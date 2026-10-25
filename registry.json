@@ -341,6 +341,234 @@
       "meta": {
         "iframeHeight": "800px"
       }
+    },
+    {
+      "name": "agent-chat-01",
+      "type": "registry:block",
+      "title": "AI 助手面板",
+      "description": "从企业监控平台提炼的 AI 助手：嵌入与浮动布局切换，Trace 展示分析摘要、工具调用与来源，内置流式演示。",
+      "dependencies": [
+        "ai",
+        "@ai-sdk/react",
+        "motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "trace",
+        "bubble",
+        "message",
+        "code-block",
+        "collapsible",
+        "button",
+        "textarea",
+        "avatar",
+        "sheet"
+      ],
+      "files": [
+        {
+          "path": "src/registry/blocks/agent-chat-01/agent-chat.tsx",
+          "type": "registry:component",
+          "target": "components/agent-chat/agent-chat.tsx"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/agent/page.tsx"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/agent-chat-body.tsx",
+          "type": "registry:component",
+          "target": "components/agent-chat/agent-chat-body.tsx"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/agent-chat-context.tsx",
+          "type": "registry:component",
+          "target": "components/agent-chat/agent-chat-context.tsx"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/chat-message.tsx",
+          "type": "registry:component",
+          "target": "components/agent-chat/chat-message.tsx"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/chat-markdown.tsx",
+          "type": "registry:component",
+          "target": "components/agent-chat/chat-markdown.tsx"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/mock-transport.ts",
+          "type": "registry:component",
+          "target": "components/agent-chat/mock-transport.ts"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/scripts.ts",
+          "type": "registry:component",
+          "target": "components/agent-chat/scripts.ts"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/config.ts",
+          "type": "registry:component",
+          "target": "components/agent-chat/config.ts"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/types.ts",
+          "type": "registry:component",
+          "target": "components/agent-chat/types.ts"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/demo-data.ts",
+          "type": "registry:component",
+          "target": "components/agent-chat/demo-data.ts"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "760px"
+      },
+      "cssVars": {
+        "theme": {
+          "color-edge": "var(--edge)"
+        },
+        "light": {
+          "edge": "color-mix(in oklch, var(--foreground) 12%, transparent)"
+        },
+        "dark": {
+          "edge": "color-mix(in oklch, var(--foreground) 18%, transparent)"
+        }
+      }
+    },
+    {
+      "name": "app-shell-01",
+      "type": "registry:page",
+      "title": "企业控制台布局",
+      "description": "提炼自企业监控平台的控制台外壳：固定顶栏、可折叠一级导航、二级工作区侧栏、独立滚动主区域，窄屏变抽屉，并预留右侧 aside 插槽（可放 AI 助手面板）。",
+      "dependencies": [
+        "lucide-react",
+        "next-themes"
+      ],
+      "registryDependencies": [
+        "button",
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "card",
+        "dropdown-menu",
+        "input",
+        "popover",
+        "sheet",
+        "tabs",
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "src/registry/templates/app-shell-01/layout.tsx",
+          "type": "registry:page",
+          "target": "app/(app)/layout.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/(app)/dashboard/page.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/app-shell.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/app-shell.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/app-header.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/app-header.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/primary-nav.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/primary-nav.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/workspace-sidebar.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/workspace-sidebar.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/page-header.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/page-header.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/page-toolbar.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/page-toolbar.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/header-status.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/header-status.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/user-menu.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/user-menu.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/theme-toggle.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/theme-toggle.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/nav-link.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/nav-link.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/nav-types.ts",
+          "type": "registry:component",
+          "target": "components/app-shell/nav-types.ts"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/nav-config.ts",
+          "type": "registry:component",
+          "target": "components/app-shell/nav-config.ts"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/use-stored-flag.ts",
+          "type": "registry:component",
+          "target": "components/app-shell/use-stored-flag.ts"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/dashboard-overview.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/dashboard-overview.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/list-page.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/list-page.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/sample-data.ts",
+          "type": "registry:component",
+          "target": "components/app-shell/sample-data.ts"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/config.ts",
+          "type": "registry:component",
+          "target": "components/app-shell/config.ts"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "800px"
+      }
     }
   ]
 }

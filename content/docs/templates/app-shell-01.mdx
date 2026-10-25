@@ -1,0 +1,271 @@
+---
+title: 企业控制台布局
+description: 提炼自企业监控平台的控制台外壳：固定顶栏、可折叠一级导航、二级工作区侧栏、独立滚动主区域，窄屏变抽屉，并预留右侧 aside 插槽（可放 AI 助手面板）。
+---
+
+<BlockViewer name="app-shell-01" />
+
+`AppShell` 提炼自我的一个企业监控平台项目的整体布局，去掉了接口请求、权限过滤和登录逻辑，只留下布局与交互本身：
+
+- **固定顶栏**：左侧品牌区宽度与导航对齐，右侧依次是 `headerActions`、亮暗模式切换、用户菜单；中间是自动生成的面包屑。
+- **一级导航**：按分组排列，当前页高亮；可折叠为图标栏（名称出现在 Tooltip 里），折叠状态记在 `localStorage`。
+- **二级工作区侧栏**：一级导航里的「模块」被选中时，右侧多出一栏，列出该模块下的页面。
+- **独立滚动的主区域**：顶栏和侧栏固定，只有 `main` 滚动，切换页面自动回到顶部。
+- **右侧 `aside` 插槽**：与 `main` 并排，高度占满顶栏以下的区域，用来放 AI 助手面板等。
+- **窄屏适配**：宽度小于 768px 时，一级导航变成左侧 Sheet 抽屉，二级导航变成顶栏下方的横向标签条。
+- 页面侧附带 `PageHeader`、`PageTabs`、`PageToolbar`、`PageFrame`，对应原项目的页面框架、范围切换和列表工具栏。
+- 颜色全部来自主题变量，切换颜色主题和亮暗模式后自动跟随，预览里可以直接试。
+
+预览里没有真实路由，所以演示用 `activeHref` + `onNavigate` 在本地模拟导航；接入 Next.js 时这两个属性都不用传，组件会用 `usePathname()` 高亮当前页。
+
+## 安装
+
+<InstallCommand name="app-shell-01" />
+
+会安装 shadcn 的 `button`、`avatar`、`badge`、`breadcrumb`、`card`、`dropdown-menu`、`input`、`popover`、`sheet`、`tabs`、`tooltip`，npm 包 `lucide-react`、`next-themes`，以及 `hooks/use-controllable-state.ts`。如果项目里已有同名文件，CLI 会询问是否覆盖。
+
+> 亮暗模式按钮依赖项目里已有的 `next-themes` `ThemeProvider`；不需要的话给 `AppShell` 传 `themeToggle={false}`。
+
+## 用法
+
+`app/(app)/layout.tsx` 把导航数据和用户信息交给 `AppShell`，路由组 `(app)` 下的所有页面都会套上这层壳：
+
+```tsx title="app/(app)/layout.tsx"
+"use client"
+
+import { AppShell } from "@/components/app-shell/app-shell"
+import { navConfig } from "@/components/app-shell/nav-config"
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AppShell
+      nav={navConfig}
+      brand={{ name: "Acme 控制台", tagline: "企业级监控与运维" }}
+      user={{ name: "管理员", email: "admin@example.com" }}
+      onSignOut={() => {
+        // 调用你的认证服务退出登录
+      }}
+    >
+      {children}
+    </AppShell>
+  )
+}
+```
+
+> 导航数据里的图标是 React 组件（函数），无法从服务端组件传给客户端组件，所以这个布局需要 `"use client"`。页面本身仍然可以是服务端组件。模板只带了 `/dashboard` 一个页面，其余导航链接是示例，请换成你自己的路由。
+
+### 文件结构
+
+安装后文件落在这些位置（项目使用 `src/` 目录时会自动加上 `src/` 前缀）。入口是 `app-shell.tsx`：
+
+```text
+app/(app)/
+├── layout.tsx                 # 控制台布局：把导航数据交给 AppShell
+└── dashboard/page.tsx         # 示例页面：概览仪表盘
+hooks/use-controllable-state.ts  # 受控 / 非受控状态 hook
+components/app-shell/
+├── app-shell.tsx              # ★ 入口：组合顶栏、导航、主区域、aside 插槽
+├── app-header.tsx             # 固定顶栏：品牌、折叠按钮、面包屑、右侧操作区
+├── primary-nav.tsx            # 一级导航（支持折叠为图标栏）
+├── workspace-sidebar.tsx      # 二级工作区侧栏 + 窄屏横向标签条
+├── nav-config.ts              # ★ 导航数据，集中配置
+├── nav-types.ts               # 导航类型与 resolveNav（根据地址找到当前位置）
+├── config.ts                  # ★ 默认文案 DEFAULT_LABELS 与存储键
+├── nav-link.tsx               # 对 next/link 的封装，统一处理点击行为
+├── page-header.tsx            # PageHeader / PageTabs / PageContent / PageFrame
+├── page-toolbar.tsx           # 列表工具栏：总数、翻页、搜索、筛选插槽
+├── header-status.tsx          # 顶栏服务状态弹层（数据由外部传入）
+├── user-menu.tsx              # 头像 + 下拉菜单
+├── theme-toggle.tsx           # 亮暗模式切换
+├── use-stored-flag.ts         # 持久化到 localStorage 的布尔状态
+├── dashboard-overview.tsx     # 演示：概览仪表盘（统计卡片 + 柱图 + 事件表）
+├── list-page.tsx              # 演示：列表页（工具栏 + 表格）
+└── sample-data.ts             # 演示用假数据
+```
+
+演示相关的三个文件（`dashboard-overview.tsx`、`list-page.tsx`、`sample-data.ts`）只用来展示布局效果，接入真实数据后可以直接删除。
+
+### 配置导航
+
+导航数据都在 `nav-config.ts`，类型定义在 `nav-types.ts`：
+
+```ts title="nav-config.ts"
+import { LayoutDashboard, Settings, Users } from "lucide-react"
+import type { NavConfig } from "./nav-types"
+
+const navConfig: NavConfig = {
+  sections: [
+    {
+      id: "workspace",
+      label: "工作台",                       // 一级导航里的分组小标题
+      entries: [
+        // 叶子条目：点击直接跳转
+        { id: "overview", label: "概览", href: "/dashboard", icon: LayoutDashboard },
+        // 模块条目：有 items，选中后出现二级侧栏
+        {
+          id: "system",
+          label: "系统管理",
+          icon: Settings,
+          description: "账号、权限与系统设置", // 二级侧栏顶部的副标题
+          items: [
+            {
+              id: "users",
+              label: "用户管理",
+              href: "/dashboard/system/users",
+              icon: Users,
+              description: "账号与角色分配",    // 二级侧栏里的说明
+              badge: 3,                          // 可选角标
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  // 固定在一级导航底部的分组，可选
+  footer: { id: "resources", label: "资源与帮助", entries: [/* … */] },
+}
+
+export { navConfig }
+```
+
+| 类型 | 字段 | 说明 |
+| --- | --- | --- |
+| `NavLeaf` | `id` `label` `href` `icon` | 叶子条目；`description`、`badge` 可选 |
+| `NavModule` | `id` `label` `icon` `items` | 模块；`items` 是 `NavLeaf[]`，`description` 可选。一级导航里点击模块会跳到第一个子项 |
+| `NavSection` | `id` `label` `entries` | 一级导航的分组，`entries` 可以混排叶子和模块 |
+| `NavConfig` | `sections` `footer?` | `footer` 固定在一级导航底部 |
+
+约定：
+
+- **高亮匹配**：`resolveNav(config, href)` 取 `href` 匹配最长的条目，`/dashboard/system/users/12` 会匹配到 `/dashboard/system/users`。比较时忽略查询串、哈希和末尾斜杠，开启 `trailingSlash` 的项目也能正常高亮。
+- **面包屑**自动由「分组 → 模块 → 页面」生成，窄屏只显示最后一级。
+- 没有匹配到任何条目时，不显示二级侧栏和面包屑，布局仍然正常。
+- 需要按权限过滤导航时，在传给 `AppShell` 之前先过滤 `navConfig` 即可，组件本身不关心权限。
+
+## 示例
+
+### 在 aside 里放 AI 助手
+
+`aside` 会渲染成 `main` 右侧的兄弟元素，和 `main` 一起在横向 flex 布局里分配宽度，高度占满顶栏以下的区域。放进来的面板应该：
+
+1. 根元素是 `h-full` 的 `<aside>`，**自带宽度**（如 `w-96 shrink-0`），自己决定边框与背景；
+2. 窄屏下是否隐藏由面板自己处理（例如加 `hidden lg:flex`）。
+
+「AI 助手」按钮放进 `headerActions`，面板放进 `aside`，用一个状态位控制显隐：
+
+```tsx title="app/(app)/layout.tsx"
+"use client"
+
+import { SparklesIcon } from "lucide-react"
+import * as React from "react"
+
+import { AppShell } from "@/components/app-shell/app-shell"
+import { navConfig } from "@/components/app-shell/nav-config"
+import { Button } from "@/components/ui/button"
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const [assistantOpen, setAssistantOpen] = React.useState(false)
+  return (
+    <AppShell
+      nav={navConfig}
+      headerActions={
+        <Button
+          variant={assistantOpen ? "secondary" : "ghost"}
+          aria-pressed={assistantOpen}
+          onClick={() => setAssistantOpen((open) => !open)}
+        >
+          <SparklesIcon data-icon="inline-start" />
+          AI 助手
+        </Button>
+      }
+      aside={assistantOpen ? <YourAssistantPanel /> : null}
+    >
+      {children}
+    </AppShell>
+  )
+}
+```
+
+站内的 [AI 助手面板](/blocks/agent-chat-01/) 区块在「嵌入」模式下就是这样一个自带宽度的 `<aside>`，可以直接放进 `aside` 插槽。
+
+### 受控的侧栏折叠
+
+`collapsed` / `defaultCollapsed` / `onCollapsedChange` 成对出现，同时支持受控与非受控。不传 `collapsed` 时组件自己维护，并把状态记在 `localStorage`（默认键 `travinsy:app-shell:collapsed`，可用 `storageKey` 修改）；传了就完全由你决定，不再读写本地存储：
+
+```tsx
+const [collapsed, setCollapsed] = React.useState(false)
+
+<AppShell nav={navConfig} collapsed={collapsed} onCollapsedChange={setCollapsed}>
+  {children}
+</AppShell>
+```
+
+### 页面框架
+
+主区域里的页面可以用 `page-header.tsx` 和 `page-toolbar.tsx` 里的组件快速搭起来：
+
+```tsx title="app/(app)/dashboard/system/users/page.tsx"
+import { PageFrame } from "@/components/app-shell/page-header"
+import { PageToolbar } from "@/components/app-shell/page-toolbar"
+
+<PageFrame
+  section="系统管理"
+  title="用户管理"
+  description="账号与角色分配"
+  actions={<Button>新建</Button>}
+  toolbar={<PageToolbar total={128} page={1} pageSize={20} onPageChange={setPage} />}
+>
+  {/* 表格、卡片…… */}
+</PageFrame>
+```
+
+### 自定义文案
+
+用户可见文案集中在 `config.ts` 的 `DEFAULT_LABELS`，通过 `labels` 覆盖任意几项，带 `{name}` 的文案会被填入实际名称：
+
+```tsx
+<AppShell
+  nav={navConfig}
+  labels={{ signOut: "Sign out", collapseSidebar: "Collapse", userMenu: "Account: {name}" }}
+>
+  {children}
+</AppShell>
+```
+
+## API
+
+### AppShell
+
+<PropsTable name="app-shell-01" component="AppShell" />
+
+### 页面组件
+
+| 组件 | 属性 | 说明 |
+| --- | --- | --- |
+| `PageHeader` | `title` `description?` `section?` `actions?` | 标题栏，滚动时吸附在主区域顶部 |
+| `PageTabs` | `tabs` `value` `onValueChange` `trailing?` | 下划线标签条，用来切换范围（应用、环境等） |
+| `PageToolbar` | `total` `page` `pageSize` `onPageChange` `search?` `onSearchChange?` `filters?` `labels?` | 总数、翻页、搜索；状态完全受控 |
+| `PageContent` | — | 统一内边距与纵向间距 |
+| `PageFrame` | 同 `PageHeader`，另有 `tabs?` `toolbar?` | 把标题栏、标签条、工具栏、内容区一次组合 |
+| `HeaderStatus` | `services` `checkedAt?` `labels?` | 顶栏服务状态弹层，放进 `headerActions` |
+
+### data-slot 与状态
+
+根元素都带 `data-slot`，方便用选择器或 `has-data-[slot=…]` 定制：`app-shell`（`data-collapsed`、`data-has-aside`、`data-has-workspace`）、`app-shell-header`、`app-shell-sidebar`、`app-shell-primary-nav`、`app-shell-nav-item`（`data-active`）、`app-shell-workspace-sidebar`、`app-shell-workspace-item`（`data-active`）、`app-shell-main`、`app-shell-page-header`、`app-shell-page-toolbar` 等。
+
+## 可访问性
+
+- 提供「跳转到主内容」链接，键盘 Tab 的第一个焦点；`main` 带 `aria-label`。
+- 一级导航、二级导航、面包屑都是带名称的 `nav`；当前页用 `aria-current="page"`，当前模块用 `aria-current="true"`。
+- 侧栏折叠按钮带 `aria-expanded` 与随状态变化的名称；折叠后导航项仍有 `aria-label`，并通过 Tooltip 显示名称。
+- 窄屏抽屉是 Sheet（Base UI Dialog）：Esc 关闭、焦点被困在抽屉内、关闭后焦点回到触发按钮。
+- 纯图标按钮都有 `aria-label`；状态徽标同时用图标与文字，不只靠颜色。
+- 过渡动画在系统开启「减少动态效果」时关闭。
+
+## 注意事项
+
+- **静态导出**：布局完全在客户端运行，不使用 Server Actions 或 `cookies()`，可用于 `output: "export"`。
+- **折叠状态与水合**：服务端和水合阶段始终使用 `defaultCollapsed`，水合完成后再读取 `localStorage`，所以已折叠过的用户刷新时会看到一次短暂的展开→折叠切换。
+- **布局高度**：外层使用 `h-svh`，应放在不带其他固定高度父级的路由组布局里；预览用 iframe 的高度。
+- **两处宽度要一致**：一级导航展开 200px、折叠 60px，写在 `app-shell.tsx` 与 `app-header.tsx` 里，修改时两处同步，顶栏品牌区才能和导航对齐。
+- **颜色**：来自项目的主题变量（`globals.css`），到 [主题](/themes/) 页挑一套复制进去，整个控制台自动换色。

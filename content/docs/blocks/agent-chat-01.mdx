@@ -1,0 +1,232 @@
+---
+title: AI 助手面板
+description: 从企业监控平台提炼的 AI 助手：嵌入与浮动布局切换，Trace 展示分析摘要、工具调用与来源，内置流式演示。
+---
+
+<BlockViewer name="agent-chat-01" />
+
+提炼自我的一个企业监控平台项目的 AI 助手，保留「在工作区旁边排查问题」的交互，去掉认证、业务接口与监控数据依赖。默认使用离线模拟数据，不需要密钥或服务端。
+
+- **两种布局**：右侧嵌入面板、右下角浮动窗口；聊天记录、输入草稿和滚动位置在切换时保留。
+- **可检查的过程**：Trace 展示分析摘要、运行中的工具、成功与失败结果，以及可打开的参考来源。输入与输出可折叠查看。
+- **流式演示**：应用监控、vLLM 显存、CI 安装失败三个剧本，其他问题使用通用剧本。所有 reasoning 均为预写的演示摘要，不是真实模型的隐藏思维。
+- **对话操作**：复制、点赞/点踩、重新生成、新建对话、停止生成。反馈仅保存在当前页面，不会上报。
+- **窄屏适配**：小于 768px 时，两种模式均使用底部 Sheet，带焦点管理和 Escape 关闭；嵌入面板支持鼠标/触摸拖动和方向键调整宽度。
+
+## 安装
+
+<InstallCommand name="agent-chat-01" />
+
+安装页面 `app/agent/page.tsx` 和 `components/agent-chat/` 中的组件与数据文件。共享 hook 安装到 `hooks/use-controllable-state.ts`。shadcn 依赖来自官方 registry；npm 依赖为 `ai`、`@ai-sdk/react`、`motion`、`lucide-react`、`class-variance-authority`。实现基于 AI SDK 7 与 React SDK 4。
+
+## 用法
+
+```tsx title="app/workspace/page.tsx"
+"use client"
+
+import {
+  AgentChatPanel,
+  AgentChatProvider,
+  AgentChatTrigger,
+} from "@/components/agent-chat/agent-chat"
+
+export default function Workspace() {
+  return (
+    <AgentChatProvider defaultMode="embedded" defaultOpen>
+      <div className="flex h-dvh flex-col">
+        <header className="p-4">
+          <AgentChatTrigger variant="button" />
+        </header>
+        <div className="flex min-h-0 flex-1">
+          <main className="min-w-0 flex-1 overflow-auto p-6">你的工作区</main>
+          <AgentChatPanel />
+        </div>
+        <AgentChatTrigger />
+      </div>
+    </AgentChatProvider>
+  )
+}
+```
+
+Provider 内只创建一个 `useChat` 实例。将面板放在与 `main` 同级的 flex 容器中；嵌入时默认宽 400px，调整范围 320–640px，父容器需要有明确高度与 `min-h-0`。同一个 Provider 只挂载一个面板。
+
+## 示例
+
+### 受控布局与自定义文案
+
+```tsx title="components/workspace.tsx"
+"use client"
+
+import { useState } from "react"
+import {
+  AgentChatPanel,
+  AgentChatProvider,
+  AgentChatTrigger,
+  type AgentChatMode,
+} from "@/components/agent-chat/agent-chat"
+
+export function Workspace() {
+  const [mode, setMode] = useState<AgentChatMode>("embedded")
+  const [open, setOpen] = useState(true)
+  return (
+    <AgentChatProvider
+      mode={mode}
+      onModeChange={setMode}
+      open={open}
+      onOpenChange={setOpen}
+      labels={{ title: "工程助手", welcome: "今天要解决什么问题？" }}
+    >
+      <div className="flex h-dvh flex-col">
+        <header>
+          <AgentChatTrigger variant="button" />
+        </header>
+        <div className="flex min-h-0 flex-1">
+          <main className="min-w-0 flex-1">你的工作区</main>
+          <AgentChatPanel />
+        </div>
+        <AgentChatTrigger />
+      </div>
+    </AgentChatProvider>
+  )
+}
+```
+
+预览页包含嵌入、浮动、预填记录和从工作区发起问题的组合示例。
+
+## API
+
+### AgentChatProvider
+
+| 属性              | 类型                       | 默认值 / 说明                          |
+| ----------------- | -------------------------- | -------------------------------------- |
+| `defaultMode`     | `"embedded" \| "floating"` | `"floating"`                           |
+| `defaultOpen`     | `boolean`                  | `false`                                |
+| `transport`       | `ChatTransport<UIMessage>` | 内置 mock transport                    |
+| `suggestions`     | `string[]`                 | 三个示例问题，传 `[]` 隐藏             |
+| `title`           | `string`                   | `"AI 助手"`                            |
+| `initialMessages` | `UIMessage[]`              | 可选的初始记录，演示页用它预填一轮对话 |
+| `children`        | `ReactNode`                | 工作区内容                             |
+
+`default*` 与 `initialMessages` 只用于初始化。更换会话或 transport 配置时，可通过 Provider 的 React `key` 重新创建实例。所有状态仅在当前 Provider 生命周期内保存，刷新后重置。
+
+### AgentChatPanel
+
+<PropsTable name="agent-chat-01" component="AgentChatPanel" />
+
+### 触发器、建议问题与 Hook
+
+| 导出                  | API                                                                                                            |
+| --------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `AgentChatPanel`      | `{ className?: string }`；关闭时不渲染；桌面嵌入为 `aside`                                                     |
+| `AgentChatTrigger`    | `{ variant?: "fab" \| "button"; className?: string }`；默认 `fab`，只在浮动模式关闭时显示                      |
+| `useAgentChat()`      | `{ mode, setMode, toggleMode, open, setOpen }`；必须在 Provider 内调用                                         |
+| `AgentChatSuggestion` | `{ question: string; children?: ReactNode; className?: string }`；从外部工作区打开面板并发送问题，生成期间禁用 |
+| `AgentChatMode`       | `"embedded" \| "floating"`                                                                                     |
+
+`Enter` 发送，`Shift + Enter` 换行，中文输入法选词时不会误发送。生成中点击「停止」调用 `stop()`；已收到的内容保留，未完成的工具标记为「已停止」。阅读旧消息时不会强制滚动到底部。
+
+## 可访问性
+
+- 标题栏与反馈按钮均有中文可访问名称，输入框有标签。
+- 聊天记录通过 `aria-live="polite"` 播报新增内容；按钮暴露 `aria-expanded`、`aria-pressed`，面板通过 `data-mode`、`data-state` 暴露状态。
+- `Enter` 发送，`Shift + Enter` 换行；输入法组合期间不会误发。调整面板宽度可用左右方向键。
+- 窄屏 Sheet 提供焦点管理、焦点回到触发区域和 Escape 关闭。
+- 动效遵循 `prefers-reduced-motion`，来源链接标注新标签页。
+
+## 注意事项
+
+### 文件结构
+
+```text
+components/agent-chat/
+├── agent-chat.tsx            # 对外入口、面板和触发器
+├── agent-chat-context.tsx    # Provider 与会话状态
+├── agent-chat-body.tsx       # 标题栏、滚动区、输入框
+├── chat-message.tsx          # Trace 与反馈
+├── chat-markdown.tsx         # 安全的简单 Markdown
+├── config.ts                 # DEFAULT_LABELS 与建议问题
+├── types.ts                  # 模式类型
+├── mock-transport.ts         # 可取消的流
+├── scripts.ts                # 预置剧本
+└── demo-data.ts              # 页面默认记录与场景
+hooks/use-controllable-state.ts
+app/agent/page.tsx
+```
+
+### Mock transport 设计
+
+`mock-transport.ts` 按最后一条用户消息匹配正则，构造标准 `UIMessageChunk` 队列。每次 `pull` 只输出一个片段：reasoning → 多个 dynamic tool → source-url → text → finish。延迟定时器受 `AbortSignal` 和流取消控制，不会执行真实命令或请求业务服务；`reconnectToStream` 返回 `null`。
+
+`chat-message.tsx` 同时接受动态工具与 `tool-*` 静态工具消息。Markdown 仅支持段落、列表与行内代码，不执行 HTML；来源 URL 仅允许 HTTP(S)。
+
+### 接入真实后端
+
+客户端只需替换 transport；保持 `useChat` 在 Provider 中：
+
+```tsx title="app/workspace/page.tsx"
+"use client"
+
+import { useState } from "react"
+import { DefaultChatTransport } from "ai"
+import {
+  AgentChatPanel,
+  AgentChatProvider,
+  AgentChatTrigger,
+} from "@/components/agent-chat/agent-chat"
+
+export default function Workspace() {
+  const [transport] = useState(
+    () => new DefaultChatTransport({ api: "/api/chat" }),
+  )
+  return (
+    <AgentChatProvider transport={transport} defaultOpen>
+      <main>你的工作区</main>
+      <AgentChatPanel />
+      <AgentChatTrigger />
+    </AgentChatProvider>
+  )
+}
+```
+
+下面的服务端示例应放在支持服务端运行的应用或独立 API 服务中。**本站是纯静态导出，不部署这个 POST Route Handler。** 跨域后端可以给 `api` 配置完整 URL，并在后端配置 CORS。真实应用还需实现认证、输入校验与工具权限控制。
+
+```tsx title="app/api/chat/route.ts（服务端应用示例）"
+import {
+  convertToModelMessages,
+  stepCountIs,
+  streamText,
+  tool,
+  type UIMessage,
+} from "ai"
+import { z } from "zod"
+
+export async function POST(request: Request) {
+  const { messages }: { messages: UIMessage[] } = await request.json()
+  const result = streamText({
+    // 使用你配置的模型或 AI Gateway；密钥仅在服务端配置。
+    model: "openai/gpt-5-mini",
+    messages: await convertToModelMessages(messages),
+    abortSignal: request.signal,
+    stopWhen: stepCountIs(3),
+    tools: {
+      readMetrics: tool({
+        description: "读取授权范围内的监控摘要",
+        inputSchema: z.object({ service: z.string() }),
+        execute: async ({ service }) => {
+          // 替换为带权限检查的真实只读查询。
+          return { service, availability: "99.95%", demo: true }
+        },
+      }),
+    },
+  })
+  return result.toUIMessageStreamResponse({
+    originalMessages: messages,
+    sendReasoning: true,
+    sendSources: true,
+  })
+}
+```
+
+`sendReasoning` 仅在模型提供可公开的 reasoning 内容时才有数据；不支持时可以省略该部分。工具 `input-streaming / input-available` 映射为运行中，`output-available` 映射为完成，`output-error / output-denied` 映射为失败；停止时未结束的调用显示为已停止。模型或检索工具提供的 `source-url` 映射为来源链接，不会自动生成引用。服务端应只发送适合向用户公开的分析摘要与工具输出。
+
+参考：[shadcn Trace](https://ui.shadcn.com/docs/components/aria/trace)、[AI SDK UI](https://ai-sdk.dev/docs/ai-sdk-ui/chatbot)。
