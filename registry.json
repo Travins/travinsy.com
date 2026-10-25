@@ -55,47 +55,56 @@
             "pointer-events": "none"
           }
         },
-        "@utility bg-ruler": {
+        "@utility pattern-ruler": {
           "background-color": "color-mix(in oklab, var(--foreground) 34%, transparent)",
           "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='31' shape-rendering='crispEdges'%3E%3Crect x='0' y='19' width='1' height='12'/%3E%3Crect x='0' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='8' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='8' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='16' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='16' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='24' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='24' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='32' y='24' width='1' height='7' fill-opacity='.8'/%3E%3Crect x='32' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='40' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='40' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='48' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='48' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='56' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='56' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='64' y='24' width='1' height='7' fill-opacity='.8'/%3E%3Crect x='64' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='72' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='72' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='80' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='80' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='88' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='88' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='96' y='24' width='1' height='7' fill-opacity='.8'/%3E%3Crect x='96' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='104' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='104' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='112' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='112' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='120' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='120' y='0' width='1' height='3' fill-opacity='.45'/%3E%3C/svg%3E\")",
           "mask-size": "128px 31px",
           "mask-repeat": "repeat-x",
           "mask-position": "0 0"
         },
-        "@utility bg-hatch": {
+        "@utility pattern-hatch": {
           "background-color": "color-mix(in oklab, var(--foreground) 34%, transparent)",
-          "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-1 9L9-1M-1 1L1-1M7 9L9 7' fill='none' stroke='black'/%3E%3C/svg%3E\")",
+          "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-1-1L9 9M7-1L9 1M-1 7L1 9' fill='none' stroke='black'/%3E%3C/svg%3E\")",
           "mask-size": "8px 8px",
           "mask-repeat": "repeat",
           "mask-position": "0 0"
         },
-        "@utility bg-dots": {
+        "@utility pattern-dots": {
           "background-color": "color-mix(in oklab, var(--foreground) 34%, transparent)",
           "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='31' shape-rendering='crispEdges'%3E%3Crect x='4' y='7' width='1' height='1'/%3E%3Crect x='4' y='15' width='1' height='1'/%3E%3Crect x='4' y='23' width='1' height='1'/%3E%3C/svg%3E\")",
           "mask-size": "8px 31px",
           "mask-repeat": "repeat-x",
           "mask-position": "0 0"
         },
-        "@utility bg-grid-fine": {
+        "@utility pattern-grid": {
           "background-color": "color-mix(in oklab, var(--foreground) 22%, transparent)",
           "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='31' shape-rendering='crispEdges'%3E%3Crect x='0' y='0' width='1' height='31'/%3E%3Crect x='1' y='15' width='15' height='1'/%3E%3C/svg%3E\")",
           "mask-size": "16px 31px",
           "mask-repeat": "repeat-x",
           "mask-position": "0 0"
         },
-        "@utility bg-plus": {
+        "@utility pattern-plus": {
           "background-color": "color-mix(in oklab, var(--foreground) 34%, transparent)",
           "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='31' shape-rendering='crispEdges'%3E%3Crect x='6' y='7' width='5' height='1'/%3E%3Crect x='8' y='5' width='1' height='2'/%3E%3Crect x='8' y='8' width='1' height='2'/%3E%3Crect x='6' y='23' width='5' height='1'/%3E%3Crect x='8' y='21' width='1' height='2'/%3E%3Crect x='8' y='24' width='1' height='2'/%3E%3C/svg%3E\")",
           "mask-size": "16px 31px",
           "mask-repeat": "repeat-x",
           "mask-position": "0 0"
         },
-        "@utility bg-wave": {
+        "@utility pattern-wave": {
           "background-color": "color-mix(in oklab, var(--foreground) 34%, transparent)",
           "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='31'%3E%3Cpath d='M0 15.5C5.33 10.5 10.67 10.5 16 15.5S26.67 20.5 32 15.5' fill='none' stroke='black'/%3E%3C/svg%3E\")",
           "mask-size": "32px 31px",
           "mask-repeat": "repeat-x",
           "mask-position": "0 0"
+        },
+        "@utility bg-hatch": {
+          "background-image": "repeating-linear-gradient(\n    45deg,\n    var(--edge) 0 1px,\n    transparent 0 50%\n  )",
+          "background-size": "8px 8px"
+        },
+        "@utility bg-dots": {
+          "background-image": "radial-gradient(\n    color-mix(in oklab, var(--foreground) 24%, transparent) 1px,\n    transparent 1.3px\n  )",
+          "background-size": "8px 8px",
+          "background-position": "4px 4px"
         },
         "@layer base": {
           "html": {

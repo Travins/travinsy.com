@@ -31,17 +31,19 @@ import {
 
 底层工具类（`src/styles/grid.css`）：
 - `screen-line-top` / `screen-line-bottom`：横跨整个屏幕的 1px 线（分别占用 `::before` / `::after`，不要在同一元素上再用这两个伪元素）
-- 纹路：`bg-ruler`（刻度尺）、`bg-hatch`（斜纹）、`bg-dots`（点阵）、`bg-grid-fine`（细网格）、`bg-plus`（十字阵列）、`bg-wave`（波形）；横向起点由 `--pattern-x` 控制
+- 分隔带纹理：`pattern-ruler`、`pattern-hatch`、`pattern-dots`、`pattern-grid`、`pattern-plus`、`pattern-wave`——31px 高的 mask 平铺，**只供 GridSeparator 内部使用**，页面里通过 `<GridSeparator pattern="…">` 选择
+- 面积底纹：`bg-hatch`（「\」斜纹）、`bg-dots`（点阵）——普通背景图，可铺在任意元素上（横幅、卡片背景），元素内可放文字
+- 像素约定：纹理平铺原点固定在容器左竖线上，周期 8/16/32/128 整除容器宽度；GridContainer 外宽 = --grid-width + 1px
 - 颜色 token：`border-edge` / `bg-edge` / `divide-edge`（`--edge` 由前景色混合得到，自动适配所有颜色主题）
 
 ## 规则
 
 1. **只画底线**：相邻两行只由上一行的 `screen-line-bottom` 分隔，不要上下都画，否则会出现 2px 线。页面第一行（紧接 Header）由 Header 自带底线。
 2. 行与行之间要换主题时（如个人信息 → 作品），用 `GridSeparator`；同一主题内部用普通 `GridSection`。
-   - **默认是 `ruler`（刻度尺）+ 四个交点十字**，页面里的主分隔一律用它，不要每处换一种纹路。
+   - **默认是 `ruler`（刻度尺）**，页面里的主分隔一律用它，不要每处换一种纹路。
    - 其余纹路是变体：`hatch`（斜纹）、`dots`、`grid`、`plus`、`wave`、`none`（只留线条），用于局部强调或区分特殊区域（如文档预览、某一块实验性内容），一页里最多再出现一种。
    - `label="02 / PROJECTS"` 给分隔带加等宽编号，后接虚线，可与任意纹路组合；用于大段落切换，不要每条都加。
-   - `crosshair` 默认只在 `ruler` 上开启；`GridSection` 也可传 `crosshair` 在底线两端绘制。十字也可用 `GridCrosshair` 单独放在带 `relative` 的卡片四角。
+   - `crosshair` 默认关闭（刻度尺与十字叠在一起显得杂乱）；`GridSection` 也可传 `crosshair` 在底线两端绘制。十字也可用 `GridCrosshair` 单独放在带 `relative` 的卡片四角。
 3. 行内边距统一 `px-4`（≥sm 时 `sm:px-6` 可选），不要让内容贴到竖线上。
 4. 容器外的左右空白（gutter）尽量保持干净；确需放装饰元素时，必须 `hidden lg:block`、`aria-hidden`、`pointer-events-none`，用绝对定位相对于 `GridSection` 向外偏移。不要把手写体 follow me 之类的装饰当作默认。
 5. 页面宽度：作品集类页面容器用 64rem（`--grid-width`），正文类内容（文章）自己限制到约 42rem 并居中；章节可以用「左侧窄编号栏 + 右侧内容」的两栏结构（宽屏 `md:grid-cols-[9rem_1fr]`，窄屏编号移到标题上方），编号栏用竖线与内容隔开。

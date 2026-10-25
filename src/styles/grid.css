@@ -33,7 +33,7 @@
 }
 
 /*
- * 分隔带纹路。像素级约定（改动前请读 grid-design 技能）：
+ * 分隔带纹路（pattern-*，只供 GridSeparator 的纹理层使用，固定 31px 高）。像素级约定（改动前请读 grid-design 技能）：
  * - 每种纹路是一张 SVG 平铺图，作为 mask 使用，颜色来自 background-color，
  *   因此随颜色主题与亮暗模式变化；shape-rendering=crispEdges 保证 1px 线不发虚
  * - 纹理层高 31px（分隔带 32px 减去底线），层的左端固定在容器左竖线左侧 4096px 处，
@@ -43,7 +43,7 @@
  */
 
 /* 刻度尺（默认）：下沿每 8px 短刻度、每 32px 中刻度、每 128px 长刻度，上沿一排细刻度 */
-@utility bg-ruler {
+@utility pattern-ruler {
   background-color: color-mix(in oklab, var(--foreground) 34%, transparent);
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='31' shape-rendering='crispEdges'%3E%3Crect x='0' y='19' width='1' height='12'/%3E%3Crect x='0' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='8' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='8' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='16' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='16' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='24' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='24' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='32' y='24' width='1' height='7' fill-opacity='.8'/%3E%3Crect x='32' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='40' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='40' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='48' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='48' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='56' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='56' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='64' y='24' width='1' height='7' fill-opacity='.8'/%3E%3Crect x='64' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='72' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='72' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='80' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='80' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='88' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='88' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='96' y='24' width='1' height='7' fill-opacity='.8'/%3E%3Crect x='96' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='104' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='104' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='112' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='112' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='120' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='120' y='0' width='1' height='3' fill-opacity='.45'/%3E%3C/svg%3E");
   mask-size: 128px 31px;
@@ -51,17 +51,17 @@
   mask-position: 0 0;
 }
 
-/* 斜纹：8px 周期，45° */
-@utility bg-hatch {
+/* 斜纹：8px 周期，「\」方向 */
+@utility pattern-hatch {
   background-color: color-mix(in oklab, var(--foreground) 34%, transparent);
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-1 9L9-1M-1 1L1-1M7 9L9 7' fill='none' stroke='black'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-1-1L9 9M7-1L9 1M-1 7L1 9' fill='none' stroke='black'/%3E%3C/svg%3E");
   mask-size: 8px 8px;
   mask-repeat: repeat;
   mask-position: 0 0;
 }
 
 /* 点阵：8px 间距，三行，落在两条刻度中间 */
-@utility bg-dots {
+@utility pattern-dots {
   background-color: color-mix(in oklab, var(--foreground) 34%, transparent);
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='31' shape-rendering='crispEdges'%3E%3Crect x='4' y='7' width='1' height='1'/%3E%3Crect x='4' y='15' width='1' height='1'/%3E%3Crect x='4' y='23' width='1' height='1'/%3E%3C/svg%3E");
   mask-size: 8px 31px;
@@ -70,7 +70,7 @@
 }
 
 /* 坐标网格：16px 正方格，横线与上下边线等距 */
-@utility bg-grid-fine {
+@utility pattern-grid {
   background-color: color-mix(in oklab, var(--foreground) 22%, transparent);
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='31' shape-rendering='crispEdges'%3E%3Crect x='0' y='0' width='1' height='31'/%3E%3Crect x='1' y='15' width='15' height='1'/%3E%3C/svg%3E");
   mask-size: 16px 31px;
@@ -79,7 +79,7 @@
 }
 
 /* 十字阵列：16px 间距，两行 */
-@utility bg-plus {
+@utility pattern-plus {
   background-color: color-mix(in oklab, var(--foreground) 34%, transparent);
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='31' shape-rendering='crispEdges'%3E%3Crect x='6' y='7' width='5' height='1'/%3E%3Crect x='8' y='5' width='1' height='2'/%3E%3Crect x='8' y='8' width='1' height='2'/%3E%3Crect x='6' y='23' width='5' height='1'/%3E%3Crect x='8' y='21' width='1' height='2'/%3E%3Crect x='8' y='24' width='1' height='2'/%3E%3C/svg%3E");
   mask-size: 16px 31px;
@@ -88,10 +88,35 @@
 }
 
 /* 信号波形：32px 周期，在容器竖线处过零 */
-@utility bg-wave {
+@utility pattern-wave {
   background-color: color-mix(in oklab, var(--foreground) 34%, transparent);
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='31'%3E%3Cpath d='M0 15.5C5.33 10.5 10.67 10.5 16 15.5S26.67 20.5 32 15.5' fill='none' stroke='black'/%3E%3C/svg%3E");
   mask-size: 32px 31px;
   mask-repeat: repeat-x;
   mask-position: 0 0;
+}
+
+/*
+ * 面积底纹（bg-*）：普通背景图，可铺在任意大小的元素上（横幅、卡片背景、小标题条）。
+ * 与 pattern-* 不同，不是 mask，元素里可以放文字。
+ */
+
+/* 斜纹底纹：「\」方向，8px 周期 */
+@utility bg-hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--edge) 0 1px,
+    transparent 0 50%
+  );
+  background-size: 8px 8px;
+}
+
+/* 点阵底纹：8px 间距 */
+@utility bg-dots {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--foreground) 24%, transparent) 1px,
+    transparent 1.3px
+  );
+  background-size: 8px 8px;
+  background-position: 4px 4px;
 }

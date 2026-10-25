@@ -23,12 +23,14 @@ async function main() {
   const expected = [
     "screen-line-top",
     "screen-line-bottom",
+    "pattern-ruler",
+    "pattern-hatch",
+    "pattern-dots",
+    "pattern-grid",
+    "pattern-plus",
+    "pattern-wave",
     "bg-hatch",
-    "bg-ruler",
     "bg-dots",
-    "bg-grid-fine",
-    "bg-plus",
-    "bg-wave",
   ]
   const missing = expected.filter((name) => !css[`@utility ${name}`])
   if (missing.length || Object.keys(css).length !== expected.length)

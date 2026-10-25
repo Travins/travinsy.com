@@ -46,7 +46,7 @@ export default function Page() {
 
 ### 分隔带纹路
 
-`GridSeparator` 用 `pattern` 切换纹路。页面里的主分隔用默认的 `ruler`（刻度尺，并在四个交点处绘制「+」）；`hatch`、`dots`、`grid`、`plus`、`wave` 适合局部强调或区分不同类型的内容。
+`GridSeparator` 用 `pattern` 切换纹路。页面里的主分隔用默认的 `ruler`（刻度尺）；`hatch`、`dots`、`grid`、`plus`、`wave` 适合局部强调或区分不同类型的内容。
 
 <ComponentPreview name="grid-separator-patterns-demo" />
 
@@ -58,7 +58,7 @@ export default function Page() {
 
 ### 交点十字
 
-`crosshair` 控制容器竖线与横线交点处的「+」：`GridSeparator` 默认只在 `ruler` 纹路上开启，传 `crosshair` / `crosshair={false}` 可强制开关；`GridSection` 传 `crosshair` 会在底线两端绘制。也可以直接使用 `GridCrosshair` 原语，放在任何 `position: relative` 的容器的四个角。
+`crosshair` 控制容器竖线与横线交点处的「+」：`GridSeparator` 默认关闭，传 `crosshair` 开启；`GridSection` 传 `crosshair` 会在底线两端绘制。也可以直接使用 `GridCrosshair` 原语，放在任何 `position: relative` 的容器的四个角。
 
 ## API
 
@@ -115,7 +115,7 @@ export default function Page() {
 
 ### 主题与工具类
 
-安装命令会注册 `--edge` 变量、`border-edge` 主题映射，以及 `screen-line-top`、`screen-line-bottom` 两个横线工具类，和 `bg-hatch`、`bg-ruler`、`bg-dots`、`bg-grid-fine`、`bg-plus`、`bg-wave` 六个纹路工具类（Tailwind CSS v4）。线条与纹路的颜色都来自 `--edge` / `--foreground`，随颜色主题和亮暗模式变化。
+安装命令会注册 `--edge` 变量、`border-edge` 主题映射，以及 `screen-line-top`、`screen-line-bottom` 两个横线工具类，六个分隔带纹理工具类 `pattern-ruler`、`pattern-hatch`、`pattern-dots`、`pattern-grid`、`pattern-plus`、`pattern-wave`（供 GridSeparator 使用），以及两个面积底纹 `bg-hatch`、`bg-dots`（可直接铺在任意元素上）（Tailwind CSS v4）。线条与纹路的颜色都来自 `--edge` / `--foreground`，随颜色主题和亮暗模式变化。
 
 全宽横线需要页面的 `html` 设置 `overflow-x: clip`；Registry 安装会一并写入该规则。
 
