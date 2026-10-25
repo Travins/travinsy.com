@@ -90,6 +90,51 @@ export default function LoginPage() {
 
 使用 NextAuth 时，把 `onSignIn` 换成 `signIn("credentials", { redirect: false, ... })` 并在返回 `error` 时抛出即可；第三方登录对应 `signIn(provider)`。
 
+### 换成英文
+
+`labels` 也能覆盖校验提示（`validation*` 键）。提示里的 `{min}`、`{length}` 由 `schemas.ts` 的规则常量填入，**保留占位符**就会显示成对应的数字：
+
+```tsx title="app/login/page.tsx"
+import { Auth01, type Auth01Labels } from "@/components/auth-01/auth-01"
+
+// 只覆盖需要改的键，没写的键仍是默认中文
+const english: Partial<Auth01Labels> = {
+  signInTitle: "Welcome back",
+  signInDescription: "Sign in to continue",
+  accountLabel: "Username or email",
+  accountPlaceholder: "you@example.com",
+  passwordLabel: "Password",
+  passwordPlaceholder: "Enter your password",
+  signInSubmit: "Sign in",
+  signUpTitle: "Create an account",
+  nameLabel: "Name",
+  emailLabel: "Email",
+  newPasswordPlaceholder: "At least 8 characters, letters and numbers",
+  confirmPasswordLabel: "Confirm password",
+  signUpSubmit: "Sign up",
+  // 校验提示：{min}、{length} 一定要保留，否则数字不会被填入
+  validationAccountRequired: "Enter your username or email",
+  validationPasswordRequired: "Enter your password",
+  validationEmailRequired: "Enter your email",
+  validationEmailInvalid: "Enter a valid email address",
+  validationPhoneInvalid: "Enter a valid {length}-digit phone number",
+  validationCodeInvalid: "Enter the {length}-digit code",
+  validationPasswordMin: "Use at least {min} characters",
+  validationPasswordLetter: "Include a letter",
+  validationPasswordDigit: "Include a number",
+  validationNameMin: "Name needs at least {min} characters",
+  validationConfirmRequired: "Re-enter your password",
+  validationPasswordMismatch: "Passwords do not match",
+  validationTermsRequired: "Please accept the terms to continue",
+}
+
+export default function LoginPage() {
+  return <Auth01 labels={english} />
+}
+```
+
+完整键与默认值见下方 [labels](#labels)。
+
 ## API
 
 ### Auth01
@@ -121,7 +166,7 @@ export default function LoginPage() {
 
 ### labels
 
-所有键都在 `config.ts` 的 `DEFAULT_LABELS` 里，传 `labels={{ signInTitle: "Sign in" }}` 这样覆盖其中任意几项。含 `{name}`、`{email}`、`{seconds}`、`{level}` 的文案会在渲染时填入实际值。
+所有键都在 `config.ts` 的 `DEFAULT_LABELS` 里，传 `labels={{ signInTitle: "Sign in" }}` 这样覆盖其中任意几项。含 `{name}`、`{email}`、`{seconds}`、`{level}` 的文案会在渲染时填入实际值；表格末尾的 `validation*` 键是表单校验提示，其中的 `{min}`、`{length}` 由 `schemas.ts` 的规则常量填入（例如改小密码最小长度后，提示里的数字会自动变）。
 
 | 键 | 默认值 | 说明 |
 | --- | --- | --- |
@@ -159,6 +204,19 @@ export default function LoginPage() {
 | `showPassword` / `hidePassword` | `显示密码` / `隐藏密码` | 密码显示切换按钮的 `aria-label` |
 | `passwordStrength` / `passwordStrengthEmpty` | `强度：{level}` / `强度：—` | 强度条右侧文字 |
 | `strengthWeak` / `strengthFair` / `strengthGood` / `strengthStrong` | `弱` / `一般` / `较强` / `强` | 四个强度等级 |
+| `validationAccountRequired` | `请输入用户名或邮箱` | 密码登录：账号为空 |
+| `validationPasswordRequired` | `请输入密码` | 密码登录：密码为空 |
+| `validationEmailRequired` | `请输入邮箱` | 邮箱为空（注册、找回密码） |
+| `validationEmailInvalid` | `请输入有效的邮箱地址` | 邮箱格式错误 |
+| `validationPhoneInvalid` | `请输入有效的 {length} 位手机号` | 验证码登录：手机号格式错误，`{length}` 默认 `11` |
+| `validationCodeInvalid` | `请输入 {length} 位数字验证码` | 验证码格式错误，`{length}` 默认 `6` |
+| `validationPasswordMin` | `密码至少 {min} 位` | 密码太短，`{min}` 默认 `8` |
+| `validationPasswordLetter` | `密码需要包含字母` | 密码缺少字母 |
+| `validationPasswordDigit` | `密码需要包含数字` | 密码缺少数字 |
+| `validationNameMin` | `姓名至少 {min} 个字符` | 姓名太短，`{min}` 默认 `2` |
+| `validationConfirmRequired` | `请再次输入密码` | 确认密码为空 |
+| `validationPasswordMismatch` | `两次输入的密码不一致` | 两次输入的密码不同 |
+| `validationTermsRequired` | `请先阅读并同意服务条款` | 未勾选条款 |
 | `requestFailed` | `操作失败，请稍后重试` | 回调抛出的错误没有 `message` 时的兜底提示 |
 
 ## 可访问性
@@ -189,19 +247,19 @@ components/auth-01/
 ├── password-strength.tsx                # 密码强度条与评分
 ├── social-buttons.tsx                   # GitHub / Google 按钮
 ├── form-parts.tsx                       # 输入框、密码框、错误提示等共用件
-├── schemas.ts                           # zod 校验规则与校验提示
+├── schemas.ts                           # zod 校验规则工厂与规则常量，提示语取自 labels
 └── use-auth-form.ts                     # 受控表单状态 + 校验 + 提交状态
 ```
 
-- **校验提示不在 labels 里**：提示语和 zod 规则一一对应（如「密码至少 8 位」），集中在 `schemas.ts`，改规则时一起改；`labels` 只覆盖界面文案。
+- **校验规则与校验提示分开**：规则常量（`PASSWORD_MIN_LENGTH`、`NAME_MIN_LENGTH`、`CODE_LENGTH`、`PHONE_PATTERN` / `PHONE_LENGTH`）在 `schemas.ts`，提示文案是 `labels` 的 `validation*` 键；提示里的 `{min}`、`{length}` 由常量填入，改规则后文案里的数字自动更新。schema 由 `createSignInSchema(labels)` 这类工厂函数生成，组件里用 `useMemo` 缓存，`labels` 引用不变就不会重建。
 - **前端校验不是安全边界**：手机号、密码策略只是体验层，服务端必须再校验一次。
 - **静态导出**：组件是纯客户端组件，不使用 Server Actions 或 `cookies()`，可用于 `output: "export"`。
 
 ### 如何自定义
 
-- **校验规则**：都在 `schemas.ts`。手机号默认是中国大陆 11 位规则，面向其他地区时替换那条正则；密码策略（长度、是否必须含字母数字）也在这里。
+- **校验规则**：规则常量都在 `schemas.ts`。手机号默认是中国大陆 11 位规则，面向其他地区时替换 `PHONE_PATTERN` 并同步 `PHONE_LENGTH`；密码策略是 `PASSWORD_MIN_LENGTH` 与两条正则（必须含字母、必须含数字）；姓名最短长度是 `NAME_MIN_LENGTH`，验证码位数是 `CODE_LENGTH`。提示文案不用改，数字会跟着常量走；`newPasswordPlaceholder`（「至少 8 位，包含字母和数字」）是静态示例文案，改了最小长度记得一并改。
 - **强度条算法**：`password-strength.tsx` 的 `getPasswordStrength`，按长度（8、12）与大小写、数字、符号计分，颜色从 `destructive` 过渡到 `primary`。
 - **只要登录**：传 `allowSignUp={false}`，并去掉 `socialProviders`。
 - **增减第三方平台**：在 `social-buttons.tsx` 的 `providers` 里补一项，并扩展 `SocialProvider` 类型。
-- **改文案**：优先用 `labels`；整站换语言时也可以直接改 `config.ts` 的 `DEFAULT_LABELS`。
+- **改文案**：优先用 `labels`，校验提示也一样，见上方[换成英文](#换成英文)；整站换语言时也可以直接改 `config.ts` 的 `DEFAULT_LABELS`。
 - **表单状态**：刻意只用受控状态 + zod，没有引入 react-hook-form。字段首次失焦时校验该字段，提交失败后改为输入时实时校验。

@@ -1,13 +1,13 @@
 "use client"
 
 import { Mail, MailCheck } from "lucide-react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 
 import { resolveLabels, splitLabel, type Auth01Labels } from "./config"
 import { FormError, SubmitButton, TextField, ViewHeading } from "./form-parts"
-import { forgotPasswordSchema } from "./schemas"
+import { createForgotPasswordSchema } from "./schemas"
 import { useAuthForm } from "./use-auth-form"
 
 function ForgotPasswordForm({
@@ -19,9 +19,11 @@ function ForgotPasswordForm({
   onSwitchToSignIn: () => void
   labels?: Partial<Auth01Labels>
 }) {
-  const text = resolveLabels(labels)
+  // labels 引用不变时 text 与 schema 都不重建，避免每次输入都重新编译 zod schema
+  const text = useMemo(() => resolveLabels(labels), [labels])
+  const schema = useMemo(() => createForgotPasswordSchema(text), [text])
   const form = useAuthForm(
-    forgotPasswordSchema,
+    schema,
     { email: "" },
     { fallbackError: text.requestFailed },
   )

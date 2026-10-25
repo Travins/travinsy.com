@@ -1,6 +1,7 @@
 "use client"
 
 import { Lock, Mail, User } from "lucide-react"
+import { useMemo } from "react"
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -15,7 +16,7 @@ import {
   ViewHeading,
 } from "./form-parts"
 import { PasswordStrength } from "./password-strength"
-import { signUpSchema } from "./schemas"
+import { createSignUpSchema } from "./schemas"
 import { useAuthForm } from "./use-auth-form"
 
 type SignUpValues = { name: string; email: string; password: string }
@@ -33,9 +34,11 @@ function SignUpForm({
   onSwitchToSignIn: () => void
   labels?: Partial<Auth01Labels>
 }) {
-  const text = resolveLabels(labels)
+  // labels 引用不变时 text 与 schema 都不重建，避免每次输入都重新编译 zod schema
+  const text = useMemo(() => resolveLabels(labels), [labels])
+  const schema = useMemo(() => createSignUpSchema(text), [text])
   const form = useAuthForm(
-    signUpSchema,
+    schema,
     {
       name: "",
       email: "",

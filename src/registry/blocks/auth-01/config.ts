@@ -1,6 +1,7 @@
 /**
- * 登录页所有用户可见的文案。
- * 表单校验提示在 schemas.ts 里，和 zod 规则写在一起（校验规则与提示语一一对应，规则本身不可按实例替换）。
+ * 登录页所有用户可见的文案，包含表单校验提示（validation* 键）。
+ * 校验提示里的 {min}、{length} 由 schemas.ts 的规则常量填入；只改规则（密码策略、手机号格式）
+ * 不用动文案，想换提示语则覆盖对应的 validation* 键。
  * 品牌名、标题、特性列表属于品牌数据，见 brand.ts。
  */
 const DEFAULT_LABELS = {
@@ -66,6 +67,20 @@ const DEFAULT_LABELS = {
   strengthFair: "一般",
   strengthGood: "较强",
   strengthStrong: "强",
+  // 校验提示（schemas.ts 使用，{min}、{length} 由规则常量填入）
+  validationAccountRequired: "请输入用户名或邮箱",
+  validationPasswordRequired: "请输入密码",
+  validationEmailRequired: "请输入邮箱",
+  validationEmailInvalid: "请输入有效的邮箱地址",
+  validationPhoneInvalid: "请输入有效的 {length} 位手机号",
+  validationCodeInvalid: "请输入 {length} 位数字验证码",
+  validationPasswordMin: "密码至少 {min} 位",
+  validationPasswordLetter: "密码需要包含字母",
+  validationPasswordDigit: "密码需要包含数字",
+  validationNameMin: "姓名至少 {min} 个字符",
+  validationConfirmRequired: "请再次输入密码",
+  validationTermsRequired: "请先阅读并同意服务条款",
+  validationPasswordMismatch: "两次输入的密码不一致",
   // 通用
   requestFailed: "操作失败，请稍后重试",
 } as const

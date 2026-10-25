@@ -1,7 +1,7 @@
 "use client"
 
 import { KeyRound, Lock, Smartphone, User } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -17,7 +17,7 @@ import {
   TextField,
   ViewHeading,
 } from "./form-parts"
-import { codeSignInSchema, signInSchema } from "./schemas"
+import { createCodeSignInSchema, createSignInSchema } from "./schemas"
 import { SocialButtons, type SocialProvider } from "./social-buttons"
 import { useAsyncAction, useAuthForm } from "./use-auth-form"
 
@@ -36,9 +36,11 @@ function PasswordSignIn({
   onForgotPassword: () => void
   labels?: Partial<Auth01Labels>
 }) {
-  const text = resolveLabels(labels)
+  // labels 引用不变时 text 与 schema 都不重建，避免每次输入都重新编译 zod schema
+  const text = useMemo(() => resolveLabels(labels), [labels])
+  const schema = useMemo(() => createSignInSchema(text), [text])
   const form = useAuthForm(
-    signInSchema,
+    schema,
     { account: "", password: "", remember: false },
     { fallbackError: text.requestFailed },
   )
@@ -108,9 +110,10 @@ function CodeSignIn({
   onSendCode: (phone: string) => Promise<void>
   labels?: Partial<Auth01Labels>
 }) {
-  const text = resolveLabels(labels)
+  const text = useMemo(() => resolveLabels(labels), [labels])
+  const schema = useMemo(() => createCodeSignInSchema(text), [text])
   const form = useAuthForm(
-    codeSignInSchema,
+    schema,
     { phone: "", code: "" },
     { fallbackError: text.requestFailed },
   )
