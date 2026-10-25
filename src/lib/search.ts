@@ -4,6 +4,7 @@ export const searchGroups = [
   "组件",
   "区块",
   "模板",
+  "主题",
   "Agent",
   "博客",
   "页面",
@@ -16,15 +17,29 @@ export function searchGroup(url: string): SearchGroup {
     components: "组件",
     blocks: "区块",
     templates: "模板",
+    themes: "主题",
     agents: "Agent",
     blog: "博客",
   }
   return groups[section] ?? "页面"
 }
 
-export const searchShortcuts = [
-  { title: "安装与使用", url: "/components/installation/" },
-  { title: "浏览组件", url: "/components/" },
-  { title: "颜色主题", url: "/themes/" },
-  { title: "Agent 开发指南", url: "/agents/" },
+/** 空状态的快捷入口：group 决定图标。 */
+export const searchShortcuts: {
+  title: string
+  url: string
+  group: SearchGroup
+}[] = [
+  { title: "组件", url: "/components/", group: "组件" },
+  { title: "区块", url: "/blocks/", group: "区块" },
+  { title: "模板", url: "/templates/", group: "模板" },
+  { title: "颜色主题", url: "/themes/", group: "主题" },
+  { title: "Agent 开发指南", url: "/agents/", group: "Agent" },
+  { title: "博客", url: "/blog/", group: "博客" },
 ]
+
+/** `/components/grid-layout/` → `/components/grid-layout`（根路径保持 `/`）。 */
+export function displayPath(url: string) {
+  const path = url.split("#")[0].replace(/\/+$/, "")
+  return path || "/"
+}

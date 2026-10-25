@@ -26,6 +26,7 @@ export function createSiteSearch() {
         id: "/themes/",
         url: "/themes/",
         title: "颜色主题",
+        breadcrumbs: [searchGroup("/themes/")],
         description: "预览和安装颜色主题，搭配亮色与暗色模式构建界面。",
         structuredData: { headings: [], contents: [] },
       })
