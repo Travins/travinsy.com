@@ -19,6 +19,7 @@ import {
   useAgentContext,
 } from "./agent-chat-context"
 import { AgentChatBody } from "./agent-chat-body"
+import { useAgentChatPosition } from "./use-agent-chat-position"
 import type { AgentChatMode } from "./types"
 import type { AgentChatLabels } from "./config"
 
@@ -94,11 +95,20 @@ function AgentChatSuggestion({
 function AgentChatPanel({
   className,
   id,
-}: Pick<ComponentProps<"aside">, "className" | "id">) {
+  draggable = true,
+}: Pick<ComponentProps<"aside">, "className" | "id"> & {
+  draggable?: boolean
+}) {
   const { mode, open, setOpen, title, labels } = useAgentContext()
   const [mobile, setMobile] = useState(false)
   const [width, setWidth] = useState(400)
   const reduced = useReducedMotion()
+  const movable = mode === "floating" && !mobile && draggable
+  const { panelRef, position, headerProps, onMoveKeyDown, reset } =
+    useAgentChatPosition({
+      enabled: movable && open,
+      active: mode === "floating" && !mobile && open,
+    })
   useEffect(() => {
     const query = window.matchMedia("(max-width: 767px)")
     const update = () => setMobile(query.matches)
@@ -129,6 +139,8 @@ function AgentChatPanel({
     )
   return (
     <motion.aside
+      ref={panelRef}
+      data-draggable={movable || undefined}
       id={id}
       data-slot="agent-chat-panel"
       data-state="open"
@@ -143,9 +155,21 @@ function AgentChatPanel({
       initial={reduced ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: reduced ? 0 : 0.2 }}
-      style={{ "--agent-width": `${width}px` } as CSSProperties}
+      style={
+        {
+          "--agent-width": `${width}px`,
+          ...(mode === "floating" && position
+            ? {
+                left: position.x,
+                top: position.y,
+                right: "auto",
+                bottom: "auto",
+              }
+            : {}),
+        } as CSSProperties
+      }
       className={cn(
-        "flex min-h-0 flex-col bg-background text-foreground",
+        "flex min-h-0 flex-col bg-background text-foreground data-[dragging]:cursor-grabbing data-[dragging]:select-none",
         mode === "embedded"
           ? "relative h-full w-(--agent-width) shrink-0 border-l border-edge"
           : "fixed right-4 bottom-4 z-40 h-[min(600px,calc(100dvh-2rem))] w-[400px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-edge shadow-xl",
@@ -196,7 +220,12 @@ function AgentChatPanel({
           }}
         />
       ) : null}
-      <AgentChatBody />
+      <AgentChatBody
+        draggable={movable}
+        headerProps={headerProps}
+        onMoveKeyDown={onMoveKeyDown}
+        onResetPosition={reset}
+      />
     </motion.aside>
   )
 }

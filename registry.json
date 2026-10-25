@@ -402,6 +402,11 @@
           "target": "components/agent-chat/agent-chat-body.tsx"
         },
         {
+          "path": "src/registry/blocks/agent-chat-01/use-agent-chat-position.ts",
+          "type": "registry:component",
+          "target": "components/agent-chat/use-agent-chat-position.ts"
+        },
+        {
           "path": "src/registry/blocks/agent-chat-01/agent-chat-context.tsx",
           "type": "registry:component",
           "target": "components/agent-chat/agent-chat-context.tsx"

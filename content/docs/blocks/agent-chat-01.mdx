@@ -107,21 +107,23 @@ export function Workspace() {
 | `initialMessages` | `UIMessage[]`              | 可选的初始记录，演示页用它预填一轮对话 |
 | `children`        | `ReactNode`                | 工作区内容                             |
 
-`default*` 与 `initialMessages` 只用于初始化。更换会话或 transport 配置时，可通过 Provider 的 React `key` 重新创建实例。所有状态仅在当前 Provider 生命周期内保存，刷新后重置。
+`default*` 与 `initialMessages` 只用于初始化。更换会话或 transport 配置时，可通过 Provider 的 React `key` 重新创建实例。会话状态仅在当前 Provider 生命周期内保存，刷新后重置；浮动窗口位置单独保存在 `localStorage`（`travinsy:agent-chat:position`），刷新与切换布局后恢复，读取和窗口尺寸变化时都会约束到视口内。存储不可用时仍可在当前页面移动。
 
 ### labels
 
-`labels` 接收 `Partial<AgentChatLabels>`，覆盖 `config.ts` 中 `DEFAULT_LABELS` 的任意几项（面板标题、输入框占位、按钮名称、状态文案等），例如 `labels={{ title: "工程助手", welcome: "今天要解决什么问题？" }}`。`thought` 支持 `{seconds}` 占位符；完整键列表见 `config.ts`。
+`labels` 接收 `Partial<AgentChatLabels>`，覆盖 `config.ts` 中 `DEFAULT_LABELS` 的任意几项（面板标题、输入框占位、按钮名称、状态文案等），例如 `labels={{ title: "工程助手", welcome: "今天要解决什么问题？" }}`。`thought` 支持 `{seconds}` 占位符；新增 `moveWindow`（默认 `"移动助手窗口"`），用于浮动窗口拖动手柄的可访问名称；完整键列表见 `config.ts`。
 
 ### AgentChatPanel
 
 <PropsTable name="agent-chat-01" component="AgentChatPanel" />
 
+`draggable?: boolean` 默认 `true`，允许桌面浮动模式拖动；传 `false` 禁用指针和键盘移动。小于 768px 的 Sheet 自动禁用拖动。标题栏支持鼠标与触控拖动，操作按钮不会触发拖动；双击标题栏复位到默认右下角。`data-draggable` 表示可移动，拖动期间面板与标题栏设置 `data-dragging="true"`。
+
 ### 触发器、建议问题与 Hook
 
 | 导出                  | API                                                                                                            |
 | --------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `AgentChatPanel`      | `{ className?: string }`；关闭时不渲染；桌面嵌入为 `aside`                                                     |
+| `AgentChatPanel`      | `{ className?: string; id?: string; draggable?: boolean }`；关闭时不渲染；桌面嵌入为 `aside`                   |
 | `AgentChatTrigger`    | `{ variant?: "fab" \| "button"; className?: string }`；默认 `fab`，只在浮动模式关闭时显示                      |
 | `useAgentChat()`      | `{ mode, setMode, toggleMode, open, setOpen }`；必须在 Provider 内调用                                         |
 | `AgentChatSuggestion` | `{ question: string; children?: ReactNode; className?: string }`；从外部工作区打开面板并发送问题，生成期间禁用 |
@@ -134,6 +136,7 @@ export function Workspace() {
 - 标题栏与反馈按钮均有中文可访问名称，输入框有标签。
 - 聊天记录通过 `aria-live="polite"` 播报新增内容；按钮暴露 `aria-expanded`、`aria-pressed`，面板通过 `data-mode`、`data-state` 暴露状态。
 - `Enter` 发送，`Shift + Enter` 换行；输入法组合期间不会误发。调整面板宽度可用左右方向键。
+- 浮动模式下，Tab 聚焦「移动助手窗口」手柄，方向键每次移动 16px，Shift + 方向键移动 64px；Home、Enter 或空格复位到默认右下角。双击标题栏也可复位。移动始终限制在视口内；窄屏或 `draggable={false}` 时不显示手柄。
 - 窄屏 Sheet 提供焦点管理、焦点回到触发区域和 Escape 关闭。
 - 动效遵循 `prefers-reduced-motion`，来源链接标注新标签页。
 
@@ -145,6 +148,7 @@ export function Workspace() {
 components/agent-chat/
 ├── agent-chat.tsx            # 对外入口、面板和触发器
 ├── agent-chat-context.tsx    # Provider 与会话状态
+├── use-agent-chat-position.ts # 指针/键盘移动、视口约束与位置持久化
 ├── agent-chat-body.tsx       # 标题栏、滚动区、输入框
 ├── chat-message.tsx          # Trace 与反馈
 ├── chat-markdown.tsx         # 安全的简单 Markdown
