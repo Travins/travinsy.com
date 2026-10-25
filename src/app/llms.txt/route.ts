@@ -31,7 +31,8 @@ export function GET() {
       ),
       "## 其他资源",
       `- [全部文档与博客原文](${absoluteUrl("/llms-full.txt")}): 去除 frontmatter 的 MDX 全文。`,
-      `- [安装与配置](${absoluteUrl("/components/installation/")}): URL 与 @travinsy 命名空间安装说明。`,
+      `- [安装](${absoluteUrl("/docs/installation/")}): 初始化 shadcn 并安装第一个组件。`,
+      `- [Registry 与命名空间](${absoluteUrl("/docs/registry/")}): URL 与 @travinsy 命名空间安装说明。`,
       `- [主题](${absoluteUrl("/themes/")}): 颜色主题。`,
       `- [RSS](${absoluteUrl("/rss.xml")}): 博客订阅。`,
     ].join("\n\n") + "\n"

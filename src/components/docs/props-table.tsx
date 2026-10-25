@@ -59,7 +59,7 @@ export async function PropsTable({
   if (entries.length === 0) {
     return (
       <div className="docs-table-wrap">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-[13px] text-muted-foreground">
           {component} 没有自定义 Props；该组件继承原生元素的全部属性。
         </p>
       </div>

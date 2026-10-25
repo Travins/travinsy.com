@@ -1,6 +1,7 @@
 export const SEARCH_INDEX_URL = "/search.json"
 
 export const searchGroups = [
+  "入门",
   "组件",
   "区块",
   "模板",
@@ -14,6 +15,7 @@ export type SearchGroup = (typeof searchGroups)[number]
 export function searchGroup(url: string): SearchGroup {
   const section = url.split("/").filter(Boolean)[0]
   const groups: Record<string, SearchGroup> = {
+    docs: "入门",
     components: "组件",
     blocks: "区块",
     templates: "模板",
@@ -30,6 +32,7 @@ export const searchShortcuts: {
   url: string
   group: SearchGroup
 }[] = [
+  { title: "入门", url: "/docs/", group: "入门" },
   { title: "组件", url: "/components/", group: "组件" },
   { title: "区块", url: "/blocks/", group: "区块" },
   { title: "模板", url: "/templates/", group: "模板" },

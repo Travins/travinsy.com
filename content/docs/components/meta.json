@@ -1,8 +1,6 @@
 {
   "title": "组件",
   "pages": [
-    "installation",
-    "index",
     "grid-layout",
     "contribution-graph",
     "local-time",

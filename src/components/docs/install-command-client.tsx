@@ -26,13 +26,13 @@ export function InstallCommandClient({
         </TabsList>
       </Tabs>
       {method === "namespace" && (
-        <p className="mb-3 text-sm text-muted-foreground">
+        <p className="mb-3 text-[13px] text-muted-foreground">
           请先按{" "}
           <Link
-            href="/components/installation/"
+            href="/docs/registry/"
             className="underline underline-offset-4"
           >
-            安装与配置
+            Registry 与命名空间
           </Link>{" "}
           配置 @travinsy 命名空间。
         </p>
@@ -58,15 +58,15 @@ export function InstallCommandClient({
         })}
       </Tabs>
       <details className="mt-4">
-        <summary className="cursor-pointer py-2 text-sm font-medium">
+        <summary className="cursor-pointer py-2 text-[13px] font-medium">
           手动安装
         </summary>
-        <p className="my-3 text-sm leading-7 text-muted-foreground">
+        <p className="my-3 text-[13px] leading-6 text-muted-foreground">
           将下面的组件源码复制到项目，确认 @/lib/utils 导出 cn，并将 Registry
           JSON 中的 css 与 cssVars 合并到全局样式。CLI 安装会自动完成这些步骤。
         </p>
         <a
-          className="text-sm underline underline-offset-4"
+          className="text-[13px] underline underline-offset-4"
           href={`${siteConfig.url}/r/${name}.json`}
         >
           查看 CSS 工具类和变量

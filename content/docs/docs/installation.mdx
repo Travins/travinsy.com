@@ -1,0 +1,35 @@
+---
+title: 安装
+description: 初始化 shadcn，用完整 URL 安装第一个组件，了解安装后的文件落在哪里。
+---
+
+## 准备项目
+
+组件使用 React、Tailwind CSS v4 和 shadcn/ui。已有项目请先初始化 shadcn，生成 `components.json` 和基础样式。
+
+```bash title="终端"
+pnpm dlx shadcn@latest init
+```
+
+没有项目时，可以先用 `pnpm create next-app` 创建 Next.js 应用，再运行上面的命令。
+
+## 安装第一个组件
+
+默认推荐使用完整 URL 安装，无需任何额外配置。
+
+<InstallCommand name="grid-layout" />
+
+也可以将 `pnpm dlx` 换成 `npx`、`yarn dlx` 或 `bunx`。CLI 会安装组件源码，并将条目依赖的 CSS 工具类和主题变量写入项目样式。
+
+想用更短的命令，见 [Registry 与命名空间](/docs/registry/)。
+
+## 源码归属
+
+安装后的组件就是你的项目源码，可以直接修改。线条网格条目安装到 `components/ui/grid-layout/grid-layout.tsx`，导入路径以 CLI 的实际输出为准。
+
+组件依赖 `@/lib/utils` 导出的 `cn`，shadcn 初始化时已经生成。
+
+## 下一步
+
+- 浏览[组件](/components/)、[区块](/blocks/)与[模板](/templates/)。
+- 阅读[主题定制](/docs/theming/)，了解线条颜色与亮暗模式如何工作。

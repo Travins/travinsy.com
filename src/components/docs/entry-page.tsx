@@ -1,10 +1,9 @@
-import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import type { MDXComponents } from "mdx/types"
 import { source } from "@/lib/source"
 import { siteConfig } from "@/config/site"
-import { GridSection } from "@/registry/ui/grid-layout/grid-layout"
+import { DocsCard, DocsShell } from "./docs-shell"
 import { BlockViewer } from "./block-viewer"
 import { mdxComponents } from "./mdx-components"
 import {
@@ -50,52 +49,6 @@ export async function entryMetadata(
   }
 }
 
-function SideNav({ current }: { current: string }) {
-  return (
-    <nav aria-label="文档导航">
-      <p className="font-mono text-xs text-muted-foreground">DOCUMENTATION</p>
-      <ul className="mt-4 flex flex-col gap-1">
-        <li>
-          <Link className="docs-nav-link" href="/components/">
-            ← 组件
-          </Link>
-        </li>
-        {(Object.keys(entrySections) as EntrySection[]).map((key) => (
-          <li key={key} className="mt-5">
-            <p className="mb-2 text-xs font-medium text-muted-foreground">
-              {entrySections[key].title}
-            </p>
-            <ul className="flex flex-col gap-1">
-              <li>
-                <Link
-                  className="docs-nav-link"
-                  href={`/${key}/`}
-                  aria-current={current === `/${key}/` ? "page" : undefined}
-                >
-                  概览
-                </Link>
-              </li>
-              {sectionItems(key).map((item) => (
-                <li key={item.name}>
-                  <Link
-                    className="docs-nav-link"
-                    href={`/${key}/${item.name}/`}
-                    aria-current={
-                      current === `/${key}/${item.name}/` ? "page" : undefined
-                    }
-                  >
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  )
-}
-
 export async function EntryPage({
   section,
   params,
@@ -103,113 +56,34 @@ export async function EntryPage({
   const { slug = [] } = await params
   const page = getPage(section, slug)
   const items = sectionItems(section)
-  const index = items.findIndex((item) => item.name === slug[0])
-  const previous = index > 0 ? items[index - 1] : undefined
-  const next = index >= 0 ? items[index + 1] : undefined
   const isIndex = slug.length === 0
   const Body = page.data.body
   return (
-    <GridSection className="docs-layout">
-      <aside className="docs-sidebar">
-        <SideNav current={page.url} />
-      </aside>
-      <main id="main-content" className="docs-main">
-        <nav className="mb-8 text-xs text-muted-foreground" aria-label="面包屑">
-          <Link href={`/${section}/`}>{entrySections[section].title}</Link>
-          {!isIndex && <span> / {page.data.title}</span>}
-        </nav>
-        <header className="mb-10">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            {page.data.title}
-          </h1>
-          <p className="mt-4 max-w-xl leading-7 text-muted-foreground">
-            {isIndex ? sectionIntro[section] : page.data.description}
-          </p>
-        </header>
-        {isIndex ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {items.map((item) => (
-              <Link
-                key={item.name}
-                href={`/${section}/${item.name}/`}
-                className="group border border-edge p-6 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
-              >
-                <p className="mb-6 font-mono text-xs text-muted-foreground">
-                  {entrySections[section].label} / {item.files.length} FILES
-                </p>
-                <h2 className="text-lg font-medium">
-                  {item.title}{" "}
-                  <span
-                    aria-hidden
-                    className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
-                  >
-                    ↗
-                  </span>
-                </h2>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  {item.description}
-                </p>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <article className="docs-prose">
-            <Body components={entryMdxComponents} />
-          </article>
-        )}
-        {!isIndex && (
-          <nav
-            aria-label="相邻文档"
-            className="mt-14 grid grid-cols-2 gap-4 border-t border-edge pt-6"
-          >
-            {previous ? (
-              <Link href={`/${section}/${previous.name}/`} className="text-sm">
-                <span className="mb-2 block text-xs text-muted-foreground">
-                  ← 上一页
-                </span>
-                {previous.title}
-              </Link>
-            ) : (
-              <span />
-            )}
-            {next && (
-              <Link
-                href={`/${section}/${next.name}/`}
-                className="text-right text-sm"
-              >
-                <span className="mb-2 block text-xs text-muted-foreground">
-                  下一页 →
-                </span>
-                {next.title}
-              </Link>
-            )}
-          </nav>
-        )}
-      </main>
-      <aside className="docs-toc">
-        {!isIndex && (
-          <nav aria-label="本页目录">
-            <p className="mb-4 text-xs font-medium">本页目录</p>
-            <ul className="flex flex-col gap-3">
-              {page.data.toc.map((item) => (
-                <li
-                  key={item.url}
-                  style={{
-                    paddingInlineStart: `${Math.max(0, item.depth - 2) * 12}px`,
-                  }}
-                >
-                  <a
-                    className="text-xs text-muted-foreground hover:text-foreground"
-                    href={item.url}
-                  >
-                    {item.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
-      </aside>
-    </GridSection>
+    <DocsShell
+      section={section}
+      url={page.url}
+      title={page.data.title}
+      description={isIndex ? sectionIntro[section] : page.data.description}
+      overview={isIndex}
+      toc={isIndex ? [] : page.data.toc}
+    >
+      {isIndex ? (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {items.map((item) => (
+            <DocsCard
+              key={item.name}
+              href={`/${section}/${item.name}/`}
+              eyebrow={`${entrySections[section].label} / ${item.files.length} FILES`}
+              title={item.title}
+              description={item.description}
+            />
+          ))}
+        </div>
+      ) : (
+        <article className="docs-prose">
+          <Body components={entryMdxComponents} />
+        </article>
+      )}
+    </DocsShell>
   )
 }

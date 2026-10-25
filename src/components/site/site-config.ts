@@ -2,6 +2,7 @@ export const SITE_NAME = "travinsy"
 export const GITHUB_URL = "https://github.com/travinsy"
 
 export const SITE_NAV = [
+  { label: "文档", href: "/docs/" },
   { label: "组件", href: "/components/" },
   { label: "区块", href: "/blocks/" },
   { label: "模板", href: "/templates/" },

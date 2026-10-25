@@ -36,22 +36,10 @@ export function blogPosts() {
     )
 }
 
-export type DocsSection = "components" | "agents"
-export const sections: Record<
-  DocsSection,
-  { title: string; description: string }
-> = {
-  components: {
-    title: "组件",
-    description:
-      "从线条、留白与排版开始，构建属于自己的界面。源码开放，复制即用。",
-  },
-  agents: {
-    title: "Agent 开发指南",
-    description: "让 Agent 理解项目约定，协作构建一致的界面。",
-  },
-}
-export function sectionPages(section: DocsSection) {
+export type DocsSection = "docs" | "components" | "agents"
+
+/** 某个内容分区下的全部文档页，顺序与 meta.json 一致。 */
+export function sectionPages(section: string) {
   const order = new Map(
     flattenTree(source.getPageTree(siteConfig.defaultLanguage).children).map(
       (page, index) => [page.url, index],

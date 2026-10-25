@@ -58,4 +58,4 @@ MDX 内置组件由 `src/components/docs/mdx-components.tsx` 注册，无需在�
 
 安装验收需要通过静态 HTTP 服务访问 `out/r/<name>.json`，在临时项目执行 CLI 后检查组件源码、三个工具类、`--edge` 以及 `@theme inline` 中的 `--color-edge`，结束后删除临时项目。布局源码使用 `@/lib/utils` 的 cn；手动安装需要接收项目已有该工具函数。
 
-命名空间为 `@travinsy`；`InstallCommand` 默认 URL 安装，可切换命名空间安装。配置教程位于 `content/docs/components/installation.mdx`（分区首篇文档），components.json 中使用 `"registries": { "@travinsy": "https://travinsy.com/r/{name}.json" }`。
+命名空间为 `@travinsy`；`InstallCommand` 默认 URL 安装，可切换命名空间安装。配置教程位于 `content/docs/docs/registry.mdx`，安装入口位于 `content/docs/docs/installation.mdx`（入门分区），components.json 中使用 `"registries": { "@travinsy": "https://travinsy.com/r/{name}.json" }`。

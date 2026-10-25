@@ -1,0 +1,54 @@
+---
+title: Registry 与命名空间
+description: 通过 URL 或 @travinsy 命名空间安装条目，了解目录地址与各类条目。
+---
+
+本站的所有条目都以 JSON 形式静态发布在 `/r/` 下，格式遵循 shadcn 的 registry-item 规范。
+
+## URL 安装
+
+每个条目都有固定地址 `https://travinsy.com/r/<name>.json`，直接交给 CLI 即可，不需要配置：
+
+```bash title="终端"
+pnpm dlx shadcn@latest add https://travinsy.com/r/grid-layout.json
+```
+
+## 配置命名空间
+
+在项目的 `components.json` 中合并以下配置。若已有其他 Registry，请保留原有条目。
+
+```json title="components.json"
+{
+  "registries": {
+    "@travinsy": "https://travinsy.com/r/{name}.json"
+  }
+}
+```
+
+CLI 会把条目名代入 `{name}`，于是命令可以缩短为：
+
+```bash title="终端"
+pnpm dlx shadcn@latest add @travinsy/grid-layout
+```
+
+## 条目目录
+
+完整的条目清单位于 [`/r/registry.json`](https://travinsy.com/r/registry.json)，包含每个条目的类型、依赖与文件列表。可以用它做检索，也可以交给脚本或 AI 工具读取。
+
+也可以用 CLI 直接查看：
+
+```bash title="终端"
+pnpm dlx shadcn@latest search @travinsy
+pnpm dlx shadcn@latest view @travinsy/grid-layout
+```
+
+## 条目类型
+
+| 类型 | 内容 | 示例 |
+| --- | --- | --- |
+| `registry:ui` | 单个组件，安装到 `components/ui` | `grid-layout` |
+| `registry:block` | 区块，由多个文件和组件组成 | `auth-01` |
+| `registry:page` | 整页模板，会写入 `app/` 下的页面 | `portfolio-grid` |
+| `registry:theme` | 颜色主题，只写入 CSS 变量 | `theme-blue` |
+
+条目之间通过 `registryDependencies` 相互依赖。安装区块时，它用到的组件会一并安装，已存在的文件会提示是否覆盖。

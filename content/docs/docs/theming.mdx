@@ -1,0 +1,52 @@
+---
+title: 主题定制
+description: 主题变量如何控制颜色与线条，亮暗模式与颜色主题是两个独立维度。
+---
+
+## 变量体系
+
+所有组件只使用 shadcn 的语义变量：`background`、`foreground`、`muted-foreground`、`primary`、`border` 等，不写死任何颜色。换一套变量，整站的颜色就整体改变。
+
+线条网格额外引入一个变量 `--edge`，由前景色按比例混合得到，用于所有线条和分隔带：
+
+```css title="globals.css"
+:root {
+  --edge: color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+.dark {
+  --edge: color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+```
+
+因为 `--edge` 跟随 `foreground` 计算，切换任何颜色主题后线条都会自动适配。安装 `grid-layout` 时 CLI 会一并写入它。
+
+## 亮暗模式
+
+亮暗模式通过 `html` 上的 `.dark` class 切换，本站使用 `next-themes` 管理。它和颜色主题互不干扰：同一个颜色主题有亮、暗两组变量。
+
+## 颜色主题
+
+本站提供 10 套颜色主题：neutral、zinc、stone、slate、rose、orange、amber、green、blue、violet。色值取自 shadcn 官方主题，可以在[颜色主题](/themes/)页面实时预览，切换主题与亮暗模式，并复制 CSS。
+
+颜色主题通过 `html` 上的 `data-theme` 属性启用。
+
+## 安装主题
+
+每套主题都是一个 `registry:theme` 条目，命名为 `theme-<id>`，只写入 CSS 变量：
+
+```bash title="终端"
+pnpm dlx shadcn@latest add https://travinsy.com/r/theme-blue.json
+```
+
+配置了命名空间时（见 [Registry 与命名空间](/docs/registry/)）：
+
+```bash title="终端"
+pnpm dlx shadcn@latest add @travinsy/theme-blue
+```
+
+主题不包含 `--radius`，圆角仍由你的 `globals.css` 决定。
+
+## 自定义
+
+直接修改 `globals.css` 里的变量即可。建议只改变量值，不在组件里写具体颜色，这样所有条目都会跟着变化。
