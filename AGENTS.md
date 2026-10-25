@@ -93,6 +93,7 @@ scripts/                     构建辅助脚本
 ### Registry
 - 对外发布的代码只放在 `src/registry/`，文档预览、代码展示、`public/r/*.json` 都从同一份源码读取，**禁止复制粘贴副本**
 - 新增或修改 registry 条目请按 `registry-item` 技能执行
+- **所有 registry 代码必须遵守 `component-conventions` 技能（组件书写规范）**：分层依赖、命名、data-slot、导出方式、Props 约定、labels 文案、样式 token、可访问性、文档结构。写任何组件前先读它
 
 ## 5. 项目级技能（`.agents/skills/`，`.claude/skills` 和 `.pi/skills` 是指向它的软链接）
 
@@ -104,6 +105,7 @@ scripts/                     构建辅助脚本
 | `frontend-design` | 高质量视觉设计 | 做新页面、新组件外观 |
 | `web-design-guidelines` | UI/可访问性审查 | 交付 UI 前自查 |
 | `next-dev-loop` | 在运行中的 `next dev` 里验证行为 | 验收 UI 改动 |
+| `component-conventions` | **组件书写规范（强制）** | 写/改 src/registry 下任何代码 |
 | `registry-item` | 本项目新增 registry 组件的完整流程 | 新增/修改组件、区块、模板、主题 |
 | `grid-design` | 本项目线条网格设计规范 | 做任何页面布局 |
 

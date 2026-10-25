@@ -5,6 +5,8 @@ description: 在 travinsy.com 新增或修改一个 shadcn registry 条目（组
 
 # 新增 registry 条目
 
+> 开始前先读 `component-conventions` 技能（组件书写规范），本流程只描述步骤，代码写法以规范为准。
+
 > 唯一真源：`src/registry/`。文档预览、代码展示、`public/r/<name>.json` 都读同一份文件，禁止复制副本。
 
 ## 步骤
