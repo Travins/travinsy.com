@@ -2,37 +2,53 @@ import Link from "next/link"
 import type { ReactNode } from "react"
 import type { TOCItemType } from "fumadocs-core/toc"
 import { GridSection } from "@/registry/ui/grid-layout/grid-layout"
-import { docsNeighbours, sectionHome, type NavSectionId } from "./docs-nav"
+import {
+  docsNeighbours,
+  sectionHome,
+  withSlash,
+  type NavSectionId,
+} from "./docs-nav"
 import { DocsMobileNav } from "./docs-mobile-nav"
 import { DocsSidebarNav } from "./docs-sidebar"
 import { DocsToc } from "./docs-toc"
+import { PageActions } from "./page-actions"
 
 type DocsShellProps = {
   section: NavSectionId
   url: string
   title: string
   description: string
-  /** 概览页：面包屑只有分区名，没有目录和上下页 */
+  /** 概览页：没有「复制页面」、上下页和返回链接 */
   overview?: boolean
+  /** 本页 Markdown 原文，供「复制页面」使用 */
+  markdown?: string
   links?: Record<string, string>
   toc?: TOCItemType[]
   children: ReactNode
 }
 
-/** 所有文档类页面共用的外壳：统一侧栏、面包屑、页头、上一页 / 下一页、右侧目录。 */
+const sectionNoun: Record<NavSectionId, string> = {
+  docs: "文档",
+  components: "组件",
+  blocks: "区块",
+  templates: "模板",
+  agents: "文档",
+}
+
+/** 所有文档类页面共用的外壳：统一侧栏、页头动作条、上一页 / 下一页、右侧目录。 */
 export function DocsShell({
   section,
-  url,
+  url: rawUrl,
   title,
   description,
   overview = false,
+  markdown,
   links,
   toc = [],
   children,
 }: DocsShellProps) {
+  const url = withSlash(rawUrl)
   const home = sectionHome[section]
-  // 入门分区的概览就是介绍页本身，面包屑里仍显示页面标题
-  const showTitle = !overview && !(section === "agents")
   const { previous, next } = overview ? {} : docsNeighbours(url)
   return (
     <GridSection className="docs-layout">
@@ -43,15 +59,14 @@ export function DocsShell({
         <DocsSidebarNav current={url} />
       </aside>
       <main id="main-content" className="docs-main">
-        <nav className="docs-crumb" aria-label="面包屑">
-          <Link href={home.url}>{home.title}</Link>
-          {showTitle && (
-            <>
-              <span aria-hidden>/</span>
-              <span aria-current="page">{title}</span>
-            </>
-          )}
-        </nav>
+        <PageActions
+          back={url === home.url ? undefined : home}
+          markdown={overview ? undefined : markdown}
+          url={url}
+          noun={sectionNoun[section]}
+          previous={previous}
+          next={next}
+        />
         <header className="docs-header">
           <h1>{title}</h1>
           <p>{description}</p>

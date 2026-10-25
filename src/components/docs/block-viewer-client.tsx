@@ -17,10 +17,21 @@ import {
   type ReactNode,
 } from "react"
 import { buttonVariants, Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
+import { CopyButton } from "./copy-button"
+import {
+  DocFrameBar,
+  DocTabsList,
+  DocTabsTrigger,
+  docFrameClass,
+  docFramePanelClass,
+} from "./doc-frame"
+import { IconTip } from "./icon-tip"
+import { v0Url } from "./registry-items"
+import { V0Icon } from "./v0-icon"
 
-type ViewerFile = { path: string; code: ReactNode }
+type ViewerFile = { path: string; source: string; code: ReactNode }
 type TreeNode = { name: string; path?: string; children: TreeNode[] }
 
 const MIN_WIDTH = 320
@@ -164,17 +175,23 @@ export function BlockViewerClient({
     event.preventDefault()
   }
 
+  const activeSource = files.find((file) => file.path === active)?.source ?? ""
+  const iconAction = cn(
+    buttonVariants({ variant: "ghost", size: "icon-sm" }),
+    "text-muted-foreground hover:text-foreground",
+  )
+
   return (
     <Tabs
       value={view}
       onValueChange={(value) => setView(String(value))}
-      className="not-prose my-6 min-w-0 gap-0 overflow-hidden rounded-lg border border-edge"
+      className={docFrameClass}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-edge bg-muted/40 px-2 py-1.5">
-        <TabsList aria-label={`${title} 查看方式`}>
-          <TabsTrigger value="preview">预览</TabsTrigger>
-          <TabsTrigger value="code">代码</TabsTrigger>
-        </TabsList>
+      <DocFrameBar>
+        <DocTabsList aria-label={`${title} 查看方式`}>
+          <DocTabsTrigger value="preview">预览</DocTabsTrigger>
+          <DocTabsTrigger value="code">代码</DocTabsTrigger>
+        </DocTabsList>
         <div
           role="group"
           aria-label="预览宽度"
@@ -184,18 +201,18 @@ export function BlockViewerClient({
           )}
         >
           {presets.map(({ id, label, width: presetWidth, Icon }) => (
-            <Button
-              key={id}
-              variant="ghost"
-              size="icon-sm"
-              aria-label={`${label}宽度`}
-              aria-pressed={!fit && width === presetWidth}
-              title={presetWidth ? `${label} ${presetWidth}px` : label}
-              onClick={() => setWidth(presetWidth)}
-              className="aria-pressed:bg-muted aria-pressed:text-foreground"
-            >
-              <Icon aria-hidden="true" />
-            </Button>
+            <IconTip key={id} label={`${label} ${presetWidth}px`}>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`${label}宽度`}
+                aria-pressed={!fit && width === presetWidth}
+                onClick={() => setWidth(presetWidth)}
+                className="text-muted-foreground aria-pressed:bg-muted aria-pressed:text-foreground"
+              >
+                <Icon aria-hidden="true" />
+              </Button>
+            </IconTip>
           ))}
           <span
             title="iframe 的布局宽度 · 缩放比例"
@@ -204,32 +221,50 @@ export function BlockViewerClient({
             {layoutWidth}px · {Math.round(scale * 100)}%
           </span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
+          <IconTip label="在 v0 中打开">
+            <a
+              href={v0Url(name)}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="在 v0 中打开（在新标签页中打开）"
+              className={iconAction}
+            >
+              <V0Icon className="size-4" />
+            </a>
+          </IconTip>
+          {view === "code" && (
+            <CopyButton value={activeSource} label={`复制 ${active}`} />
+          )}
+          <IconTip label="新标签打开预览">
+            <a
+              href={`/view/${name}/`}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="新标签打开预览（在新标签页中打开）"
+              className={iconAction}
+            >
+              <ExternalLink aria-hidden="true" />
+            </a>
+          </IconTip>
           <Button
             variant="ghost"
             size="sm"
             aria-expanded={installOpen}
             onClick={() => setInstallOpen((open) => !open)}
+            className="text-muted-foreground aria-expanded:text-foreground"
           >
             <Terminal aria-hidden="true" data-icon="inline-start" />
             安装
           </Button>
-          <a
-            href={`/view/${name}/`}
-            target="_blank"
-            rel="noreferrer"
-            className={buttonVariants({ variant: "ghost", size: "sm" })}
-          >
-            <ExternalLink aria-hidden="true" data-icon="inline-start" />
-            新标签打开
-            <span className="sr-only">（在新标签页中打开）</span>
-          </a>
         </div>
-      </div>
-      {installOpen && (
-        <div className="border-b border-edge px-4 py-2">{install}</div>
-      )}
-      <TabsContent value="preview" keepMounted>
+      </DocFrameBar>
+      {installOpen && <div className="mb-1">{install}</div>}
+      <TabsContent
+        value="preview"
+        keepMounted
+        className={docFramePanelClass}
+      >
         <div ref={stageRef} className="flex justify-center bg-muted/30 sm:px-4">
           <div
             className={cn(
@@ -275,7 +310,11 @@ export function BlockViewerClient({
           </div>
         </div>
       </TabsContent>
-      <TabsContent value="code" keepMounted>
+      <TabsContent
+        value="code"
+        keepMounted
+        className={docFramePanelClass}
+      >
         <div className="grid md:grid-cols-[15rem_minmax(0,1fr)]">
           <nav
             aria-label="文件"
@@ -288,7 +327,6 @@ export function BlockViewerClient({
               <div
                 key={file.path}
                 hidden={file.path !== active}
-                className="[&_.docs-code]:my-0 [&_.docs-code]:rounded-none [&_.docs-code]:border-0"
               >
                 {file.code}
               </div>

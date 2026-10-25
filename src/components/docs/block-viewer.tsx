@@ -3,8 +3,14 @@ import { CodeBlock } from "./code-block"
 import { BlockViewerClient } from "./block-viewer-client"
 import { InstallCommand } from "./install-command"
 import { getRegistryItem } from "./registry-items"
+import { toInstalledImports } from "./installed-imports"
 
-const langs: Record<string, string> = { ts: "ts", tsx: "tsx", css: "css", json: "json" }
+const langs: Record<string, string> = {
+  ts: "ts",
+  tsx: "tsx",
+  css: "css",
+  json: "json",
+}
 
 /**
  * 区块 / 页面模板查看器：iframe 预览（可切换设备宽度）+ 多文件代码 + 安装命令。
@@ -15,14 +21,16 @@ export async function BlockViewer({ name }: { name: string }) {
   const files = await Promise.all(
     item.files.map(async (file) => {
       const shown = file.target ?? file.path.split("/").at(-1)!
-      const code = await readFile(file.path, "utf8")
+      const code = toInstalledImports(await readFile(file.path, "utf8"))
       return {
         path: shown,
+        source: code,
         code: (
           <CodeBlock
             code={code}
             lang={langs[shown.split(".").at(-1)!] ?? "tsx"}
-            title={shown}
+            bare
+            collapse={false}
           />
         ),
       }
@@ -34,7 +42,7 @@ export async function BlockViewer({ name }: { name: string }) {
       title={item.title}
       height={item.meta?.iframeHeight ?? "720px"}
       files={files}
-      install={<InstallCommand name={name} />}
+      install={<InstallCommand name={name} bare />}
     />
   )
 }

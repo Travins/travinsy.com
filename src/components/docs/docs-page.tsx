@@ -3,7 +3,8 @@ import type { Metadata } from "next"
 import { source, sectionPages, type DocsSection } from "@/lib/source"
 import { siteConfig } from "@/config/site"
 import { DocsCard, DocsShell } from "./docs-shell"
-import { mdxComponents } from "./mdx-components"
+import { createMdxComponents } from "./mdx-components"
+import { pageMarkdown } from "./page-markdown"
 
 export type DocsRouteProps = { params: Promise<{ slug?: string[] }> }
 function getPage(section: DocsSection, slug: string[] = []) {
@@ -41,6 +42,7 @@ export async function DocsPage({
       title={page.data.title}
       description={page.data.description}
       overview={overview}
+      markdown={overview ? undefined : await pageMarkdown(page)}
       links={page.data.links}
       toc={page.data.toc}
     >
@@ -60,7 +62,7 @@ export async function DocsPage({
         </div>
       ) : (
         <article className="docs-prose">
-          <Body components={mdxComponents} />
+          <Body components={createMdxComponents(section === "components" ? slug.at(-1) : undefined)} />
         </article>
       )}
     </DocsShell>

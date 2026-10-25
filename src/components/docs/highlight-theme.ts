@@ -1,18 +1,8 @@
-import { createCssVariablesTheme } from "shiki"
-export const codeTheme = createCssVariablesTheme({
-  name: "site-tokens",
-  variablePrefix: "--code-",
-  variableDefaults: {
-    foreground: "var(--foreground)",
-    background: "var(--muted)",
-    "token-constant": "var(--primary)",
-    "token-string": "var(--primary)",
-    "token-comment": "var(--muted-foreground)",
-    "token-keyword": "var(--primary)",
-    "token-parameter": "var(--foreground)",
-    "token-function": "var(--foreground)",
-    "token-string-expression": "var(--primary)",
-    "token-punctuation": "var(--muted-foreground)",
-    "token-link": "var(--primary)",
-  },
-})
+/**
+ * 代码高亮用 shiki 内置的 GitHub 双主题，配合 defaultColor: false，
+ * 每个 token 输出 --shiki-light / --shiki-dark 两个变量，由 docs.css 按 .dark 选择。
+ */
+export const codeThemes = {
+  light: "github-light-default",
+  dark: "github-dark-default",
+} as const

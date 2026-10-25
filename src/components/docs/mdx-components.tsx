@@ -1,4 +1,5 @@
 import type { MDXComponents } from "mdx/types"
+import type { ComponentProps } from "react"
 import { ComponentPreview } from "./component-preview"
 import { ComponentSource } from "./component-source"
 import { InstallCommand } from "./install-command"
@@ -21,4 +22,14 @@ export const mdxComponents: MDXComponents = {
       <a href={`#${id}`}>{children}</a>
     </h3>
   ),
+}
+
+/** 组件文档：示例默认归属页面 slug 对应的 registry 条目（用于「在 v0 中打开」）。 */
+export function createMdxComponents(item?: string): MDXComponents {
+  return {
+    ...mdxComponents,
+    ComponentPreview: (props: ComponentProps<typeof ComponentPreview>) => (
+      <ComponentPreview item={item} {...props} />
+    ),
+  }
 }

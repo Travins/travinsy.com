@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site"
 import { DocsCard, DocsShell } from "./docs-shell"
 import { BlockViewer } from "./block-viewer"
 import { mdxComponents } from "./mdx-components"
+import { pageMarkdown } from "./page-markdown"
 import {
   entrySections,
   sectionItems,
@@ -65,6 +66,7 @@ export async function EntryPage({
       title={page.data.title}
       description={isIndex ? sectionIntro[section] : page.data.description}
       overview={isIndex}
+      markdown={isIndex ? undefined : await pageMarkdown(page)}
       toc={isIndex ? [] : page.data.toc}
     >
       {isIndex ? (

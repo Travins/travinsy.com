@@ -1,3 +1,4 @@
+import { siteConfig } from "@/config/site"
 import registry from "../../../registry.json"
 
 export type RegistryFile = { path: string; type: string; target?: string }
@@ -34,4 +35,13 @@ export function sectionItems(section: EntrySection) {
 /** 可以在 /view/<name>/ 整页预览的条目：区块与页面模板。 */
 export function viewItems() {
   return [...sectionItems("blocks"), ...sectionItems("templates")]
+}
+
+/** 「在 v0 中打开」：v0 读取 registry JSON 并生成可编辑的项目。 */
+export function v0Url(name: string) {
+  return `https://v0.dev/chat/api/open?url=${siteConfig.url}/r/${name}.json`
+}
+
+export function hasRegistryItem(name: string) {
+  return items.some((entry) => entry.name === name)
 }

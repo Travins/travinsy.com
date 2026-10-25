@@ -19,10 +19,13 @@ export const sectionHome: Record<NavSectionId, { title: string; url: string }> =
   agents: { title: "Agent 开发", url: "/agents/" },
 }
 
+/** fumadocs 生成的 page.url 没有末尾斜杠，而站点路由（trailingSlash）统一带斜杠。 */
+export const withSlash = (url: string) => (url.endsWith("/") ? url : `${url}/`)
+
 function mdxItems(section: NavSectionId, includeIndex: boolean): NavItem[] {
   return sectionPages(section)
     .filter((page) => includeIndex || page.slugs.length > 1)
-    .map((page) => ({ title: page.data.title, url: page.url }))
+    .map((page) => ({ title: page.data.title, url: withSlash(page.url) }))
 }
 
 function entryItems(section: EntrySection): NavItem[] {
@@ -56,7 +59,7 @@ export function docsNav(): NavGroup[] {
       title: sectionHome.agents.title,
       items: sectionPages("agents").map((page) => ({
         title: page.slugs.length === 1 ? "开发指南" : page.data.title,
-        url: page.url,
+        url: withSlash(page.url),
       })),
     },
   ]
@@ -66,7 +69,7 @@ export function docsNav(): NavGroup[] {
 /** 上一页 / 下一页：按侧栏树的顺序跨分组连续。 */
 export function docsNeighbours(url: string) {
   const flat = docsNav().flatMap((group) => group.items)
-  const index = flat.findIndex((item) => item.url === url)
+  const index = flat.findIndex((item) => item.url === withSlash(url))
   if (index < 0) return {}
   return { previous: flat[index - 1], next: flat[index + 1] }
 }

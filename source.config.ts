@@ -1,4 +1,4 @@
-import { codeTheme } from "./src/components/docs/highlight-theme"
+import { codeThemes } from "./src/components/docs/highlight-theme"
 import { defineConfig, defineDocs } from "fumadocs-mdx/config"
 import { pageSchema } from "fumadocs-core/source/schema"
 import { z } from "zod"
@@ -29,7 +29,7 @@ export const blog = defineDocs({
 export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
-      themes: { light: codeTheme, dark: codeTheme },
+      themes: codeThemes,
       defaultColor: false,
     },
   },
