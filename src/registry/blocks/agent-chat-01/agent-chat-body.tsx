@@ -1,10 +1,11 @@
 "use client"
 
-import { useLayoutEffect, useRef, useState } from "react"
+import { useLayoutEffect, useRef, useState, type ComponentProps } from "react"
 import {
   ArrowDown,
   ArrowUp,
   Bot,
+  GripHorizontal,
   PanelRight,
   Plus,
   Square,
@@ -17,7 +18,17 @@ import { cn } from "@/lib/utils"
 import { AgentChatMessage } from "./chat-message"
 import { useAgentContext } from "./agent-chat-context"
 
-function AgentChatBody() {
+function AgentChatBody({
+  draggable = false,
+  headerProps,
+  onMoveKeyDown,
+  onResetPosition,
+}: {
+  draggable?: boolean
+  headerProps?: ComponentProps<"header">
+  onMoveKeyDown?: ComponentProps<"button">["onKeyDown"]
+  onResetPosition?: () => void
+}) {
   const {
     labels,
     chat,
@@ -65,7 +76,30 @@ function AgentChatBody() {
       data-state={busy ? "streaming" : "idle"}
       className="contents"
     >
-      <header className="flex shrink-0 items-center gap-2 border-b border-edge px-3 py-3">
+      <header
+        data-slot="agent-chat-header"
+        {...headerProps}
+        className={cn(
+          "flex shrink-0 items-center gap-2 border-b border-edge px-3 py-3",
+          draggable &&
+            "cursor-grab touch-none select-none data-[dragging]:cursor-grabbing",
+        )}
+      >
+        {draggable ? (
+          <Button
+            data-slot="agent-chat-move-handle"
+            variant="ghost"
+            size="icon-sm"
+            aria-label={labels.moveWindow}
+            className="cursor-grab in-data-[dragging]:cursor-grabbing"
+            onKeyDown={onMoveKeyDown}
+            onClick={(event) => {
+              if (event.detail === 0) onResetPosition?.()
+            }}
+          >
+            <GripHorizontal aria-hidden="true" />
+          </Button>
+        ) : null}
         <Avatar className="size-8">
           <AvatarFallback>
             <Bot className="size-4" />

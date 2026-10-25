@@ -22,6 +22,7 @@ const DEFAULT_LABELS = {
   newline: "Shift + Enter 换行",
   stop: "停止",
   send: "发送问题",
+  moveWindow: "移动助手窗口",
   resize: "调整助手面板宽度",
   copy: "复制回答",
   copied: "回答已复制",
