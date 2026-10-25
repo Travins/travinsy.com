@@ -1,0 +1,7 @@
+import { X } from "@/components/site/header";
+"use client";
+export const Panel = () => <div className="dark:bg-blue-500/50 text-white border-red-500/50">你好</div>;
+const Ref = React.forwardRef(() => null);
+localStorage.setItem("panel", "1");
+export default Panel;
+const variants = cva("bg-[#fff]", { variants: { tone: { bad: "ring-offset-sky-300" } } });

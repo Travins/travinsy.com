@@ -1,0 +1,13 @@
+// bg-red-500 #fff rgb(0, 0, 0) 仅在注释出现。
+"use client";
+import type { ComponentProps } from "react";
+type Props = ComponentProps<"div">;
+export interface Extra { open: boolean }
+export type Alias = Props;
+const DEFAULT_LABELS = { title: <span>标题</span> };
+const variants = cva("bg-background text-foreground border-border ring-ring/50");
+function Panel(props: Props) { return <div data-slot="panel" className={cn(variants, "text-muted-foreground", props.className)}>{DEFAULT_LABELS.title}</div>; }
+function Wrapper() { return <Panel />; }
+function Fragment() { return <>内容</>; }
+localStorage.getItem("travinsy:panel");
+export { Panel, Wrapper, Fragment };

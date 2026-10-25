@@ -12,7 +12,8 @@
     "themes:build": "tsx scripts/build-theme-registry.ts",
     "registry:index": "tsx scripts/build-registry-index.ts",
     "prebuild": "pnpm registry:build",
-    "postinstall": "fumadocs-mdx"
+    "postinstall": "fumadocs-mdx",
+    "registry:lint": "tsx scripts/registry-lint.ts"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.157",
