@@ -16,7 +16,7 @@ const patterns: { pattern: GridSeparatorPattern; note: string }[] = [
 
 export default function GridSeparatorPatternsDemo() {
   return (
-    <GridContainer className="max-w-lg bg-background">
+    <GridContainer className="bg-background [--grid-width:32rem]">
       {patterns.map(({ pattern, note }) => (
         <div key={pattern}>
           <GridSection className="flex items-baseline justify-between px-4 py-3">

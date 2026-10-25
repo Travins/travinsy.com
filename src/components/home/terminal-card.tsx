@@ -128,10 +128,10 @@ function TerminalCard({
       data-slot="terminal-card"
       className="relative w-full max-w-md border border-edge bg-background"
     >
-      <GridCrosshair position="top-left" />
-      <GridCrosshair position="top-right" />
-      <GridCrosshair position="bottom-left" />
-      <GridCrosshair position="bottom-right" />
+      <GridCrosshair position="top-left" anchor="border" />
+      <GridCrosshair position="top-right" anchor="border" />
+      <GridCrosshair position="bottom-left" anchor="border" />
+      <GridCrosshair position="bottom-right" anchor="border" />
       <div
         aria-hidden="true"
         className="flex items-center justify-between border-b border-edge px-3 py-2 font-mono text-[11px] text-muted-foreground"

@@ -6,7 +6,7 @@ import {
 
 export default function GridSeparatorLabelDemo() {
   return (
-    <GridContainer className="max-w-lg bg-background">
+    <GridContainer className="bg-background [--grid-width:32rem]">
       <GridSection className="px-4 py-6">
         <p className="text-sm text-muted-foreground">
           给分隔带加一个编号，像图纸上的章节标记。

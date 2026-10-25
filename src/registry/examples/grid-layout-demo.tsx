@@ -7,7 +7,7 @@ import {
 
 export default function GridLayoutDemo() {
   return (
-    <GridContainer className="max-w-lg bg-background">
+    <GridContainer className="bg-background [--grid-width:32rem]">
       <GridSection className="px-4 py-6">
         <p className="font-mono text-xs text-muted-foreground">
           01 / GRID LAYOUT
