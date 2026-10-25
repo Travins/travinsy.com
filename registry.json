@@ -6,8 +6,11 @@
     {
       "name": "grid-layout",
       "type": "registry:ui",
+      "dependencies": [
+        "class-variance-authority"
+      ],
       "title": "线条网格布局",
-      "description": "带全宽横线、竖线容器和斜纹分隔带的响应式布局原语。",
+      "description": "带全宽横线、竖线容器、刻度尺等多种纹路分隔带和交点十字的响应式布局原语。",
       "files": [
         {
           "path": "src/registry/ui/grid-layout/grid-layout.tsx",
@@ -55,6 +58,36 @@
         "@utility bg-hatch": {
           "background-image": "repeating-linear-gradient(\n    315deg,\n    var(--edge) 0 1px,\n    transparent 0 50%\n  )",
           "background-size": "10px 10px"
+        },
+        "@utility bg-ruler": {
+          "background-image": "linear-gradient(\n      90deg,\n      color-mix(in oklab, var(--foreground) 28%, transparent) 1px,\n      transparent 1px\n    ),\n    linear-gradient(\n      90deg,\n      color-mix(in oklab, var(--foreground) 20%, transparent) 1px,\n      transparent 1px\n    ),\n    linear-gradient(90deg, var(--edge) 1px, transparent 1px)",
+          "background-size": "80px 16px,\n    40px 10px,\n    8px 5px",
+          "background-repeat": "repeat-x",
+          "background-position": "var(--pattern-x, 0) 100%"
+        },
+        "@utility bg-dots": {
+          "background-image": "radial-gradient(\n    color-mix(in oklab, var(--foreground) 24%, transparent) 1px,\n    transparent 1.3px\n  )",
+          "background-size": "8px 8px",
+          "background-position": "calc(var(--pattern-x, 0px) + 4px) 4px"
+        },
+        "@utility bg-grid-fine": {
+          "background-image": "linear-gradient(var(--edge) 1px, transparent 1px),\n    linear-gradient(90deg, var(--edge) 1px, transparent 1px)",
+          "background-size": "8px 8px",
+          "background-position": "var(--pattern-x, 0px) 0"
+        },
+        "@utility bg-plus": {
+          "background-color": "color-mix(in oklab, var(--foreground) 28%, transparent)",
+          "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M8 5v6M5 8h6' stroke='black'/%3E%3C/svg%3E\")",
+          "mask-size": "16px 16px",
+          "mask-repeat": "repeat",
+          "mask-position": "var(--pattern-x, 0px) 50%"
+        },
+        "@utility bg-wave": {
+          "background-color": "color-mix(in oklab, var(--foreground) 28%, transparent)",
+          "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32'%3E%3Cpath d='M0 16q6-7 12 0t12 0' fill='none' stroke='black'/%3E%3C/svg%3E\")",
+          "mask-size": "24px 32px",
+          "mask-repeat": "repeat-x",
+          "mask-position": "var(--pattern-x, 0px) 50%"
         },
         "@layer base": {
           "html": {

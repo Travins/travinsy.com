@@ -18,7 +18,7 @@ export function ComponentPreviewClient({
         <TabsTrigger value="code">代码</TabsTrigger>
       </TabsList>
       <TabsContent value="preview">
-        <div className="docs-preview bg-hatch">
+        <div className="docs-preview bg-muted/30">
           <Suspense fallback={<p role="status">正在加载示例…</p>}>
             {Preview ? <Preview /> : <p>找不到示例：{name}</p>}
           </Suspense>

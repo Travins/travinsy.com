@@ -2,11 +2,14 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "grid-layout",
   "title": "线条网格布局",
-  "description": "带全宽横线、竖线容器和斜纹分隔带的响应式布局原语。",
+  "description": "带全宽横线、竖线容器、刻度尺等多种纹路分隔带和交点十字的响应式布局原语。",
+  "dependencies": [
+    "class-variance-authority"
+  ],
   "files": [
     {
       "path": "src/registry/ui/grid-layout/grid-layout.tsx",
-      "content": "import type * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\n/**\n * 页面主容器：固定宽度 + 左右竖线。\n * 宽度可通过 CSS 变量 --grid-width 覆盖（默认 48rem）。\n */\nfunction GridContainer({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"grid-container\"\n      className={cn(\n        \"mx-auto w-full max-w-[var(--grid-width,48rem)] border-x border-edge\",\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\n/**\n * 一行内容：底部一条横跨整个屏幕的分隔线。\n * 放在 GridContainer 内使用。\n */\nfunction GridSection({\n  className,\n  topLine = false,\n  ...props\n}: React.ComponentProps<\"section\"> & { topLine?: boolean }) {\n  return (\n    <section\n      data-slot=\"grid-section\"\n      data-top-line={topLine}\n      className={cn(\n        \"screen-line-bottom\",\n        topLine && \"screen-line-top\",\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\n/**\n * 斜纹分隔带：全屏宽度的斜线纹理 + 底部横线。\n */\nfunction GridSeparator({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      aria-hidden\n      data-slot=\"grid-separator\"\n      className={cn(\"screen-line-bottom h-8 w-full\", className)}\n      {...props}\n    >\n      <div className=\"absolute inset-y-0 -left-[100vw] w-[200vw] bg-hatch\" />\n    </div>\n  )\n}\n\n/**\n * 分栏：栏与栏之间用虚线分隔，窄屏自动堆叠。\n */\nfunction GridColumns({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"grid-columns\"\n      className={cn(\n        \"grid grid-cols-1 divide-y divide-dashed divide-edge sm:grid-cols-2 sm:divide-x sm:divide-y-0\",\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nexport { GridColumns, GridContainer, GridSection, GridSeparator }\n",
+      "content": "import type * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\n\nimport { cn } from \"@/lib/utils\"\n\nconst gridCrosshairVariants = cva(\n  // 11px 的十字：中心落在竖线（border-x）与横线的交点上，各偏移 0.5px 对齐 1px 线条的中心\n  \"pointer-events-none absolute z-10 size-[11px] before:absolute before:inset-y-0 before:left-[5px] before:w-px before:bg-foreground/45 after:absolute after:inset-x-0 after:top-[5px] after:h-px after:bg-foreground/45\",\n  {\n    variants: {\n      position: {\n        \"top-left\":\n          \"top-[-0.5px] left-[-0.5px] -translate-x-1/2 -translate-y-1/2\",\n        \"top-right\":\n          \"top-[-0.5px] right-[-0.5px] translate-x-1/2 -translate-y-1/2\",\n        \"bottom-left\":\n          \"bottom-[0.5px] left-[-0.5px] -translate-x-1/2 translate-y-1/2\",\n        \"bottom-right\":\n          \"right-[-0.5px] bottom-[0.5px] translate-x-1/2 translate-y-1/2\",\n      },\n    },\n    defaultVariants: { position: \"top-left\" },\n  },\n)\n\nconst gridSeparatorVariants = cva(\n  // --pattern-x：让纹路从容器左侧竖线开始计数，而不是从 200vw 宽的纹理层左端\n  \"absolute inset-y-0 -left-[100vw] w-[200vw] [--pattern-x:100vw]\",\n  {\n    variants: {\n      pattern: {\n        ruler: \"bg-ruler\",\n        hatch: \"bg-hatch\",\n        dots: \"bg-dots\",\n        grid: \"bg-grid-fine\",\n        plus: \"bg-plus\",\n        wave: \"bg-wave\",\n        none: \"\",\n      },\n    },\n    defaultVariants: { pattern: \"ruler\" },\n  },\n)\n\ntype GridSeparatorPattern = NonNullable<\n  VariantProps<typeof gridSeparatorVariants>[\"pattern\"]\n>\n\n/**\n * 交点十字：绘制在容器竖线与横线交点处的小「+」，纯装饰。\n * 放在带 `position: relative` 的行（GridSection、GridSeparator）内，由 position 指定四个角之一。\n */\nfunction GridCrosshair({\n  className,\n  position,\n  ...props\n}: React.ComponentProps<\"span\"> & VariantProps<typeof gridCrosshairVariants>) {\n  return (\n    <span\n      aria-hidden\n      data-slot=\"grid-crosshair\"\n      data-position={position ?? \"top-left\"}\n      className={cn(gridCrosshairVariants({ position }), className)}\n      {...props}\n    />\n  )\n}\n\n/**\n * 页面主容器：固定宽度 + 左右竖线。\n * 宽度可通过 CSS 变量 --grid-width 覆盖（默认 48rem）。\n */\nfunction GridContainer({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"grid-container\"\n      className={cn(\n        \"mx-auto w-full max-w-[var(--grid-width,48rem)] border-x border-edge\",\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\n/**\n * 一行内容：底部一条横跨整个屏幕的分隔线。\n * 放在 GridContainer 内使用。\n */\nfunction GridSection({\n  className,\n  topLine = false,\n  crosshair = false,\n  children,\n  ...props\n}: React.ComponentProps<\"section\"> & {\n  /** 在行的顶部补一条全屏横线（默认只画底线） */\n  topLine?: boolean\n  /** 在底线与左右竖线的两个交点处绘制「+」，默认关闭 */\n  crosshair?: boolean\n}) {\n  return (\n    <section\n      data-slot=\"grid-section\"\n      data-top-line={topLine}\n      className={cn(\n        \"screen-line-bottom\",\n        topLine && \"screen-line-top\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n      {crosshair ? (\n        <>\n          <GridCrosshair position=\"bottom-left\" />\n          <GridCrosshair position=\"bottom-right\" />\n        </>\n      ) : null}\n    </section>\n  )\n}\n\n/**\n * 分隔带：全屏宽度的纹理 + 底部横线，用于主题切换处。\n * 默认是刻度尺纹路，并在上下两条线与左右竖线的四个交点处绘制「+」。\n */\nfunction GridSeparator({\n  className,\n  pattern,\n  label,\n  crosshair,\n  ...props\n}: React.ComponentProps<\"div\"> &\n  VariantProps<typeof gridSeparatorVariants> & {\n    /** 纹路：ruler（默认）、hatch、dots、grid、plus、wave，none 为只留线条 */\n    pattern?: GridSeparatorPattern | null\n    /** 左侧的等宽小字编号（如 `02 / PROJECTS`），后接虚线；可与任意纹路组合 */\n    label?: React.ReactNode\n    /** 是否绘制四个交点十字，默认只有 ruler 纹路开启 */\n    crosshair?: boolean\n  }) {\n  const resolved = pattern ?? \"ruler\"\n  const showCrosshair = crosshair ?? resolved === \"ruler\"\n  return (\n    <div\n      aria-hidden\n      data-slot=\"grid-separator\"\n      data-pattern={resolved}\n      className={cn(\"screen-line-bottom h-8 w-full\", className)}\n      {...props}\n    >\n      <div\n        data-slot=\"grid-separator-pattern\"\n        className={gridSeparatorVariants({ pattern: resolved })}\n      />\n      {label ? (\n        <div\n          data-slot=\"grid-separator-label\"\n          className=\"absolute inset-0 flex items-center gap-3 px-4 font-mono text-[11px] tracking-[0.08em] text-muted-foreground sm:px-6\"\n        >\n          <span className=\"bg-background px-1.5 whitespace-nowrap\">\n            {label}\n          </span>\n          <span className=\"h-px flex-1 border-t border-dashed border-edge\" />\n        </div>\n      ) : null}\n      {showCrosshair ? (\n        <>\n          <GridCrosshair position=\"top-left\" />\n          <GridCrosshair position=\"top-right\" />\n          <GridCrosshair position=\"bottom-left\" />\n          <GridCrosshair position=\"bottom-right\" />\n        </>\n      ) : null}\n    </div>\n  )\n}\n\n/**\n * 分栏：栏与栏之间用虚线分隔，窄屏自动堆叠。\n */\nfunction GridColumns({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"grid-columns\"\n      className={cn(\n        \"grid grid-cols-1 divide-y divide-dashed divide-edge sm:grid-cols-2 sm:divide-x sm:divide-y-0\",\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nexport {\n  GridColumns,\n  GridContainer,\n  GridCrosshair,\n  GridSection,\n  GridSeparator,\n  gridCrosshairVariants,\n  gridSeparatorVariants,\n}\nexport type { GridSeparatorPattern }\n",
       "type": "registry:ui"
     }
   ],
@@ -51,6 +54,36 @@
     "@utility bg-hatch": {
       "background-image": "repeating-linear-gradient(\n    315deg,\n    var(--edge) 0 1px,\n    transparent 0 50%\n  )",
       "background-size": "10px 10px"
+    },
+    "@utility bg-ruler": {
+      "background-image": "linear-gradient(\n      90deg,\n      color-mix(in oklab, var(--foreground) 28%, transparent) 1px,\n      transparent 1px\n    ),\n    linear-gradient(\n      90deg,\n      color-mix(in oklab, var(--foreground) 20%, transparent) 1px,\n      transparent 1px\n    ),\n    linear-gradient(90deg, var(--edge) 1px, transparent 1px)",
+      "background-size": "80px 16px,\n    40px 10px,\n    8px 5px",
+      "background-repeat": "repeat-x",
+      "background-position": "var(--pattern-x, 0) 100%"
+    },
+    "@utility bg-dots": {
+      "background-image": "radial-gradient(\n    color-mix(in oklab, var(--foreground) 24%, transparent) 1px,\n    transparent 1.3px\n  )",
+      "background-size": "8px 8px",
+      "background-position": "calc(var(--pattern-x, 0px) + 4px) 4px"
+    },
+    "@utility bg-grid-fine": {
+      "background-image": "linear-gradient(var(--edge) 1px, transparent 1px),\n    linear-gradient(90deg, var(--edge) 1px, transparent 1px)",
+      "background-size": "8px 8px",
+      "background-position": "var(--pattern-x, 0px) 0"
+    },
+    "@utility bg-plus": {
+      "background-color": "color-mix(in oklab, var(--foreground) 28%, transparent)",
+      "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M8 5v6M5 8h6' stroke='black'/%3E%3C/svg%3E\")",
+      "mask-size": "16px 16px",
+      "mask-repeat": "repeat",
+      "mask-position": "var(--pattern-x, 0px) 50%"
+    },
+    "@utility bg-wave": {
+      "background-color": "color-mix(in oklab, var(--foreground) 28%, transparent)",
+      "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32'%3E%3Cpath d='M0 16q6-7 12 0t12 0' fill='none' stroke='black'/%3E%3C/svg%3E\")",
+      "mask-size": "24px 32px",
+      "mask-repeat": "repeat-x",
+      "mask-position": "var(--pattern-x, 0px) 50%"
     },
     "@layer base": {
       "html": {

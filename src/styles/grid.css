@@ -32,6 +32,13 @@
   }
 }
 
+/*
+ * 分隔带纹路。统一约定：
+ * - 颜色只来自 --edge / --foreground，随颜色主题与亮暗模式变化
+ * - 横向起点由 --pattern-x 控制（GridSeparator 用它把纹路对齐到容器左侧竖线）
+ * - mask 类纹路自带 background-color，所以不要在同一元素里放文字，纹理层请单独成层
+ */
+
 @utility bg-hatch {
   background-image: repeating-linear-gradient(
     315deg,
@@ -39,4 +46,63 @@
     transparent 0 50%
   );
   background-size: 10px 10px;
+}
+
+/* 刻度尺：底边一排刻度，每 8px 短、40px 中、80px 长 */
+@utility bg-ruler {
+  background-image:
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--foreground) 28%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--foreground) 20%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, var(--edge) 1px, transparent 1px);
+  background-size:
+    80px 16px,
+    40px 10px,
+    8px 5px;
+  background-repeat: repeat-x;
+  background-position: var(--pattern-x, 0) 100%;
+}
+
+/* 点阵 */
+@utility bg-dots {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--foreground) 24%, transparent) 1px,
+    transparent 1.3px
+  );
+  background-size: 8px 8px;
+  background-position: calc(var(--pattern-x, 0px) + 4px) 4px;
+}
+
+/* 坐标细网格 */
+@utility bg-grid-fine {
+  background-image:
+    linear-gradient(var(--edge) 1px, transparent 1px),
+    linear-gradient(90deg, var(--edge) 1px, transparent 1px);
+  background-size: 8px 8px;
+  background-position: var(--pattern-x, 0px) 0;
+}
+
+/* 十字阵列：SVG 作 mask，颜色由 background-color 决定 */
+@utility bg-plus {
+  background-color: color-mix(in oklab, var(--foreground) 28%, transparent);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M8 5v6M5 8h6' stroke='black'/%3E%3C/svg%3E");
+  mask-size: 16px 16px;
+  mask-repeat: repeat;
+  mask-position: var(--pattern-x, 0px) 50%;
+}
+
+/* 信号波形：周期 24px，垂直居中 */
+@utility bg-wave {
+  background-color: color-mix(in oklab, var(--foreground) 28%, transparent);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32'%3E%3Cpath d='M0 16q6-7 12 0t12 0' fill='none' stroke='black'/%3E%3C/svg%3E");
+  mask-size: 24px 32px;
+  mask-repeat: repeat-x;
+  mask-position: var(--pattern-x, 0px) 50%;
 }

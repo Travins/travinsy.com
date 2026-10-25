@@ -20,8 +20,19 @@ async function main() {
   root.walkAtRules("utility", (rule) => {
     css[`@utility ${rule.params}`] = object(rule)
   })
-  if (Object.keys(css).length !== 3)
-    throw new Error("grid.css 应包含三个网格工具类，请审查同步脚本")
+  const expected = [
+    "screen-line-top",
+    "screen-line-bottom",
+    "bg-hatch",
+    "bg-ruler",
+    "bg-dots",
+    "bg-grid-fine",
+    "bg-plus",
+    "bg-wave",
+  ]
+  const missing = expected.filter((name) => !css[`@utility ${name}`])
+  if (missing.length || Object.keys(css).length !== expected.length)
+    throw new Error(`grid.css 的工具类与预期不一致（缺少：${missing.join("、") || "无"}），请审查同步脚本`)
   const grid = registry.items.find(
     (item: { name: string }) => item.name === "grid-layout",
   )

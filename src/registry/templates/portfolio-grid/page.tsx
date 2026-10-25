@@ -56,6 +56,7 @@ export default function Page() {
             tagline={siteConfig.tagline}
           />
           <SocialFollow
+            followMe={false}
             socials={siteConfig.socials.map((social) => ({
               name: social.name,
               href: social.href,

@@ -230,7 +230,7 @@ export function BlockViewerClient({
         <div className="border-b border-edge px-4 py-2">{install}</div>
       )}
       <TabsContent value="preview" keepMounted>
-        <div ref={stageRef} className="flex justify-center bg-hatch sm:px-4">
+        <div ref={stageRef} className="flex justify-center bg-muted/30 sm:px-4">
           <div
             className={cn(
               "relative bg-background sm:ring-1 sm:ring-edge",

@@ -2,9 +2,25 @@
 export const profile = {
   name: "Travins",
   brand: "travinsy",
-  initials: "T",
   bio: "全栈开发者，专注 AI 应用与大模型落地。从界面到推理服务，把想法做成可用的产品。",
   roles: ["全栈开发", "AI Agent 开发", "大模型部署", "组件设计"],
+  /** 封面左上角的小标题，像规格书的文档标题栏 */
+  eyebrow: "PROFILE / 个人规格书",
+  /** 封面右侧终端卡片：依次打出命令，再显示输出 */
+  terminal: {
+    title: "travins@dev ~",
+    steps: [
+      { command: "whoami", output: ["travins — 全栈开发者"] },
+      {
+        command: "ls ./focus",
+        output: ["fullstack  ai-agents  llm-deploy"],
+      },
+      {
+        command: "deploy --model qwen3 --gpu 2",
+        output: ["✓ ready on :8000"],
+      },
+    ],
+  },
   location: "",
   timeZone: "",
   email: "",
@@ -47,8 +63,6 @@ export const profile = {
     "Kubernetes",
     "PostgreSQL",
   ],
-  greetingNote:
-    "欢迎来到我的数字自留地。这里记录作品、组件，以及那些值得反复打磨的小想法。",
   /**
    * 首页「精选组件」：名称对应 registry.json 的条目，
    * 标题、描述与链接都直接取自 Registry，避免再维护一份文案。

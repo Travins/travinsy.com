@@ -46,6 +46,7 @@ export default function Page() {
 | --- | --- | --- |
 | `socials` | `{ name: string; href: string; icon: ReactNode }[]` | 链接列表；`name` 同时作为读屏名称和悬停提示 |
 | `note` | `string` | 右侧小字，默认「在别处，也在这里」，传空字符串隐藏 |
+| `followMe` | `boolean` | 是否显示容器外侧的手写体 follow me 装饰，默认 `true` |
 | `labels` | `Partial<SocialFollowLabels>` | 覆盖默认文案，见下方 labels |
 | `className` | `string` | 追加到外层 `GridSection` |
 
@@ -80,5 +81,5 @@ components/social-follow/
 ### 如何自定义
 
 - **换图标**：`icon` 接收任意节点，用 `lucide-react`、自己的 SVG 都可以。品牌图标放在 `brand-icons.tsx`，想加别的平台就往里补。
-- **去掉装饰**：删掉 `social-follow.tsx` 里的 `<FollowMe />` 即可，也不再需要 `follow-me` 依赖。
+- **去掉装饰**：传 `followMe={false}` 即可（[线条网格个人主页](/templates/portfolio-grid/) 模板默认就是关闭的）；彻底不需要时，也可以删掉 `social-follow.tsx` 里的 `<FollowMe />` 和 `follow-me` 依赖。
 - **改读屏名称**：用 `labels={{ socialLinks: "Social links" }}` 覆盖，不用改组件。

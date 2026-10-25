@@ -7,6 +7,8 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "follow-me-demo": lazy(() => import("./examples/follow-me-demo")),
   "greeting-demo": lazy(() => import("./examples/greeting-demo")),
   "grid-layout-demo": lazy(() => import("./examples/grid-layout-demo")),
+  "grid-separator-label-demo": lazy(() => import("./examples/grid-separator-label-demo")),
+  "grid-separator-patterns-demo": lazy(() => import("./examples/grid-separator-patterns-demo")),
   "icon-link-demo": lazy(() => import("./examples/icon-link-demo")),
   "local-time-demo": lazy(() => import("./examples/local-time-demo")),
 }

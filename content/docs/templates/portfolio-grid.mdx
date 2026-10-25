@@ -116,7 +116,7 @@ export { siteConfig }
 
 - **改得更多**：
   - **换颜色**：颜色来自项目的主题变量（`globals.css`），到 [主题](/themes/) 页挑一套复制进去，整页自动换色。
-  - **增减区块**：在 `app/page.tsx` 里增删区块即可；每个区块都是独立的 `GridSection`，相邻区块之间用 `GridSeparator` 隔开，不同主题的内容之间才需要。
+  - **增减区块**：在 `app/page.tsx` 里增删区块即可；每个区块都是独立的 `GridSection`，相邻区块之间用 `GridSeparator`（默认是刻度尺纹路，可用 `pattern`、`label` 调整）隔开，不同主题的内容之间才需要。
   - **亮暗模式**：模板本身不带切换按钮，沿用你项目里已有的 `next-themes` 或其他方案即可。
   - **改界面文案**：用各区块的 `labels`，或直接改 `lib/config.ts`。
 - **静态导出**：整页是服务端可渲染组件，没有客户端状态，可直接用于 `output: "export"`。

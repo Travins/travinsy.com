@@ -56,28 +56,31 @@ export default async function BlogPost({ params }: Props) {
     >
       <article>
         <GridSection className="px-4 py-10 sm:px-6 sm:py-14">
-          <Link
-            href="/blog/"
-            className="text-xs text-muted-foreground hover:text-foreground"
-          >
-            ← 全部文章
-          </Link>
-          <h1 className="mt-8 text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl">
-            {post.data.title}
-          </h1>
-          <p className="mt-5 leading-7 text-muted-foreground">
-            {post.data.description}
-          </p>
-          <div className="mt-6">
-            <PostMeta
-              date={post.data.date}
-              tags={post.data.tags}
-              minutes={await readingMinutes(post.data)}
-            />
+          {/* 容器加宽到 64rem 后，标题与正文仍限制在约 42rem 内，保证可读 */}
+          <div className="mx-auto w-full max-w-2xl">
+            <Link
+              href="/blog/"
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              ← 全部文章
+            </Link>
+            <h1 className="mt-8 text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl">
+              {post.data.title}
+            </h1>
+            <p className="mt-5 leading-7 text-muted-foreground">
+              {post.data.description}
+            </p>
+            <div className="mt-6">
+              <PostMeta
+                date={post.data.date}
+                tags={post.data.tags}
+                minutes={await readingMinutes(post.data)}
+              />
+            </div>
           </div>
         </GridSection>
         <GridSection className="min-w-0 px-4 pt-4 pb-12 sm:px-6">
-          <div className="docs-prose min-w-0">
+          <div className="docs-prose mx-auto max-w-2xl min-w-0">
             <Body components={mdxComponents} />
           </div>
         </GridSection>
