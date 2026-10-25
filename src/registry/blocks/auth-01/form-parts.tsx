@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
+import { resolveLabels, type Auth01Labels } from "./config"
+
 /** 带图标、错误提示的输入框；错误通过 aria-describedby 关联，读屏会一并读出。 */
-export function TextField({
+function TextField({
   id,
   label,
   icon: Icon,
@@ -33,7 +35,7 @@ export function TextField({
 }) {
   const errorId = `${id}-error`
   return (
-    <div className="flex flex-col gap-2">
+    <div data-slot="auth-01-text-field" className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
         <Label htmlFor={id}>{label}</Label>
         {labelAction}
@@ -65,9 +67,13 @@ export function TextField({
 }
 
 /** 带显示/隐藏切换的密码框。 */
-export function PasswordField(
-  props: Omit<ComponentProps<typeof TextField>, "type" | "trailing">,
-) {
+function PasswordField({
+  labels,
+  ...props
+}: Omit<ComponentProps<typeof TextField>, "type" | "trailing"> & {
+  labels?: Partial<Auth01Labels>
+}) {
+  const text = resolveLabels(labels)
   const [visible, setVisible] = useState(false)
   return (
     <TextField
@@ -79,15 +85,11 @@ export function PasswordField(
           variant="ghost"
           size="icon-sm"
           onClick={() => setVisible((value) => !value)}
-          aria-label={visible ? "隐藏密码" : "显示密码"}
+          aria-label={visible ? text.hidePassword : text.showPassword}
           aria-pressed={visible}
           className="absolute top-1/2 right-1.5 -translate-y-1/2 text-muted-foreground hover:text-foreground"
         >
-          {visible ? (
-            <EyeOff aria-hidden="true" />
-          ) : (
-            <Eye aria-hidden="true" />
-          )}
+          {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
         </Button>
       }
     />
@@ -95,10 +97,11 @@ export function PasswordField(
 }
 
 /** 表单级错误（接口返回的失败原因等），出现时读屏会立即朗读。 */
-export function FormError({ message }: { message: string | null }) {
+function FormError({ message }: { message: string | null }) {
   if (!message) return null
   return (
     <p
+      data-slot="auth-01-form-error"
       role="alert"
       className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
     >
@@ -108,7 +111,7 @@ export function FormError({ message }: { message: string | null }) {
 }
 
 /** 提交按钮：pending 时显示转圈并禁用。 */
-export function SubmitButton({
+function SubmitButton({
   pending,
   pendingText,
   children,
@@ -118,7 +121,12 @@ export function SubmitButton({
   children: ReactNode
 }) {
   return (
-    <Button type="submit" className="h-10 w-full" disabled={pending}>
+    <Button
+      data-slot="auth-01-submit-button"
+      type="submit"
+      className="h-10 w-full"
+      disabled={pending}
+    >
       {pending ? (
         <>
           <Loader2 aria-hidden="true" className="animate-spin" />
@@ -132,7 +140,7 @@ export function SubmitButton({
 }
 
 /** 视图头部：标题 + 说明。每个视图只有一个 h1。 */
-export function ViewHeading({
+function ViewHeading({
   title,
   description,
 }: {
@@ -140,7 +148,7 @@ export function ViewHeading({
   description: string
 }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div data-slot="auth-01-view-heading" className="flex flex-col gap-1">
       <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
       <p className="text-sm text-muted-foreground">{description}</p>
     </div>
@@ -148,12 +156,10 @@ export function ViewHeading({
 }
 
 /** 文字链接样式的按钮，用于视图切换。 */
-export function LinkButton({
-  className,
-  ...props
-}: ComponentProps<"button">) {
+function LinkButton({ className, ...props }: ComponentProps<"button">) {
   return (
     <button
+      data-slot="auth-01-link-button"
       type="button"
       className={cn(
         "rounded-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
@@ -163,3 +169,5 @@ export function LinkButton({
     />
   )
 }
+
+export { FormError, LinkButton, PasswordField, SubmitButton, TextField, ViewHeading }

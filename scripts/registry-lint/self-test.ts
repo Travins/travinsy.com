@@ -15,6 +15,13 @@ type Diagnostic = {
 }
 type Api = {
   lintSource: (file: string, text: string) => Diagnostic[]
+  lintFile: (
+    file: string,
+    text: string,
+  ) => {
+    diagnostics: Diagnostic[]
+    ignored: { rule: string; file: string; line: number }[]
+  }
   lintRegistry: (root: string) => Diagnostic[]
   packageName: (spec: string) => string
   siteDependency: (spec: string, homepage: string) => string | undefined
@@ -73,6 +80,73 @@ export function runSelfTests(api: Api) {
         `src/registry/blocks/test/${name}.tsx`,
       ).some((d) => ["data-slot", "no-default-export"].includes(d.rule)),
     )
+  // exports-at-end：demo/page/layout 与 examples 按 Next.js 约定不要求集中导出。
+  const moduleExport =
+    'export const value = 1; export function Panel() { return <div data-slot="panel" />; }'
+  assert(
+    lint(moduleExport).filter((d) => d.rule === "exports-at-end").length === 2,
+  )
+  for (const exemptFile of [
+    "src/registry/examples/test.tsx",
+    "src/registry/blocks/test/demo.tsx",
+    "src/registry/blocks/test/page.tsx",
+    "src/registry/templates/test/layout.tsx",
+  ])
+    assert.deepEqual(
+      lint(moduleExport, exemptFile).filter((d) => d.rule === "exports-at-end"),
+      [],
+      exemptFile,
+    )
+  // 忽略注释：必须写明规则 id，且只作用于紧邻的下一行。
+  const ignoredOne = api.lintFile(
+    file,
+    "// registry-lint-disable-next-line exports-at-end\nexport const value = 1;",
+  )
+  assert.deepEqual(ignoredOne.diagnostics, [])
+  assert.deepEqual(ignoredOne.ignored, [
+    { rule: "exports-at-end", file, line: 2 },
+  ])
+  const ignoredTwo = api.lintFile(
+    file,
+    "// registry-lint-disable-next-line exports-at-end, data-slot\nexport function Panel() { return <div />; }",
+  )
+  assert.deepEqual(ignoredTwo.diagnostics, [])
+  assert.deepEqual(ignoredTwo.ignored.map((entry) => entry.rule).sort(), [
+    "data-slot",
+    "exports-at-end",
+  ])
+  assert.deepEqual(
+    api
+      .lintFile(
+        file,
+        "// registry-lint-disable-next-line\nexport const value = 1;",
+      )
+      .diagnostics.map((d) => d.rule),
+    ["disable-comment", "exports-at-end"],
+  )
+  assert.deepEqual(
+    api
+      .lintFile(
+        file,
+        "// registry-lint-disable-next-line nope\nexport const value = 1;",
+      )
+      .diagnostics.map((d) => d.rule),
+    ["disable-comment", "exports-at-end"],
+  )
+  assert.deepEqual(
+    lint(
+      "// registry-lint-disable-next-line exports-at-end\n\nexport const value = 1;",
+    ).map((d) => d.rule),
+    ["exports-at-end"],
+    "忽略注释只作用于紧邻的下一行",
+  )
+  assert.deepEqual(
+    lint(
+      `const text = "// registry-lint-disable-next-line exports-at-end"\nexport const value = 1;`,
+    ).map((d) => d.rule),
+    ["exports-at-end"],
+    "字符串里的同名文本不是忽略注释",
+  )
   assert.equal(
     lint(
       "function Panel() { return <div>一<span>二</span><span>三</span><span>四</span></div>; }",
@@ -229,6 +303,33 @@ export function runSelfTests(api: Api) {
     assert.equal(
       cli("--rule", "exports-at-end", "--max-warnings", "1").status,
       0,
+    )
+    // 生成文件 src/registry/__index__.tsx 不参与检查。
+    write("src/registry/__index__.tsx", "export const registryExamples = {};")
+    assert.equal(
+      cli("--rule", "exports-at-end", "--max-warnings", "1").status,
+      0,
+    )
+    // 被忽略的条数会进入统计与 JSON 输出，不触发退出码。
+    write(
+      "src/registry/ui/a/ignored.tsx",
+      "// registry-lint-disable-next-line exports-at-end\nexport const value = 1;",
+    )
+    const suppressed = cli("--rule", "exports-at-end", "--json")
+    assert.equal(suppressed.status, 0, suppressed.stderr)
+    const report = JSON.parse(suppressed.stdout)
+    assert.deepEqual(
+      report.diagnostics.filter((d: Diagnostic) =>
+        d.file.endsWith("ignored.tsx"),
+      ),
+      [],
+    )
+    assert.equal(report.summary.ignored.total, 1)
+    assert.equal(report.summary.ignored.byRule["exports-at-end"], 1)
+    assert.equal(report.summary.warnings, 1)
+    assert.match(
+      cli("--rule", "exports-at-end").stdout,
+      /已忽略 1 条（exports-at-end 1）/,
     )
     assert.equal(cli("--rule", "unknown").status, 1)
     assert.equal(cli("--max-warnings", "-1").status, 1)

@@ -1,15 +1,22 @@
 import { GridSection } from "@/registry/ui/grid-layout/grid-layout"
 
+import { resolveLabels, type PortfolioGridLabels } from "../../lib/config"
+
 /** 技术栈：两列（≥sm 四列）的小方块网格。 */
-export function StackSection({
+function StackSection({
   title,
   items,
+  labels,
 }: {
   title: string
   items: readonly string[]
+  /** 覆盖默认文案，见 lib/config.ts 的 DEFAULT_LABELS */
+  labels?: Partial<PortfolioGridLabels>
 }) {
+  const text = resolveLabels(labels)
   return (
     <GridSection
+      data-slot="portfolio-grid-stack"
       id="stack"
       aria-labelledby="stack-title"
       className="scroll-mt-16 px-4 py-6 sm:px-6"
@@ -22,7 +29,7 @@ export function StackSection({
           aria-hidden="true"
           className="font-mono text-[10px] text-muted-foreground"
         >
-          TOOLS OF THE TRADE
+          {text.stackEyebrow}
         </span>
       </div>
       <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -49,3 +56,5 @@ export function StackSection({
     </GridSection>
   )
 }
+
+export { StackSection }

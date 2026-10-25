@@ -3,7 +3,9 @@
 import { useCallback, useState, type FormEvent } from "react"
 import type { z } from "zod"
 
-export type FieldErrors = Record<string, string>
+import { DEFAULT_LABELS } from "./config"
+
+type FieldErrors = Record<string, string>
 // 字面量初始值（false、""）会被推断成字面量类型，这里放宽为 boolean / string
 type Widen<T> = {
   [K in keyof T]: T[K] extends boolean ? boolean : T[K] extends string ? string : T[K]
@@ -19,29 +21,34 @@ function toErrors(error: z.ZodError): FieldErrors {
   return errors
 }
 
-export function errorMessage(error: unknown) {
-  return error instanceof Error && error.message
-    ? error.message
-    : "操作失败，请稍后重试"
+/** 把未知错误转成可展示的中文文案；没有 message 时用传入的兜底文案。 */
+function errorMessage(
+  error: unknown,
+  fallback: string = DEFAULT_LABELS.requestFailed,
+) {
+  return error instanceof Error && error.message ? error.message : fallback
 }
 
 /** 包装一个异步动作：管理 loading，并把抛出的错误转成可展示的中文文案。 */
-export function useAsyncAction() {
+function useAsyncAction(fallbackError: string = DEFAULT_LABELS.requestFailed) {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const run = useCallback(async (action: () => Promise<void>) => {
-    setPending(true)
-    setError(null)
-    try {
-      await action()
-      return true
-    } catch (caught) {
-      setError(errorMessage(caught))
-      return false
-    } finally {
-      setPending(false)
-    }
-  }, [])
+  const run = useCallback(
+    async (action: () => Promise<void>) => {
+      setPending(true)
+      setError(null)
+      try {
+        await action()
+        return true
+      } catch (caught) {
+        setError(errorMessage(caught, fallbackError))
+        return false
+      } finally {
+        setPending(false)
+      }
+    },
+    [fallbackError],
+  )
   return { pending, error, run, clearError: () => setError(null) }
 }
 
@@ -49,15 +56,16 @@ export function useAsyncAction() {
  * 极简受控表单：zod 校验 + 字段错误 + 提交状态。
  * 首次提交前，字段失焦时校验该字段；提交失败后，输入时实时重新校验。
  */
-export function useAuthForm<I extends Record<string, string | boolean>>(
+function useAuthForm<I extends Record<string, string | boolean>>(
   schema: z.ZodType,
   initial: I,
+  options: { fallbackError?: string } = {},
 ) {
   type V = Widen<I>
   const [values, setValues] = useState<V>(initial as V)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [submitted, setSubmitted] = useState(false)
-  const action = useAsyncAction()
+  const action = useAsyncAction(options.fallbackError)
 
   const check = useCallback(
     (next: V) => {
@@ -107,3 +115,6 @@ export function useAuthForm<I extends Record<string, string | boolean>>(
     },
   }
 }
+
+export { errorMessage, useAsyncAction, useAuthForm }
+export type { FieldErrors }

@@ -14,7 +14,13 @@ import { Button } from "@/components/ui/button"
 import { SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 
-import { formatLabel, resolveLabels, type AppShellLabels } from "./config"
+import {
+  formatLabel,
+  NAV_WIDTH_CLASS,
+  NAV_WIDTH_TRANSITION,
+  useAppShellLabels,
+  type AppShellLabels,
+} from "./config"
 import { NavLink, type NavLinkBehavior } from "./nav-link"
 import { ThemeToggle } from "./theme-toggle"
 import { UserMenu, type AppShellUser } from "./user-menu"
@@ -60,7 +66,7 @@ function AppHeader({
   labels,
   ...props
 }: AppHeaderProps) {
-  const text = resolveLabels(labels)
+  const text = useAppShellLabels(labels)
   const toggleLabel = collapsed ? text.expandSidebar : text.collapseSidebar
   return (
     <header
@@ -75,8 +81,11 @@ function AppHeader({
       <div className="flex h-14 items-center">
         <div
           className={cn(
-            "h-full shrink-0 border-r border-sidebar-border bg-sidebar px-3 transition-[width] duration-200 motion-reduce:transition-none sm:px-4",
-            collapsed ? "w-[60px]" : "w-[200px] max-md:w-[60px]"
+            "h-full shrink-0 border-r border-sidebar-border bg-sidebar px-3 sm:px-4",
+            NAV_WIDTH_TRANSITION,
+            collapsed
+              ? NAV_WIDTH_CLASS.collapsed
+              : cn(NAV_WIDTH_CLASS.expanded, NAV_WIDTH_CLASS.mobile)
           )}
         >
           <NavLink

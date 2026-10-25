@@ -35,13 +35,6 @@ export function SocialLinks() {
 }
 ```
 
-### 无障碍约定
-
-- `label` 是唯一的信息来源：读屏读到的是“个人网站”，而不是图标。
-- 传入的图标被包在 `aria-hidden` 的 `<span>` 里，不会被重复朗读。
-- 焦点样式用 `focus-visible:outline-2 outline-offset-4 outline-ring`，键盘 Tab 到时会明显偏移一圈，鼠标点击不会出现。
-- 图标尺寸由 `[&_svg]:size-5` 统一，换用任何 SVG 图标库都不需要单独调尺寸。
-
 ### 打开新窗口
 
 需要新标签页时自行补 `target` 与 `rel`，组件不会默认添加：
@@ -52,15 +45,34 @@ export function SocialLinks() {
 </IconLink>
 ```
 
-## Props
+原生属性会原样透传，所以 `download`、`aria-current` 这类属性也可以直接用。
+
+## API
 
 <PropsTable name="icon-link" component="IconLink" />
 
-## 注意
+### data-slot
+
+| 元素 | `data-slot` |
+| --- | --- |
+| 根元素 `<a>` | `icon-link` |
+| 图标容器 `<span>` | `icon-link-icon` |
+
+## 可访问性
+
+- `label` 是唯一的信息来源：读屏读到的是“个人网站”，而不是图标。
+- 传入的图标被包在 `aria-hidden` 的 `<span>` 里，不会被重复朗读。
+- 焦点样式用 `focus-visible:outline-2 outline-offset-4 outline-ring`，键盘 Tab 到时会明显偏移一圈，鼠标点击不会出现。
+- 图标尺寸由 `[&_svg]:size-5` 统一，换用任何 SVG 图标库都不需要单独调尺寸。
+- 渲染的是真正的 `<a>`，Enter 激活、右键“在新标签页打开”等原生行为都保留；悬浮提示 `title` 只是补充，不能替代 `label`。
+- 组件只有 `transition-colors` 的悬停过渡，不涉及位移或缩放，`prefers-reduced-motion` 下没有额外处理。
+
+## 注意事项
 
 - 默认尺寸是 `size-11`（44px），刚好够触屏最小点击区域，用它来替换 `size-8` 的小图标能顺带修掉移动端误触。
 - 背景用 `bg-muted/30`，悬浮变 `bg-muted` 并将文字提到 `text-foreground`；全部走主题变量。
 - 想调整圆角、尺寸或配色，直接传 `className` 覆盖即可。
+- 图标本身要自带明确的图形语义：一排图标链接里不要重复使用同一个图标配不同 `label`，视觉上会分不清。
 
 ## 源码
 

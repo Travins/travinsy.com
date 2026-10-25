@@ -46,7 +46,7 @@ export default function Page() {
   return (
     <>
       <SiteHeader />
-      <main>
+      <main data-slot="portfolio-grid">
         <GridContainer>
           <ProfileHero
             name={siteConfig.name}

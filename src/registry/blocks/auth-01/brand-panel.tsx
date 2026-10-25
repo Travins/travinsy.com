@@ -1,11 +1,24 @@
-import type { BrandConfig } from "./brand"
+import { cn } from "@/lib/utils"
 
-function Logo({ logo, className }: { logo: BrandConfig["logo"]; className: string }) {
+import type { BrandConfig } from "./brand"
+import { formatLabel, resolveLabels, type Auth01Labels } from "./config"
+
+function Logo({
+  logo,
+  className,
+}: {
+  logo: BrandConfig["logo"]
+  className: string
+}) {
   // 外层限定尺寸，内部的 svg / img 自动缩放到框内
   return (
     <span
+      data-slot="auth-01-brand-logo"
       aria-hidden="true"
-      className={`flex shrink-0 items-center justify-center [&>*]:max-h-full [&>*]:max-w-full [&>svg]:size-full ${className}`}
+      className={cn(
+        "flex shrink-0 items-center justify-center [&>*]:max-h-full [&>*]:max-w-full [&>svg]:size-full",
+        className,
+      )}
     >
       {logo}
     </span>
@@ -13,10 +26,18 @@ function Logo({ logo, className }: { logo: BrandConfig["logo"]; className: strin
 }
 
 /** 大屏左半边的品牌面板：主色渐变 + 模糊光斑 + 同心圆环。所有颜色都来自 primary。 */
-export function BrandPanel({ brand }: { brand: BrandConfig }) {
+function BrandPanel({
+  brand,
+  labels,
+}: {
+  brand: BrandConfig
+  labels?: Partial<Auth01Labels>
+}) {
+  const text = resolveLabels(labels)
   return (
     <aside
-      aria-label={`${brand.name} 品牌介绍`}
+      data-slot="auth-01-brand-panel"
+      aria-label={formatLabel(text.brandPanelLabel, { name: brand.name })}
       className="relative hidden overflow-hidden bg-linear-to-br from-primary/90 via-primary to-primary/80 text-primary-foreground lg:flex lg:w-1/2"
     >
       <div aria-hidden="true" className="absolute inset-0">
@@ -62,9 +83,12 @@ export function BrandPanel({ brand }: { brand: BrandConfig }) {
 }
 
 /** 窄屏下表单上方的 Logo + 名称（品牌面板此时被隐藏）。 */
-export function MobileBrand({ brand }: { brand: BrandConfig }) {
+function MobileBrand({ brand }: { brand: BrandConfig }) {
   return (
-    <div className="mb-8 flex items-center justify-center gap-2 lg:hidden">
+    <div
+      data-slot="auth-01-mobile-brand"
+      className="mb-8 flex items-center justify-center gap-2 lg:hidden"
+    >
       <Logo logo={brand.logo} className="size-10" />
       <span className="text-xl font-bold" translate="no">
         {brand.name}
@@ -72,3 +96,5 @@ export function MobileBrand({ brand }: { brand: BrandConfig }) {
     </div>
   )
 }
+
+export { BrandPanel, MobileBrand }

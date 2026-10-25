@@ -34,21 +34,51 @@ export function Header() {
 
 组件把目标时区的 UTC 偏移和 `Date.prototype.getTimezoneOffset()` 相减得到小时数，因此夏令时（例如 `Europe/London`）也能自动跟随。差值为 0 时显示 `与你同一时间`。
 
+### 文案与区域格式
+
+`//` 后的说明、占位文案和时差单位都是带默认值的中文 props；`locale` 决定 `Intl.DateTimeFormat` 与 `Intl.NumberFormat` 的格式化结果：
+
+```tsx
+<LocalTime
+  timeZone="Europe/London"
+  locale="en-GB"
+  placeholder="--:--:--"
+  placeholderLabel="local time"
+  sameTimeLabel="same as your time"
+  aheadLabel="ahead"
+  behindLabel="behind"
+  hourUnit="h"
+/>
+```
+
+## API
+
+<PropsTable name="local-time" component="LocalTime" />
+
+| 元素 | `data-slot` | 其他属性 |
+| --- | --- | --- |
+| 根元素 | `local-time` | `data-state="pending"` / `"ready"` |
+| 当前时间 `<time>` | `local-time-time` | `dateTime`（ISO 字符串） |
+| `//` 后的说明 | `local-time-note` | — |
+
+## 可访问性
+
+- 时间用语义化的 `<time>` 加机器可读的 `dateTime`，读屏与复制粘贴拿到的都是标准格式。
+- 每秒变化的内容**没有**加 `aria-live`：真正的实时时钟如果每秒播报会完全打断读屏用户。需要提醒时请在外层自行加 `aria-live="polite"`，并考虑降低更新频率。
+- 占位文案（`--:--:-- // 当地时间`）与就位后的文本都使用 `tabular-nums` 且宽度一致，切换时不引起布局跳动，也不会成为空的焦点目标。
+- 组件不含动画与位移，`prefers-reduced-motion` 下表现一致。
+
+## 注意事项
+
 ### 为什么必须在客户端渲染
 
 时间依赖访客的浏览器时钟，服务端渲染出来的秒数一定会过期。组件采用“先占位、再更新”的策略：初始渲染输出 `--:--:--` 占位，挂载后再每秒刷新。这样静态导出的 HTML 与客户端首屏完全一致，不会出现水合警告，也不会先闪出一个错误的时间。
 
-占位文本同样使用 `tabular-nums` 和相同宽度，切换时不会引起布局跳动。
-
-## Props
-
-<PropsTable name="local-time" component="LocalTime" />
-
-## 注意
+### 其他
 
 - `timeZone` 必须是合法的 IANA 名称，传错会在浏览器抛 `RangeError`。
 - 每个实例各自持有一个 1 秒定时器；同一页面渲染多个时区时建议控制在几个以内。
-- 数字格式固定为 `zh-CN` 的 24 小时制（`hourCycle: "h23"`），需要 12 小时制请在源码里改 `Intl.DateTimeFormat` 的选项。
+- 时间格式是 24 小时制（`hourCycle: "h23"`），不受 `locale` 影响；需要 12 小时制请在源码里改 `Intl.DateTimeFormat` 的选项。
 
 ## 源码
 

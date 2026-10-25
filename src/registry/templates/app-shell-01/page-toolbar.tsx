@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
-import { resolveLabels, type AppShellLabels } from "./config"
+import { useAppShellLabels, type AppShellLabels } from "./config"
 
 type PageToolbarProps = Omit<React.ComponentProps<"section">, "children"> & {
   total: number
@@ -40,7 +40,7 @@ function PageToolbar({
   labels,
   ...props
 }: PageToolbarProps) {
-  const text = resolveLabels(labels)
+  const text = useAppShellLabels(labels)
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
   const searchName = searchLabel ?? text.search
   return (

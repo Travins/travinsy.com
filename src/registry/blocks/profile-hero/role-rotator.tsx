@@ -3,8 +3,17 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { useEffect, useState } from "react"
 
+import { resolveLabels, type ProfileHeroLabels } from "./config"
+
 /** 职业标签轮播：每 3.2 秒切换一次，可暂停；系统开启「减少动态效果」时不自动轮播。 */
-export function RoleRotator({ roles }: { roles: readonly string[] }) {
+function RoleRotator({
+  roles,
+  labels,
+}: {
+  roles: readonly string[]
+  labels?: Partial<ProfileHeroLabels>
+}) {
+  const text = resolveLabels(labels)
   const reducedMotion = useReducedMotion()
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -18,7 +27,11 @@ export function RoleRotator({ roles }: { roles: readonly string[] }) {
   }, [paused, reducedMotion, roles.length])
   if (!roles.length) return null
   return (
-    <div className="flex min-h-7 items-center gap-3 font-mono text-sm text-muted-foreground">
+    <div
+      data-slot="profile-hero-role-rotator"
+      data-paused={paused ? "" : undefined}
+      className="flex min-h-7 items-center gap-3 font-mono text-sm text-muted-foreground"
+    >
       <span aria-hidden="true" className="text-primary">
         ↳
       </span>
@@ -42,7 +55,8 @@ export function RoleRotator({ roles }: { roles: readonly string[] }) {
         <button
           type="button"
           onClick={() => setPaused((value) => !value)}
-          aria-label={paused ? "播放职业标签" : "暂停职业标签"}
+          aria-label={paused ? text.playRoles : text.pauseRoles}
+          aria-pressed={paused}
           className="inline-flex size-7 items-center justify-center rounded text-xs text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring motion-reduce:hidden"
         >
           <span aria-hidden="true">{paused ? "▶" : "❚❚"}</span>
@@ -51,3 +65,5 @@ export function RoleRotator({ roles }: { roles: readonly string[] }) {
     </div>
   )
 }
+
+export { RoleRotator }

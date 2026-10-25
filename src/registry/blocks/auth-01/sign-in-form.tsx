@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+import { formatLabel, resolveLabels, type Auth01Labels } from "./config"
 import {
   FormError,
   LinkButton,
@@ -20,7 +21,7 @@ import { codeSignInSchema, signInSchema } from "./schemas"
 import { SocialButtons, type SocialProvider } from "./social-buttons"
 import { useAsyncAction, useAuthForm } from "./use-auth-form"
 
-export type SignInValues =
+type SignInValues =
   | { method: "password"; account: string; password: string; remember: boolean }
   | { method: "code"; phone: string; code: string }
 
@@ -29,17 +30,21 @@ const CODE_COOLDOWN = 60
 function PasswordSignIn({
   onSignIn,
   onForgotPassword,
+  labels,
 }: {
   onSignIn: (values: SignInValues) => Promise<void>
   onForgotPassword: () => void
+  labels?: Partial<Auth01Labels>
 }) {
-  const form = useAuthForm(signInSchema, {
-    account: "",
-    password: "",
-    remember: false,
-  })
+  const text = resolveLabels(labels)
+  const form = useAuthForm(
+    signInSchema,
+    { account: "", password: "", remember: false },
+    { fallbackError: text.requestFailed },
+  )
   return (
     <form
+      data-slot="auth-01-sign-in-password"
       noValidate
       onSubmit={form.handleSubmit((values) =>
         onSignIn({ method: "password", ...values }),
@@ -49,10 +54,10 @@ function PasswordSignIn({
       <FormError message={form.formError} />
       <TextField
         id="sign-in-account"
-        label="用户名或邮箱"
+        label={text.accountLabel}
         icon={User}
         autoComplete="username"
-        placeholder="请输入用户名或邮箱"
+        placeholder={text.accountPlaceholder}
         value={form.values.account}
         error={form.errors.account}
         onChange={(event) => form.setValue("account", event.target.value)}
@@ -60,17 +65,18 @@ function PasswordSignIn({
       />
       <PasswordField
         id="sign-in-password"
-        label="密码"
+        label={text.passwordLabel}
         icon={Lock}
         autoComplete="current-password"
-        placeholder="请输入密码"
+        placeholder={text.passwordPlaceholder}
         value={form.values.password}
         error={form.errors.password}
         onChange={(event) => form.setValue("password", event.target.value)}
         onBlur={() => form.blur("password")}
+        labels={labels}
         labelAction={
           <LinkButton className="text-xs" onClick={onForgotPassword}>
-            忘记密码？
+            {text.forgotPassword}
           </LinkButton>
         }
       />
@@ -78,14 +84,16 @@ function PasswordSignIn({
         <Checkbox
           id="sign-in-remember"
           checked={form.values.remember}
-          onCheckedChange={(checked) => form.setValue("remember", checked === true)}
+          onCheckedChange={(checked) =>
+            form.setValue("remember", checked === true)
+          }
         />
         <Label htmlFor="sign-in-remember" className="cursor-pointer font-normal">
-          记住登录状态
+          {text.remember}
         </Label>
       </div>
-      <SubmitButton pending={form.pending} pendingText="登录中…">
-        登录
+      <SubmitButton pending={form.pending} pendingText={text.signInPending}>
+        {text.signInSubmit}
       </SubmitButton>
     </form>
   )
@@ -94,12 +102,19 @@ function PasswordSignIn({
 function CodeSignIn({
   onSignIn,
   onSendCode,
+  labels,
 }: {
   onSignIn: (values: SignInValues) => Promise<void>
   onSendCode: (phone: string) => Promise<void>
+  labels?: Partial<Auth01Labels>
 }) {
-  const form = useAuthForm(codeSignInSchema, { phone: "", code: "" })
-  const sender = useAsyncAction()
+  const text = resolveLabels(labels)
+  const form = useAuthForm(
+    codeSignInSchema,
+    { phone: "", code: "" },
+    { fallbackError: text.requestFailed },
+  )
+  const sender = useAsyncAction(text.requestFailed)
   const [seconds, setSeconds] = useState(0)
   useEffect(() => {
     if (seconds <= 0) return
@@ -114,6 +129,7 @@ function CodeSignIn({
   }
   return (
     <form
+      data-slot="auth-01-sign-in-code"
       noValidate
       onSubmit={form.handleSubmit((values) =>
         onSignIn({ method: "code", ...values }),
@@ -123,12 +139,12 @@ function CodeSignIn({
       <FormError message={form.formError ?? sender.error} />
       <TextField
         id="sign-in-phone"
-        label="手机号"
+        label={text.phoneLabel}
         icon={Smartphone}
         type="tel"
         inputMode="numeric"
         autoComplete="tel"
-        placeholder="请输入 11 位手机号"
+        placeholder={text.phonePlaceholder}
         value={form.values.phone}
         error={form.errors.phone}
         onChange={(event) => form.setValue("phone", event.target.value)}
@@ -136,12 +152,12 @@ function CodeSignIn({
       />
       <TextField
         id="sign-in-code"
-        label="验证码"
+        label={text.codeLabel}
         icon={KeyRound}
         inputMode="numeric"
         maxLength={6}
         autoComplete="one-time-code"
-        placeholder="6 位数字验证码"
+        placeholder={text.codePlaceholder}
         value={form.values.code}
         error={form.errors.code}
         onChange={(event) => form.setValue("code", event.target.value)}
@@ -155,21 +171,21 @@ function CodeSignIn({
             onClick={sendCode}
           >
             {sender.pending
-              ? "发送中…"
+              ? text.sendCodePending
               : seconds > 0
-                ? `${seconds}s 后重发`
-                : "获取验证码"}
+                ? formatLabel(text.resendCode, { seconds })
+                : text.sendCode}
           </Button>
         }
       />
-      <SubmitButton pending={form.pending} pendingText="登录中…">
-        登录
+      <SubmitButton pending={form.pending} pendingText={text.signInPending}>
+        {text.signInSubmit}
       </SubmitButton>
     </form>
   )
 }
 
-export function SignInForm({
+function SignInForm({
   socialProviders,
   allowSignUp,
   onSignIn,
@@ -177,6 +193,7 @@ export function SignInForm({
   onSocialSignIn,
   onForgotPassword,
   onSwitchToSignUp,
+  labels,
 }: {
   socialProviders: readonly SocialProvider[]
   allowSignUp: boolean
@@ -185,25 +202,32 @@ export function SignInForm({
   onSocialSignIn: (provider: SocialProvider) => Promise<void>
   onForgotPassword: () => void
   onSwitchToSignUp: () => void
+  labels?: Partial<Auth01Labels>
 }) {
+  const text = resolveLabels(labels)
   const [method, setMethod] = useState("password")
-  const social = useAsyncAction()
+  const social = useAsyncAction(text.requestFailed)
   return (
-    <div className="flex flex-col gap-5">
-      <ViewHeading title="欢迎回来" description="请输入您的账号信息登录" />
+    <div data-slot="auth-01-sign-in" className="flex flex-col gap-5">
+      <ViewHeading title={text.signInTitle} description={text.signInDescription} />
       <Tabs value={method} onValueChange={(value) => setMethod(String(value))}>
-        <TabsList aria-label="登录方式" className="w-full">
-          <TabsTrigger value="password">密码登录</TabsTrigger>
-          <TabsTrigger value="code">验证码登录</TabsTrigger>
+        <TabsList aria-label={text.signInMethodLabel} className="w-full">
+          <TabsTrigger value="password">{text.signInPasswordTab}</TabsTrigger>
+          <TabsTrigger value="code">{text.signInCodeTab}</TabsTrigger>
         </TabsList>
         <TabsContent value="password" className="pt-3">
           <PasswordSignIn
             onSignIn={onSignIn}
             onForgotPassword={onForgotPassword}
+            labels={labels}
           />
         </TabsContent>
         <TabsContent value="code" className="pt-3">
-          <CodeSignIn onSignIn={onSignIn} onSendCode={onSendCode} />
+          <CodeSignIn
+            onSignIn={onSignIn}
+            onSendCode={onSendCode}
+            labels={labels}
+          />
         </TabsContent>
       </Tabs>
       {socialProviders.length > 0 && (
@@ -212,24 +236,25 @@ export function SignInForm({
             role="separator"
             className="flex items-center gap-3 text-xs text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border"
           >
-            或
+            {text.socialDivider}
           </div>
           <FormError message={social.error} />
           <SocialButtons
             providers={socialProviders}
             pending={social.pending}
-            onSelect={(provider) =>
-              social.run(() => onSocialSignIn(provider))
-            }
+            onSelect={(provider) => social.run(() => onSocialSignIn(provider))}
           />
         </>
       )}
       {allowSignUp && (
         <p className="text-center text-sm text-muted-foreground">
-          还没有账号？{" "}
-          <LinkButton onClick={onSwitchToSignUp}>注册</LinkButton>
+          {text.noAccount}{" "}
+          <LinkButton onClick={onSwitchToSignUp}>{text.signUpLink}</LinkButton>
         </p>
       )}
     </div>
   )
 }
+
+export { SignInForm }
+export type { SignInValues }

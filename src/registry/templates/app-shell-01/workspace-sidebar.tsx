@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-import { formatLabel, resolveLabels, type AppShellLabels } from "./config"
+import { formatLabel, useAppShellLabels, type AppShellLabels } from "./config"
 import { NavLink, type NavLinkBehavior } from "./nav-link"
 import type { NavModule } from "./nav-types"
 
@@ -25,7 +25,7 @@ function WorkspaceNav({
   mobile = false,
   ...props
 }: WorkspaceNavProps & { mobile?: boolean }) {
-  const text = resolveLabels(labels)
+  const text = useAppShellLabels(labels)
   const navRef = React.useRef<HTMLElement>(null)
 
   // 移动端是横向滚动条：让当前项保持在可视区域中间
@@ -118,7 +118,7 @@ function WorkspaceSidebar({
   ...props
 }: WorkspaceNavProps) {
   const { module: group, labels } = props
-  const text = resolveLabels(labels)
+  const text = useAppShellLabels(labels)
   const GroupIcon = group.icon
   return (
     <aside

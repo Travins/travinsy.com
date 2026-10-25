@@ -1,13 +1,13 @@
 import { Gauge, Hexagon, ShieldCheck, Zap } from "lucide-react"
 import type { ReactNode } from "react"
 
-export type BrandFeature = {
+type BrandFeature = {
   icon: ReactNode
   title: string
   description: string
 }
 
-export type BrandConfig = {
+type BrandConfig = {
   /** 产品名，显示在 Logo 旁 */
   name: string
   /** Logo 节点：建议用 currentColor 的 SVG，这样在品牌面板（反色）和表单上方（正常色）都能看清 */
@@ -22,7 +22,7 @@ export type BrandConfig = {
 }
 
 /** 示例品牌：换成自己的产品信息，或通过 Auth01 的 brand 属性逐项覆盖。 */
-export const defaultBrand: BrandConfig = {
+const defaultBrand: BrandConfig = {
   name: "Acme",
   logo: <Hexagon strokeWidth={1.5} />,
   title: "把想法变成可用的产品",
@@ -46,3 +46,6 @@ export const defaultBrand: BrandConfig = {
   ],
   copyright: "© 2026 Acme. 保留所有权利。",
 }
+
+export { defaultBrand }
+export type { BrandConfig, BrandFeature }

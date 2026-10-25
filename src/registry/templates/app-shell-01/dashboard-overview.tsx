@@ -4,8 +4,6 @@ import {
   AlertTriangleIcon,
   CheckIcon,
   DownloadIcon,
-  GlobeIcon,
-  LayoutGridIcon,
   RefreshCwIcon,
   XIcon,
 } from "lucide-react"
@@ -22,12 +20,14 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+import { formatLabel, useAppShellLabels } from "./config"
 import { PageContent, PageHeader, PageTabs } from "./page-header"
 import {
+  dateRange,
   events,
   latencySeries,
+  scopes,
   stats,
-  statusLabels,
   type EventStatus,
 } from "./sample-data"
 
@@ -45,6 +45,12 @@ const statusVariants = {
 
 /** 状态徽标：图标 + 文字，不只依赖颜色。 */
 function StatusBadge({ status }: { status: EventStatus }) {
+  const text = useAppShellLabels()
+  const label = {
+    ok: text.eventOk,
+    warning: text.eventWarning,
+    error: text.eventError,
+  } satisfies Record<EventStatus, string>
   const Icon = statusIcons[status]
   return (
     <Badge
@@ -53,19 +59,14 @@ function StatusBadge({ status }: { status: EventStatus }) {
       variant={statusVariants[status]}
     >
       <Icon data-icon="inline-start" />
-      {statusLabels[status]}
+      {label[status]}
     </Badge>
   )
 }
 
-const scopes = [
-  { value: "all", label: "全局总览", icon: GlobeIcon },
-  { value: "orders", label: "订单中心", icon: LayoutGridIcon },
-  { value: "payments", label: "支付网关", icon: LayoutGridIcon },
-]
-
 /** 概览仪表盘：统计卡片 + 响应耗时柱图 + 最近事件表。纯 Tailwind 与已安装组件实现。 */
 function DashboardOverview() {
+  const text = useAppShellLabels()
   const [scope, setScope] = React.useState("all")
   const rows =
     scope === "all"
@@ -74,6 +75,7 @@ function DashboardOverview() {
           scope === "orders" ? event.app === "订单中心" : event.app === "支付网关",
         )
   const max = Math.max(...latencySeries)
+  const min = Math.min(...latencySeries)
 
   return (
     <div
@@ -81,18 +83,18 @@ function DashboardOverview() {
       className="flex min-w-0 flex-col"
     >
       <PageHeader
-        section="工作台"
-        title="概览"
-        description="近 24 小时的拨测质量与告警情况"
+        section={text.overviewSection}
+        title={text.overviewTitle}
+        description={text.overviewDescription}
         actions={
           <>
             <Button variant="outline">
               <DownloadIcon data-icon="inline-start" />
-              导出
+              {text.exportAction}
             </Button>
             <Button>
               <RefreshCwIcon data-icon="inline-start" />
-              刷新
+              {text.refreshAction}
             </Button>
           </>
         }
@@ -101,11 +103,11 @@ function DashboardOverview() {
         tabs={scopes}
         value={scope}
         onValueChange={setScope}
-        trailing="2025-06-01 ~ 2025-06-02"
+        trailing={dateRange}
       />
       <PageContent>
         <section
-          aria-label="关键指标"
+          aria-label={text.keyMetrics}
           className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
         >
           {stats.map((stat) => (
@@ -128,13 +130,13 @@ function DashboardOverview() {
 
         <Card>
           <CardHeader>
-            <CardTitle>响应耗时趋势</CardTitle>
-            <CardDescription>每小时 P50，单位 ms</CardDescription>
+            <CardTitle>{text.latencyTrend}</CardTitle>
+            <CardDescription>{text.latencyTrendUnit}</CardDescription>
           </CardHeader>
           <CardContent>
             <div
               role="img"
-              aria-label={`过去 24 小时响应耗时，最高 ${max} 毫秒，最低 ${Math.min(...latencySeries)} 毫秒`}
+              aria-label={formatLabel(text.latencyChartLabel, { max, min })}
               className="flex h-32 items-end gap-1"
             >
               {latencySeries.map((value, index) => (
@@ -160,19 +162,31 @@ function DashboardOverview() {
 
         <Card>
           <CardHeader>
-            <CardTitle>最近事件</CardTitle>
-            <CardDescription>按时间倒序，共 {rows.length} 条</CardDescription>
+            <CardTitle>{text.recentEvents}</CardTitle>
+            <CardDescription>
+              {formatLabel(text.recentEventsCount, { count: rows.length })}
+            </CardDescription>
           </CardHeader>
           <CardContent className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-left text-sm">
-              <caption className="sr-only">最近拨测事件</caption>
+              <caption className="sr-only">{text.eventsCaption}</caption>
               <thead className="text-xs text-muted-foreground">
                 <tr className="border-b border-border">
-                  <th scope="col" className="py-2 pr-4 font-medium">应用</th>
-                  <th scope="col" className="py-2 pr-4 font-medium">目标</th>
-                  <th scope="col" className="py-2 pr-4 font-medium">状态</th>
-                  <th scope="col" className="py-2 pr-4 text-right font-medium">耗时</th>
-                  <th scope="col" className="py-2 text-right font-medium">时间</th>
+                  <th scope="col" className="py-2 pr-4 font-medium">
+                    {text.columnApp}
+                  </th>
+                  <th scope="col" className="py-2 pr-4 font-medium">
+                    {text.columnTarget}
+                  </th>
+                  <th scope="col" className="py-2 pr-4 font-medium">
+                    {text.columnStatus}
+                  </th>
+                  <th scope="col" className="py-2 pr-4 text-right font-medium">
+                    {text.columnLatency}
+                  </th>
+                  <th scope="col" className="py-2 text-right font-medium">
+                    {text.columnTime}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -182,7 +196,9 @@ function DashboardOverview() {
                     <td className="py-2.5 pr-4 font-mono text-xs text-muted-foreground">
                       {row.target}
                     </td>
-                    <td className="py-2.5 pr-4"><StatusBadge status={row.status} /></td>
+                    <td className="py-2.5 pr-4">
+                      <StatusBadge status={row.status} />
+                    </td>
                     <td className="py-2.5 pr-4 text-right tabular-nums">{row.latency}</td>
                     <td className="py-2.5 text-right text-muted-foreground tabular-nums">
                       {row.time}

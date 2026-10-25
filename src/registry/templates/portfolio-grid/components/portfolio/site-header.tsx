@@ -1,10 +1,21 @@
 import { siteConfig } from "@/registry/templates/portfolio-grid/lib/site.config"
 import { GridContainer } from "@/registry/ui/grid-layout/grid-layout"
 
+import { resolveLabels, type PortfolioGridLabels } from "../../lib/config"
+
 /** 简易页头：站名 + 锚点导航。screen-line-bottom 放在内层，避免与 sticky 冲突。 */
-export function SiteHeader() {
+function SiteHeader({
+  labels,
+}: {
+  /** 覆盖默认文案，见 lib/config.ts 的 DEFAULT_LABELS */
+  labels?: Partial<PortfolioGridLabels>
+}) {
+  const text = resolveLabels(labels)
   return (
-    <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+    <header
+      data-slot="portfolio-grid-site-header"
+      className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60"
+    >
       <div className="screen-line-bottom">
         <GridContainer className="flex h-14 items-center justify-between gap-4 px-4 sm:px-6">
           <a
@@ -14,7 +25,11 @@ export function SiteHeader() {
           >
             {siteConfig.name}
           </a>
-          <nav aria-label="页面导航" className="flex items-center gap-1">
+          <nav
+            data-slot="portfolio-grid-site-nav"
+            aria-label={text.siteNav}
+            className="flex items-center gap-1"
+          >
             {siteConfig.nav.map((item) => (
               <a
                 key={item.href}
@@ -30,3 +45,5 @@ export function SiteHeader() {
     </header>
   )
 }
+
+export { SiteHeader }

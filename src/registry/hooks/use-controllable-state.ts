@@ -43,7 +43,7 @@ function useControllableState<T>({
       if (!isControlled) setUncontrolled(resolved)
       onChangeRef.current?.(resolved)
     },
-    [isControlled]
+    [isControlled],
   )
 
   return [value, setValue] as const

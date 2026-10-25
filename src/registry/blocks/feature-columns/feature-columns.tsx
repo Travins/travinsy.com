@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 
 import { GridColumns, GridSection } from "@/registry/ui/grid-layout/grid-layout"
 
-export type Feature = {
+type Feature = {
   title: string
   description: string
   /** 图标节点，显示在标题上方的小方块里 */
@@ -17,7 +17,7 @@ const columnClass: Record<number, string> = {
 }
 
 /** 虚线分隔的多栏介绍，窄屏自动堆叠。建议 2–4 项，放在 GridContainer 内使用。 */
-export function FeatureColumns({
+function FeatureColumns({
   title,
   items,
   id,
@@ -31,7 +31,7 @@ export function FeatureColumns({
   className?: string
 }) {
   return (
-    <GridSection id={id} className={className}>
+    <GridSection data-slot="feature-columns" id={id} className={className}>
       <div className="px-4 py-4 sm:px-6">
         <h2 className="text-sm font-medium">{title}</h2>
       </div>
@@ -39,6 +39,7 @@ export function FeatureColumns({
         {items.map((item) => (
           <div
             key={item.title}
+            data-slot="feature-columns-item"
             className="flex min-w-0 flex-col items-start gap-3 p-4 sm:px-6 sm:pb-6"
           >
             {item.icon ? (
@@ -59,3 +60,6 @@ export function FeatureColumns({
     </GridSection>
   )
 }
+
+export { FeatureColumns }
+export type { Feature }

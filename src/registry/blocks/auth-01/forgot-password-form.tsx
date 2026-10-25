@@ -5,28 +5,36 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 
-import {
-  FormError,
-  SubmitButton,
-  TextField,
-  ViewHeading,
-} from "./form-parts"
+import { resolveLabels, splitLabel, type Auth01Labels } from "./config"
+import { FormError, SubmitButton, TextField, ViewHeading } from "./form-parts"
 import { forgotPasswordSchema } from "./schemas"
 import { useAuthForm } from "./use-auth-form"
 
-export function ForgotPasswordForm({
+function ForgotPasswordForm({
   onForgotPassword,
   onSwitchToSignIn,
+  labels,
 }: {
   onForgotPassword: (email: string) => Promise<void>
   onSwitchToSignIn: () => void
+  labels?: Partial<Auth01Labels>
 }) {
-  const form = useAuthForm(forgotPasswordSchema, { email: "" })
+  const text = resolveLabels(labels)
+  const form = useAuthForm(
+    forgotPasswordSchema,
+    { email: "" },
+    { fallbackError: text.requestFailed },
+  )
   const [sentTo, setSentTo] = useState<string | null>(null)
 
   if (sentTo) {
+    const [before, after] = splitLabel(text.emailSentDescription, "email")
     return (
-      <div className="flex flex-col items-center gap-4 text-center" role="status">
+      <div
+        data-slot="auth-01-email-sent"
+        className="flex flex-col items-center gap-4 text-center"
+        role="status"
+      >
         <span
           aria-hidden="true"
           className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary [&_svg]:size-7"
@@ -34,23 +42,26 @@ export function ForgotPasswordForm({
           <MailCheck />
         </span>
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold tracking-tight">邮件已发送</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {text.emailSentTitle}
+          </h1>
           <p className="text-sm leading-6 text-muted-foreground">
-            我们已向 <span className="font-medium text-foreground">{sentTo}</span>{" "}
-            发送了重置密码的链接，请查收邮件。没收到？请检查垃圾邮件箱。
+            {before}
+            <span className="font-medium text-foreground">{sentTo}</span>
+            {after}
           </p>
         </div>
         <Button className="h-10 w-full" onClick={onSwitchToSignIn}>
-          返回登录
+          {text.backToSignIn}
         </Button>
       </div>
     )
   }
   return (
-    <div className="flex flex-col gap-5">
+    <div data-slot="auth-01-forgot-password" className="flex flex-col gap-5">
       <ViewHeading
-        title="找回密码"
-        description="输入注册时使用的邮箱，我们会发送重置链接"
+        title={text.forgotPasswordTitle}
+        description={text.forgotPasswordDescription}
       />
       <form
         noValidate
@@ -63,23 +74,28 @@ export function ForgotPasswordForm({
         <FormError message={form.formError} />
         <TextField
           id="forgot-email"
-          label="邮箱"
+          label={text.emailLabel}
           icon={Mail}
           type="email"
           autoComplete="email"
-          placeholder="name@example.com"
+          placeholder={text.emailPlaceholder}
           value={form.values.email}
           error={form.errors.email}
           onChange={(event) => form.setValue("email", event.target.value)}
           onBlur={() => form.blur("email")}
         />
-        <SubmitButton pending={form.pending} pendingText="发送中…">
-          发送重置链接
+        <SubmitButton
+          pending={form.pending}
+          pendingText={text.sendResetLinkPending}
+        >
+          {text.sendResetLink}
         </SubmitButton>
       </form>
       <Button variant="ghost" className="h-10" onClick={onSwitchToSignIn}>
-        返回登录
+        {text.backToSignIn}
       </Button>
     </div>
   )
 }
+
+export { ForgotPasswordForm }

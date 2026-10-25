@@ -2,16 +2,21 @@ import { useId, type ReactNode } from "react"
 
 import { GridSection } from "@/registry/ui/grid-layout/grid-layout"
 
+import type { ProfileHeroLabels } from "./config"
 import { RoleRotator } from "./role-rotator"
 
-/** 个人封面：斜纹横幅 + 头像 + 名字 + 简介 + 职业标签轮播。放在 GridContainer 内使用。 */
-export function ProfileHero({
+/**
+ * 个人封面：斜纹横幅 + 头像 + 名字 + 简介 + 职业标签轮播。放在 GridContainer 内使用。
+ * 名字、简介、职业标签都是页面数据；按钮文案通过 labels 覆盖。
+ */
+function ProfileHero({
   name,
   bio,
   roles = [],
   initials,
   avatar,
   tagline = "DESIGN · CODE · REPEAT",
+  labels,
   className,
 }: {
   /** 显示的名字，会作为页面的 h1 */
@@ -26,12 +31,19 @@ export function ProfileHero({
   avatar?: ReactNode
   /** 横幅中间的装饰文字，设为空字符串可隐藏 */
   tagline?: string
+  /** 覆盖默认文案，见 config.ts 的 DEFAULT_LABELS */
+  labels?: Partial<ProfileHeroLabels>
   className?: string
 }) {
   const titleId = useId()
   return (
-    <GridSection aria-labelledby={titleId} className={className}>
+    <GridSection
+      data-slot="profile-hero"
+      aria-labelledby={titleId}
+      className={className}
+    >
       <div
+        data-slot="profile-hero-banner"
         aria-hidden="true"
         className="relative flex h-32 items-center justify-center overflow-hidden bg-muted/20 sm:h-44"
       >
@@ -65,9 +77,11 @@ export function ProfileHero({
           <p className="text-sm leading-7 text-pretty text-muted-foreground sm:text-base">
             {bio}
           </p>
-          <RoleRotator roles={roles} />
+          <RoleRotator roles={roles} labels={labels} />
         </div>
       </div>
     </GridSection>
   )
 }
+
+export { ProfileHero }

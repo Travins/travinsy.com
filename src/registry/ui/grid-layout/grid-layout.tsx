@@ -12,7 +12,7 @@ function GridContainer({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="grid-container"
       className={cn(
         "mx-auto w-full max-w-[var(--grid-width,48rem)] border-x border-edge",
-        className
+        className,
       )}
       {...props}
     />
@@ -31,7 +31,12 @@ function GridSection({
   return (
     <section
       data-slot="grid-section"
-      className={cn("screen-line-bottom", topLine && "screen-line-top", className)}
+      data-top-line={topLine}
+      className={cn(
+        "screen-line-bottom",
+        topLine && "screen-line-top",
+        className,
+      )}
       {...props}
     />
   )
@@ -62,7 +67,7 @@ function GridColumns({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="grid-columns"
       className={cn(
         "grid grid-cols-1 divide-y divide-dashed divide-edge sm:grid-cols-2 sm:divide-x sm:divide-y-0",
-        className
+        className,
       )}
       {...props}
     />

@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-// 校验规则集中在这里：想换手机号规则、密码策略，只改这个文件
+// 校验规则与提示集中在这里：想换手机号规则、密码策略，只改这个文件
 const email = z
   .string()
   .trim()
@@ -19,18 +19,18 @@ const password = z
   .regex(/[A-Za-z]/, "密码需要包含字母")
   .regex(/\d/, "密码需要包含数字")
 
-export const signInSchema = z.object({
+const signInSchema = z.object({
   account: z.string().trim().min(1, "请输入用户名或邮箱"),
   password: z.string().min(1, "请输入密码"),
   remember: z.boolean(),
 })
 
-export const codeSignInSchema = z.object({
+const codeSignInSchema = z.object({
   phone,
   code: z.string().trim().regex(/^\d{6}$/, "请输入 6 位数字验证码"),
 })
 
-export const signUpSchema = z
+const signUpSchema = z
   .object({
     name: z.string().trim().min(2, "姓名至少 2 个字符"),
     email,
@@ -43,4 +43,11 @@ export const signUpSchema = z
     path: ["confirm"],
   })
 
-export const forgotPasswordSchema = z.object({ email })
+const forgotPasswordSchema = z.object({ email })
+
+export {
+  codeSignInSchema,
+  forgotPasswordSchema,
+  signInSchema,
+  signUpSchema,
+}

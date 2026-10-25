@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
-import { formatLabel, resolveLabels, type AppShellLabels } from "./config"
+import { formatLabel, useAppShellLabels, type AppShellLabels } from "./config"
 
 type ServiceState = "healthy" | "warning" | "unavailable" | "unknown"
 
@@ -73,7 +73,7 @@ function HeaderStatus({
   className,
   labels,
 }: HeaderStatusProps) {
-  const text = resolveLabels(labels)
+  const text = useAppShellLabels(labels)
   const overall =
     severity.find((state) => services.some((s) => s.state === state)) ??
     "unknown"

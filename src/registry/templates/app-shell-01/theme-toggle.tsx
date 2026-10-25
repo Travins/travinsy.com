@@ -6,7 +6,7 @@ import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
 
-import { resolveLabels, type AppShellLabels } from "./config"
+import { useAppShellLabels, type AppShellLabels } from "./config"
 
 /** 亮 / 暗模式切换，依赖项目里已有的 next-themes ThemeProvider。用 CSS 切换图标，避免水合不一致。 */
 function ThemeToggle({
@@ -16,7 +16,7 @@ function ThemeToggle({
   labels?: Partial<AppShellLabels>
 }) {
   const { resolvedTheme, setTheme } = useTheme()
-  const { toggleTheme } = resolveLabels(labels)
+  const { toggleTheme } = useAppShellLabels(labels)
   return (
     <Button
       data-slot="app-shell-theme-toggle"

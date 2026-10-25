@@ -40,17 +40,9 @@ export default function Page() {
 }
 ```
 
-### 容器宽度
+`GridSection` 默认只画底部横线；需要给第一行补一条顶部横线时传 `topLine`。
 
-通过父元素上的 `--grid-width` 变量调整宽度，默认 `48rem`。文档页面使用 `80rem`。`GridColumns` 在窄屏下堆叠，`sm` 起显示两列。
-
-### 主题与工具类
-
-安装命令会注册 `--edge` 变量、`border-edge` 主题映射，以及 `screen-line-top`、`screen-line-bottom`、`bg-hatch` 三个 Tailwind CSS v4 工具类。线条颜色随前景色和亮暗模式变化。
-
-全宽横线需要页面的 `html` 设置 `overflow-x: clip`；Registry 安装会一并写入该规则。
-
-## Props
+## API
 
 四个组件都支持对应 HTML 元素的原生属性，包括 `className`、`children`、`id` 和无障碍属性。
 
@@ -69,6 +61,36 @@ export default function Page() {
 ### GridColumns
 
 <PropsTable name="grid-layout" component="GridColumns" />
+
+### data-slot 与状态
+
+| 组件 | `data-slot` | 其他属性 |
+| --- | --- | --- |
+| `GridContainer` | `grid-container` | — |
+| `GridSection` | `grid-section` | `data-top-line`（`true` / `false`） |
+| `GridSeparator` | `grid-separator` | — |
+| `GridColumns` | `grid-columns` | — |
+
+这四个属性都可以作为父级选择器的锚点，例如 `[&>[data-slot=grid-section]]:px-4`。
+
+## 可访问性
+
+- 这四个组件只提供容器，不添加 `role`，也不改变文档结构：`GridSection` 渲染真正的 `<section>`，`GridContainer`、`GridSeparator`、`GridColumns` 渲染 `<div>`。
+- 行是页面骨架，语义需要自己补：给 `GridSection` 加 `aria-label` 或配合 `aria-labelledby` 指向行内标题，读屏才会把这一行念成区域。原生属性会原样透传。
+- `GridSeparator` 是纯装饰，自带 `aria-hidden`，不会被读屏朗读，也不进入 Tab 顺序；分隔符里的斜纹在 `prefers-reduced-motion` 下也没有动画，静态呈现。
+- 线条与文字的颜色都来自主题变量（`--edge`、`border-edge`），在亮暗模式和 10 个颜色主题下对比度一致，不依赖颜色传达信息。
+
+## 注意事项
+
+### 容器宽度
+
+通过父元素上的 `--grid-width` 变量调整宽度，默认 `48rem`。文档页面使用 `80rem`。`GridColumns` 在窄屏下堆叠，`sm` 起显示两列。
+
+### 主题与工具类
+
+安装命令会注册 `--edge` 变量、`border-edge` 主题映射，以及 `screen-line-top`、`screen-line-bottom`、`bg-hatch` 三个 Tailwind CSS v4 工具类。线条颜色随前景色和亮暗模式变化。
+
+全宽横线需要页面的 `html` 设置 `overflow-x: clip`；Registry 安装会一并写入该规则。
 
 ## 源码
 

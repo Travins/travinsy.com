@@ -4,11 +4,11 @@
  */
 
 /** 社交链接支持的图标：github / x / mail / link */
-export type SocialIcon = "github" | "x" | "mail" | "link"
+type SocialIcon = "github" | "x" | "mail" | "link"
 /** 「我在做什么」支持的图标：code / bot / server / layout */
-export type FocusIcon = "code" | "bot" | "server" | "layout"
+type FocusIcon = "code" | "bot" | "server" | "layout"
 
-export const siteConfig = {
+const siteConfig = {
   name: "Your Name",
   /** 头像方块里显示的缩写，1–2 个字符 */
   initials: "Y",
@@ -73,4 +73,7 @@ export const siteConfig = {
   footer: "用线条网格搭建",
 }
 
-export type SiteConfig = typeof siteConfig
+type SiteConfig = typeof siteConfig
+
+export { siteConfig }
+export type { FocusIcon, SiteConfig, SocialIcon }

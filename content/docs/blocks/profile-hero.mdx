@@ -5,8 +5,6 @@ description: 首页封面区：斜纹横幅、头像、名字、简介与职业�
 
 <BlockViewer name="profile-hero" />
 
-## 简介
-
 `ProfileHero` 是本站首页最上面的那一屏：顶部一条斜纹横幅，压着一个缩写头像，下面是名字、简介和一行会自动轮播的职业标签。
 
 它只负责「一行内容」，所以必须放在 `GridContainer` 里使用，底部那条横跨屏幕的线由 `GridSection` 自带。
@@ -16,14 +14,6 @@ description: 首页封面区：斜纹横幅、头像、名字、简介与职业�
 <InstallCommand name="profile-hero" />
 
 安装会一并带上 [线条网格布局](/components/grid-layout/)（`GridSection` 等原语和 `--edge` 变量），并安装 npm 包 `motion`。
-
-## 文件结构
-
-```text
-components/profile-hero/
-├── profile-hero.tsx   # 封面区本体（服务端组件）
-└── role-rotator.tsx   # 职业标签轮播（客户端组件，用到 motion）
-```
 
 ## 用法
 
@@ -45,7 +35,9 @@ export default function Page() {
 }
 ```
 
-## Props
+## API
+
+### ProfileHero
 
 | 属性 | 类型 | 说明 |
 | --- | --- | --- |
@@ -55,9 +47,41 @@ export default function Page() {
 | `initials` | `string` | 头像位置的缩写，默认取名字的第一个字符 |
 | `avatar` | `ReactNode` | 自定义头像节点，传入后替换缩写方块 |
 | `tagline` | `string` | 横幅中间的装饰文字，默认 `DESIGN · CODE · REPEAT`，传空字符串隐藏 |
+| `labels` | `Partial<ProfileHeroLabels>` | 覆盖默认文案，见下方 labels |
 | `className` | `string` | 追加到外层 `GridSection` |
 
-## 如何自定义
+### labels
+
+键在 `config.ts` 的 `DEFAULT_LABELS` 里，`labels` 会原样传给内部的 `RoleRotator`。
+
+| 键 | 默认值 | 说明 |
+| --- | --- | --- |
+| `pauseRoles` | `暂停职业标签` | 轮播暂停按钮的 `aria-label` |
+| `playRoles` | `播放职业标签` | 暂停后按钮的 `aria-label` |
+
+### data-slot
+
+根元素是 `profile-hero`（覆盖 `GridSection` 的 `grid-section`），横幅是 `profile-hero-banner`，轮播行是 `profile-hero-role-rotator`（暂停时带 `data-paused`）。
+
+## 可访问性
+
+- 名字是页面的 `h1`，区块用 `aria-labelledby` 指向它；横幅、头像缩写、装饰符号都是 `aria-hidden`。
+- 职业标签对读屏一次性读出全部（`sr-only`），视觉轮播部分对读屏隐藏，不会重复播报。
+- 暂停 / 播放按钮是原生 `button`，带随状态变化的中文名称和 `aria-pressed`，`focus-visible` 有可见轮廓。
+- 系统开启「减少动态效果」时不自动轮播，并隐藏暂停按钮（此时也不需要暂停）。
+
+## 注意事项
+
+### 文件结构
+
+```text
+components/profile-hero/
+├── profile-hero.tsx   # 封面区本体（服务端组件）
+├── role-rotator.tsx   # 职业标签轮播（客户端组件，用到 motion）
+└── config.ts          # 默认文案 DEFAULT_LABELS
+```
+
+### 如何自定义
 
 - **换成真实头像**：传入 `avatar`。保持 `-mt-10`、`size-20`、`ring-4 ring-background` 的组合，头像才会压在横幅上沿。
 

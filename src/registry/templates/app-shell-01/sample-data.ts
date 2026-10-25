@@ -1,5 +1,7 @@
 /** 演示用假数据：替换成你自己的接口数据即可。 */
 
+import { GlobeIcon, LayoutGridIcon } from "lucide-react"
+
 type EventStatus = "ok" | "warning" | "error"
 
 type EventRow = {
@@ -9,12 +11,6 @@ type EventRow = {
   status: EventStatus
   latency: string
   time: string
-}
-
-const statusLabels: Record<EventStatus, string> = {
-  ok: "正常",
-  warning: "需关注",
-  error: "异常",
 }
 
 const events: EventRow[] = [
@@ -45,11 +41,28 @@ const latencySeries = [
   160, 172, 149, 138, 130, 127, 121, 116, 112,
 ]
 
+/** 概览页标签条：value 与 events 的 app 字段对应，替换数据时一起改 */
+const scopes = [
+  { value: "all", label: "全局总览", icon: GlobeIcon },
+  { value: "orders", label: "订单中心", icon: LayoutGridIcon },
+  { value: "payments", label: "支付网关", icon: LayoutGridIcon },
+]
+
+/** 概览页标签条右侧的时间范围说明 */
+const dateRange = "2025-06-01 ~ 2025-06-02"
+
 const services = [
   { id: "probe", label: "拨测服务", state: "healthy" as const, detail: "全部节点在线" },
   { id: "worker", label: "任务调度", state: "warning" as const, detail: "队列积压 1 200 条，正在消化" },
   { id: "notify", label: "通知通道", state: "healthy" as const, detail: "站内信、邮件均可用" },
 ]
 
-export { events, latencySeries, services, stats, statusLabels }
+export {
+  dateRange,
+  events,
+  latencySeries,
+  scopes,
+  services,
+  stats,
+}
 export type { EventRow, EventStatus }

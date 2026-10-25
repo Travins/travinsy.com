@@ -5,6 +5,7 @@ import { Lock, Mail, User } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
+import { resolveLabels, type Auth01Labels } from "./config"
 import {
   FormError,
   LinkButton,
@@ -17,29 +18,36 @@ import { PasswordStrength } from "./password-strength"
 import { signUpSchema } from "./schemas"
 import { useAuthForm } from "./use-auth-form"
 
-export type SignUpValues = { name: string; email: string; password: string }
+type SignUpValues = { name: string; email: string; password: string }
 
-export function SignUpForm({
+function SignUpForm({
   termsHref,
   privacyHref,
   onSignUp,
   onSwitchToSignIn,
+  labels,
 }: {
   termsHref: string
   privacyHref: string
   onSignUp: (values: SignUpValues) => Promise<void>
   onSwitchToSignIn: () => void
+  labels?: Partial<Auth01Labels>
 }) {
-  const form = useAuthForm(signUpSchema, {
-    name: "",
-    email: "",
-    password: "",
-    confirm: "",
-    terms: false,
-  })
+  const text = resolveLabels(labels)
+  const form = useAuthForm(
+    signUpSchema,
+    {
+      name: "",
+      email: "",
+      password: "",
+      confirm: "",
+      terms: false,
+    },
+    { fallbackError: text.requestFailed },
+  )
   return (
-    <div className="flex flex-col gap-5">
-      <ViewHeading title="创建账号" description="填写以下信息，几步完成注册" />
+    <div data-slot="auth-01-sign-up" className="flex flex-col gap-5">
+      <ViewHeading title={text.signUpTitle} description={text.signUpDescription} />
       <form
         noValidate
         onSubmit={form.handleSubmit(({ name, email, password }) =>
@@ -50,10 +58,10 @@ export function SignUpForm({
         <FormError message={form.formError} />
         <TextField
           id="sign-up-name"
-          label="姓名"
+          label={text.nameLabel}
           icon={User}
           autoComplete="name"
-          placeholder="请输入姓名"
+          placeholder={text.namePlaceholder}
           value={form.values.name}
           error={form.errors.name}
           onChange={(event) => form.setValue("name", event.target.value)}
@@ -61,11 +69,11 @@ export function SignUpForm({
         />
         <TextField
           id="sign-up-email"
-          label="邮箱"
+          label={text.emailLabel}
           icon={Mail}
           type="email"
           autoComplete="email"
-          placeholder="name@example.com"
+          placeholder={text.emailPlaceholder}
           value={form.values.email}
           error={form.errors.email}
           onChange={(event) => form.setValue("email", event.target.value)}
@@ -74,27 +82,29 @@ export function SignUpForm({
         <div className="flex flex-col gap-2">
           <PasswordField
             id="sign-up-password"
-            label="密码"
+            label={text.passwordLabel}
             icon={Lock}
             autoComplete="new-password"
-            placeholder="至少 8 位，包含字母和数字"
+            placeholder={text.newPasswordPlaceholder}
             value={form.values.password}
             error={form.errors.password}
             onChange={(event) => form.setValue("password", event.target.value)}
             onBlur={() => form.blur("password")}
+            labels={labels}
           />
-          <PasswordStrength password={form.values.password} />
+          <PasswordStrength password={form.values.password} labels={labels} />
         </div>
         <PasswordField
           id="sign-up-confirm"
-          label="确认密码"
+          label={text.confirmPasswordLabel}
           icon={Lock}
           autoComplete="new-password"
-          placeholder="再次输入密码"
+          placeholder={text.confirmPasswordPlaceholder}
           value={form.values.confirm}
           error={form.errors.confirm}
           onChange={(event) => form.setValue("confirm", event.target.value)}
           onBlur={() => form.blur("confirm")}
+          labels={labels}
         />
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -103,19 +113,27 @@ export function SignUpForm({
               checked={form.values.terms}
               aria-invalid={form.errors.terms ? true : undefined}
               aria-describedby={form.errors.terms ? "sign-up-terms-error" : undefined}
-              onCheckedChange={(checked) => form.setValue("terms", checked === true)}
+              onCheckedChange={(checked) =>
+                form.setValue("terms", checked === true)
+              }
             />
             <Label
               htmlFor="sign-up-terms"
               className="cursor-pointer leading-5 font-normal"
             >
-              我已阅读并同意
-              <a href={termsHref} className="text-primary underline-offset-4 hover:underline">
-                服务条款
+              {text.termsPrefix}
+              <a
+                href={termsHref}
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                {text.termsOfService}
               </a>
-              和
-              <a href={privacyHref} className="text-primary underline-offset-4 hover:underline">
-                隐私政策
+              {text.termsConjunction}
+              <a
+                href={privacyHref}
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                {text.privacyPolicy}
               </a>
             </Label>
           </div>
@@ -125,13 +143,17 @@ export function SignUpForm({
             </p>
           ) : null}
         </div>
-        <SubmitButton pending={form.pending} pendingText="注册中…">
-          注册
+        <SubmitButton pending={form.pending} pendingText={text.signUpPending}>
+          {text.signUpSubmit}
         </SubmitButton>
       </form>
       <p className="text-center text-sm text-muted-foreground">
-        已有账号？ <LinkButton onClick={onSwitchToSignIn}>登录</LinkButton>
+        {text.haveAccount}{" "}
+        <LinkButton onClick={onSwitchToSignIn}>{text.signInLink}</LinkButton>
       </p>
     </div>
   )
 }
+
+export { SignUpForm }
+export type { SignUpValues }

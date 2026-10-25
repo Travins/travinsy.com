@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { formatLabel, resolveLabels, type AppShellLabels } from "./config"
+import { formatLabel, useAppShellLabels, type AppShellLabels } from "./config"
 
 type AppShellUser = {
   name: string
@@ -33,7 +33,7 @@ type UserMenuProps = {
 
 /** 头像 + 下拉菜单：账号信息、自定义菜单项（children）、退出登录。 */
 function UserMenu({ user, onSignOut, labels, children }: UserMenuProps) {
-  const text = resolveLabels(labels)
+  const text = useAppShellLabels(labels)
   const initial = user.name.trim().slice(0, 1).toUpperCase() || "U"
   return (
     <DropdownMenu>

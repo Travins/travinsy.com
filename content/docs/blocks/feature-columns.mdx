@@ -5,8 +5,6 @@ description: 虚线分隔的 2–4 栏介绍（如「我在做什么」），窄
 
 <BlockViewer name="feature-columns" />
 
-## 简介
-
 `FeatureColumns` 是一个带标题的多栏介绍：每栏一个图标方块、一个小标题和一段说明，栏与栏之间用虚线分隔，窄屏自动变成上下堆叠。
 
 ## 安装
@@ -14,13 +12,6 @@ description: 虚线分隔的 2–4 栏介绍（如「我在做什么」），窄
 <InstallCommand name="feature-columns" />
 
 只依赖 [线条网格布局](/components/grid-layout/)，没有额外的 npm 包。
-
-## 文件结构
-
-```text
-components/feature-columns/
-└── feature-columns.tsx
-```
 
 ## 用法
 
@@ -45,7 +36,7 @@ export default function Page() {
 }
 ```
 
-## Props
+## API
 
 | 属性 | 类型 | 说明 |
 | --- | --- | --- |
@@ -54,7 +45,28 @@ export default function Page() {
 | `id` | `string` | 锚点 id，供页头导航跳转 |
 | `className` | `string` | 追加到外层 `GridSection` |
 
-## 如何自定义
+区块里的文字全部来自 `title` 与 `items`（页面数据），没有内置文案，所以不需要 `labels`。
+
+### data-slot
+
+根元素是 `feature-columns`（覆盖 `GridSection` 的 `grid-section`），每一栏是 `feature-columns-item`。
+
+## 可访问性
+
+- 区块标题渲染为 `h2`，每一栏的标题是 `h3`，标题层级连续。
+- 图标方块是装饰（`aria-hidden`），信息由标题与说明文字承载，不依赖图标或颜色。
+- 栏与栏之间的分隔是纯样式（`divide-dashed`），不影响读屏顺序。
+
+## 注意事项
+
+### 文件结构
+
+```text
+components/feature-columns/
+└── feature-columns.tsx
+```
+
+### 如何自定义
 
 - **列数**：`items` 的数量决定 `sm` 以上的列数（2、3、4 栏），其余数量回退为 3 栏。想要固定列数，直接改文件里的 `columnClass`。
 - **不要图标**：`icon` 可省略，这一栏就只有标题和说明。

@@ -109,6 +109,10 @@ export function Workspace() {
 
 `default*` 与 `initialMessages` 只用于初始化。更换会话或 transport 配置时，可通过 Provider 的 React `key` 重新创建实例。所有状态仅在当前 Provider 生命周期内保存，刷新后重置。
 
+### labels
+
+`labels` 接收 `Partial<AgentChatLabels>`，覆盖 `config.ts` 中 `DEFAULT_LABELS` 的任意几项（面板标题、输入框占位、按钮名称、状态文案等），例如 `labels={{ title: "工程助手", welcome: "今天要解决什么问题？" }}`。`thought` 支持 `{seconds}` 占位符；完整键列表见 `config.ts`。
+
 ### AgentChatPanel
 
 <PropsTable name="agent-chat-01" component="AgentChatPanel" />

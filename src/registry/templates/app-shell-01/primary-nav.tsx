@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
-import { resolveLabels, type AppShellLabels } from "./config"
+import { useAppShellLabels, type AppShellLabels } from "./config"
 import { NavLink, type NavLinkBehavior } from "./nav-link"
 import {
   isModule,
@@ -41,7 +41,7 @@ function PrimaryNav({
   labels,
   ...props
 }: PrimaryNavProps) {
-  const text = resolveLabels(labels)
+  const text = useAppShellLabels(labels)
 
   function renderEntry(entry: NavEntry) {
     const isGroup = isModule(entry)

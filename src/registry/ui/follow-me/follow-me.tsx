@@ -1,24 +1,35 @@
 import { cn } from "@/lib/utils"
 
 /** 放在内容容器外侧的手写标注，不参与交互和无障碍阅读。 */
-export function FollowMe({ className }: { className?: string }) {
+function FollowMe({
+  className,
+  label = "follow me",
+}: {
+  className?: string
+  /** 手写文字内容，默认 `follow me` */
+  label?: string
+}) {
   return (
     <div
+      data-slot="follow-me"
       aria-hidden="true"
       className={cn(
         "pointer-events-none absolute top-1 -left-32 hidden w-28 -rotate-12 text-muted-foreground lg:block",
         className,
       )}
     >
+      {/* 手写体来自系统字体，用工具类表达，才能跟 className 一起被覆盖。 */}
       <span
-        className="text-2xl italic"
-        style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
+        data-slot="follow-me-label"
+        className="[font-family:Bradley_Hand,Segoe_Print,cursive] text-2xl italic"
       >
-        follow me
+        {label}
       </span>
       <svg
+        data-slot="follow-me-arrow"
         viewBox="0 0 100 60"
         fill="none"
+        aria-hidden="true"
         className="ml-5 h-14 w-24"
         stroke="currentColor"
         strokeWidth="1.3"
@@ -30,3 +41,5 @@ export function FollowMe({ className }: { className?: string }) {
     </div>
   )
 }
+
+export { FollowMe }

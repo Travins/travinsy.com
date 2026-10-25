@@ -1,8 +1,9 @@
 import type { ComponentProps, ReactNode } from "react"
+
 import { cn } from "@/lib/utils"
 
 /** 有明确名称和键盘焦点的图标链接方块。 */
-export function IconLink({
+function IconLink({
   label,
   children,
   className,
@@ -14,6 +15,7 @@ export function IconLink({
 }) {
   return (
     <a
+      data-slot="icon-link"
       aria-label={label}
       title={label}
       className={cn(
@@ -22,7 +24,11 @@ export function IconLink({
       )}
       {...props}
     >
-      <span aria-hidden="true">{children}</span>
+      <span data-slot="icon-link-icon" aria-hidden="true">
+        {children}
+      </span>
     </a>
   )
 }
+
+export { IconLink }

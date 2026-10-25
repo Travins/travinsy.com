@@ -3,29 +3,31 @@
 import { useEffect, useState } from "react"
 
 /** 根据访客当地时间问候，首屏使用一致的静态文案以避免水合差异。 */
-export function Greeting({
+function Greeting({
   fallback = "你好",
   suffix = "，很高兴在这里遇见你。",
+  morning = "早上好",
+  noon = "中午好",
+  afternoon = "下午好",
+  evening = "晚上好",
 }: {
   /** 首屏与挂载前显示的静态文案，需保持中性以避免水合差异 */
   fallback?: string
   /** 问候语之后拼接的文本，默认带一个逗号 */
   suffix?: string
+  /** 05:00–10:59 的问候语，默认 `早上好` */
+  morning?: string
+  /** 11:00–13:59 的问候语，默认 `中午好` */
+  noon?: string
+  /** 14:00–17:59 的问候语，默认 `下午好` */
+  afternoon?: string
+  /** 18:00–次日 04:59 的问候语，默认 `晚上好` */
+  evening?: string
 }) {
-  const [greeting, setGreeting] = useState(fallback)
+  // 只保存小时数：挂载前为 null，用它区分服务端静态文案与客户端时段文案。
+  const [hour, setHour] = useState<number | null>(null)
   useEffect(() => {
-    const update = () => {
-      const hour = new Date().getHours()
-      setGreeting(
-        hour >= 5 && hour < 11
-          ? "早上好"
-          : hour >= 11 && hour < 14
-            ? "中午好"
-            : hour >= 14 && hour < 18
-              ? "下午好"
-              : "晚上好",
-      )
-    }
+    const update = () => setHour(new Date().getHours())
     const first = window.setTimeout(update, 0)
     const timer = window.setInterval(update, 60_000)
     return () => {
@@ -33,10 +35,22 @@ export function Greeting({
       window.clearInterval(timer)
     }
   }, [])
+  const greeting =
+    hour === null
+      ? fallback
+      : hour >= 5 && hour < 11
+        ? morning
+        : hour >= 11 && hour < 14
+          ? noon
+          : hour >= 14 && hour < 18
+            ? afternoon
+            : evening
   return (
-    <>
+    <span data-slot="greeting" data-state={hour === null ? "pending" : "ready"}>
       {greeting}
       {suffix}
-    </>
+    </span>
   )
 }
+
+export { Greeting }

@@ -5,8 +5,6 @@ description: 一行社交图标方块，配合容器外侧的手写体 follow me
 
 <BlockViewer name="social-follow" />
 
-## 简介
-
 `SocialFollow` 把一组图标链接排成一行，左侧容器外的空白处（gutter）放一个手写体的 `follow me` 加箭头。装饰只在 `lg` 以上显示，纯装饰，读屏会跳过。
 
 > 预览里能看到手写体，是因为 iframe 宽度够大。窄屏下装饰会自动隐藏。
@@ -16,14 +14,6 @@ description: 一行社交图标方块，配合容器外侧的手写体 follow me
 <InstallCommand name="social-follow" />
 
 会同时安装 [线条网格布局](/components/grid-layout/)、[图标链接](/components/icon-link/)、[手写标注](/components/follow-me/) 三个依赖。
-
-## 文件结构
-
-```text
-components/social-follow/
-├── social-follow.tsx   # 区块本体
-└── brand-icons.tsx     # GitHub、X 的 SVG 标识
-```
 
 ## 用法
 
@@ -48,16 +38,47 @@ export default function Page() {
 }
 ```
 
-## Props
+## API
+
+### SocialFollow
 
 | 属性 | 类型 | 说明 |
 | --- | --- | --- |
 | `socials` | `{ name: string; href: string; icon: ReactNode }[]` | 链接列表；`name` 同时作为读屏名称和悬停提示 |
 | `note` | `string` | 右侧小字，默认「在别处，也在这里」，传空字符串隐藏 |
+| `labels` | `Partial<SocialFollowLabels>` | 覆盖默认文案，见下方 labels |
 | `className` | `string` | 追加到外层 `GridSection` |
 
-## 如何自定义
+### labels
+
+| 键 | 默认值 | 说明 |
+| --- | --- | --- |
+| `socialLinks` | `社交链接` | 区块的 `aria-label` |
+
+### data-slot
+
+根元素是 `social-follow`（覆盖 `GridSection` 的 `grid-section`）；品牌图标分别是 `social-follow-github-mark`、`social-follow-x-mark`。
+
+## 可访问性
+
+- 区块用带 `aria-label` 的 `section` 包裹，读屏会播报「社交链接」。
+- 每个图标链接的名称来自 `socials[].name`，同时作为 Tooltip 文字；图标本身 `aria-hidden`。
+- 所有链接默认 `target="_blank"` 并带 `rel="noreferrer noopener"`；外链行为由 `IconLink` 统一处理。
+- `follow me` 手写装饰是纯装饰，对读屏隐藏。
+
+## 注意事项
+
+### 文件结构
+
+```text
+components/social-follow/
+├── social-follow.tsx   # 区块本体
+├── brand-icons.tsx     # GitHub、X 的 SVG 标识
+└── config.ts           # 默认文案 DEFAULT_LABELS
+```
+
+### 如何自定义
 
 - **换图标**：`icon` 接收任意节点，用 `lucide-react`、自己的 SVG 都可以。品牌图标放在 `brand-icons.tsx`，想加别的平台就往里补。
 - **去掉装饰**：删掉 `social-follow.tsx` 里的 `<FollowMe />` 即可，也不再需要 `follow-me` 依赖。
-- 所有链接默认 `target="_blank"`，并带上 `rel="noreferrer noopener"`。
+- **改读屏名称**：用 `labels={{ socialLinks: "Social links" }}` 覆盖，不用改组件。

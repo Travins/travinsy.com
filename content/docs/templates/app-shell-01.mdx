@@ -26,6 +26,37 @@ description: 提炼自企业监控平台的控制台外壳：固定顶栏、可�
 
 > 亮暗模式按钮依赖项目里已有的 `next-themes` `ThemeProvider`；不需要的话给 `AppShell` 传 `themeToggle={false}`。
 
+## 文件结构
+
+安装后文件落在这些位置（项目使用 `src/` 目录时会自动加上 `src/` 前缀）。入口是 `app-shell.tsx`：
+
+```text
+app/(app)/
+├── layout.tsx                 # 控制台布局：把导航数据交给 AppShell
+└── dashboard/page.tsx         # 示例页面：概览仪表盘
+hooks/use-controllable-state.ts  # 受控 / 非受控状态 hook
+components/app-shell/
+├── app-shell.tsx              # ★ 入口：组合顶栏、导航、主区域、aside 插槽
+├── app-header.tsx             # 固定顶栏：品牌、折叠按钮、面包屑、右侧操作区
+├── primary-nav.tsx            # 一级导航（支持折叠为图标栏）
+├── workspace-sidebar.tsx      # 二级工作区侧栏 + 窄屏横向标签条
+├── nav-config.ts              # ★ 导航数据，集中配置
+├── nav-types.ts               # 导航类型与 resolveNav（根据地址找到当前位置）
+├── config.ts                  # ★ 默认文案、文案上下文、一级导航宽度常量与存储键
+├── nav-link.tsx               # 对 next/link 的封装，统一处理点击行为
+├── page-header.tsx            # PageHeader / PageTabs / PageContent / PageFrame
+├── page-toolbar.tsx           # 列表工具栏：总数、翻页、搜索、筛选插槽
+├── header-status.tsx          # 顶栏服务状态弹层（数据由外部传入）
+├── user-menu.tsx              # 头像 + 下拉菜单
+├── theme-toggle.tsx           # 亮暗模式切换
+├── use-stored-flag.ts         # 持久化到 localStorage 的布尔状态
+├── dashboard-overview.tsx     # 演示：概览仪表盘（统计卡片 + 柱图 + 事件表）
+├── list-page.tsx              # 演示：列表页（工具栏 + 表格）
+└── sample-data.ts             # 演示用假数据
+```
+
+演示相关的三个文件（`dashboard-overview.tsx`、`list-page.tsx`、`sample-data.ts`）只用来展示布局效果，接入真实数据后可以直接删除。
+
 ## 用法
 
 `app/(app)/layout.tsx` 把导航数据和用户信息交给 `AppShell`，路由组 `(app)` 下的所有页面都会套上这层壳：
@@ -53,37 +84,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 ```
 
 > 导航数据里的图标是 React 组件（函数），无法从服务端组件传给客户端组件，所以这个布局需要 `"use client"`。页面本身仍然可以是服务端组件。模板只带了 `/dashboard` 一个页面，其余导航链接是示例，请换成你自己的路由。
-
-### 文件结构
-
-安装后文件落在这些位置（项目使用 `src/` 目录时会自动加上 `src/` 前缀）。入口是 `app-shell.tsx`：
-
-```text
-app/(app)/
-├── layout.tsx                 # 控制台布局：把导航数据交给 AppShell
-└── dashboard/page.tsx         # 示例页面：概览仪表盘
-hooks/use-controllable-state.ts  # 受控 / 非受控状态 hook
-components/app-shell/
-├── app-shell.tsx              # ★ 入口：组合顶栏、导航、主区域、aside 插槽
-├── app-header.tsx             # 固定顶栏：品牌、折叠按钮、面包屑、右侧操作区
-├── primary-nav.tsx            # 一级导航（支持折叠为图标栏）
-├── workspace-sidebar.tsx      # 二级工作区侧栏 + 窄屏横向标签条
-├── nav-config.ts              # ★ 导航数据，集中配置
-├── nav-types.ts               # 导航类型与 resolveNav（根据地址找到当前位置）
-├── config.ts                  # ★ 默认文案 DEFAULT_LABELS 与存储键
-├── nav-link.tsx               # 对 next/link 的封装，统一处理点击行为
-├── page-header.tsx            # PageHeader / PageTabs / PageContent / PageFrame
-├── page-toolbar.tsx           # 列表工具栏：总数、翻页、搜索、筛选插槽
-├── header-status.tsx          # 顶栏服务状态弹层（数据由外部传入）
-├── user-menu.tsx              # 头像 + 下拉菜单
-├── theme-toggle.tsx           # 亮暗模式切换
-├── use-stored-flag.ts         # 持久化到 localStorage 的布尔状态
-├── dashboard-overview.tsx     # 演示：概览仪表盘（统计卡片 + 柱图 + 事件表）
-├── list-page.tsx              # 演示：列表页（工具栏 + 表格）
-└── sample-data.ts             # 演示用假数据
-```
-
-演示相关的三个文件（`dashboard-overview.tsx`、`list-page.tsx`、`sample-data.ts`）只用来展示布局效果，接入真实数据后可以直接删除。
 
 ### 配置导航
 
@@ -221,7 +221,7 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 
 ### 自定义文案
 
-用户可见文案集中在 `config.ts` 的 `DEFAULT_LABELS`，通过 `labels` 覆盖任意几项，带 `{name}` 的文案会被填入实际名称：
+用户可见文案集中在 `config.ts` 的 `DEFAULT_LABELS`，通过 `labels` 覆盖任意几项。`AppShell` 会把合并后的文案放进 context，所以主区域里的 `PageHeader`、`PageToolbar`、演示页面等组件会自动继承，不需要再逐个传 `labels`；单个组件也可以传自己的 `labels` 覆盖外层值。带占位符的文案会被填入实际名称：
 
 ```tsx
 <AppShell
@@ -248,6 +248,50 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 | `PageContent` | — | 统一内边距与纵向间距 |
 | `PageFrame` | 同 `PageHeader`，另有 `tabs?` `toolbar?` | 把标题栏、标签条、工具栏、内容区一次组合 |
 | `HeaderStatus` | `services` `checkedAt?` `labels?` | 顶栏服务状态弹层，放进 `headerActions` |
+| `UserMenu` / `ThemeToggle` | `labels?` | 头像菜单与亮暗模式切换 |
+| `PrimaryNav` / `WorkspaceSidebar` / `WorkspaceMobileNav` | `config` 或 `module` `active`/`activeId` `labels?` | 一级导航与二级工作区导航，通常由 `AppShell` 组合 |
+
+### labels
+
+全部键在 `config.ts` 的 `DEFAULT_LABELS` 里。含 `{name}`、`{count}`、`{max}`、`{min}` 的文案会在渲染时填入实际值。
+
+**外壳**
+
+| 键 | 默认值 | 说明 |
+| --- | --- | --- |
+| `skipToContent` | `跳转到主内容` | 键盘跳转链接 |
+| `mainContent` | `主内容` | `main` 的 `aria-label` |
+| `mainNavigation` / `mainNavigationDescription` | `主导航` / `选择要访问的页面` | 一级导航名称、窄屏抽屉说明 |
+| `openNavigation` | `打开导航` | 窄屏打开抽屉按钮 |
+| `collapseSidebar` / `expandSidebar` | `收起侧边栏` / `展开侧边栏` | 折叠按钮名称，随状态切换 |
+| `breadcrumb` | `面包屑` | 面包屑的 `aria-label` |
+| `brandHome` | `{name}，回到首页` | 品牌链接的 `aria-label` |
+| `workspaceNavigation` / `workspaceSidebar` | `{name}导航` / `{name}侧栏` | 二级导航与二级侧栏的 `aria-label` |
+| `toggleTheme` | `切换亮暗模式` | 亮暗模式按钮 |
+| `userMenu` / `signOut` | `用户菜单：{name}` / `退出登录` | 用户菜单 |
+| `pageToolbar` / `totalUnit` | `列表控制` / `条` | 工具栏名称与总数单位 |
+| `previousPage` / `nextPage` | `上一页` / `下一页` | 翻页按钮 |
+| `search` | `搜索` | 搜索框默认名称 |
+| `serviceStatus` / `serviceStatusAria` / `checkedAt` | `服务状态` / `查看服务状态：{name}` / `检查于 {name}` | 顶栏服务状态 |
+| `stateHealthy` / `stateWarning` / `stateUnavailable` / `stateUnknown` | `可用` / `需关注` / `不可用` / `未知` | 服务状态文字 |
+
+**页面内容（演示页）**
+
+| 键 | 默认值 | 说明 |
+| --- | --- | --- |
+| `overviewSection` / `overviewTitle` | `工作台` / `概览` | 概览页标题栏 |
+| `overviewDescription` | `近 24 小时的拨测质量与告警情况` | 概览页说明 |
+| `exportAction` / `refreshAction` | `导出` / `刷新` | 概览页操作按钮 |
+| `keyMetrics` | `关键指标` | 统计卡片区的 `aria-label` |
+| `latencyTrend` / `latencyTrendUnit` | `响应耗时趋势` / `每小时 P50，单位 ms` | 柱状图卡片 |
+| `latencyChartLabel` | `过去 24 小时响应耗时，最高 {max} 毫秒，最低 {min} 毫秒` | 柱状图的 `aria-label` |
+| `recentEvents` / `recentEventsCount` / `eventsCaption` | `最近事件` / `按时间倒序，共 {count} 条` / `最近拨测事件` | 事件表卡片与表格题注 |
+| `createAction` | `新建` | 列表页新建按钮 |
+| `searchEvents` | `搜索应用或目标` | 列表页搜索框 |
+| `listCaption` | `{title}列表` | 列表页表格题注 |
+| `emptyRows` | `没有匹配的记录` | 空结果提示 |
+| `columnApp` / `columnTarget` / `columnStatus` / `columnLatency` / `columnTime` | `应用` / `目标` / `状态` / `耗时` / `时间` | 表头 |
+| `eventOk` / `eventWarning` / `eventError` | `正常` / `需关注` / `异常` | 事件状态徽标文字 |
 
 ### data-slot 与状态
 
@@ -260,6 +304,7 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 - 侧栏折叠按钮带 `aria-expanded` 与随状态变化的名称；折叠后导航项仍有 `aria-label`，并通过 Tooltip 显示名称。
 - 窄屏抽屉是 Sheet（Base UI Dialog）：Esc 关闭、焦点被困在抽屉内、关闭后焦点回到触发按钮。
 - 纯图标按钮都有 `aria-label`；状态徽标同时用图标与文字，不只靠颜色。
+- 表格有 `caption` 与 `th scope="col"`；柱状图用 `role="img"` 加一段描述整体数据的 `aria-label`。
 - 过渡动画在系统开启「减少动态效果」时关闭。
 
 ## 注意事项
@@ -267,5 +312,6 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 - **静态导出**：布局完全在客户端运行，不使用 Server Actions 或 `cookies()`，可用于 `output: "export"`。
 - **折叠状态与水合**：服务端和水合阶段始终使用 `defaultCollapsed`，水合完成后再读取 `localStorage`，所以已折叠过的用户刷新时会看到一次短暂的展开→折叠切换。
 - **布局高度**：外层使用 `h-svh`，应放在不带其他固定高度父级的路由组布局里；预览用 iframe 的高度。
-- **两处宽度要一致**：一级导航展开 200px、折叠 60px，写在 `app-shell.tsx` 与 `app-header.tsx` 里，修改时两处同步，顶栏品牌区才能和导航对齐。
+- **一级导航宽度只定义一处**：展开 200px、折叠 60px 写在 `config.ts` 的 `NAV_WIDTH_CLASS`，`app-shell.tsx` 的侧栏与 `app-header.tsx` 的品牌区都从这里取，改宽度只需改一处；窄屏品牌区的 `max-md:w-[60px]` 也在这个常量里。
+- **文案继承**：`AppShell` 的 `labels` 通过 context 传遍整个外壳和主区域，页面里自己传的 `labels` 优先级更高。
 - **颜色**：来自项目的主题变量（`globals.css`），到 [主题](/themes/) 页挑一套复制进去，整个控制台自动换色。

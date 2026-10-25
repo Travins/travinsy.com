@@ -5,18 +5,15 @@ import { useState } from "react"
 
 import { cn } from "@/lib/utils"
 
-import { defaultBrand, type BrandConfig } from "./brand"
+import { defaultBrand, type BrandConfig, type BrandFeature } from "./brand"
 import { BrandPanel, MobileBrand } from "./brand-panel"
+import type { Auth01Labels } from "./config"
 import { ForgotPasswordForm } from "./forgot-password-form"
 import { SignInForm, type SignInValues } from "./sign-in-form"
 import { SignUpForm, type SignUpValues } from "./sign-up-form"
 import type { SocialProvider } from "./social-buttons"
 
-export type { BrandConfig, BrandFeature } from "./brand"
-export type { SignInValues } from "./sign-in-form"
-export type { SignUpValues } from "./sign-up-form"
-export type { SocialProvider } from "./social-buttons"
-export type AuthView = "sign-in" | "sign-up" | "forgot-password"
+type AuthView = "sign-in" | "sign-up" | "forgot-password"
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 // 未传回调时的示例实现：只在控制台打印，并模拟 0.8 秒的网络请求
@@ -31,7 +28,7 @@ const demo =
  * 分屏式登录 / 注册页：左侧品牌面板 + 右侧表单，窄屏只显示表单。
  * 回调返回 Promise；组件管理 loading，回调 throw 的 Error.message 会显示为表单错误。
  */
-export function Auth01({
+function Auth01({
   brand,
   defaultView = "sign-in",
   socialProviders = ["github", "google"],
@@ -43,6 +40,7 @@ export function Auth01({
   onForgotPassword = demo<[string]>("onForgotPassword"),
   onSendCode = demo<[string]>("onSendCode"),
   onSocialSignIn = demo<[SocialProvider]>("onSocialSignIn"),
+  labels,
   className,
 }: {
   /** 品牌信息，逐项覆盖默认的示例品牌 */
@@ -59,14 +57,16 @@ export function Auth01({
   onForgotPassword?: (email: string) => Promise<void>
   onSendCode?: (phone: string) => Promise<void>
   onSocialSignIn?: (provider: SocialProvider) => Promise<void>
+  /** 覆盖默认文案，见 config.ts 的 DEFAULT_LABELS */
+  labels?: Partial<Auth01Labels>
   className?: string
 }) {
   const [view, setView] = useState<AuthView>(defaultView)
   const reducedMotion = useReducedMotion()
   const resolved: BrandConfig = { ...defaultBrand, ...brand }
   return (
-    <div className={cn("relative flex min-h-svh", className)}>
-      <BrandPanel brand={resolved} />
+    <div data-slot="auth-01" className={cn("relative flex min-h-svh", className)}>
+      <BrandPanel brand={resolved} labels={labels} />
       <main className="relative flex flex-1 items-center justify-center bg-background p-6 pb-16 sm:p-12 sm:pb-16">
         <div className="w-full max-w-md">
           <MobileBrand brand={resolved} />
@@ -87,6 +87,7 @@ export function Auth01({
                   onSocialSignIn={onSocialSignIn}
                   onForgotPassword={() => setView("forgot-password")}
                   onSwitchToSignUp={() => setView("sign-up")}
+                  labels={labels}
                 />
               )}
               {view === "sign-up" && (
@@ -95,12 +96,14 @@ export function Auth01({
                   privacyHref={privacyHref}
                   onSignUp={onSignUp}
                   onSwitchToSignIn={() => setView("sign-in")}
+                  labels={labels}
                 />
               )}
               {view === "forgot-password" && (
                 <ForgotPasswordForm
                   onForgotPassword={onForgotPassword}
                   onSwitchToSignIn={() => setView("sign-in")}
+                  labels={labels}
                 />
               )}
             </motion.div>
@@ -112,4 +115,15 @@ export function Auth01({
       </main>
     </div>
   )
+}
+
+export { Auth01 }
+export type {
+  Auth01Labels,
+  AuthView,
+  BrandConfig,
+  BrandFeature,
+  SignInValues,
+  SignUpValues,
+  SocialProvider,
 }

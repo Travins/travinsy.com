@@ -2,11 +2,15 @@
  * Registry 规范检查（结构判断使用 TypeScript AST，字符串颜色使用正则）。
  * error: no-default-export（page/layout/demo.tsx、examples 例外）、use-client-first、
  * no-forward-ref、no-hardcoded-color（只查 className/cva，忽略注释）、
- * forbidden-import（站点私有模块与逆向依赖）、registry-deps（文件与依赖声明）。
- * warn: exports-at-end（类型导出例外）、data-slot（只查直接返回原生 JSX 的大写函数，
- * page/layout/demo.tsx、examples 例外）、function-declaration（大写 JSX 箭头组件）、
+ * forbidden-import（站点私有模块与逆向依赖）、registry-deps（文件与依赖声明）、
+ * disable-comment（忽略注释未写规则 id 或写了未知规则 id）。
+ * warn: exports-at-end（类型导出、page/layout/demo.tsx、examples 例外）、
+ * data-slot（只查直接返回原生 JSX 的大写函数，page/layout/demo.tsx、examples 例外）、
+ * function-declaration（大写 JSX 箭头组件）、
  * labels（blocks/templates JSX 中文，config.ts、DEFAULT_LABELS、demo/page 例外，最多三处）、
  * storage-key-prefix（静态 key 必须以 travinsy: 开头）。未使用的 npm 依赖为 warn。
+ * 忽略单条诊断：紧邻上一行写 `// registry-lint-disable-next-line <规则 id>[, <规则 id>]`，
+ * 必须写明规则 id；被忽略的条数在报告末尾统计。
  * 不做类型推导、跨文件常量求值或 JSX 运行时行为分析。
  */
 import fs from "node:fs"
@@ -30,6 +34,7 @@ type RegistryItem = {
   dependencies?: string[]
   registryDependencies?: string[]
 }
+type Ignored = { rule: string; file: string; line: number }
 const rules = [
   "no-default-export",
   "exports-at-end",
@@ -42,7 +47,10 @@ const rules = [
   "registry-deps",
   "labels",
   "storage-key-prefix",
+  "disable-comment",
 ]
+// registry:index / shadcn build 会整体重写这些文件，检查它们没有意义。
+const generatedFiles = new Set(["src/registry/__index__.tsx"])
 const slash = (p: string) => p.split(path.sep).join("/")
 const parse = (file: string, text: string) =>
   ts.createSourceFile(
@@ -125,19 +133,59 @@ const jsx = (n: ts.Node) =>
   ts.isJsxElement(n) || ts.isJsxSelfClosingElement(n) || ts.isJsxFragment(n)
 const colorPattern =
   /#[\da-f]{3,8}\b|\b(?:rgb|hsl)a?\s*\(|(?:^|[^\w-])(?:bg|text|border(?:-[xysetblr])?|from|via|to|ring(?:-offset)?|fill|stroke|outline|shadow|decoration|divide|accent|caret)-(?:white|black|(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|[1-9]00|950))(?=$|[^\w-])/gi
-function lintSource(file: string, text: string): Diagnostic[] {
+function lintFile(
+  file: string,
+  text: string,
+): { diagnostics: Diagnostic[]; ignored: Ignored[] } {
   const sf = parse(file, text),
-    output: Diagnostic[] = []
+    output: Diagnostic[] = [],
+    ignored: Ignored[] = []
+  // 行号 → 该行允许忽略的规则 id
+  const suppressed = new Map<number, Set<string>>()
   const add = (rule: string, level: Level, node: ts.Node, message: string) => {
     const pos = sf.getLineAndCharacterOfPosition(node.getStart(sf))
+    const line = pos.line + 1
+    // 忽略注释写在被忽略的那一行之上，只作用于紧邻的下一行。
+    if (suppressed.get(line)?.has(rule)) {
+      ignored.push({ rule, file, line })
+      return
+    }
     output.push({
       rule,
       level,
       file,
-      line: pos.line + 1,
+      line,
       column: pos.character + 1,
       message,
     })
+  }
+  for (const comment of singleLineComments(text)) {
+    const match = /^\/\/\s*registry-lint-disable-next-line\b(.*)$/.exec(
+      comment.text,
+    )
+    if (!match) continue
+    const line = sf.getLineAndCharacterOfPosition(comment.pos).line + 1
+    const ids = match[1]
+      .split(",")
+      .map((id) => id.trim())
+      .filter((id) => id.length > 0)
+    const unknown = ids.filter((id) => !rules.includes(id))
+    if (!ids.length || unknown.length)
+      output.push({
+        rule: "disable-comment",
+        level: "error",
+        file,
+        line,
+        column: 1,
+        message: !ids.length
+          ? "忽略注释必须写明规则 id，例如 // registry-lint-disable-next-line exports-at-end"
+          : `未知的规则 id：${unknown.join("、")}`,
+      })
+    if (ids.length && !unknown.length) {
+      const target = suppressed.get(line + 1) ?? new Set<string>()
+      for (const id of ids) target.add(id)
+      suppressed.set(line + 1, target)
+    }
   }
   const exempt =
     /(?:^|\/)(?:page|layout|demo)\.tsx$/.test(file) ||
@@ -193,7 +241,9 @@ function lintSource(file: string, text: string): Diagnostic[] {
       const mods = ts.getModifiers(n) ?? []
       if (mods.some((m) => m.kind === ts.SyntaxKind.DefaultKeyword) && !exempt)
         add("no-default-export", "error", n, "禁止默认导出，请使用命名导出")
+      // demo/page/layout 与 examples 按 Next.js 约定使用 export default 和局部导出，不要求集中到末尾。
       if (
+        !exempt &&
         (ts.isFunctionDeclaration(n) || ts.isVariableStatement(n)) &&
         mods.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
       )
@@ -350,7 +400,32 @@ function lintSource(file: string, text: string): Diagnostic[] {
         `禁止站点私有依赖或逆向依赖：${spec}`,
       )
   }
-  return output
+  return { diagnostics: output, ignored }
+}
+/** 只返回诊断，供测试与外部调用；被忽略的条数由 lintFile 另行返回。 */
+function lintSource(file: string, text: string): Diagnostic[] {
+  return lintFile(file, text).diagnostics
+}
+/** 用扫描器取真正的单行注释，避免把字符串里的同名文本当成忽略指令。 */
+function singleLineComments(text: string) {
+  const scanner = ts.createScanner(
+    ts.ScriptTarget.Latest,
+    false,
+    ts.LanguageVariant.Standard,
+    text,
+  )
+  const found: { pos: number; text: string }[] = []
+  for (
+    let token = scanner.scan();
+    token !== ts.SyntaxKind.EndOfFileToken;
+    token = scanner.scan()
+  )
+    if (token === ts.SyntaxKind.SingleLineCommentTrivia)
+      found.push({
+        pos: scanner.getTokenPos(),
+        text: text.slice(scanner.getTokenPos(), scanner.getTextPos()),
+      })
+  return found
 }
 function packageName(spec: string) {
   return spec.startsWith("@")
@@ -527,24 +602,29 @@ function sourceFiles(dir: string): string[] {
               : [],
         )
 }
+const byPosition = (a: Ignored | Diagnostic, b: Ignored | Diagnostic) =>
+  a.file.localeCompare(b.file) ||
+  a.line - b.line ||
+  ("column" in a && "column" in b ? a.column - b.column : 0) ||
+  a.rule.localeCompare(b.rule)
 function collect(root: string, rule?: string) {
-  const diagnostics = sourceFiles(path.join(root, "src/registry"))
+  const results = sourceFiles(path.join(root, "src/registry"))
     .sort()
-    .flatMap((f) =>
-      lintSource(slash(path.relative(root, f)), fs.readFileSync(f, "utf8")),
-    )
-  diagnostics.push(...lintRegistry(root))
-  return diagnostics
+    .map((f) => slash(path.relative(root, f)))
+    .filter((f) => !generatedFiles.has(f))
+    .map((f) => lintFile(f, fs.readFileSync(path.join(root, f), "utf8")))
+  const diagnostics = results
+    .flatMap((result) => result.diagnostics)
+    .concat(lintRegistry(root))
     .filter((d) => !rule || d.rule === rule)
-    .sort(
-      (a, b) =>
-        a.file.localeCompare(b.file) ||
-        a.line - b.line ||
-        a.column - b.column ||
-        a.rule.localeCompare(b.rule),
-    )
+    .sort(byPosition)
+  const ignored = results
+    .flatMap((result) => result.ignored)
+    .filter((i) => !rule || i.rule === rule)
+    .sort(byPosition)
+  return { diagnostics, ignored }
 }
-function summarize(diagnostics: Diagnostic[]) {
+function summarize(diagnostics: Diagnostic[], ignored: Ignored[]) {
   const byRule = Object.fromEntries(
     rules.map((rule) => [
       rule,
@@ -561,6 +641,14 @@ function summarize(diagnostics: Diagnostic[]) {
   return {
     errors: diagnostics.filter((d) => d.level === "error").length,
     warnings: diagnostics.filter((d) => d.level === "warn").length,
+    ignored: {
+      total: ignored.length,
+      byRule: Object.fromEntries(
+        rules
+          .map((rule) => [rule, ignored.filter((i) => i.rule === rule).length])
+          .filter(([, count]) => Number(count) > 0),
+      ),
+    },
     byRule,
   }
 }
@@ -568,6 +656,7 @@ async function selfTest() {
   const { runSelfTests } = await import("./registry-lint/self-test")
   runSelfTests({
     lintSource,
+    lintFile,
     lintRegistry,
     packageName,
     siteDependency,
@@ -603,14 +692,15 @@ async function main() {
     )
     return
   }
-  const diagnostics = collect(process.cwd(), rule),
-    summary = summarize(diagnostics)
+  const { diagnostics, ignored } = collect(process.cwd(), rule),
+    summary = summarize(diagnostics, ignored)
   const exceeded = summary.warnings > maxWarnings
   if (json)
     console.log(
       JSON.stringify(
         {
           diagnostics,
+          ignored,
           summary,
           maxWarnings: Number.isFinite(maxWarnings) ? maxWarnings : null,
           maxWarningsExceeded: exceeded,
@@ -632,8 +722,11 @@ async function main() {
         `  ${d.line}:${d.column} ${color(d.level, d.level === "error" ? 31 : 33)} [${d.rule}] ${d.message}`,
       )
     }
+    const ignoredDetail = Object.entries(summary.ignored.byRule)
+      .map(([name, count]) => `${name} ${count}`)
+      .join("、")
     console.log(
-      `\n共 ${summary.errors} error，${summary.warnings} warn${exceeded ? `（超过上限 ${maxWarnings}）` : ""}`,
+      `\n共 ${summary.errors} error，${summary.warnings} warn${exceeded ? `（超过上限 ${maxWarnings}）` : ""}，已忽略 ${summary.ignored.total} 条${ignoredDetail ? `（${ignoredDetail}）` : ""}`,
     )
   }
   if (summary.errors || exceeded) process.exitCode = 1

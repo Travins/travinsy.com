@@ -16,8 +16,11 @@ import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
 import { AppHeader, type AppShellBrand } from "./app-header"
 import {
+  AppShellLabelsProvider,
   DEFAULT_STORAGE_KEY,
-  resolveLabels,
+  NAV_WIDTH_CLASS,
+  NAV_WIDTH_TRANSITION,
+  useAppShellLabels,
   type AppShellLabels,
 } from "./config"
 import type { NavLinkBehavior } from "./nav-link"
@@ -83,7 +86,7 @@ function AppShell({
   children,
   ...props
 }: AppShellProps) {
-  const text = resolveLabels(labels)
+  const text = useAppShellLabels(labels)
   const pathname = usePathname()
   const currentHref = activeHref ?? pathname
   const active = React.useMemo(
@@ -123,103 +126,106 @@ function AppShell({
 
   return (
     <TooltipProvider>
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <div
-          data-slot="app-shell"
-          data-collapsed={collapsed ? "" : undefined}
-          data-has-aside={aside ? "" : undefined}
-          data-has-workspace={group ? "" : undefined}
-          className={cn(
-            "flex h-svh flex-col overflow-hidden bg-muted/35 text-foreground",
-            className
-          )}
-          {...props}
-        >
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-lg focus:ring-3 focus:ring-ring/50 focus:outline-none"
+      <AppShellLabelsProvider labels={text}>
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <div
+            data-slot="app-shell"
+            data-collapsed={collapsed ? "" : undefined}
+            data-has-aside={aside ? "" : undefined}
+            data-has-workspace={group ? "" : undefined}
+            className={cn(
+              "flex h-svh flex-col overflow-hidden bg-muted/35 text-foreground",
+              className
+            )}
+            {...props}
           >
-            {text.skipToContent}
-          </a>
-          <AppHeader
-            brand={brand}
-            collapsed={collapsed}
-            onToggleCollapsed={() => setCollapsed(!collapsed)}
-            trail={active?.trail ?? []}
-            actions={headerActions}
-            themeToggle={themeToggle}
-            user={user}
-            userMenu={userMenu}
-            onSignOut={onSignOut}
-            navigation={navigation}
-            labels={labels}
-          />
-          {group ? (
-            <WorkspaceMobileNav
-              module={group}
-              activeId={active?.item.id}
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-lg focus:ring-3 focus:ring-ring/50 focus:outline-none"
+            >
+              {text.skipToContent}
+            </a>
+            <AppHeader
+              brand={brand}
+              collapsed={collapsed}
+              onToggleCollapsed={() => setCollapsed(!collapsed)}
+              trail={active?.trail ?? []}
+              actions={headerActions}
+              themeToggle={themeToggle}
+              user={user}
+              userMenu={userMenu}
+              onSignOut={onSignOut}
               navigation={navigation}
               labels={labels}
             />
-          ) : null}
-          <div className="flex min-h-0 flex-1">
-            <aside
-              data-slot="app-shell-sidebar"
-              data-collapsed={collapsed ? "" : undefined}
-              className={cn(
-                "hidden shrink-0 border-r border-sidebar-border bg-sidebar transition-[width] duration-200 motion-reduce:transition-none md:flex",
-                collapsed ? "w-[60px]" : "w-[200px]"
-              )}
-            >
-              <PrimaryNav
-                config={nav}
-                active={active}
-                collapsed={collapsed}
-                navigation={navigation}
-                labels={labels}
-              />
-            </aside>
             {group ? (
-              <WorkspaceSidebar
+              <WorkspaceMobileNav
                 module={group}
                 activeId={active?.item.id}
                 navigation={navigation}
                 labels={labels}
               />
             ) : null}
-            <main
-              data-slot="app-shell-main"
-              id="main-content"
-              ref={mainRef}
-              tabIndex={-1}
-              aria-label={text.mainContent}
-              className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-background outline-none"
-            >
-              {children}
-            </main>
-            {aside}
-          </div>
-          <SheetContent
-            side="left"
-            className="gap-0 p-0 data-[side=left]:w-[280px] data-[side=left]:sm:max-w-[280px]"
-          >
-            <SheetHeader className="border-b border-border px-4 py-3">
-              <SheetTitle className="text-sm">{text.mainNavigation}</SheetTitle>
-              <SheetDescription className="sr-only">
-                {text.mainNavigationDescription}
-              </SheetDescription>
-            </SheetHeader>
-            <div className="flex min-h-0 flex-1 bg-sidebar">
-              <PrimaryNav
-                config={nav}
-                active={active}
-                navigation={navigation}
-                labels={labels}
-              />
+            <div className="flex min-h-0 flex-1">
+              <aside
+                data-slot="app-shell-sidebar"
+                data-collapsed={collapsed ? "" : undefined}
+                className={cn(
+                  "hidden shrink-0 border-r border-sidebar-border bg-sidebar md:flex",
+                  NAV_WIDTH_TRANSITION,
+                  collapsed ? NAV_WIDTH_CLASS.collapsed : NAV_WIDTH_CLASS.expanded
+                )}
+              >
+                <PrimaryNav
+                  config={nav}
+                  active={active}
+                  collapsed={collapsed}
+                  navigation={navigation}
+                  labels={labels}
+                />
+              </aside>
+              {group ? (
+                <WorkspaceSidebar
+                  module={group}
+                  activeId={active?.item.id}
+                  navigation={navigation}
+                  labels={labels}
+                />
+              ) : null}
+              <main
+                data-slot="app-shell-main"
+                id="main-content"
+                ref={mainRef}
+                tabIndex={-1}
+                aria-label={text.mainContent}
+                className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-background outline-none"
+              >
+                {children}
+              </main>
+              {aside}
             </div>
-          </SheetContent>
-        </div>
-      </Sheet>
+            <SheetContent
+              side="left"
+              className="gap-0 p-0 data-[side=left]:w-[280px] data-[side=left]:sm:max-w-[280px]"
+            >
+              <SheetHeader className="border-b border-border px-4 py-3">
+                <SheetTitle className="text-sm">{text.mainNavigation}</SheetTitle>
+                <SheetDescription className="sr-only">
+                  {text.mainNavigationDescription}
+                </SheetDescription>
+              </SheetHeader>
+              <div className="flex min-h-0 flex-1 bg-sidebar">
+                <PrimaryNav
+                  config={nav}
+                  active={active}
+                  navigation={navigation}
+                  labels={labels}
+                />
+              </div>
+            </SheetContent>
+          </div>
+        </Sheet>
+      </AppShellLabelsProvider>
     </TooltipProvider>
   )
 }

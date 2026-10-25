@@ -6,6 +6,7 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
+import { formatLabel, useAppShellLabels } from "./config"
 import { StatusBadge } from "./dashboard-overview"
 import { PageFrame } from "./page-header"
 import { PageToolbar } from "./page-toolbar"
@@ -23,6 +24,7 @@ function ListPage({
   description?: string
   section?: string
 }) {
+  const text = useAppShellLabels()
   const [search, setSearch] = React.useState("")
   const [page, setPage] = React.useState(1)
   const keyword = search.trim().toLowerCase()
@@ -45,7 +47,7 @@ function ListPage({
       actions={
         <Button>
           <PlusIcon data-icon="inline-start" />
-          新建
+          {text.createAction}
         </Button>
       }
       toolbar={
@@ -59,20 +61,30 @@ function ListPage({
             setSearch(value)
             setPage(1)
           }}
-          searchLabel="搜索应用或目标"
+          searchLabel={text.searchEvents}
         />
       }
     >
       <Card>
         <CardContent className="overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-sm">
-            <caption className="sr-only">{title}列表</caption>
+            <caption className="sr-only">
+              {formatLabel(text.listCaption, { title })}
+            </caption>
             <thead className="text-xs text-muted-foreground">
               <tr className="border-b border-border">
-                <th scope="col" className="py-2 pr-4 font-medium">应用</th>
-                <th scope="col" className="py-2 pr-4 font-medium">目标</th>
-                <th scope="col" className="py-2 pr-4 font-medium">状态</th>
-                <th scope="col" className="py-2 text-right font-medium">时间</th>
+                <th scope="col" className="py-2 pr-4 font-medium">
+                  {text.columnApp}
+                </th>
+                <th scope="col" className="py-2 pr-4 font-medium">
+                  {text.columnTarget}
+                </th>
+                <th scope="col" className="py-2 pr-4 font-medium">
+                  {text.columnStatus}
+                </th>
+                <th scope="col" className="py-2 text-right font-medium">
+                  {text.columnTime}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -82,7 +94,9 @@ function ListPage({
                   <td className="py-2.5 pr-4 font-mono text-xs text-muted-foreground">
                     {row.target}
                   </td>
-                  <td className="py-2.5 pr-4"><StatusBadge status={row.status} /></td>
+                  <td className="py-2.5 pr-4">
+                    <StatusBadge status={row.status} />
+                  </td>
                   <td className="py-2.5 text-right text-muted-foreground tabular-nums">
                     {row.time}
                   </td>
@@ -91,7 +105,7 @@ function ListPage({
               {rows.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="py-10 text-center text-muted-foreground">
-                    没有匹配的记录
+                    {text.emptyRows}
                   </td>
                 </tr>
               ) : null}

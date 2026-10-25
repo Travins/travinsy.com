@@ -1,0 +1,98 @@
+/**
+ * 登录页所有用户可见的文案。
+ * 表单校验提示在 schemas.ts 里，和 zod 规则写在一起（校验规则与提示语一一对应，规则本身不可按实例替换）。
+ * 品牌名、标题、特性列表属于品牌数据，见 brand.ts。
+ */
+const DEFAULT_LABELS = {
+  // 品牌面板
+  brandPanelLabel: "{name} 品牌介绍",
+  // 登录
+  signInTitle: "欢迎回来",
+  signInDescription: "请输入您的账号信息登录",
+  signInMethodLabel: "登录方式",
+  signInPasswordTab: "密码登录",
+  signInCodeTab: "验证码登录",
+  accountLabel: "用户名或邮箱",
+  accountPlaceholder: "请输入用户名或邮箱",
+  passwordLabel: "密码",
+  passwordPlaceholder: "请输入密码",
+  forgotPassword: "忘记密码？",
+  remember: "记住登录状态",
+  signInSubmit: "登录",
+  signInPending: "登录中…",
+  phoneLabel: "手机号",
+  phonePlaceholder: "请输入 11 位手机号",
+  codeLabel: "验证码",
+  codePlaceholder: "6 位数字验证码",
+  sendCode: "获取验证码",
+  sendCodePending: "发送中…",
+  resendCode: "{seconds}s 后重发",
+  socialDivider: "或",
+  noAccount: "还没有账号？",
+  signUpLink: "注册",
+  // 注册
+  signUpTitle: "创建账号",
+  signUpDescription: "填写以下信息，几步完成注册",
+  nameLabel: "姓名",
+  namePlaceholder: "请输入姓名",
+  emailLabel: "邮箱",
+  emailPlaceholder: "name@example.com",
+  newPasswordPlaceholder: "至少 8 位，包含字母和数字",
+  confirmPasswordLabel: "确认密码",
+  confirmPasswordPlaceholder: "再次输入密码",
+  termsPrefix: "我已阅读并同意",
+  termsOfService: "服务条款",
+  termsConjunction: "和",
+  privacyPolicy: "隐私政策",
+  signUpSubmit: "注册",
+  signUpPending: "注册中…",
+  haveAccount: "已有账号？",
+  signInLink: "登录",
+  // 找回密码
+  forgotPasswordTitle: "找回密码",
+  forgotPasswordDescription: "输入注册时使用的邮箱，我们会发送重置链接",
+  sendResetLink: "发送重置链接",
+  sendResetLinkPending: "发送中…",
+  backToSignIn: "返回登录",
+  emailSentTitle: "邮件已发送",
+  emailSentDescription:
+    "我们已向 {email} 发送了重置密码的链接，请查收邮件。没收到？请检查垃圾邮件箱。",
+  // 输入框与密码强度
+  showPassword: "显示密码",
+  hidePassword: "隐藏密码",
+  passwordStrength: "强度：{level}",
+  passwordStrengthEmpty: "强度：—",
+  strengthWeak: "弱",
+  strengthFair: "一般",
+  strengthGood: "较强",
+  strengthStrong: "强",
+  // 通用
+  requestFailed: "操作失败，请稍后重试",
+} as const
+
+type Auth01Labels = { [Key in keyof typeof DEFAULT_LABELS]: string }
+
+/** 合并用户传入的文案与默认文案。 */
+function resolveLabels(labels?: Partial<Auth01Labels>): Auth01Labels {
+  return { ...DEFAULT_LABELS, ...labels }
+}
+
+/** 把文案里的 {key} 占位符替换成实际值，例如「强度：{level}」。 */
+function formatLabel(
+  template: string,
+  values: Record<string, string | number>,
+): string {
+  return Object.entries(values).reduce(
+    (text, [key, value]) => text.replaceAll(`{${key}}`, String(value)),
+    template,
+  )
+}
+
+/** 以 {key} 为界把文案拆成前后两段，便于把值渲染成强调元素。 */
+function splitLabel(template: string, key: string): [string, string] {
+  const [before = template, after = ""] = template.split(`{${key}}`)
+  return [before, after]
+}
+
+export { DEFAULT_LABELS, formatLabel, resolveLabels, splitLabel }
+export type { Auth01Labels }

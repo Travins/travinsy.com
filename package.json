@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "themes:build": "tsx scripts/build-theme-registry.ts",
     "registry:index": "tsx scripts/build-registry-index.ts",
-    "prebuild": "pnpm registry:build",
+    "prebuild": "pnpm registry:lint --max-warnings 0 && pnpm registry:build",
     "postinstall": "fumadocs-mdx",
     "registry:lint": "tsx scripts/registry-lint.ts"
   },

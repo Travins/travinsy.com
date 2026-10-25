@@ -155,6 +155,11 @@
           "target": "components/profile-hero/profile-hero.tsx"
         },
         {
+          "path": "src/registry/blocks/profile-hero/config.ts",
+          "type": "registry:component",
+          "target": "components/profile-hero/config.ts"
+        },
+        {
           "path": "src/registry/blocks/profile-hero/role-rotator.tsx",
           "type": "registry:component",
           "target": "components/profile-hero/role-rotator.tsx"
@@ -179,6 +184,11 @@
           "path": "src/registry/blocks/social-follow/social-follow.tsx",
           "type": "registry:component",
           "target": "components/social-follow/social-follow.tsx"
+        },
+        {
+          "path": "src/registry/blocks/social-follow/config.ts",
+          "type": "registry:component",
+          "target": "components/social-follow/config.ts"
         },
         {
           "path": "src/registry/blocks/social-follow/brand-icons.tsx",
@@ -235,6 +245,11 @@
           "target": "lib/site.config.ts"
         },
         {
+          "path": "src/registry/templates/portfolio-grid/lib/config.ts",
+          "type": "registry:lib",
+          "target": "lib/config.ts"
+        },
+        {
           "path": "src/registry/templates/portfolio-grid/components/portfolio/site-header.tsx",
           "type": "registry:component",
           "target": "components/portfolio/site-header.tsx"
@@ -286,6 +301,11 @@
           "path": "src/registry/blocks/auth-01/auth-01.tsx",
           "type": "registry:component",
           "target": "components/auth-01/auth-01.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/config.ts",
+          "type": "registry:component",
+          "target": "components/auth-01/config.ts"
         },
         {
           "path": "src/registry/blocks/auth-01/brand.tsx",

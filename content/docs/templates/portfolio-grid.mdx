@@ -5,8 +5,6 @@ description: 完整的线条网格个人主页：封面、社交、做什么、�
 
 <BlockViewer name="portfolio-grid" />
 
-## 简介
-
 这是本站首页风格的可复用版本：一个地址装下整页，之后只需要改一个配置文件，就能得到同款主页。
 
 页面由四个区块和几个小组件拼成：
@@ -31,6 +29,7 @@ description: 完整的线条网格个人主页：封面、社交、做什么、�
 ```text
 app/page.tsx                              # 页面入口，把配置交给各区块
 lib/site.config.ts                        # ★ 全部个人信息都在这里
+lib/config.ts                             # 界面文案 DEFAULT_LABELS
 components/portfolio/
 ├── site-header.tsx                       # 简易页头：站名 + 锚点导航
 ├── site-footer.tsx                       # 简易页脚
@@ -42,12 +41,29 @@ components/feature-columns/…              # 来自「多栏介绍」区块
 components/ui/grid-layout/…               # 来自「线条网格布局」
 ```
 
-## 如何自定义
+## 用法
+
+页面入口不做任何业务逻辑，只把 `site.config.ts` 的内容分发给各区块：
+
+```tsx title="app/page.tsx"
+<SiteHeader />
+<main>
+  <GridContainer>
+    <ProfileHero name={siteConfig.name} bio={siteConfig.bio} roles={siteConfig.roles} />
+    <SocialFollow socials={…} />
+    <FeatureColumns title={siteConfig.focus.title} items={…} />
+    <StackSection title={siteConfig.stack.title} items={siteConfig.stack.items} />
+    <GridSeparator />
+    <AboutSection title={siteConfig.about.title} paragraphs={siteConfig.about.paragraphs} />
+  </GridContainer>
+</main>
+<SiteFooter />
+```
 
 绝大多数情况下，只改 `lib/site.config.ts`：
 
 ```ts title="lib/site.config.ts"
-export const siteConfig = {
+const siteConfig = {
   name: "你的名字",
   initials: "你",
   bio: "一两句话介绍自己。",
@@ -55,7 +71,13 @@ export const siteConfig = {
   socials: [{ name: "GitHub", icon: "github", href: "https://github.com/你" }],
   // …… 做什么、技术栈、关于我、页脚
 }
+
+export { siteConfig }
 ```
+
+## API
+
+### siteConfig
 
 | 字段 | 说明 |
 | --- | --- |
@@ -68,8 +90,33 @@ export const siteConfig = {
 | `about` | 关于我的标题与段落 |
 | `year` / `footer` | 页脚的版权年份与右侧的一句话 |
 
-### 想改得更多
+### labels
 
-- **换颜色**：颜色来自项目的主题变量（`globals.css`），到 [主题](/themes/) 页挑一套复制进去，整页自动换色。
-- **增减区块**：在 `app/page.tsx` 里增删区块即可；每个区块都是独立的 `GridSection`，相邻区块之间用 `GridSeparator` 隔开，不同主题的内容之间才需要。
-- **亮暗模式**：模板本身不带切换按钮，沿用你项目里已有的 `next-themes` 或其他方案即可。
+`SiteHeader`、`StackSection`、`AboutSection` 接受可选的 `labels`，覆盖 `lib/config.ts` 里的 `DEFAULT_LABELS`；区块标题（「技术栈」「关于我」等）属于 `siteConfig` 数据，通过 `title` 属性传入。
+
+| 键 | 默认值 | 使用位置 |
+| --- | --- | --- |
+| `siteNav` | `页面导航` | 页头导航的 `aria-label` |
+| `stackEyebrow` | `TOOLS OF THE TRADE` | 技术栈区块右上角的等宽小字 |
+| `aboutFootnote` | `持续学习，慢慢构建。` | 关于我区块结尾的一句小字 |
+
+### data-slot
+
+`portfolio-grid`（页面 `main`）、`portfolio-grid-site-header`、`portfolio-grid-site-nav`、`portfolio-grid-site-footer`、`portfolio-grid-stack`、`portfolio-grid-about`。
+
+## 可访问性
+
+- 页头导航是带 `aria-label` 的 `nav`，站名链接可以通过 `focus-visible` 看到焦点环。
+- 各区块用 `GridSection` 的 `section` 语义：技术栈与「关于我」用 `aria-labelledby` 指向自己的 `h2`，标题层级连续。
+- 页头在 `sticky` 定位下仍保留键盘焦点可见样式；锚点跳转通过 `scroll-mt-16` 避开吸顶页头。
+- 技术栈方块里的两字母缩写、页脚装饰符号都是 `aria-hidden` 或纯装饰，信息由文字承载。
+- 颜色全部来自主题变量，切换颜色主题与亮暗模式后对比度保持一致。
+
+## 注意事项
+
+- **改得更多**：
+  - **换颜色**：颜色来自项目的主题变量（`globals.css`），到 [主题](/themes/) 页挑一套复制进去，整页自动换色。
+  - **增减区块**：在 `app/page.tsx` 里增删区块即可；每个区块都是独立的 `GridSection`，相邻区块之间用 `GridSeparator` 隔开，不同主题的内容之间才需要。
+  - **亮暗模式**：模板本身不带切换按钮，沿用你项目里已有的 `next-themes` 或其他方案即可。
+  - **改界面文案**：用各区块的 `labels`，或直接改 `lib/config.ts`。
+- **静态导出**：整页是服务端可渲染组件，没有客户端状态，可直接用于 `output: "export"`。
