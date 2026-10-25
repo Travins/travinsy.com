@@ -1,53 +1,117 @@
 import { z } from "zod"
 
-// 校验规则与提示集中在这里：想换手机号规则、密码策略，只改这个文件
-const email = z
-  .string()
-  .trim()
-  .min(1, "请输入邮箱")
-  .email("请输入有效的邮箱地址")
+import { formatLabel, type Auth01Labels } from "./config"
 
-/** 中国大陆 11 位手机号；面向海外用户时请替换为自己的规则 */
-const phone = z
-  .string()
-  .trim()
-  .regex(/^1[3-9]\d{9}$/, "请输入有效的 11 位手机号")
+/**
+ * 校验规则常量：改策略只改这里，提示文案里的 {min}、{length} 会自动带入新值。
+ * 提示文案本身全部来自 labels（config.ts 的 validation* 键），可逐实例覆盖。
+ */
 
-const password = z
-  .string()
-  .min(8, "密码至少 8 位")
-  .regex(/[A-Za-z]/, "密码需要包含字母")
-  .regex(/\d/, "密码需要包含数字")
+/** 密码最少位数 */
+const PASSWORD_MIN_LENGTH = 8
 
-const signInSchema = z.object({
-  account: z.string().trim().min(1, "请输入用户名或邮箱"),
-  password: z.string().min(1, "请输入密码"),
-  remember: z.boolean(),
-})
+/** 姓名最少字符数 */
+const NAME_MIN_LENGTH = 2
 
-const codeSignInSchema = z.object({
-  phone,
-  code: z.string().trim().regex(/^\d{6}$/, "请输入 6 位数字验证码"),
-})
+/** 短信验证码位数 */
+const CODE_LENGTH = 6
 
-const signUpSchema = z
-  .object({
-    name: z.string().trim().min(2, "姓名至少 2 个字符"),
-    email,
-    password,
-    confirm: z.string().min(1, "请再次输入密码"),
-    terms: z.boolean().refine((value) => value, "请先阅读并同意服务条款"),
+/** 中国大陆手机号位数，需与 PHONE_PATTERN 的位数一致 */
+const PHONE_LENGTH = 11
+
+/** 中国大陆 11 位手机号；面向海外用户时替换这条规则 */
+const PHONE_PATTERN = /^1[3-9]\d{9}$/
+
+/** 验证码只接受数字，位数由 CODE_LENGTH 决定 */
+const CODE_PATTERN = new RegExp(`^\\d{${CODE_LENGTH}}$`)
+
+function emailField(labels: Auth01Labels) {
+  return z
+    .string()
+    .trim()
+    .min(1, labels.validationEmailRequired)
+    .email(labels.validationEmailInvalid)
+}
+
+function passwordField(labels: Auth01Labels) {
+  return z
+    .string()
+    .min(
+      PASSWORD_MIN_LENGTH,
+      formatLabel(labels.validationPasswordMin, { min: PASSWORD_MIN_LENGTH }),
+    )
+    .regex(/[A-Za-z]/, labels.validationPasswordLetter)
+    .regex(/\d/, labels.validationPasswordDigit)
+}
+
+function phoneField(labels: Auth01Labels) {
+  return z
+    .string()
+    .trim()
+    .regex(
+      PHONE_PATTERN,
+      formatLabel(labels.validationPhoneInvalid, { length: PHONE_LENGTH }),
+    )
+}
+
+/** 密码登录。labels 需是合并过默认值的完整文案。 */
+function createSignInSchema(labels: Auth01Labels) {
+  return z.object({
+    account: z.string().trim().min(1, labels.validationAccountRequired),
+    password: z.string().min(1, labels.validationPasswordRequired),
+    remember: z.boolean(),
   })
-  .refine((values) => values.password === values.confirm, {
-    message: "两次输入的密码不一致",
-    path: ["confirm"],
-  })
+}
 
-const forgotPasswordSchema = z.object({ email })
+/** 验证码登录。 */
+function createCodeSignInSchema(labels: Auth01Labels) {
+  return z.object({
+    phone: phoneField(labels),
+    code: z
+      .string()
+      .trim()
+      .regex(
+        CODE_PATTERN,
+        formatLabel(labels.validationCodeInvalid, { length: CODE_LENGTH }),
+      ),
+  })
+}
+
+/** 注册：确认密码与条款勾选也在前端校验。 */
+function createSignUpSchema(labels: Auth01Labels) {
+  return z
+    .object({
+      name: z
+        .string()
+        .trim()
+        .min(
+          NAME_MIN_LENGTH,
+          formatLabel(labels.validationNameMin, { min: NAME_MIN_LENGTH }),
+        ),
+      email: emailField(labels),
+      password: passwordField(labels),
+      confirm: z.string().min(1, labels.validationConfirmRequired),
+      terms: z.boolean().refine((value) => value, labels.validationTermsRequired),
+    })
+    .refine((values) => values.password === values.confirm, {
+      message: labels.validationPasswordMismatch,
+      path: ["confirm"],
+    })
+}
+
+/** 找回密码。 */
+function createForgotPasswordSchema(labels: Auth01Labels) {
+  return z.object({ email: emailField(labels) })
+}
 
 export {
-  codeSignInSchema,
-  forgotPasswordSchema,
-  signInSchema,
-  signUpSchema,
+  CODE_LENGTH,
+  NAME_MIN_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  PHONE_LENGTH,
+  PHONE_PATTERN,
+  createCodeSignInSchema,
+  createForgotPasswordSchema,
+  createSignInSchema,
+  createSignUpSchema,
 }
