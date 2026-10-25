@@ -8,7 +8,7 @@ description: 提炼自企业监控平台的控制台外壳：固定顶栏、可�
 `AppShell` 提炼自我的一个企业监控平台项目的整体布局，去掉了接口请求、权限过滤和登录逻辑，只留下布局与交互本身：
 
 - **固定顶栏**：左侧品牌区宽度与导航对齐，右侧依次是 `headerActions`、亮暗模式切换、用户菜单；中间是自动生成的面包屑。
-- **一级导航**：按分组排列，当前页高亮；可折叠为图标栏（名称出现在 Tooltip 里），折叠状态记在 `localStorage`。
+- **一级导航**：按分组排列，当前页高亮；可折叠为图标栏（名称出现在 Tooltip 里），折叠状态记在 `localStorage`，刷新后首帧就是上次的状态，不会闪烁。
 - **二级工作区侧栏**：一级导航里的「模块」被选中时，右侧多出一栏，列出该模块下的页面。
 - **独立滚动的主区域**：顶栏和侧栏固定，只有 `main` 滚动，切换页面自动回到顶部。
 - **右侧 `aside` 插槽**：与 `main` 并排，高度占满顶栏以下的区域，用来放 AI 助手面板等。
@@ -37,12 +37,13 @@ app/(app)/
 hooks/use-controllable-state.ts  # 受控 / 非受控状态 hook
 components/app-shell/
 ├── app-shell.tsx              # ★ 入口：组合顶栏、导航、主区域、aside 插槽
+├── app-shell-script.tsx       # 首帧脚本：水合前恢复侧栏折叠状态
 ├── app-header.tsx             # 固定顶栏：品牌、折叠按钮、面包屑、右侧操作区
 ├── primary-nav.tsx            # 一级导航（支持折叠为图标栏）
 ├── workspace-sidebar.tsx      # 二级工作区侧栏 + 窄屏横向标签条
 ├── nav-config.ts              # ★ 导航数据，集中配置
 ├── nav-types.ts               # 导航类型与 resolveNav（根据地址找到当前位置）
-├── config.ts                  # ★ 默认文案、文案上下文、一级导航宽度常量与存储键
+├── config.ts                  # ★ 默认文案、文案上下文、一级导航宽度与过渡类名、存储键
 ├── nav-link.tsx               # 对 next/link 的封装，统一处理点击行为
 ├── page-header.tsx            # PageHeader / PageTabs / PageContent / PageFrame
 ├── page-toolbar.tsx           # 列表工具栏：总数、翻页、搜索、筛选插槽
@@ -190,7 +191,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
 ### 受控的侧栏折叠
 
-`collapsed` / `defaultCollapsed` / `onCollapsedChange` 成对出现，同时支持受控与非受控。不传 `collapsed` 时组件自己维护，并把状态记在 `localStorage`（默认键 `travinsy:app-shell:collapsed`，可用 `storageKey` 修改）；传了就完全由你决定，不再读写本地存储：
+`collapsed` / `defaultCollapsed` / `onCollapsedChange` 成对出现，同时支持受控与非受控。不传 `collapsed` 时组件自己维护，并把状态记在 `localStorage`（默认键 `travinsy:app-shell:collapsed`，可用 `storageKey` 修改）；传了就完全由你决定，不再读写本地存储，也不注入首帧脚本：
 
 ```tsx
 const [collapsed, setCollapsed] = React.useState(false)
@@ -199,6 +200,22 @@ const [collapsed, setCollapsed] = React.useState(false)
   {children}
 </AppShell>
 ```
+
+受控模式下想避免首屏闪烁，要让**首次渲染传入的值就是最终状态**，例如在服务端从 cookie 读取后作为初始值传入；静态导出没有请求上下文，通常直接用默认的非受控模式即可。
+
+### 首帧脚本：刷新不闪烁
+
+静态导出的 HTML 在构建时生成，服务端不知道用户上次是否折叠过侧栏。如果等水合后再读 `localStorage`，已折叠的用户每次刷新都会先看到展开、再跳成折叠。`AppShell` 的做法与站点的颜色主题相同：
+
+1. 非受控时，`AppShell` 在根元素里的第一个子节点渲染一段很短的内联脚本（`AppShellScript`）。浏览器解析 HTML 时同步执行它，在首次绘制与水合之前读取 `localStorage`，把结果写到根元素的 `data-collapsed`；没有本地记录时保持 `defaultCollapsed`。
+2. 侧栏宽度、顶栏品牌区、图标 / 文字显示等**所有随折叠变化的样式都由 `data-collapsed` 通过 CSS 决定**（Tailwind 的 `group-data-[collapsed]/app-shell:` 变体），不依赖 React 状态，所以水合前就是正确的外观。
+3. 水合后 React 状态读到同一个值，与 DOM 一致；根元素带 `suppressHydrationWarning`，所以脚本改写属性不会触发水合警告。点击折叠按钮时 React 同步更新 `data-collapsed` 与 `localStorage`。
+4. 宽度过渡只在用户点击折叠按钮后才开启（根元素出现 `data-animate`），首次渲染与水合不会播放动画。
+5. 通过路由跳转（客户端渲染）进入控制台时脚本不会执行，此时 React 直接按 `localStorage` 渲染，同样没有闪烁。
+
+整个机制写在 `(app)` 布局的 `AppShell` 里，**不需要改根布局，也不需要在布局里手动放脚本**；`storageKey` 会自动传给脚本。如果你不用 `AppShell`、而是自己组合 `AppHeader` / `PrimaryNav`，可以单独使用 `AppShellScript`，把它放在带 `group/app-shell` 与 `data-collapsed` 的容器里作为第一个子节点，并给该容器加 `suppressHydrationWarning`。
+
+> 内联脚本在严格的内容安全策略（CSP，不允许 `'unsafe-inline'`）下会被拦截，需要自行为脚本添加 nonce；脚本被拦截时退化为水合后再恢复折叠状态。
 
 ### 页面框架
 
@@ -237,6 +254,14 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 ### AppShell
 
 <PropsTable name="app-shell-01" component="AppShell" />
+
+### AppShellScript
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `storageKey` | `string` | `"travinsy:app-shell:collapsed"` | 读取折叠状态的 `localStorage` 键，需与 `AppShell` 的 `storageKey` 一致 |
+
+通常不需要直接使用，`AppShell` 在非受控时会自动渲染它。
 
 ### 页面组件
 
@@ -295,7 +320,7 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 
 ### data-slot 与状态
 
-根元素都带 `data-slot`，方便用选择器或 `has-data-[slot=…]` 定制：`app-shell`（`data-collapsed`、`data-has-aside`、`data-has-workspace`）、`app-shell-header`、`app-shell-sidebar`、`app-shell-primary-nav`、`app-shell-nav-item`（`data-active`）、`app-shell-workspace-sidebar`、`app-shell-workspace-item`（`data-active`）、`app-shell-main`、`app-shell-page-header`、`app-shell-page-toolbar` 等。
+根元素都带 `data-slot`，方便用选择器或 `has-data-[slot=…]` 定制：`app-shell`（`data-collapsed`、`data-animate`、`data-has-aside`、`data-has-workspace`）、`app-shell-header`、`app-shell-sidebar`、`app-shell-primary-nav`、`app-shell-nav-item`（`data-active`）、`app-shell-workspace-sidebar`、`app-shell-workspace-item`（`data-active`）、`app-shell-main`、`app-shell-page-header`、`app-shell-page-toolbar` 等。
 
 ## 可访问性
 
@@ -310,8 +335,8 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 ## 注意事项
 
 - **静态导出**：布局完全在客户端运行，不使用 Server Actions 或 `cookies()`，可用于 `output: "export"`。
-- **折叠状态与水合**：服务端和水合阶段始终使用 `defaultCollapsed`，水合完成后再读取 `localStorage`，所以已折叠过的用户刷新时会看到一次短暂的展开→折叠切换。
+- **折叠状态与水合**：服务端输出使用 `defaultCollapsed`，首帧脚本在水合前按 `localStorage` 改写根元素的 `data-collapsed`，详见上面的「首帧脚本」。折叠样式只依赖 `data-collapsed`，自定义时请沿用 `group-data-[collapsed]/app-shell:` 变体，不要根据 React 状态切换结构，否则水合前外观会不一致。
 - **布局高度**：外层使用 `h-svh`，应放在不带其他固定高度父级的路由组布局里；预览用 iframe 的高度。
-- **一级导航宽度只定义一处**：展开 200px、折叠 60px 写在 `config.ts` 的 `NAV_WIDTH_CLASS`，`app-shell.tsx` 的侧栏与 `app-header.tsx` 的品牌区都从这里取，改宽度只需改一处；窄屏品牌区的 `max-md:w-[60px]` 也在这个常量里。
+- **一级导航宽度只定义一处**：展开 200px、折叠 60px 写在 `config.ts` 的 `NAV_WIDTH_CLASS`，`app-shell.tsx` 的侧栏与 `app-header.tsx` 的品牌区都从这里取，改宽度只需改一处；窄屏品牌区的 `max-md:w-[60px]` 也在这个常量里。过渡类名在同文件的 `NAV_WIDTH_TRANSITION`。
 - **文案继承**：`AppShell` 的 `labels` 通过 context 传遍整个外壳和主区域，页面里自己传的 `labels` 优先级更高。
 - **颜色**：来自项目的主题变量（`globals.css`），到 [主题](/themes/) 页挑一套复制进去，整个控制台自动换色。

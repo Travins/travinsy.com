@@ -6,20 +6,30 @@ import { createContext, createElement, useContext, type ReactNode } from "react"
 const DEFAULT_STORAGE_KEY = "travinsy:app-shell:collapsed"
 
 /**
+ * 侧栏折叠状态在水合前由内联脚本写到 AppShell 根元素的 `data-collapsed`，
+ * 所以所有随折叠变化的样式都用 `group-data-[collapsed]/app-shell:` 变体表达，
+ * 而不是依赖 React 状态——这样首帧就是正确的折叠状态。
+ * Tailwind 需要看到完整类名，所以下面写字面量而不是拼接。
+ */
+
+/**
  * 一级导航的宽度类名，只在这里定义一次：
  * app-shell.tsx 的侧栏与 app-header.tsx 的品牌区共用，顶栏才能和导航对齐。
- * Tailwind 需要看到完整类名，所以写字面量而不是拼接。
  */
 const NAV_WIDTH_CLASS = {
-  expanded: "w-[200px]",
-  collapsed: "w-[60px]",
-  /** 窄屏下顶栏品牌区始终按图标栏宽度 */
-  mobile: "max-md:w-[60px]",
+  /** 侧栏：展开 200px，折叠 60px */
+  sidebar: "w-[200px] group-data-[collapsed]/app-shell:w-[60px]",
+  /** 顶栏品牌区：同侧栏；窄屏下始终按图标栏宽度 */
+  brand: "w-[200px] group-data-[collapsed]/app-shell:w-[60px] max-md:w-[60px]",
 } as const
 
-/** 宽度变化时的过渡，和宽度放在一起，避免两处不一致。 */
+/**
+ * 宽度变化时的过渡，和宽度放在一起，避免两处不一致。
+ * 只有 AppShell 根元素带 `data-animate`（用户点击折叠按钮之后）才播放，
+ * 首次渲染与水合时不会出现宽度动画。
+ */
 const NAV_WIDTH_TRANSITION =
-  "transition-[width] duration-200 motion-reduce:transition-none"
+  "motion-safe:group-data-[animate]/app-shell:transition-[width] motion-safe:group-data-[animate]/app-shell:duration-200"
 
 /**
  * 控制台布局里所有用户可见的文案。

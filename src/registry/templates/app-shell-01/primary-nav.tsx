@@ -25,7 +25,11 @@ type PrimaryNavProps = Omit<React.ComponentProps<"nav">, "children"> & {
   config: NavConfig
   /** 当前页面对应的导航位置，由 resolveNav 得到 */
   active?: ResolvedNav
-  /** 图标栏模式：只显示图标，名称放到 Tooltip 与读屏文本里 */
+  /**
+   * 图标栏模式：只显示图标，名称放到 Tooltip 与读屏文本里。
+   * 外观由祖先 `.group/app-shell[data-collapsed]` 决定（水合前即生效），
+   * 这个 prop 只负责 Tooltip 的开关；抽屉里的导航在 AppShell 之外，始终展开。
+   */
   collapsed?: boolean
   navigation?: NavLinkBehavior
   labels?: Partial<AppShellLabels>
@@ -57,54 +61,44 @@ function PrimaryNav({
         href={isGroup ? moduleHref(entry) : entry.href}
         navigation={navigation}
         aria-current={selected ? (isGroup ? "true" : "page") : undefined}
-        aria-label={collapsed ? entry.label : undefined}
         className={cn(
-          "relative flex h-10 w-full min-w-0 items-center rounded-md text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none",
-          collapsed ? "justify-center px-2" : "gap-3 px-3",
+          "relative flex h-10 w-full min-w-0 items-center gap-3 rounded-md px-3 text-sm transition-colors outline-none group-data-[collapsed]/app-shell:justify-center group-data-[collapsed]/app-shell:px-2 focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none",
           selected
             ? "bg-primary/10 font-medium text-sidebar-foreground shadow-[inset_3px_0_0_var(--primary)]"
             : "text-sidebar-foreground/70 hover:bg-primary/5 hover:text-sidebar-foreground"
         )}
       >
         <Icon className="size-4 shrink-0" aria-hidden="true" />
-        {collapsed ? (
+        {/* 折叠与否只靠 CSS 切换，水合前就是正确的外观；折叠时名称保留为读屏文本 */}
+        <span className="min-w-0 flex-1 truncate group-data-[collapsed]/app-shell:sr-only">
+          {entry.label}
+        </span>
+        {badge !== undefined ? (
           <>
-            <span className="sr-only">{entry.label}</span>
-            {badge !== undefined ? (
-              <span
-                aria-hidden="true"
-                className="absolute top-2 right-2 size-1.5 rounded-full bg-primary"
-              />
-            ) : null}
+            <span className="rounded-full bg-primary/10 px-1.5 text-[11px] leading-5 font-medium text-primary tabular-nums group-data-[collapsed]/app-shell:hidden">
+              {badge}
+            </span>
+            <span
+              aria-hidden="true"
+              className="absolute top-2 right-2 hidden size-1.5 rounded-full bg-primary group-data-[collapsed]/app-shell:block"
+            />
           </>
-        ) : (
-          <>
-            <span className="min-w-0 flex-1 truncate">{entry.label}</span>
-            {badge !== undefined ? (
-              <span className="rounded-full bg-primary/10 px-1.5 text-[11px] leading-5 font-medium text-primary tabular-nums">
-                {badge}
-              </span>
-            ) : null}
-            {isGroup ? (
-              <ChevronRightIcon
-                className="size-3 shrink-0 opacity-40"
-                aria-hidden="true"
-              />
-            ) : null}
-          </>
-        )}
+        ) : null}
+        {isGroup ? (
+          <ChevronRightIcon
+            className="size-3 shrink-0 opacity-40 group-data-[collapsed]/app-shell:hidden"
+            aria-hidden="true"
+          />
+        ) : null}
       </NavLink>
     )
     return (
       <li key={entry.id}>
-        {collapsed ? (
-          <Tooltip>
-            <TooltipTrigger render={link} />
-            <TooltipContent side="right">{entry.label}</TooltipContent>
-          </Tooltip>
-        ) : (
-          link
-        )}
+        {/* 始终包一层 Tooltip，仅折叠时启用，避免折叠切换时重新挂载链接 */}
+        <Tooltip disabled={!collapsed}>
+          <TooltipTrigger render={link} />
+          <TooltipContent side="right">{entry.label}</TooltipContent>
+        </Tooltip>
       </li>
     )
   }
@@ -113,10 +107,7 @@ function PrimaryNav({
     return (
       <section key={section.id} aria-label={section.label}>
         <h2
-          className={cn(
-            "flex h-8 items-center px-3 text-[11px] font-medium text-sidebar-foreground/50",
-            collapsed && "sr-only"
-          )}
+          className="flex h-8 items-center px-3 text-[11px] font-medium text-sidebar-foreground/50 group-data-[collapsed]/app-shell:sr-only"
         >
           {section.label}
         </h2>

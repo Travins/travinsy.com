@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
 import { AppHeader, type AppShellBrand } from "./app-header"
+import { AppShellScript, type AppShellScriptProps } from "./app-shell-script"
 import {
   AppShellLabelsProvider,
   DEFAULT_STORAGE_KEY,
@@ -46,7 +47,11 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   activeHref?: string
   /** 传入后拦截导航链接的默认跳转并回调，适合预览 / 单页场景；接入路由时不要传 */
   onNavigate?: (payload: { href: string }) => void
-  /** 侧栏是否折叠（受控）；不传则内部维护并记住在 localStorage */
+  /**
+   * 侧栏是否折叠（受控）；不传则内部维护并记住在 localStorage。
+   * 受控时不读写 localStorage、也不注入首帧脚本：想避免首屏闪烁，
+   * 请让首次渲染传入的值就是最终状态（例如服务端从 cookie 读取）。
+   */
   collapsed?: boolean
   /** 非受控时的初始折叠状态（无本地记录时生效） */
   defaultCollapsed?: boolean
@@ -105,6 +110,8 @@ function AppShell({
     },
   })
   const [mobileOpen, setMobileOpen] = React.useState(false)
+  // 只有用户点击折叠后才开启宽度过渡，首次渲染与水合不播放动画
+  const [animate, setAnimate] = React.useState(false)
 
   const mainRef = React.useRef<HTMLElement>(null)
   React.useEffect(() => {
@@ -131,14 +138,21 @@ function AppShell({
           <div
             data-slot="app-shell"
             data-collapsed={collapsed ? "" : undefined}
+            data-animate={animate ? "" : undefined}
             data-has-aside={aside ? "" : undefined}
             data-has-workspace={group ? "" : undefined}
             className={cn(
-              "flex h-svh flex-col overflow-hidden bg-muted/35 text-foreground",
+              "group/app-shell flex h-svh flex-col overflow-hidden bg-muted/35 text-foreground",
               className
             )}
+            // 首帧脚本会在水合前改写 data-collapsed，以 DOM 为准
+            suppressHydrationWarning
             {...props}
           >
+            {/* 受控时折叠状态由外部决定，不能让脚本用本地记录覆盖 */}
+            {collapsedProp === undefined ? (
+              <AppShellScript storageKey={storageKey} />
+            ) : null}
             <a
               href="#main-content"
               className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-lg focus:ring-3 focus:ring-ring/50 focus:outline-none"
@@ -148,7 +162,10 @@ function AppShell({
             <AppHeader
               brand={brand}
               collapsed={collapsed}
-              onToggleCollapsed={() => setCollapsed(!collapsed)}
+              onToggleCollapsed={() => {
+                setAnimate(true)
+                setCollapsed(!collapsed)
+              }}
               trail={active?.trail ?? []}
               actions={headerActions}
               themeToggle={themeToggle}
@@ -172,8 +189,8 @@ function AppShell({
                 data-collapsed={collapsed ? "" : undefined}
                 className={cn(
                   "hidden shrink-0 border-r border-sidebar-border bg-sidebar md:flex",
-                  NAV_WIDTH_TRANSITION,
-                  collapsed ? NAV_WIDTH_CLASS.collapsed : NAV_WIDTH_CLASS.expanded
+                  NAV_WIDTH_CLASS.sidebar,
+                  NAV_WIDTH_TRANSITION
                 )}
               >
                 <PrimaryNav
@@ -230,5 +247,10 @@ function AppShell({
   )
 }
 
-export { AppShell }
-export type { AppShellBrand, AppShellProps, AppShellUser }
+export { AppShell, AppShellScript }
+export type {
+  AppShellBrand,
+  AppShellProps,
+  AppShellScriptProps,
+  AppShellUser,
+}
