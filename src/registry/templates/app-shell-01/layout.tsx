@@ -11,6 +11,7 @@ import { services } from "@/registry/templates/app-shell-01/sample-data"
  * 控制台布局：app/(app) 路由组下的所有页面都会套上这层壳。
  * 导航数据里的图标是函数，不能从服务端组件传给客户端组件，所以这个布局是客户端组件。
  * 把 brand、user、onSignOut 换成你自己的数据与登录逻辑。
+ * 侧栏折叠状态的首帧脚本由 AppShell 自动注入，这里和根布局都不需要额外接线。
  */
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (

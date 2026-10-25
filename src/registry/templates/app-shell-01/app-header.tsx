@@ -82,10 +82,8 @@ function AppHeader({
         <div
           className={cn(
             "h-full shrink-0 border-r border-sidebar-border bg-sidebar px-3 sm:px-4",
-            NAV_WIDTH_TRANSITION,
-            collapsed
-              ? NAV_WIDTH_CLASS.collapsed
-              : cn(NAV_WIDTH_CLASS.expanded, NAV_WIDTH_CLASS.mobile)
+            NAV_WIDTH_CLASS.brand,
+            NAV_WIDTH_TRANSITION
           )}
         >
           <NavLink
@@ -93,8 +91,7 @@ function AppHeader({
             navigation={navigation}
             aria-label={formatLabel(text.brandHome, brand.name)}
             className={cn(
-              "flex h-full min-w-0 items-center rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-              collapsed ? "justify-center" : "gap-2.5 max-md:justify-center"
+              "flex h-full min-w-0 items-center gap-2.5 rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50 max-md:justify-center group-data-[collapsed]/app-shell:justify-center"
             )}
           >
             <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
@@ -107,18 +104,16 @@ function AppHeader({
                 </span>
               )}
             </span>
-            {collapsed ? null : (
-              <span className="hidden min-w-0 leading-tight md:block">
-                <span className="block truncate text-sm font-semibold">
-                  {brand.name}
-                </span>
-                {brand.tagline ? (
-                  <span className="block truncate text-[11px] text-muted-foreground">
-                    {brand.tagline}
-                  </span>
-                ) : null}
+            <span className="hidden min-w-0 leading-tight md:block md:group-data-[collapsed]/app-shell:hidden">
+              <span className="block truncate text-sm font-semibold">
+                {brand.name}
               </span>
-            )}
+              {brand.tagline ? (
+                <span className="block truncate text-[11px] text-muted-foreground">
+                  {brand.tagline}
+                </span>
+              ) : null}
+            </span>
           </NavLink>
         </div>
 
@@ -162,13 +157,13 @@ function AppHeader({
                       </BreadcrumbPage>
                     </BreadcrumbItem>
                   ) : (
-                    <BreadcrumbItem
-                      key={`${label}-${index}`}
-                      className="hidden shrink-0 lg:inline-flex"
-                    >
-                      {label}
-                      <BreadcrumbSeparator />
-                    </BreadcrumbItem>
+                    // 分隔符本身是 <li>，必须和 BreadcrumbItem 并列，嵌套会触发水合错误
+                    <React.Fragment key={`${label}-${index}`}>
+                      <BreadcrumbItem className="hidden shrink-0 lg:inline-flex">
+                        {label}
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator className="hidden shrink-0 lg:flex lg:items-center" />
+                    </React.Fragment>
                   )
                 })}
               </BreadcrumbList>

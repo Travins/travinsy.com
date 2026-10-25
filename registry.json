@@ -506,6 +506,11 @@
           "target": "components/app-shell/app-header.tsx"
         },
         {
+          "path": "src/registry/templates/app-shell-01/app-shell-script.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/app-shell-script.tsx"
+        },
+        {
           "path": "src/registry/templates/app-shell-01/primary-nav.tsx",
           "type": "registry:component",
           "target": "components/app-shell/primary-nav.tsx"
