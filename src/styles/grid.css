@@ -42,7 +42,7 @@
  *   因此左右两条竖线上都正好是长刻度 / 格线
  */
 
-/* 刻度尺（默认）：下沿每 8px 短刻度、每 32px 中刻度、每 128px 长刻度，上沿一排细刻度 */
+/* 刻度尺：下沿每 8px 短刻度、每 32px 中刻度、每 128px 长刻度，上沿一排细刻度 */
 @utility pattern-ruler {
   background-color: color-mix(in oklab, var(--foreground) 34%, transparent);
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='31' shape-rendering='crispEdges'%3E%3Crect x='0' y='19' width='1' height='12'/%3E%3Crect x='0' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='8' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='8' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='16' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='16' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='24' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='24' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='32' y='24' width='1' height='7' fill-opacity='.8'/%3E%3Crect x='32' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='40' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='40' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='48' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='48' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='56' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='56' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='64' y='24' width='1' height='7' fill-opacity='.8'/%3E%3Crect x='64' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='72' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='72' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='80' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='80' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='88' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='88' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='96' y='24' width='1' height='7' fill-opacity='.8'/%3E%3Crect x='96' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='104' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='104' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='112' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='112' y='0' width='1' height='3' fill-opacity='.45'/%3E%3Crect x='120' y='27' width='1' height='4' fill-opacity='.55'/%3E%3Crect x='120' y='0' width='1' height='3' fill-opacity='.45'/%3E%3C/svg%3E");
@@ -60,7 +60,7 @@
   mask-position: 0 0;
 }
 
-/* 点阵：8px 间距，三行，落在两条刻度中间 */
+/* 点阵（默认）：8px 间距，三行，以竖线为中心左右对称 */
 @utility pattern-dots {
   background-color: color-mix(in oklab, var(--foreground) 34%, transparent);
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='31' shape-rendering='crispEdges'%3E%3Crect x='4' y='7' width='1' height='1'/%3E%3Crect x='4' y='15' width='1' height='1'/%3E%3Crect x='4' y='23' width='1' height='1'/%3E%3C/svg%3E");
@@ -69,11 +69,11 @@
   mask-position: 0 0;
 }
 
-/* 坐标网格：16px 正方格，横线与上下边线等距 */
+/* 坐标网格：8px 正方格（横线在带内 7/15/23 行，与上下边线围成 4 行方格），线色较淡 */
 @utility pattern-grid {
-  background-color: color-mix(in oklab, var(--foreground) 22%, transparent);
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='31' shape-rendering='crispEdges'%3E%3Crect x='0' y='0' width='1' height='31'/%3E%3Crect x='1' y='15' width='15' height='1'/%3E%3C/svg%3E");
-  mask-size: 16px 31px;
+  background-color: color-mix(in oklab, var(--foreground) 14%, transparent);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='31' shape-rendering='crispEdges'%3E%3Crect x='0' y='0' width='1' height='31'/%3E%3Crect x='1' y='7' width='7' height='1'/%3E%3Crect x='1' y='15' width='7' height='1'/%3E%3Crect x='1' y='23' width='7' height='1'/%3E%3C/svg%3E");
+  mask-size: 8px 31px;
   mask-repeat: repeat-x;
   mask-position: 0 0;
 }

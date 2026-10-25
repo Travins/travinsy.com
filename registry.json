@@ -77,9 +77,9 @@
           "mask-position": "0 0"
         },
         "@utility pattern-grid": {
-          "background-color": "color-mix(in oklab, var(--foreground) 22%, transparent)",
-          "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='31' shape-rendering='crispEdges'%3E%3Crect x='0' y='0' width='1' height='31'/%3E%3Crect x='1' y='15' width='15' height='1'/%3E%3C/svg%3E\")",
-          "mask-size": "16px 31px",
+          "background-color": "color-mix(in oklab, var(--foreground) 14%, transparent)",
+          "mask-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='31' shape-rendering='crispEdges'%3E%3Crect x='0' y='0' width='1' height='31'/%3E%3Crect x='1' y='7' width='7' height='1'/%3E%3Crect x='1' y='15' width='7' height='1'/%3E%3Crect x='1' y='23' width='7' height='1'/%3E%3C/svg%3E\")",
+          "mask-size": "8px 31px",
           "mask-repeat": "repeat-x",
           "mask-position": "0 0"
         },

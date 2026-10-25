@@ -1,6 +1,6 @@
 ---
 title: 线条网格布局
-description: 用全宽横线、竖线容器与刻度尺分隔带，为内容建立清晰的秩序。
+description: 用全宽横线、竖线容器与点阵分隔带，为内容建立清晰的秩序。
 links:
   源码: https://travinsy.com/r/grid-layout.json
   React API: https://react.dev/reference/react-dom/components/common
@@ -46,7 +46,7 @@ export default function Page() {
 
 ### 分隔带纹路
 
-`GridSeparator` 用 `pattern` 切换纹路。页面里的主分隔用默认的 `ruler`（刻度尺）；`hatch`、`dots`、`grid`、`plus`、`wave` 适合局部强调或区分不同类型的内容。
+`GridSeparator` 用 `pattern` 切换纹路。页面里的主分隔用默认的 `dots`（点阵）；`ruler`、`hatch`、`grid`、`plus`、`wave` 适合局部强调或区分不同类型的内容。
 
 <ComponentPreview name="grid-separator-patterns-demo" />
 
@@ -76,7 +76,7 @@ export default function Page() {
 
 <PropsTable name="grid-layout" component="GridSeparator" />
 
-`pattern` 可选值：`ruler`（默认）、`hatch`、`dots`、`grid`、`plus`、`wave`、`none`。同时导出 `gridSeparatorVariants`，类型 `GridSeparatorPattern`。
+`pattern` 可选值：`dots`（默认）、`ruler`、`hatch`、`grid`、`plus`、`wave`、`none`。同时导出 `gridSeparatorVariants`，类型 `GridSeparatorPattern`。
 
 ### GridColumns
 

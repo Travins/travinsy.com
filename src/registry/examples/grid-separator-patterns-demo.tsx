@@ -6,9 +6,9 @@ import {
 } from "@/registry/ui/grid-layout/grid-layout"
 
 const patterns: { pattern: GridSeparatorPattern; note: string }[] = [
-  { pattern: "ruler", note: "刻度尺 · 默认" },
+  { pattern: "dots", note: "点阵 · 默认" },
+  { pattern: "ruler", note: "刻度尺" },
   { pattern: "hatch", note: "斜纹 · 局部强调" },
-  { pattern: "dots", note: "点阵" },
   { pattern: "grid", note: "坐标细网格" },
   { pattern: "plus", note: "十字阵列" },
   { pattern: "wave", note: "信号波形" },

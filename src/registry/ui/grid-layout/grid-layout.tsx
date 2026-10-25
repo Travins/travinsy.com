@@ -46,7 +46,7 @@ const gridSeparatorVariants = cva(
         none: "",
       },
     },
-    defaultVariants: { pattern: "ruler" },
+    defaultVariants: { pattern: "dots" },
   },
 )
 
@@ -133,7 +133,7 @@ function GridSection({
 
 /**
  * 分隔带：全屏宽度的纹理 + 底部横线，用于主题切换处。
- * 默认是刻度尺纹路；长刻度与左右竖线重合，需要时可用 crosshair 在交点绘制「+」。
+ * 默认是点阵纹路；需要时可用 crosshair 在交点绘制「+」。
  */
 function GridSeparator({
   className,
@@ -143,14 +143,14 @@ function GridSeparator({
   ...props
 }: React.ComponentProps<"div"> &
   VariantProps<typeof gridSeparatorVariants> & {
-    /** 纹路：ruler（默认）、hatch、dots、grid、plus、wave，none 为只留线条 */
+    /** 纹路：dots（默认）、ruler、hatch、grid、plus、wave，none 为只留线条 */
     pattern?: GridSeparatorPattern | null
     /** 左侧的等宽小字编号（如 `02 / PROJECTS`），像标签一样贴在纹路上；可与任意纹路组合 */
     label?: React.ReactNode
-    /** 是否在四个交点绘制十字，默认关闭（刻度尺的长刻度本身已与竖线重合） */
+    /** 是否在四个交点绘制十字，默认关闭 */
     crosshair?: boolean
   }) {
-  const resolved = pattern ?? "ruler"
+  const resolved = pattern ?? "dots"
   const showCrosshair = crosshair ?? false
   return (
     <div
