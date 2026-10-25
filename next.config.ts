@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // 纯静态导出，部署到阿里云 OSS
+  output: "export",
+  trailingSlash: true,
+  images: { unoptimized: true },
+  // 静态导出不支持 PPR，因此不开启 cacheComponents / partialPrefetching
   turbopack: {
     rules: {
       "*.css": {

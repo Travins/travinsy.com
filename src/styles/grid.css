@@ -1,0 +1,42 @@
+/*
+ * 线条网格设计系统的底层工具类。
+ * 横线通过 200vw 宽的伪元素撑满屏幕，需配合 html { overflow-x: clip }。
+ * 与 src/registry/ui/grid-layout 一起发布到 registry（css 字段）。
+ */
+
+@utility screen-line-top {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100vw;
+    width: 200vw;
+    height: 1px;
+    background-color: var(--edge);
+    pointer-events: none;
+  }
+}
+
+@utility screen-line-bottom {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: -100vw;
+    width: 200vw;
+    height: 1px;
+    background-color: var(--edge);
+    pointer-events: none;
+  }
+}
+
+@utility bg-hatch {
+  background-image: repeating-linear-gradient(
+    315deg,
+    var(--edge) 0 1px,
+    transparent 0 50%
+  );
+  background-size: 10px 10px;
+}
