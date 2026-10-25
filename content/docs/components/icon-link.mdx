@@ -1,0 +1,67 @@
+---
+title: 图标链接
+description: 带明确名称、悬浮提示与键盘焦点样式的图标链接方块，图标本身对读屏隐藏。
+links:
+  源码: https://travinsy.com/r/icon-link.json
+---
+
+<ComponentPreview name="icon-link-demo" />
+
+## 安装
+
+<InstallCommand name="icon-link" />
+
+安装命令会同时写入 `--edge` 变量和 `--color-edge` 主题映射（边框用的是 `border-edge`）。已经装过 `grid-layout` 的项目共用同一组值，重复写入不会冲突。
+
+## 用法
+
+`label` 是必填属性：它同时作为 `aria-label` 和 `title`，决定这个方块叫什么。
+
+```tsx title="app/social-links.tsx"
+import { Globe, Mail } from "lucide-react"
+import { IconLink } from "@/components/ui/icon-link/icon-link"
+
+export function SocialLinks() {
+  return (
+    <div className="flex gap-2">
+      <IconLink href="https://travinsy.com" label="个人网站">
+        <Globe strokeWidth={1.5} />
+      </IconLink>
+      <IconLink href="mailto:hi@travinsy.com" label="邮件">
+        <Mail strokeWidth={1.5} />
+      </IconLink>
+    </div>
+  )
+}
+```
+
+### 无障碍约定
+
+- `label` 是唯一的信息来源：读屏读到的是“个人网站”，而不是图标。
+- 传入的图标被包在 `aria-hidden` 的 `<span>` 里，不会被重复朗读。
+- 焦点样式用 `focus-visible:outline-2 outline-offset-4 outline-ring`，键盘 Tab 到时会明显偏移一圈，鼠标点击不会出现。
+- 图标尺寸由 `[&_svg]:size-5` 统一，换用任何 SVG 图标库都不需要单独调尺寸。
+
+### 打开新窗口
+
+需要新标签页时自行补 `target` 与 `rel`，组件不会默认添加：
+
+```tsx
+<IconLink href="https://github.com" label="GitHub" target="_blank" rel="noreferrer noopener">
+  <Globe strokeWidth={1.5} />
+</IconLink>
+```
+
+## Props
+
+<PropsTable name="icon-link" component="IconLink" />
+
+## 注意
+
+- 默认尺寸是 `size-11`（44px），刚好够触屏最小点击区域，用它来替换 `size-8` 的小图标能顺带修掉移动端误触。
+- 背景用 `bg-muted/30`，悬浮变 `bg-muted` 并将文字提到 `text-foreground`；全部走主题变量。
+- 想调整圆角、尺寸或配色，直接传 `className` 覆盖即可。
+
+## 源码
+
+<ComponentSource name="icon-link" />

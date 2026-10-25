@@ -1,0 +1,69 @@
+---
+title: 贡献热力图
+description: GitHub 风格的年度贡献日历，悬浮查看每日数量，也可以用键盘方向键和可展开的数据表读取同样的信息。
+links:
+  源码: https://travinsy.com/r/contribution-graph.json
+  贡献数据参考: https://docs.github.com/en/graphql/reference/objects#contributionscollection
+---
+
+<ComponentPreview name="contribution-graph-demo" />
+
+## 安装
+
+<InstallCommand name="contribution-graph" />
+
+条目依赖 `tooltip` 原语，安装命令会一并写入 `components/ui/tooltip`。
+
+## 用法
+
+传入过去一年的每日记录即可。顺序随意：组件会按日期排序，并只绘制最后一天往前 365 天。
+
+```tsx title="app/contributions.tsx"
+import {
+  ContributionGraph,
+  type Contribution,
+} from "@/components/ui/contribution-graph/contribution-graph"
+
+const data: Contribution[] = [
+  { date: "2025-12-30", count: 0, level: 0 },
+  { date: "2025-12-31", count: 7, level: 3 },
+]
+
+export function Contributions() {
+  return <ContributionGraph data={data} />
+}
+```
+
+### 数据形状
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `date` | `string` | `YYYY-MM-DD`，按 UTC 解析 |
+| `count` | `number` | 当天数量，用于悬浮提示与数据表 |
+| `level` | `number` | 0–4，只决定方块深浅 |
+
+`level` 与颜色一一对应，语义始终由 `count` 提供；站点构建时从 GitHub 抓取失败也可以直接复用旧数据，组件不会因为空数组而崩溃。
+
+### 颜色
+
+五个级别使用 `bg-foreground/5` 到 `bg-foreground/80`，随亮暗模式和颜色主题自动变化，不需要额外的 CSS 变量。
+
+### 无障碍
+
+- 每个方块是真正的 `<button>`，方向键（上 / 下 / 左 / 右）在相邻日期之间移动焦点。
+- 颜色之外还有三种读取方式：`aria-label`、悬浮提示，以及底部的“查看每日贡献数据”表格。
+- 日历容器可横向滚动，窄屏只会滚动不会撑破布局。
+
+## Props
+
+<PropsTable name="contribution-graph" component="ContributionGraph" />
+
+## 注意
+
+没有有效数据时组件渲染一行静态文案，不会抛错。日期必须是能被 `Date.parse` 解析的完整日期，例如 `2025-12-31`；`2025-12` 这类简写会被过滤掉。
+
+数据只在**构建时**或父组件传入时确定，组件本身不发起请求，符合静态导出的约束。
+
+## 源码
+
+<ComponentSource name="contribution-graph" />

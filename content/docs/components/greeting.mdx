@@ -1,0 +1,63 @@
+---
+title: 时段问候
+description: 按访客本地时间显示早上好、中午好、下午好或晚上好，首屏用静态文案避免水合差异。
+links:
+  源码: https://travinsy.com/r/greeting.json
+---
+
+<ComponentPreview name="greeting-demo" />
+
+## 安装
+
+<InstallCommand name="greeting" />
+
+## 用法
+
+默认输出 `你好，很高兴在这里遇见你。`，挂载后会换成与访客时段相符的问候语。
+
+```tsx title="app/greeting.tsx"
+import { Greeting } from "@/components/ui/greeting/greeting"
+
+export function Intro() {
+  return (
+    <h2 className="text-xl font-medium">
+      <Greeting />
+    </h2>
+  )
+}
+```
+
+需要换文案时传入 `fallback` 与 `suffix`，两者都是纯文本：
+
+```tsx title="app/intro.tsx"
+<Greeting fallback="嗨" suffix="，今天想写点什么？" />
+```
+
+### 时段划分
+
+| 本地时间 | 问候语 |
+| --- | --- |
+| 05:00–10:59 | 早上好 |
+| 11:00–13:59 | 中午好 |
+| 14:00–17:59 | 下午好 |
+| 18:00–次日 04:59 | 晚上好 |
+
+### 为什么必须在客户端渲染
+
+问候语取决于访客设备上的 `new Date().getHours()`，服务端渲染时无从得知。静态导出会把 HTML 在构建时生成一次，如果首屏直接用浏览器时间渲染，客户端水合时拿到的文本就会和 HTML 不一致。
+
+组件因此把 `fallback` 作为初始状态，挂载后再由 `useEffect` 替换，并每分钟校准一次。副作用是首屏会短暂显示 `fallback`：把它设成一句中性、通用的问候（例如默认的“你好”）就不会显得突兀。
+
+## Props
+
+<PropsTable name="greeting" component="Greeting" />
+
+## 注意
+
+- 组件返回的是内联文本片段，不是容器元素；请放在 `<p>`、`<h2>` 等元素内部。
+- `fallback` 与 `suffix` 都是纯字符串，不接受 JSX。需要强调某一段时，在外层用 `<span>` 包裹。
+- 时区以访客设备为准，不做服务端时区推断，因此不需要 `timeZone` 参数。
+
+## 源码
+
+<ComponentSource name="greeting" />

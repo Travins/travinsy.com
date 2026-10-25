@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "greeting",
+  "title": "时段问候",
+  "description": "按访客本地时间显示早上好、中午好、下午好或晚上好，首屏使用静态文案避免水合差异。",
+  "files": [
+    {
+      "path": "src/registry/ui/greeting/greeting.tsx",
+      "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\n\n/** 根据访客当地时间问候，首屏使用一致的静态文案以避免水合差异。 */\nexport function Greeting({\n  fallback = \"你好\",\n  suffix = \"，很高兴在这里遇见你。\",\n}: {\n  /** 首屏与挂载前显示的静态文案，需保持中性以避免水合差异 */\n  fallback?: string\n  /** 问候语之后拼接的文本，默认带一个逗号 */\n  suffix?: string\n}) {\n  const [greeting, setGreeting] = useState(fallback)\n  useEffect(() => {\n    const update = () => {\n      const hour = new Date().getHours()\n      setGreeting(\n        hour >= 5 && hour < 11\n          ? \"早上好\"\n          : hour >= 11 && hour < 14\n            ? \"中午好\"\n            : hour >= 14 && hour < 18\n              ? \"下午好\"\n              : \"晚上好\",\n      )\n    }\n    const first = window.setTimeout(update, 0)\n    const timer = window.setInterval(update, 60_000)\n    return () => {\n      window.clearTimeout(first)\n      window.clearInterval(timer)\n    }\n  }, [])\n  return (\n    <>\n      {greeting}\n      {suffix}\n    </>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

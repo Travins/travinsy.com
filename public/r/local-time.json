@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "local-time",
+  "title": "实时当地时间",
+  "description": "按指定 IANA 时区显示每秒刷新的时间，并标注与访客时区之间的时差。",
+  "files": [
+    {
+      "path": "src/registry/ui/local-time/local-time.tsx",
+      "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\n\n/** 以指定 IANA 时区显示时间，并比较访客当前的时区偏移。 */\nexport function LocalTime({ timeZone }: {\n  /** IANA 时区名，例如 `Asia/Shanghai`，不支持 `+08:00` 这类固定偏移 */\n  timeZone: string\n}) {\n  const [now, setNow] = useState<Date | null>(null)\n  useEffect(() => {\n    const update = () => setNow(new Date())\n    const first = window.setTimeout(update, 0)\n    const timer = window.setInterval(update, 1000)\n    return () => {\n      window.clearTimeout(first)\n      window.clearInterval(timer)\n    }\n  }, [])\n\n  if (!now)\n    return (\n      <span className=\"tabular-nums\">\n        --:--:-- <span className=\"text-muted-foreground\">{\"// 当地时间\"}</span>\n      </span>\n    )\n  const formatter = new Intl.DateTimeFormat(\"zh-CN\", {\n    timeZone,\n    hour: \"2-digit\",\n    minute: \"2-digit\",\n    second: \"2-digit\",\n    hourCycle: \"h23\",\n  })\n  const zone =\n    new Intl.DateTimeFormat(\"en-US\", { timeZone, timeZoneName: \"longOffset\" })\n      .formatToParts(now)\n      .find((part) => part.type === \"timeZoneName\")?.value ?? \"GMT\"\n  const offset = zone.match(/GMT([+-])(\\d{2}):(\\d{2})/)\n  const targetMinutes = offset\n    ? (Number(offset[2]) * 60 + Number(offset[3])) *\n      (offset[1] === \"+\" ? 1 : -1)\n    : 0\n  const difference = (targetMinutes + now.getTimezoneOffset()) / 60\n  const comparison =\n    difference === 0\n      ? \"与你同一时间\"\n      : `${difference > 0 ? \"早\" : \"晚\"} ${new Intl.NumberFormat(\"zh-CN\", { maximumFractionDigits: 2 }).format(Math.abs(difference))} 小时`\n  return (\n    <span className=\"tabular-nums\">\n      <time dateTime={now.toISOString()}>{formatter.format(now)}</time>{\" \"}\n      <span className=\"text-muted-foreground\">\n        {\"// \"}\n        {comparison}\n      </span>\n    </span>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

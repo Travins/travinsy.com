@@ -13,6 +13,19 @@ export const docs = defineDocs({
   },
 })
 
+export const blog = defineDocs({
+  dir: "content/blog",
+  docs: {
+    schema: pageSchema.extend({
+      title: z.string().min(1),
+      description: z.string().min(1),
+      date: z.iso.date(),
+      tags: z.array(z.string()).optional(),
+      draft: z.boolean().optional(),
+    }),
+  },
+})
+
 export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {

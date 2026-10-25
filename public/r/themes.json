@@ -1,0 +1,116 @@
+{
+  "name": "travinsy-themes",
+  "homepage": "https://travinsy.com",
+  "themes": [
+    {
+      "id": "neutral",
+      "name": "中性",
+      "title": "Neutral",
+      "description": "纯灰无色相的中性配色，shadcn 默认主题。",
+      "url": "https://travinsy.com/r/theme-neutral.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-neutral.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-neutral"
+      }
+    },
+    {
+      "id": "zinc",
+      "name": "锌灰",
+      "title": "Zinc",
+      "description": "带一点冷蓝的灰色，克制而干净。",
+      "url": "https://travinsy.com/r/theme-zinc.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-zinc.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-zinc"
+      }
+    },
+    {
+      "id": "stone",
+      "name": "石灰",
+      "title": "Stone",
+      "description": "带一点暖黄的灰色，更柔和。",
+      "url": "https://travinsy.com/r/theme-stone.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-stone.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-stone"
+      }
+    },
+    {
+      "id": "slate",
+      "name": "岩青",
+      "title": "Slate",
+      "description": "偏青蓝的灰色，适合技术向、文档类站点。",
+      "url": "https://travinsy.com/r/theme-slate.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-slate.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-slate"
+      }
+    },
+    {
+      "id": "rose",
+      "name": "玫瑰",
+      "title": "Rose",
+      "description": "饱和的玫红主色，叠加在锌灰基底上。",
+      "url": "https://travinsy.com/r/theme-rose.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-rose.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-rose"
+      }
+    },
+    {
+      "id": "orange",
+      "name": "橙色",
+      "title": "Orange",
+      "description": "温暖的橙色主色，叠加在锌灰基底上。",
+      "url": "https://travinsy.com/r/theme-orange.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-orange.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-orange"
+      }
+    },
+    {
+      "id": "amber",
+      "name": "琥珀",
+      "title": "Amber",
+      "description": "深琥珀主色，叠加在锌灰基底上。",
+      "url": "https://travinsy.com/r/theme-amber.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-amber.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-amber"
+      }
+    },
+    {
+      "id": "green",
+      "name": "翠绿",
+      "title": "Green",
+      "description": "沉稳的绿色主色，叠加在锌灰基底上。",
+      "url": "https://travinsy.com/r/theme-green.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-green.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-green"
+      }
+    },
+    {
+      "id": "blue",
+      "name": "海蓝",
+      "title": "Blue",
+      "description": "经典的蓝色主色，叠加在锌灰基底上。",
+      "url": "https://travinsy.com/r/theme-blue.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-blue.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-blue"
+      }
+    },
+    {
+      "id": "violet",
+      "name": "紫罗兰",
+      "title": "Violet",
+      "description": "浓郁的紫色主色，叠加在锌灰基底上。",
+      "url": "https://travinsy.com/r/theme-violet.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-violet.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-violet"
+      }
+    }
+  ]
+}

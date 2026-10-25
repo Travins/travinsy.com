@@ -30,6 +30,7 @@ export function ContributionGraph({
   data,
   className,
 }: {
+  /** 过去一年的每日记录，顺序任意；只绘制最后一天往前 365 天 */
   data: readonly Contribution[]
   className?: string
 }) {

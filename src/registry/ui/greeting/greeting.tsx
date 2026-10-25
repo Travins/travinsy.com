@@ -7,7 +7,9 @@ export function Greeting({
   fallback = "你好",
   suffix = "，很高兴在这里遇见你。",
 }: {
+  /** 首屏与挂载前显示的静态文案，需保持中性以避免水合差异 */
   fallback?: string
+  /** 问候语之后拼接的文本，默认带一个逗号 */
   suffix?: string
 }) {
   const [greeting, setGreeting] = useState(fallback)

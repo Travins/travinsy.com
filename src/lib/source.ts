@@ -1,4 +1,5 @@
-import { docs } from "../../.source/server"
+import { blog, docs } from "../../.source/server"
+import { toFumadocsSource } from "fumadocs-mdx/runtime/server"
 import { flattenTree } from "fumadocs-core/page-tree"
 import { loader } from "fumadocs-core/source"
 import { siteConfig } from "@/config/site"
@@ -14,6 +15,26 @@ export const source = loader({
   url: (slugs, locale) =>
     `${locale && locale !== siteConfig.defaultLanguage ? `/${locale}` : ""}/${slugs.join("/")}/`,
 })
+
+// 草稿在 loader 层排除，页面、订阅与文本输出共享同一发布边界。
+export const blogSource = loader({
+  baseUrl: "/blog",
+  source: toFumadocsSource(
+    blog.docs.filter((post) => !post.draft),
+    blog.meta,
+  ),
+  url: (slugs) => `/blog/${slugs.join("/")}/`,
+})
+
+export function blogPosts() {
+  return blogSource
+    .getPages()
+    .map((post) => ({ ...post, url: `${post.url.replace(/\/$/, "")}/` }))
+    .sort(
+      (a, b) =>
+        b.data.date.localeCompare(a.data.date) || a.url.localeCompare(b.url),
+    )
+}
 
 export type DocsSection = "components" | "agents"
 export const sections: Record<

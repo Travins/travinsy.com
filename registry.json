@@ -62,6 +62,80 @@
           }
         }
       }
+    },
+    {
+      "name": "contribution-graph",
+      "type": "registry:ui",
+      "title": "贡献热力图",
+      "description": "GitHub 风格的年度贡献日历，支持键盘方向键、悬浮提示与可展开的数据表。",
+      "registryDependencies": [
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/contribution-graph/contribution-graph.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "local-time",
+      "type": "registry:ui",
+      "title": "实时当地时间",
+      "description": "按指定 IANA 时区显示每秒刷新的时间，并标注与访客时区之间的时差。",
+      "files": [
+        {
+          "path": "src/registry/ui/local-time/local-time.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "greeting",
+      "type": "registry:ui",
+      "title": "时段问候",
+      "description": "按访客本地时间显示早上好、中午好、下午好或晚上好，首屏使用静态文案避免水合差异。",
+      "files": [
+        {
+          "path": "src/registry/ui/greeting/greeting.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "follow-me",
+      "type": "registry:ui",
+      "title": "手写标注",
+      "description": "放在内容容器外侧的手写体 follow me 与箭头装饰，纯装饰，不参与交互与无障碍阅读。",
+      "files": [
+        {
+          "path": "src/registry/ui/follow-me/follow-me.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "icon-link",
+      "type": "registry:ui",
+      "title": "图标链接",
+      "description": "带明确名称、悬停提示与键盘焦点样式的图标链接方块，图标本身对读屏隐藏。",
+      "cssVars": {
+        "theme": {
+          "color-edge": "var(--edge)"
+        },
+        "light": {
+          "edge": "color-mix(in oklch, var(--foreground) 12%, transparent)"
+        },
+        "dark": {
+          "edge": "color-mix(in oklch, var(--foreground) 18%, transparent)"
+        }
+      },
+      "files": [
+        {
+          "path": "src/registry/ui/icon-link/icon-link.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

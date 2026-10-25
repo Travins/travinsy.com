@@ -1,0 +1,55 @@
+---
+title: 实时当地时间
+description: 按指定 IANA 时区显示每秒刷新的时间，并标注它与访客当前时区之间的时差。
+links:
+  源码: https://travinsy.com/r/local-time.json
+  时区列表: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+---
+
+<ComponentPreview name="local-time-demo" />
+
+## 安装
+
+<InstallCommand name="local-time" />
+
+## 用法
+
+`timeZone` 接收 IANA 时区名，不是 `+08:00` 这类固定偏移。
+
+```tsx title="app/local-time.tsx"
+import { LocalTime } from "@/components/ui/local-time/local-time"
+
+export function Header() {
+  return (
+    <p className="font-mono text-sm">
+      <LocalTime timeZone="Asia/Shanghai" />
+    </p>
+  )
+}
+```
+
+输出形如 `21:04:33 // 早 0.5 小时`：前半段是目标时区的当前时间，`//` 后是它与访客时区的差值。数字使用 `tabular-nums`，秒数跳动时不会顶动后面的文字。
+
+### 时差怎么算
+
+组件把目标时区的 UTC 偏移和 `Date.prototype.getTimezoneOffset()` 相减得到小时数，因此夏令时（例如 `Europe/London`）也能自动跟随。差值为 0 时显示 `与你同一时间`。
+
+### 为什么必须在客户端渲染
+
+时间依赖访客的浏览器时钟，服务端渲染出来的秒数一定会过期。组件采用“先占位、再更新”的策略：初始渲染输出 `--:--:--` 占位，挂载后再每秒刷新。这样静态导出的 HTML 与客户端首屏完全一致，不会出现水合警告，也不会先闪出一个错误的时间。
+
+占位文本同样使用 `tabular-nums` 和相同宽度，切换时不会引起布局跳动。
+
+## Props
+
+<PropsTable name="local-time" component="LocalTime" />
+
+## 注意
+
+- `timeZone` 必须是合法的 IANA 名称，传错会在浏览器抛 `RangeError`。
+- 每个实例各自持有一个 1 秒定时器；同一页面渲染多个时区时建议控制在几个以内。
+- 数字格式固定为 `zh-CN` 的 24 小时制（`hourCycle: "h23"`），需要 12 小时制请在源码里改 `Intl.DateTimeFormat` 的选项。
+
+## 源码
+
+<ComponentSource name="local-time" />

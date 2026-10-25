@@ -7,7 +7,11 @@ export function IconLink({
   children,
   className,
   ...props
-}: ComponentProps<"a"> & { label: string; children: ReactNode }) {
+}: ComponentProps<"a"> & {
+  /** 同时作为 aria-label 与 title 的可读名称，必填 */
+  label: string
+  children: ReactNode
+}) {
   return (
     <a
       aria-label={label}

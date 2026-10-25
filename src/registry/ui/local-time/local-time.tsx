@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react"
 
 /** 以指定 IANA 时区显示时间，并比较访客当前的时区偏移。 */
-export function LocalTime({ timeZone }: { timeZone: string }) {
+export function LocalTime({ timeZone }: {
+  /** IANA 时区名，例如 `Asia/Shanghai`，不支持 `+08:00` 这类固定偏移 */
+  timeZone: string
+}) {
   const [now, setNow] = useState<Date | null>(null)
   useEffect(() => {
     const update = () => setNow(new Date())

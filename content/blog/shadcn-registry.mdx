@@ -1,0 +1,58 @@
+---
+title: 用 shadcn registry 搭建个人组件库
+description: 让源码、预览和安装指向同一份实现，再把发布过程收敛到一次静态构建。
+date: "2026-10-24"
+tags: [shadcn, Registry, Next.js]
+---
+
+组件库不一定要先发布 npm 包。对这个个人网站来说，我更希望使用者拿到可以修改的源码，同时能在文档里看到它如何工作。shadcn registry 正好提供了这样的交付方式。
+
+## 从一份源码开始
+
+本站把对外发布的实现放在 `src/registry/`。例如，线条网格原语位于 `src/registry/ui/grid-layout/`。首页和文档演示也直接导入这里的组件，避免演示与安装内容各维护一份。
+
+仓库根目录的 `registry.json` 描述每个条目的名称、类型、说明与文件路径。组件通常使用 `registry:ui` 类型；如果需要额外依赖、CSS 工具类或主题变量，也应在条目中声明。仅列出 TSX 文件，无法保证安装后的视觉完整。
+
+## 把清单变成可安装文件
+
+shadcn 的构建命令读取清单，把源码及依赖信息写入 `public/r/` 下的 JSON 文件：
+
+```bash title="终端"
+pnpm exec shadcn build
+```
+
+本站还在 `pnpm registry:build` 中串联了 CSS 同步与索引生成。发布前应运行项目脚本，避免遗漏网格工具类。`public/r/*.json` 是生成物，不是编辑入口；修改组件后需要重新构建。
+
+使用者可以直接通过 URL 安装，无需先配置命名空间：
+
+```bash title="终端"
+pnpm dlx shadcn@latest add https://travinsy.com/r/grid-layout.json
+```
+
+## 给常用地址一个名字
+
+如果经常安装本站组件，可以在使用者项目的 `components.json` 中合并以下配置：
+
+```json title="components.json"
+{
+  "registries": {
+    "@travinsy": "https://travinsy.com/r/{name}.json"
+  }
+}
+```
+
+这里的 `@travinsy` 是 shadcn registry 命名空间。配置完成后，CLI 会把条目名替换进 URL 模板：
+
+```bash title="终端"
+pnpm dlx shadcn@latest add @travinsy/grid-layout
+```
+
+安装前需要在目标项目里初始化 shadcn。安装后得到的文件属于目标项目，使用者可以改布局、换样式，或删掉不需要的部分。
+
+## 与静态站一起发布
+
+这个网站使用 Next.js 的 `output: "export"`，并开启 `trailingSlash: true`。构建后，页面变成 `out/` 中的 HTML，registry JSON 也作为静态资源进入同一个目录，之后可上传到阿里云 OSS。
+
+这条链路不需要运行时服务：编辑源码，更新清单，生成 registry，再构建网站。文档、预览与安装文件围绕同一份源码组织，才是比发布命令更值得维护的约束。
+
+具体配置可查看[安装文档](/components/installation/)，网格原语的用法见[线条网格布局](/components/grid-layout/)。

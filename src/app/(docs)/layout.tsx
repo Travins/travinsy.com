@@ -2,7 +2,6 @@ import type { ReactNode } from "react"
 import { SiteHeader } from "@/components/site/site-header"
 import { SiteFooter } from "@/components/site/site-footer"
 import { GridContainer } from "@/registry/ui/grid-layout/grid-layout"
-import "@/styles/docs.css"
 
 export default function DocsLayout({ children }: { children: ReactNode }) {
   return (

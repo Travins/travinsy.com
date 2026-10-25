@@ -1,4 +1,13 @@
 {
   "title": "组件",
-  "pages": ["installation", "index", "grid-layout"]
+  "pages": [
+    "installation",
+    "index",
+    "grid-layout",
+    "contribution-graph",
+    "local-time",
+    "greeting",
+    "follow-me",
+    "icon-link"
+  ]
 }
