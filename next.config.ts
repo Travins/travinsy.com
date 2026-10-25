@@ -1,4 +1,5 @@
-import type { NextConfig } from "next";
+import { createMDX } from "fumadocs-mdx/next"
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   // 纯静态导出，部署到阿里云 OSS
@@ -14,6 +15,6 @@ const nextConfig: NextConfig = {
       },
     },
   },
-};
+}
 
-export default nextConfig;
+export default createMDX()(nextConfig)

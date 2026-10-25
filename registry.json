@@ -1,0 +1,67 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "travinsy",
+  "homepage": "https://travinsy.com",
+  "items": [
+    {
+      "name": "grid-layout",
+      "type": "registry:ui",
+      "title": "线条网格布局",
+      "description": "带全宽横线、竖线容器和斜纹分隔带的响应式布局原语。",
+      "files": [
+        {
+          "path": "src/registry/ui/grid-layout/grid-layout.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "color-edge": "var(--edge)"
+        },
+        "light": {
+          "edge": "color-mix(in oklch, var(--foreground) 12%, transparent)"
+        },
+        "dark": {
+          "edge": "color-mix(in oklch, var(--foreground) 18%, transparent)"
+        }
+      },
+      "css": {
+        "@utility screen-line-top": {
+          "position": "relative",
+          "&::before": {
+            "content": "\"\"",
+            "position": "absolute",
+            "top": "0",
+            "left": "-100vw",
+            "width": "200vw",
+            "height": "1px",
+            "background-color": "var(--edge)",
+            "pointer-events": "none"
+          }
+        },
+        "@utility screen-line-bottom": {
+          "position": "relative",
+          "&::after": {
+            "content": "\"\"",
+            "position": "absolute",
+            "bottom": "0",
+            "left": "-100vw",
+            "width": "200vw",
+            "height": "1px",
+            "background-color": "var(--edge)",
+            "pointer-events": "none"
+          }
+        },
+        "@utility bg-hatch": {
+          "background-image": "repeating-linear-gradient(\n    315deg,\n    var(--edge) 0 1px,\n    transparent 0 50%\n  )",
+          "background-size": "10px 10px"
+        },
+        "@layer base": {
+          "html": {
+            "overflow-x": "clip"
+          }
+        }
+      }
+    }
+  ]
+}

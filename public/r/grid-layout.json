@@ -1,0 +1,62 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "grid-layout",
+  "title": "线条网格布局",
+  "description": "带全宽横线、竖线容器和斜纹分隔带的响应式布局原语。",
+  "files": [
+    {
+      "path": "src/registry/ui/grid-layout/grid-layout.tsx",
+      "content": "import type * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\n/**\n * 页面主容器：固定宽度 + 左右竖线。\n * 宽度可通过 CSS 变量 --grid-width 覆盖（默认 48rem）。\n */\nfunction GridContainer({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"grid-container\"\n      className={cn(\n        \"mx-auto w-full max-w-[var(--grid-width,48rem)] border-x border-edge\",\n        className\n      )}\n      {...props}\n    />\n  )\n}\n\n/**\n * 一行内容：底部一条横跨整个屏幕的分隔线。\n * 放在 GridContainer 内使用。\n */\nfunction GridSection({\n  className,\n  topLine = false,\n  ...props\n}: React.ComponentProps<\"section\"> & { topLine?: boolean }) {\n  return (\n    <section\n      data-slot=\"grid-section\"\n      className={cn(\"screen-line-bottom\", topLine && \"screen-line-top\", className)}\n      {...props}\n    />\n  )\n}\n\n/**\n * 斜纹分隔带：全屏宽度的斜线纹理 + 底部横线。\n */\nfunction GridSeparator({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      aria-hidden\n      data-slot=\"grid-separator\"\n      className={cn(\"screen-line-bottom h-8 w-full\", className)}\n      {...props}\n    >\n      <div className=\"absolute inset-y-0 -left-[100vw] w-[200vw] bg-hatch\" />\n    </div>\n  )\n}\n\n/**\n * 分栏：栏与栏之间用虚线分隔，窄屏自动堆叠。\n */\nfunction GridColumns({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"grid-columns\"\n      className={cn(\n        \"grid grid-cols-1 divide-y divide-dashed divide-edge sm:grid-cols-2 sm:divide-x sm:divide-y-0\",\n        className\n      )}\n      {...props}\n    />\n  )\n}\n\nexport { GridColumns, GridContainer, GridSection, GridSeparator }\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "color-edge": "var(--edge)"
+    },
+    "light": {
+      "edge": "color-mix(in oklch, var(--foreground) 12%, transparent)"
+    },
+    "dark": {
+      "edge": "color-mix(in oklch, var(--foreground) 18%, transparent)"
+    }
+  },
+  "css": {
+    "@utility screen-line-top": {
+      "position": "relative",
+      "&::before": {
+        "content": "\"\"",
+        "position": "absolute",
+        "top": "0",
+        "left": "-100vw",
+        "width": "200vw",
+        "height": "1px",
+        "background-color": "var(--edge)",
+        "pointer-events": "none"
+      }
+    },
+    "@utility screen-line-bottom": {
+      "position": "relative",
+      "&::after": {
+        "content": "\"\"",
+        "position": "absolute",
+        "bottom": "0",
+        "left": "-100vw",
+        "width": "200vw",
+        "height": "1px",
+        "background-color": "var(--edge)",
+        "pointer-events": "none"
+      }
+    },
+    "@utility bg-hatch": {
+      "background-image": "repeating-linear-gradient(\n    315deg,\n    var(--edge) 0 1px,\n    transparent 0 50%\n  )",
+      "background-size": "10px 10px"
+    },
+    "@layer base": {
+      "html": {
+        "overflow-x": "clip"
+      }
+    }
+  },
+  "type": "registry:ui"
+}

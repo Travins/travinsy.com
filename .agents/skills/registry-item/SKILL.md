@@ -30,3 +30,30 @@ description: 在 travinsy.com 新增或修改一个 shadcn registry 条目（组
    检查 `public/r/<name>.json` 已生成，内容包含源码。
    重要条目还要在临时项目里实际安装一次：
    `env -u ALL_PROXY -u all_proxy pnpm dlx shadcn@latest add http://localhost:3000/r/<name>.json`
+
+## 已实现的文档 API
+
+MDX 内置组件由 `src/components/docs/mdx-components.tsx` 注册，无需在文档内 import：
+
+- `<ComponentPreview name="grid-layout-demo" />`：读取 `src/registry/examples/<name>.tsx` 源码，预览/代码 Tabs；演示必须默认导出 React 组件。
+- `<ComponentSource name="grid-layout" />`：从根目录 `registry.json` 查找文件，构建时读取唯一真源。
+- `<InstallCommand name="grid-layout" />`：pnpm/npm/yarn/bun 命令、复制与手动安装折叠区。
+- `<PropsTable name="grid-layout" component="GridSection" />`：用 `fumadocs-typescript` 从条目首个源码文件解析导出组件，通过 Parameters<typeof Component>[0] 自动解析自定义属性及 className/children，排除其余继承的 HTML 属性。
+- Markdown 代码围栏支持 `title="文件名.tsx"`，构建时用 Shiki 高亮，颜色映射主题 token。
+
+文档分区为 `content/docs/components/`、`content/docs/agents/`；新增 blocks/templates 时沿用 `src/app/(docs)/components/[[...slug]]/page.tsx`，扩充 `src/lib/source.ts` 分区类型及配置。每个动态路由必须设置 `dynamicParams = false` 并生成静态参数。
+
+## 构建流程
+
+`pnpm registry:build` 依次运行：
+
+1. `scripts/sync-registry-css.ts` 使用 PostCSS 解析 `src/styles/grid.css`，同步三个 `@utility` 到 grid-layout 条目的 css；不要手改这些生成字段。`--edge` 与 Tailwind `color-edge` 映射在 registry.json 的 cssVars 配置。
+2. `scripts/build-registry-index.ts` 扫描 `src/registry/examples/*.tsx`，生成 `src/registry/__index__.tsx` 中的 React.lazy 索引（不要手写映射）。
+3. `shadcn build` 生成 `public/r/<name>.json`。
+4. `scripts/build-registry-catalog.ts` 生成带源码的 `public/r/registry.json`。
+
+`prebuild` 自动调用上述流程；Fumadocs 由 `createMDX` 集成，在 `.source/` 生成内容索引。新增演示后运行 `pnpm registry:index`，再刷新开发页面。
+
+安装验收需要通过静态 HTTP 服务访问 `out/r/<name>.json`，在临时项目执行 CLI 后检查组件源码、三个工具类、`--edge` 以及 `@theme inline` 中的 `--color-edge`，结束后删除临时项目。布局源码使用 `@/lib/utils` 的 cn；手动安装需要接收项目已有该工具函数。
+
+命名空间为 `@travinsy`；`InstallCommand` 默认 URL 安装，可切换命名空间安装。配置教程位于 `content/docs/components/installation.mdx`（分区首篇文档），components.json 中使用 `"registries": { "@travinsy": "https://travinsy.com/r/{name}.json" }`。

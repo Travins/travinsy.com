@@ -1,0 +1,75 @@
+---
+title: 线条网格布局
+description: 用全宽横线、竖线容器与斜纹分隔带，为内容建立清晰的秩序。
+links:
+  源码: https://travinsy.com/r/grid-layout.json
+  React API: https://react.dev/reference/react-dom/components/common
+---
+
+<ComponentPreview name="grid-layout-demo" />
+
+## 安装
+
+<InstallCommand name="grid-layout" />
+
+## 用法
+
+每个页面使用一个 `GridContainer`，在其中依次排列 `GridSection` 与 `GridSeparator`。相邻行只绘制底线，避免重复描边。
+
+```tsx title="app/page.tsx"
+import {
+  GridContainer,
+  GridSection,
+  GridSeparator,
+  GridColumns,
+} from "@/components/ui/grid-layout/grid-layout"
+
+export default function Page() {
+  return (
+    <GridContainer>
+      <GridSection className="px-4 py-6">个人介绍</GridSection>
+      <GridSeparator />
+      <GridSection>
+        <GridColumns>
+          <div className="p-4">项目</div>
+          <div className="p-4">文章</div>
+        </GridColumns>
+      </GridSection>
+    </GridContainer>
+  )
+}
+```
+
+### 容器宽度
+
+通过父元素上的 `--grid-width` 变量调整宽度，默认 `48rem`。文档页面使用 `80rem`。`GridColumns` 在窄屏下堆叠，`sm` 起显示两列。
+
+### 主题与工具类
+
+安装命令会注册 `--edge` 变量、`border-edge` 主题映射，以及 `screen-line-top`、`screen-line-bottom`、`bg-hatch` 三个 Tailwind CSS v4 工具类。线条颜色随前景色和亮暗模式变化。
+
+全宽横线需要页面的 `html` 设置 `overflow-x: clip`；Registry 安装会一并写入该规则。
+
+## Props
+
+四个组件都支持对应 HTML 元素的原生属性，包括 `className`、`children`、`id` 和无障碍属性。
+
+### GridContainer
+
+<PropsTable name="grid-layout" component="GridContainer" />
+
+### GridSection
+
+<PropsTable name="grid-layout" component="GridSection" />
+
+### GridSeparator
+
+<PropsTable name="grid-layout" component="GridSeparator" />
+
+### GridColumns
+
+<PropsTable name="grid-layout" component="GridColumns" />
+
+## 源码
+
+<ComponentSource name="grid-layout" />
