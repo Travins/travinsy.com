@@ -1,0 +1,145 @@
+---
+title: 分屏登录页
+description: 左侧品牌面板 + 右侧表单的分屏登录页：登录（密码 / 验证码）、注册（带强度条）、找回密码，zod 校验。
+---
+
+<BlockViewer name="auth-01" />
+
+## 简介
+
+`Auth01` 提炼自我的一个企业监控平台项目的登录页，在原有「左侧品牌面板 + 右侧表单」结构上，补全了完整的账号流程：
+
+- **登录**：密码登录 / 验证码登录两个标签；账号（用户名或邮箱）、密码显示切换、记住我、忘记密码、第三方登录（GitHub、Google）、跳转注册。
+- **注册**：姓名、邮箱、密码（实时强度条）、确认密码、同意服务条款。
+- **找回密码**：邮箱提交后切换为「邮件已发送」的成功状态。
+- 三个视图在同一个组件内切换，带 180ms 的淡入位移过渡，系统开启「减少动态效果」时只保留淡入。
+- 大屏左半屏是品牌面板，窄屏隐藏面板并在表单上方显示 Logo 与名称。
+- 品牌面板的所有颜色都来自 `primary` 与 `primary-foreground`，切换颜色主题和亮暗模式后自动跟随，预览里可以直接试。
+
+## 安装
+
+<InstallCommand name="auth-01" />
+
+会安装 shadcn 的 `button`、`input`、`label`、`checkbox`、`tabs`，以及 npm 包 `motion`、`zod`、`lucide-react`。如果项目里已有同名文件，CLI 会询问是否覆盖。
+
+## 文件结构
+
+```text
+app/login/page.tsx                       # 页面入口：把回调接到你的认证服务
+components/auth-01/
+├── auth-01.tsx                          # 主组件：分屏布局 + 视图切换
+├── brand.tsx                            # 品牌配置类型与默认示例品牌
+├── brand-panel.tsx                      # 左侧品牌面板、窄屏顶部品牌
+├── sign-in-form.tsx                     # 登录（密码 / 验证码）+ 第三方登录
+├── sign-up-form.tsx                     # 注册
+├── forgot-password-form.tsx             # 找回密码
+├── password-strength.tsx                # 密码强度条与评分
+├── social-buttons.tsx                   # GitHub / Google 按钮
+├── form-parts.tsx                       # 输入框、密码框、错误提示等共用件
+├── schemas.ts                           # zod 校验规则
+└── use-auth-form.ts                     # 受控表单状态 + 校验 + 提交状态
+```
+
+## 用法
+
+最简单的用法是直接渲染，不传任何属性——所有回调会退回到「控制台打印 + 模拟 0.8 秒请求」的示例实现，方便先看效果：
+
+```tsx title="app/login/page.tsx"
+import { Auth01 } from "@/components/auth-01/auth-01"
+
+export default function LoginPage() {
+  return <Auth01 />
+}
+```
+
+## 接入你的认证服务
+
+回调都返回 `Promise`。**组件负责按钮的 loading 状态；失败时 `throw new Error("中文原因")`，错误信息会显示在表单上方。** 下面以 better-auth 为例，NextAuth / Auth.js、Supabase 等同理：
+
+```tsx title="app/login/page.tsx"
+"use client"
+
+import { useRouter } from "next/navigation"
+import { Auth01 } from "@/components/auth-01/auth-01"
+import { authClient } from "@/lib/auth-client"
+
+export default function LoginPage() {
+  const router = useRouter()
+  return (
+    <Auth01
+      brand={{ name: "你的产品", title: "一句话说清价值" }}
+      onSignIn={async (values) => {
+        if (values.method === "code") {
+          // 验证码登录：values.phone / values.code
+          throw new Error("暂未开通验证码登录")
+        }
+        const isEmail = values.account.includes("@")
+        const { error } = isEmail
+          ? await authClient.signIn.email({
+              email: values.account,
+              password: values.password,
+              rememberMe: values.remember,
+            })
+          : await authClient.signIn.username({
+              username: values.account,
+              password: values.password,
+              rememberMe: values.remember,
+            })
+        if (error) throw new Error(error.message ?? "登录失败")
+        router.push("/")
+      }}
+      onSignUp={async ({ name, email, password }) => {
+        const { error } = await authClient.signUp.email({ name, email, password })
+        if (error) throw new Error(error.message ?? "注册失败")
+        router.push("/")
+      }}
+      onForgotPassword={async (email) => {
+        const { error } = await authClient.requestPasswordReset({ email })
+        if (error) throw new Error(error.message ?? "发送失败")
+      }}
+      onSendCode={async (phone) => {
+        await fetch("/api/sms/send", { method: "POST", body: JSON.stringify({ phone }) })
+      }}
+      onSocialSignIn={async (provider) => {
+        await authClient.signIn.social({ provider })
+      }}
+    />
+  )
+}
+```
+
+使用 NextAuth 时，把 `onSignIn` 换成 `signIn("credentials", { redirect: false, ... })` 并在返回 `error` 时抛出即可；第三方登录对应 `signIn(provider)`。
+
+## Props
+
+| 属性 | 类型 | 说明 |
+| --- | --- | --- |
+| `brand` | `Partial<BrandConfig>` | 品牌信息，逐项覆盖默认示例品牌，见下表 |
+| `defaultView` | `"sign-in" \| "sign-up" \| "forgot-password"` | 初始视图，默认 `sign-in` |
+| `socialProviders` | `("github" \| "google")[]` | 启用的第三方登录，传 `[]` 隐藏该区域；默认两个都开 |
+| `allowSignUp` | `boolean` | 设为 `false` 隐藏「注册」入口，默认 `true` |
+| `termsHref` / `privacyHref` | `string` | 注册页中「服务条款」「隐私政策」的链接 |
+| `onSignIn` | `(values: SignInValues) => Promise<void>` | `values` 是联合类型：`{ method: "password", account, password, remember }` 或 `{ method: "code", phone, code }` |
+| `onSignUp` | `(values: { name; email; password }) => Promise<void>` | 校验通过后才会调用；确认密码与条款勾选已在组件内校验 |
+| `onForgotPassword` | `(email: string) => Promise<void>` | 成功返回后显示「邮件已发送」 |
+| `onSendCode` | `(phone: string) => Promise<void>` | 成功返回后「获取验证码」按钮进入 60 秒倒计时 |
+| `onSocialSignIn` | `(provider) => Promise<void>` | 点击第三方登录按钮时调用 |
+| `className` | `string` | 追加到最外层容器 |
+
+### BrandConfig
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `name` | `string` | 产品名 |
+| `logo` | `ReactNode` | Logo。建议用 `currentColor` 的 SVG，在品牌面板（反色）和表单上方（正常色）都能看清；也可以传 `<img>` |
+| `title` / `description` | `string` | 品牌面板的大标题与说明 |
+| `features` | `{ icon: ReactNode; title; description }[]` | 特性列表，建议 2–3 条，图标用 `lucide-react` |
+| `copyright` | `string` | 右下角版权文字 |
+
+## 如何自定义
+
+- **校验规则**：都在 `schemas.ts`。手机号默认是中国大陆 11 位规则，面向其他地区时替换那条正则；密码策略（长度、是否必须含字母数字）也在这里。
+- **强度条算法**：`password-strength.tsx` 的 `getPasswordStrength`，按长度（8、12）与大小写、数字、符号计分，颜色从 `destructive` 过渡到 `primary`。
+- **只要登录**：传 `allowSignUp={false}`，并去掉 `socialProviders`。
+- **增减第三方平台**：在 `social-buttons.tsx` 的 `providers` 里补一项，并扩展 `SocialProvider` 类型。
+- **表单状态**：刻意只用受控状态 + zod，没有引入 react-hook-form。字段首次失焦时校验该字段，提交失败后改为输入时实时校验。

@@ -2,14 +2,15 @@ import Link from "next/link"
 import {
   ArrowDownRight,
   ArrowUpRight,
+  CalendarDays,
+  Clock,
   Code2,
   Bot,
   Server,
   Component,
   Globe,
   Grid2X2,
-  Layers,
-  Terminal,
+  Link2,
 } from "lucide-react"
 import type { ComponentType, SVGProps } from "react"
 import { GitHubMark, XMark } from "@/components/home/brand-icons"
@@ -17,6 +18,8 @@ import type { LucideIcon } from "lucide-react"
 
 import { RoleRotator } from "@/components/home/role-rotator"
 import { profile } from "@/config/profile"
+import { blogPosts } from "@/lib/source"
+import registry from "../../../registry.json"
 import { FollowMe } from "@/registry/ui/follow-me/follow-me"
 import { Greeting } from "@/registry/ui/greeting/greeting"
 import {
@@ -31,11 +34,12 @@ const socialIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   x: XMark,
   github: GitHubMark,
 }
-const projectIcons: Record<string, LucideIcon> = {
-  grid: Grid2X2,
-  component: Component,
-  layout: Layers,
-  terminal: Terminal,
+// 精选组件的图标按 Registry 条目名映射，未登记的条目回落到通用图标。
+const componentIcons: Record<string, LucideIcon> = {
+  "grid-layout": Grid2X2,
+  "contribution-graph": CalendarDays,
+  "local-time": Clock,
+  "icon-link": Link2,
 }
 const focusClass =
   "rounded-sm transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
@@ -49,6 +53,14 @@ function InfoIcon({ icon: Icon }: { icon: LucideIcon }) {
 }
 
 export default function HomePage() {
+  // 精选组件的标题与描述都来自 Registry，保持与文档、安装产物同源。
+  const featured = profile.featuredComponents.map((name) => {
+    const item = registry.items.find((entry) => entry.name === name)
+    if (!item) throw new Error(`未登记的 Registry 条目：${name}`)
+    return item
+  })
+  // 最新文章按发布日期倒序，只取首页展示的两篇。
+  const posts = blogPosts().slice(0, 2)
   return (
     <GridContainer>
       <GridSection aria-labelledby="profile-name">
@@ -216,15 +228,15 @@ export default function HomePage() {
       {[0, 2].map((offset) => (
         <GridSection
           key={offset}
-          aria-label={`精选作品 ${offset + 1} 至 ${offset + 2}`}
+          aria-label={`精选组件 ${offset + 1} 至 ${offset + 2}`}
         >
           <GridColumns>
-            {profile.projects.slice(offset, offset + 2).map((project) => {
-              const Icon = projectIcons[project.icon] ?? Component
+            {featured.slice(offset, offset + 2).map((item, index) => {
+              const Icon = componentIcons[item.name] ?? Component
               return (
                 <Link
-                  key={project.title}
-                  href={project.href}
+                  key={item.name}
+                  href={`/components/${item.name}/`}
                   className="group flex min-w-0 flex-col gap-5 p-4 transition-colors hover:bg-muted/30 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ring sm:p-6"
                 >
                   <div className="flex items-start justify-between">
@@ -242,17 +254,17 @@ export default function HomePage() {
                   </div>
                   <div>
                     <p className="mb-2 font-mono text-[10px] text-muted-foreground">
-                      {project.category}
+                      组件 / {String(offset + index + 1).padStart(2, "0")}
                     </p>
                     <h3 className="text-base font-medium tracking-tight">
-                      {project.title}
+                      {item.title}
                     </h3>
                     <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                      {project.description}
+                      {item.description}
                     </p>
                   </div>
                   <p className="mt-auto font-mono text-[10px] text-muted-foreground">
-                    {project.tags.join(" / ")}
+                    {item.files[0].path.split("/").at(-1)}
                   </p>
                 </Link>
               )
@@ -260,6 +272,47 @@ export default function HomePage() {
           </GridColumns>
         </GridSection>
       ))}
+      {posts.length > 0 && (
+        <>
+          <GridSeparator />
+          <GridSection
+            aria-labelledby="latest-posts-title"
+            className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6"
+          >
+            <h2 id="latest-posts-title" className="text-sm font-medium">
+              最新文章
+            </h2>
+            <Link
+              href="/blog/"
+              className={`${focusClass} font-mono text-xs text-muted-foreground`}
+            >
+              全部文章{" "}
+              <ArrowUpRight aria-hidden="true" className="inline size-3" />
+            </Link>
+          </GridSection>
+          {posts.map((post) => (
+            <GridSection key={post.url}>
+              <Link
+                href={post.url}
+                className="group block min-w-0 px-4 py-5 transition-colors hover:bg-muted/30 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ring sm:px-6"
+              >
+                <time
+                  dateTime={post.data.date}
+                  className="font-mono text-xs text-muted-foreground"
+                >
+                  {post.data.date}
+                </time>
+                <h3 className="mt-3 text-base font-medium tracking-tight text-balance group-hover:text-primary">
+                  {post.data.title}
+                </h3>
+                <p className="mt-2 text-sm leading-7 text-pretty text-muted-foreground">
+                  {post.data.description}
+                </p>
+              </Link>
+            </GridSection>
+          ))}
+        </>
+      )}
       <GridSeparator />
       <GridSection aria-labelledby="about-title" className="px-4 py-8 sm:px-6">
         <div className="mb-4 flex items-center justify-between">

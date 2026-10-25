@@ -1,0 +1,75 @@
+---
+title: 线条网格个人主页
+description: 完整的线条网格个人主页：封面、社交、做什么、技术栈、关于我，所有内容集中在 lib/site.config.ts。
+---
+
+<BlockViewer name="portfolio-grid" />
+
+## 简介
+
+这是本站首页风格的可复用版本：一个地址装下整页，之后只需要改一个配置文件，就能得到同款主页。
+
+页面由四个区块和几个小组件拼成：
+
+- 封面：[个人封面](/blocks/profile-hero/)
+- 社交：[社交关注](/blocks/social-follow/)
+- 我在做什么：[多栏介绍](/blocks/feature-columns/)
+- 技术栈、关于我、简易页头页脚：模板自带
+
+## 安装
+
+先在目标项目里完成 `shadcn init`（Tailwind v4），然后：
+
+<InstallCommand name="portfolio-grid" />
+
+> 命令会写入 `app/page.tsx`。如果项目里已经有首页，CLI 会询问是否覆盖。
+
+## 文件结构
+
+安装后文件落在这些位置（项目使用 `src/` 目录时会自动加上 `src/` 前缀）：
+
+```text
+app/page.tsx                              # 页面入口，把配置交给各区块
+lib/site.config.ts                        # ★ 全部个人信息都在这里
+components/portfolio/
+├── site-header.tsx                       # 简易页头：站名 + 锚点导航
+├── site-footer.tsx                       # 简易页脚
+├── stack-section.tsx                     # 技术栈
+└── about-section.tsx                     # 关于我
+components/profile-hero/…                 # 来自「个人封面」区块
+components/social-follow/…                # 来自「社交关注」区块
+components/feature-columns/…              # 来自「多栏介绍」区块
+components/ui/grid-layout/…               # 来自「线条网格布局」
+```
+
+## 如何自定义
+
+绝大多数情况下，只改 `lib/site.config.ts`：
+
+```ts title="lib/site.config.ts"
+export const siteConfig = {
+  name: "你的名字",
+  initials: "你",
+  bio: "一两句话介绍自己。",
+  roles: ["全栈开发", "AI 应用"],
+  socials: [{ name: "GitHub", icon: "github", href: "https://github.com/你" }],
+  // …… 做什么、技术栈、关于我、页脚
+}
+```
+
+| 字段 | 说明 |
+| --- | --- |
+| `name` / `initials` / `bio` / `roles` | 封面区的名字、头像缩写、简介、轮播标签 |
+| `tagline` | 横幅装饰文字，传空字符串隐藏 |
+| `nav` | 页头的锚点导航，`href` 对应各区块的 `id`（`#focus`、`#stack`、`#about`） |
+| `socials` | 社交链接，`icon` 支持 `github` / `x` / `mail` / `link` |
+| `focus` | 「我在做什么」的标题与条目，`icon` 支持 `code` / `bot` / `server` / `layout` |
+| `stack` | 技术栈标题与列表 |
+| `about` | 关于我的标题与段落 |
+| `year` / `footer` | 页脚的版权年份与右侧的一句话 |
+
+### 想改得更多
+
+- **换颜色**：颜色来自项目的主题变量（`globals.css`），到 [主题](/themes/) 页挑一套复制进去，整页自动换色。
+- **增减区块**：在 `app/page.tsx` 里增删区块即可；每个区块都是独立的 `GridSection`，相邻区块之间用 `GridSeparator` 隔开，不同主题的内容之间才需要。
+- **亮暗模式**：模板本身不带切换按钮，沿用你项目里已有的 `next-themes` 或其他方案即可。

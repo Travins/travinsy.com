@@ -1,0 +1,80 @@
+---
+title: 个人封面
+description: 首页封面区：斜纹横幅、头像、名字、简介与职业标签轮播。
+---
+
+<BlockViewer name="profile-hero" />
+
+## 简介
+
+`ProfileHero` 是本站首页最上面的那一屏：顶部一条斜纹横幅，压着一个缩写头像，下面是名字、简介和一行会自动轮播的职业标签。
+
+它只负责「一行内容」，所以必须放在 `GridContainer` 里使用，底部那条横跨屏幕的线由 `GridSection` 自带。
+
+## 安装
+
+<InstallCommand name="profile-hero" />
+
+安装会一并带上 [线条网格布局](/components/grid-layout/)（`GridSection` 等原语和 `--edge` 变量），并安装 npm 包 `motion`。
+
+## 文件结构
+
+```text
+components/profile-hero/
+├── profile-hero.tsx   # 封面区本体（服务端组件）
+└── role-rotator.tsx   # 职业标签轮播（客户端组件，用到 motion）
+```
+
+## 用法
+
+```tsx title="app/page.tsx"
+import { ProfileHero } from "@/components/profile-hero/profile-hero"
+import { GridContainer } from "@/components/ui/grid-layout/grid-layout"
+
+export default function Page() {
+  return (
+    <GridContainer>
+      <ProfileHero
+        name="你的名字"
+        initials="你"
+        bio="一两句话介绍自己。"
+        roles={["全栈开发", "AI Agent 开发", "组件设计"]}
+      />
+    </GridContainer>
+  )
+}
+```
+
+## Props
+
+| 属性 | 类型 | 说明 |
+| --- | --- | --- |
+| `name` | `string` | 名字，渲染为页面的 `h1` |
+| `bio` | `string` | 自我介绍 |
+| `roles` | `readonly string[]` | 职业标签，依次轮播；不传则不显示这一行 |
+| `initials` | `string` | 头像位置的缩写，默认取名字的第一个字符 |
+| `avatar` | `ReactNode` | 自定义头像节点，传入后替换缩写方块 |
+| `tagline` | `string` | 横幅中间的装饰文字，默认 `DESIGN · CODE · REPEAT`，传空字符串隐藏 |
+| `className` | `string` | 追加到外层 `GridSection` |
+
+## 如何自定义
+
+- **换成真实头像**：传入 `avatar`。保持 `-mt-10`、`size-20`、`ring-4 ring-background` 的组合，头像才会压在横幅上沿。
+
+  ```tsx
+  <ProfileHero
+    name="你的名字"
+    bio="……"
+    avatar={
+      <img
+        src="/avatar.png"
+        alt=""
+        className="-mt-10 size-20 rounded-2xl border border-edge ring-4 ring-background"
+      />
+    }
+  />
+  ```
+
+- **调整横幅高度**：直接改 `profile-hero.tsx` 里的 `h-32 sm:h-44`。
+- **关闭自动轮播**：系统开启「减少动态效果」时不会轮播；用户也可以点击旁边的按钮暂停。
+- 颜色全部来自主题变量，切换颜色主题和亮暗模式后会自动跟随。

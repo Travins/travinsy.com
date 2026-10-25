@@ -1,4 +1,4 @@
-/** 个人信息统一配置；私密联系信息默认留空，精选组件内容可按需替换。 */
+/** 个人信息统一配置；私密联系信息默认留空，精选组件按 Registry 条目挑选。 */
 export const profile = {
   name: "Travins",
   brand: "travinsy",
@@ -49,39 +49,15 @@ export const profile = {
   ],
   greetingNote:
     "欢迎来到我的数字自留地。这里记录作品、组件，以及那些值得反复打磨的小想法。",
-  projects: [
-    {
-      title: "线条网格",
-      category: "组件 / 01",
-      description: "用简单的线条，建立有秩序的页面。",
-      href: "/components/",
-      icon: "grid",
-      tags: ["React", "Tailwind CSS"],
-    },
-    {
-      title: "界面实验室",
-      category: "组件 / 02",
-      description: "可组合、可复制，也经得起细看。",
-      href: "/components/",
-      icon: "component",
-      tags: ["Base UI", "交互设计"],
-    },
-    {
-      title: "从想法到页面",
-      category: "组件 / 03",
-      description: "给下一个个人项目，一个轻巧的起点。",
-      href: "/components/",
-      icon: "layout",
-      tags: ["Next.js", "开源"],
-    },
-    {
-      title: "为交互留一点温度",
-      category: "组件 / 04",
-      description: "在轻巧的动效里，找到恰到好处的反馈。",
-      href: "/components/",
-      icon: "terminal",
-      tags: ["Motion", "可访问性"],
-    },
+  /**
+   * 首页「精选组件」：名称对应 registry.json 的条目，
+   * 标题、描述与链接都直接取自 Registry，避免再维护一份文案。
+   */
+  featuredComponents: [
+    "grid-layout",
+    "contribution-graph",
+    "local-time",
+    "icon-link",
   ],
   about: [
     "你好，我是 Travins，travinsy.com 是我的个人站。我关注全栈开发、AI 应用与大模型部署，也喜欢把反复用到的界面细节整理成组件。",

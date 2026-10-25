@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "social-follow",
+  "title": "社交关注",
+  "description": "一行社交图标方块，配合容器外侧的手写体 follow me 装饰。",
+  "registryDependencies": [
+    "https://travinsy.com/r/grid-layout.json",
+    "https://travinsy.com/r/icon-link.json",
+    "https://travinsy.com/r/follow-me.json"
+  ],
+  "files": [
+    {
+      "path": "src/registry/blocks/social-follow/social-follow.tsx",
+      "content": "import type { ReactNode } from \"react\"\n\nimport { cn } from \"@/lib/utils\"\nimport { FollowMe } from \"@/registry/ui/follow-me/follow-me\"\nimport { GridSection } from \"@/registry/ui/grid-layout/grid-layout\"\nimport { IconLink } from \"@/registry/ui/icon-link/icon-link\"\n\nexport type SocialLink = {\n  /** 链接名称，同时作为读屏名称与悬停提示 */\n  name: string\n  href: string\n  /** 图标节点，建议 strokeWidth={1.5} 的线性图标 */\n  icon: ReactNode\n}\n\n/** 社交方块一行 + 容器外侧手写体 follow me 装饰。放在 GridContainer 内使用。 */\nexport function SocialFollow({\n  socials,\n  note = \"在别处，也在这里\",\n  className,\n}: {\n  socials: readonly SocialLink[]\n  /** 右侧的小字说明，设为空字符串可隐藏 */\n  note?: string\n  className?: string\n}) {\n  return (\n    <GridSection\n      aria-label=\"社交链接\"\n      className={cn(\"px-4 py-4 sm:px-6\", className)}\n    >\n      <FollowMe />\n      <div className=\"flex items-center justify-between gap-4\">\n        <div className=\"flex gap-2\">\n          {socials.map((social) => (\n            <IconLink\n              key={social.name}\n              href={social.href}\n              label={social.name}\n              target=\"_blank\"\n              rel=\"noreferrer noopener\"\n            >\n              {social.icon}\n            </IconLink>\n          ))}\n        </div>\n        {note ? (\n          <span className=\"font-mono text-[10px] text-muted-foreground\">\n            {note} <span aria-hidden=\"true\">↗</span>\n          </span>\n        ) : null}\n      </div>\n    </GridSection>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/social-follow/social-follow.tsx"
+    },
+    {
+      "path": "src/registry/blocks/social-follow/brand-icons.tsx",
+      "content": "import type { SVGProps } from \"react\"\n\n/** 品牌标识用独立 SVG，不依赖图标库里的品牌图标。 */\nexport function GitHubMark(props: SVGProps<SVGSVGElement>) {\n  return (\n    <svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\" {...props}>\n      <path d=\"M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.87c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.81c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.76c0 .27.18.58.69.48A10 10 0 0 0 12 2Z\" />\n    </svg>\n  )\n}\n\nexport function XMark(props: SVGProps<SVGSVGElement>) {\n  return (\n    <svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\" {...props}>\n      <path d=\"M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.6 5.5 22H2.3l7.9-9L1.8 2h6.5l4.5 6.8L18.9 2Zm-1.1 18h1.7L7.3 3.9H5.5L17.8 20Z\" />\n    </svg>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/social-follow/brand-icons.tsx"
+    }
+  ],
+  "meta": {
+    "iframeHeight": "280px"
+  },
+  "type": "registry:block"
+}

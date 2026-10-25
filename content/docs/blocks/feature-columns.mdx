@@ -1,0 +1,61 @@
+---
+title: 多栏介绍
+description: 虚线分隔的 2–4 栏介绍（如「我在做什么」），窄屏自动堆叠。
+---
+
+<BlockViewer name="feature-columns" />
+
+## 简介
+
+`FeatureColumns` 是一个带标题的多栏介绍：每栏一个图标方块、一个小标题和一段说明，栏与栏之间用虚线分隔，窄屏自动变成上下堆叠。
+
+## 安装
+
+<InstallCommand name="feature-columns" />
+
+只依赖 [线条网格布局](/components/grid-layout/)，没有额外的 npm 包。
+
+## 文件结构
+
+```text
+components/feature-columns/
+└── feature-columns.tsx
+```
+
+## 用法
+
+```tsx title="app/page.tsx"
+import { Bot, Code2, Server } from "lucide-react"
+import { FeatureColumns } from "@/components/feature-columns/feature-columns"
+import { GridContainer } from "@/components/ui/grid-layout/grid-layout"
+
+export default function Page() {
+  return (
+    <GridContainer>
+      <FeatureColumns
+        title="我在做什么"
+        items={[
+          { title: "全栈开发", description: "……", icon: <Code2 strokeWidth={1.5} /> },
+          { title: "AI 应用", description: "……", icon: <Bot strokeWidth={1.5} /> },
+          { title: "大模型部署", description: "……", icon: <Server strokeWidth={1.5} /> },
+        ]}
+      />
+    </GridContainer>
+  )
+}
+```
+
+## Props
+
+| 属性 | 类型 | 说明 |
+| --- | --- | --- |
+| `title` | `string` | 区块标题 |
+| `items` | `{ title: string; description: string; icon?: ReactNode }[]` | 每一栏的内容，建议 2–4 项 |
+| `id` | `string` | 锚点 id，供页头导航跳转 |
+| `className` | `string` | 追加到外层 `GridSection` |
+
+## 如何自定义
+
+- **列数**：`items` 的数量决定 `sm` 以上的列数（2、3、4 栏），其余数量回退为 3 栏。想要固定列数，直接改文件里的 `columnClass`。
+- **不要图标**：`icon` 可省略，这一栏就只有标题和说明。
+- 超过 4 项会换行，但换行后行与行之间不会有虚线，需要多行时建议拆成多个区块。

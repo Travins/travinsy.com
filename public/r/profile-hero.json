@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "profile-hero",
+  "title": "个人封面",
+  "description": "首页封面区：斜纹横幅、头像、名字、简介与职业标签轮播。",
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "https://travinsy.com/r/grid-layout.json"
+  ],
+  "files": [
+    {
+      "path": "src/registry/blocks/profile-hero/profile-hero.tsx",
+      "content": "import { useId, type ReactNode } from \"react\"\n\nimport { GridSection } from \"@/registry/ui/grid-layout/grid-layout\"\n\nimport { RoleRotator } from \"./role-rotator\"\n\n/** 个人封面：斜纹横幅 + 头像 + 名字 + 简介 + 职业标签轮播。放在 GridContainer 内使用。 */\nexport function ProfileHero({\n  name,\n  bio,\n  roles = [],\n  initials,\n  avatar,\n  tagline = \"DESIGN · CODE · REPEAT\",\n  className,\n}: {\n  /** 显示的名字，会作为页面的 h1 */\n  name: string\n  /** 一两句话的自我介绍 */\n  bio: string\n  /** 职业标签，会依次轮播 */\n  roles?: readonly string[]\n  /** 未传 avatar 时，头像位置显示的缩写（1–2 个字符） */\n  initials?: string\n  /** 自定义头像节点，传入后替换缩写方块 */\n  avatar?: ReactNode\n  /** 横幅中间的装饰文字，设为空字符串可隐藏 */\n  tagline?: string\n  className?: string\n}) {\n  const titleId = useId()\n  return (\n    <GridSection aria-labelledby={titleId} className={className}>\n      <div\n        aria-hidden=\"true\"\n        className=\"relative flex h-32 items-center justify-center overflow-hidden bg-muted/20 sm:h-44\"\n      >\n        <div className=\"absolute inset-0 bg-hatch opacity-40\" />\n        {tagline ? (\n          <div className=\"relative flex items-center gap-5 font-mono text-muted-foreground/70\">\n            <span className=\"text-4xl font-extralight sm:text-5xl\">{\"{ \"}</span>\n            <span className=\"text-xs tracking-[0.35em]\">{tagline}</span>\n            <span className=\"text-4xl font-extralight sm:text-5xl\">{\" }\"}</span>\n          </div>\n        ) : null}\n      </div>\n      <div className=\"relative flex flex-col gap-5 px-4 pb-7 sm:px-6\">\n        {avatar ?? (\n          <div\n            aria-hidden=\"true\"\n            className=\"relative -mt-10 flex size-20 items-center justify-center rounded-2xl border border-edge bg-background font-mono text-3xl font-medium tracking-tighter ring-4 ring-background\"\n          >\n            {initials ?? name.slice(0, 1)}\n          </div>\n        )}\n        <div className=\"flex flex-col gap-2\">\n          <h1\n            id={titleId}\n            className=\"text-3xl font-semibold tracking-tight sm:text-4xl\"\n            translate=\"no\"\n          >\n            {name}\n            <span className=\"text-primary\">.</span>\n          </h1>\n          <p className=\"text-sm leading-7 text-pretty text-muted-foreground sm:text-base\">\n            {bio}\n          </p>\n          <RoleRotator roles={roles} />\n        </div>\n      </div>\n    </GridSection>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/profile-hero/profile-hero.tsx"
+    },
+    {
+      "path": "src/registry/blocks/profile-hero/role-rotator.tsx",
+      "content": "\"use client\"\n\nimport { AnimatePresence, motion, useReducedMotion } from \"motion/react\"\nimport { useEffect, useState } from \"react\"\n\n/** 职业标签轮播：每 3.2 秒切换一次，可暂停；系统开启「减少动态效果」时不自动轮播。 */\nexport function RoleRotator({ roles }: { roles: readonly string[] }) {\n  const reducedMotion = useReducedMotion()\n  const [index, setIndex] = useState(0)\n  const [paused, setPaused] = useState(false)\n  useEffect(() => {\n    if (reducedMotion || paused || roles.length < 2) return\n    const timer = window.setInterval(\n      () => setIndex((value) => (value + 1) % roles.length),\n      3200,\n    )\n    return () => window.clearInterval(timer)\n  }, [paused, reducedMotion, roles.length])\n  if (!roles.length) return null\n  return (\n    <div className=\"flex min-h-7 items-center gap-3 font-mono text-sm text-muted-foreground\">\n      <span aria-hidden=\"true\" className=\"text-primary\">\n        ↳\n      </span>\n      {/* 读屏一次性读出全部标签，视觉上的轮播对读屏隐藏 */}\n      <span className=\"sr-only\">{roles.join(\"、\")}</span>\n      <span aria-hidden=\"true\" className=\"min-w-0\">\n        <AnimatePresence mode=\"wait\" initial={false}>\n          <motion.span\n            key={index}\n            className=\"inline-block\"\n            initial={{ opacity: 0, y: reducedMotion ? 0 : 5 }}\n            animate={{ opacity: 1, y: 0 }}\n            exit={{ opacity: 0, y: reducedMotion ? 0 : -5 }}\n            transition={{ duration: 0.18 }}\n          >\n            {roles[index]}\n          </motion.span>\n        </AnimatePresence>\n      </span>\n      {roles.length > 1 ? (\n        <button\n          type=\"button\"\n          onClick={() => setPaused((value) => !value)}\n          aria-label={paused ? \"播放职业标签\" : \"暂停职业标签\"}\n          className=\"inline-flex size-7 items-center justify-center rounded text-xs text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring motion-reduce:hidden\"\n        >\n          <span aria-hidden=\"true\">{paused ? \"▶\" : \"❚❚\"}</span>\n        </button>\n      ) : null}\n    </div>\n  )\n}\n",
+      "type": "registry:component",
+      "target": "components/profile-hero/role-rotator.tsx"
+    }
+  ],
+  "meta": {
+    "iframeHeight": "560px"
+  },
+  "type": "registry:block"
+}

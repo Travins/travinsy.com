@@ -136,6 +136,211 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "profile-hero",
+      "type": "registry:block",
+      "title": "个人封面",
+      "description": "首页封面区：斜纹横幅、头像、名字、简介与职业标签轮播。",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/grid-layout.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/blocks/profile-hero/profile-hero.tsx",
+          "type": "registry:component",
+          "target": "components/profile-hero/profile-hero.tsx"
+        },
+        {
+          "path": "src/registry/blocks/profile-hero/role-rotator.tsx",
+          "type": "registry:component",
+          "target": "components/profile-hero/role-rotator.tsx"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "560px"
+      }
+    },
+    {
+      "name": "social-follow",
+      "type": "registry:block",
+      "title": "社交关注",
+      "description": "一行社交图标方块，配合容器外侧的手写体 follow me 装饰。",
+      "registryDependencies": [
+        "https://travinsy.com/r/grid-layout.json",
+        "https://travinsy.com/r/icon-link.json",
+        "https://travinsy.com/r/follow-me.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/blocks/social-follow/social-follow.tsx",
+          "type": "registry:component",
+          "target": "components/social-follow/social-follow.tsx"
+        },
+        {
+          "path": "src/registry/blocks/social-follow/brand-icons.tsx",
+          "type": "registry:component",
+          "target": "components/social-follow/brand-icons.tsx"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "280px"
+      }
+    },
+    {
+      "name": "feature-columns",
+      "type": "registry:block",
+      "title": "多栏介绍",
+      "description": "虚线分隔的 2–4 栏介绍（如「我在做什么」），窄屏自动堆叠。",
+      "registryDependencies": [
+        "https://travinsy.com/r/grid-layout.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/blocks/feature-columns/feature-columns.tsx",
+          "type": "registry:component",
+          "target": "components/feature-columns/feature-columns.tsx"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "360px"
+      }
+    },
+    {
+      "name": "portfolio-grid",
+      "type": "registry:page",
+      "title": "线条网格个人主页",
+      "description": "完整的线条网格个人主页：封面、社交、做什么、技术栈、关于我，所有内容集中在 lib/site.config.ts。",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/grid-layout.json",
+        "https://travinsy.com/r/profile-hero.json",
+        "https://travinsy.com/r/social-follow.json",
+        "https://travinsy.com/r/feature-columns.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/templates/portfolio-grid/page.tsx",
+          "type": "registry:page",
+          "target": "app/page.tsx"
+        },
+        {
+          "path": "src/registry/templates/portfolio-grid/lib/site.config.ts",
+          "type": "registry:lib",
+          "target": "lib/site.config.ts"
+        },
+        {
+          "path": "src/registry/templates/portfolio-grid/components/portfolio/site-header.tsx",
+          "type": "registry:component",
+          "target": "components/portfolio/site-header.tsx"
+        },
+        {
+          "path": "src/registry/templates/portfolio-grid/components/portfolio/site-footer.tsx",
+          "type": "registry:component",
+          "target": "components/portfolio/site-footer.tsx"
+        },
+        {
+          "path": "src/registry/templates/portfolio-grid/components/portfolio/stack-section.tsx",
+          "type": "registry:component",
+          "target": "components/portfolio/stack-section.tsx"
+        },
+        {
+          "path": "src/registry/templates/portfolio-grid/components/portfolio/about-section.tsx",
+          "type": "registry:component",
+          "target": "components/portfolio/about-section.tsx"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "900px"
+      }
+    },
+    {
+      "name": "auth-01",
+      "type": "registry:block",
+      "title": "分屏登录页",
+      "description": "左侧品牌面板 + 右侧表单的分屏登录页：登录（密码 / 验证码）、注册（带强度条）、找回密码，zod 校验。",
+      "dependencies": [
+        "motion",
+        "zod",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "label",
+        "checkbox",
+        "tabs"
+      ],
+      "files": [
+        {
+          "path": "src/registry/blocks/auth-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/login/page.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/auth-01.tsx",
+          "type": "registry:component",
+          "target": "components/auth-01/auth-01.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/brand.tsx",
+          "type": "registry:component",
+          "target": "components/auth-01/brand.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/brand-panel.tsx",
+          "type": "registry:component",
+          "target": "components/auth-01/brand-panel.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/sign-in-form.tsx",
+          "type": "registry:component",
+          "target": "components/auth-01/sign-in-form.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/sign-up-form.tsx",
+          "type": "registry:component",
+          "target": "components/auth-01/sign-up-form.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/forgot-password-form.tsx",
+          "type": "registry:component",
+          "target": "components/auth-01/forgot-password-form.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/form-parts.tsx",
+          "type": "registry:component",
+          "target": "components/auth-01/form-parts.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/password-strength.tsx",
+          "type": "registry:component",
+          "target": "components/auth-01/password-strength.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/schemas.ts",
+          "type": "registry:component",
+          "target": "components/auth-01/schemas.ts"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/social-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/auth-01/social-buttons.tsx"
+        },
+        {
+          "path": "src/registry/blocks/auth-01/use-auth-form.ts",
+          "type": "registry:component",
+          "target": "components/auth-01/use-auth-form.ts"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "800px"
+      }
     }
   ]
 }

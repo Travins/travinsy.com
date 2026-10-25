@@ -1,5 +1,6 @@
 import Link from "next/link"
 
+import { SearchButton } from "@/components/search/search-button"
 import { GithubIcon } from "@/components/site/github-icon"
 import { ModeToggle } from "@/components/site/mode-toggle"
 import { GITHUB_URL, SITE_NAME } from "@/components/site/site-config"
@@ -24,6 +25,7 @@ export function SiteHeader() {
           <div className="flex items-center gap-1">
             <SiteNav />
             <span aria-hidden className="mx-1 hidden h-4 w-px bg-edge md:block" />
+            <SearchButton />
             <ThemeSwitcher />
             <ModeToggle />
             <a
