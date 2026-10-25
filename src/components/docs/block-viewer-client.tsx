@@ -8,6 +8,7 @@ import {
   Terminal,
 } from "lucide-react"
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -23,8 +24,12 @@ type ViewerFile = { path: string; code: ReactNode }
 type TreeNode = { name: string; path?: string; children: TreeNode[] }
 
 const MIN_WIDTH = 320
+// 桌面模式用固定的虚拟宽度渲染，再整体缩放进容器，这样才能看到真正的桌面布局
+const DESKTOP_WIDTH = 1280
+// 容器窄于这个值（手机上的文档页）时不再模拟设备宽度，直接按容器宽度渲染
+const FIT_BELOW = 640
 const presets = [
-  { id: "desktop", label: "桌面", width: null, Icon: Monitor },
+  { id: "desktop", label: "桌面", width: DESKTOP_WIDTH, Icon: Monitor },
   { id: "tablet", label: "平板", width: 768, Icon: Tablet },
   { id: "mobile", label: "手机", width: 375, Icon: Smartphone },
 ] as const
@@ -104,29 +109,42 @@ export function BlockViewerClient({
   files: ViewerFile[]
   install: ReactNode
 }) {
+  const heightPx = /^\d+(\.\d+)?px$/.test(height) ? parseFloat(height) : 720
   const [view, setView] = useState("preview")
-  // null 表示跟随容器宽度（桌面）
-  const [width, setWidth] = useState<number | null>(null)
+  // iframe 的虚拟（布局）宽度；放不下时整体缩放，布局宽度不变
+  const [width, setWidth] = useState(DESKTOP_WIDTH)
+  // 容器可用宽度，由 ResizeObserver 维护；0 表示尚未测量
+  const [available, setAvailable] = useState(0)
   const [dragging, setDragging] = useState(false)
   const [installOpen, setInstallOpen] = useState(false)
   const [active, setActive] = useState(files[0]?.path ?? "")
   const tree = useMemo(() => buildTree(files), [files])
   const stageRef = useRef<HTMLDivElement>(null)
-  const frameRef = useRef<HTMLDivElement>(null)
   const drag = useRef<{ x: number; width: number } | null>(null)
 
-  const clamp = (value: number) =>
-    Math.round(
-      Math.min(
-        Math.max(value, MIN_WIDTH),
-        stageRef.current?.clientWidth ?? value,
-      ),
+  useEffect(() => {
+    const stage = stageRef.current
+    if (!stage) return
+    const observer = new ResizeObserver(([entry]) =>
+      setAvailable(Math.floor(entry.contentRect.width)),
     )
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [])
+
+  const fit = available > 0 && available < FIT_BELOW
+  const layoutWidth = fit ? available : width
+  const scale = available > 0 ? Math.min(1, available / layoutWidth) : 1
+  const frameWidth = Math.round(layoutWidth * scale)
+  const frameHeight = Math.round(heightPx * scale)
+  const clamp = (value: number) =>
+    Math.round(Math.min(Math.max(value, MIN_WIDTH), available || value))
   // 预览框居中，拖右边缘时左右各变化一半，所以位移乘以 2 才能让边缘跟手
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (!frameRef.current) return
     event.currentTarget.setPointerCapture(event.pointerId)
-    drag.current = { x: event.clientX, width: frameRef.current.offsetWidth }
+    // 拖拽以屏幕上看到的宽度为准（此时不缩放）
+    drag.current = { x: event.clientX, width: frameWidth }
+    setWidth(frameWidth)
     setDragging(true)
   }
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
@@ -138,12 +156,10 @@ export function BlockViewerClient({
     setDragging(false)
   }
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const current = frameRef.current?.offsetWidth
-    if (!current) return
     const step = event.shiftKey ? 64 : 16
-    if (event.key === "ArrowLeft") setWidth(clamp(current - step))
-    else if (event.key === "ArrowRight") setWidth(clamp(current + step))
-    else if (event.key === "Home") setWidth(null)
+    if (event.key === "ArrowLeft") setWidth(clamp(frameWidth - step))
+    else if (event.key === "ArrowRight") setWidth(clamp(frameWidth + step))
+    else if (event.key === "Home") setWidth(DESKTOP_WIDTH)
     else return
     event.preventDefault()
   }
@@ -173,7 +189,7 @@ export function BlockViewerClient({
               variant="ghost"
               size="icon-sm"
               aria-label={`${label}宽度`}
-              aria-pressed={width === presetWidth}
+              aria-pressed={!fit && width === presetWidth}
               title={presetWidth ? `${label} ${presetWidth}px` : label}
               onClick={() => setWidth(presetWidth)}
               className="aria-pressed:bg-muted aria-pressed:text-foreground"
@@ -181,6 +197,12 @@ export function BlockViewerClient({
               <Icon aria-hidden="true" />
             </Button>
           ))}
+          <span
+            title="iframe 的布局宽度 · 缩放比例"
+            className="ml-1 min-w-24 font-mono text-xs text-muted-foreground tabular-nums"
+          >
+            {layoutWidth}px · {Math.round(scale * 100)}%
+          </span>
         </div>
         <div className="flex items-center gap-1">
           <Button
@@ -208,31 +230,38 @@ export function BlockViewerClient({
         <div className="border-b border-edge px-4 py-2">{install}</div>
       )}
       <TabsContent value="preview" keepMounted>
-        <div
-          ref={stageRef}
-          className="bg-hatch flex justify-center sm:px-4"
-        >
+        <div ref={stageRef} className="flex justify-center bg-hatch sm:px-4">
           <div
-            ref={frameRef}
             className={cn(
-              "relative max-w-full bg-background sm:border-x sm:border-edge",
-              !dragging && "transition-[width] duration-200 motion-reduce:transition-none",
+              "relative bg-background sm:ring-1 sm:ring-edge",
+              !dragging &&
+                "transition-[width,height] duration-200 motion-reduce:transition-none",
             )}
-            style={{ width: width ?? "100%" }}
+            style={{ width: frameWidth, height: frameHeight }}
           >
-            <iframe
-              src={`/view/${name}/`}
-              title={`${title} 预览`}
-              loading="lazy"
-              className={cn("block w-full border-0", dragging && "pointer-events-none")}
-              style={{ height }}
-            />
+            {/* iframe 以布局宽度渲染，再用 transform 缩放到容器里 */}
+            <div className="size-full overflow-hidden">
+              <iframe
+                src={`/view/${name}/`}
+                title={`${title} 预览`}
+                loading="lazy"
+                className={cn(
+                  "block origin-top-left border-0",
+                  dragging && "pointer-events-none",
+                )}
+                style={{
+                  width: layoutWidth,
+                  height: heightPx,
+                  transform: `scale(${scale})`,
+                }}
+              />
+            </div>
             <div
               role="separator"
               tabIndex={0}
               aria-orientation="vertical"
               aria-label="拖拽或用左右方向键调整预览宽度，Home 恢复"
-              aria-valuenow={width ?? undefined}
+              aria-valuenow={layoutWidth}
               aria-valuemin={MIN_WIDTH}
               onPointerDown={onPointerDown}
               onPointerMove={onPointerMove}
