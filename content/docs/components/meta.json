@@ -4,9 +4,7 @@
     "grid-layout",
     "local-time",
     "greeting",
-    "follow-me",
     "isometric-mark",
-    "flow-diagram",
-    "icon-link"
+    "flow-diagram"
   ]
 }

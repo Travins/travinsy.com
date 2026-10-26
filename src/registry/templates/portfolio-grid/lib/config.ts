@@ -4,6 +4,7 @@
  */
 const DEFAULT_LABELS = {
   siteNav: "页面导航",
+  socialLinks: "社交链接",
   stackEyebrow: "TOOLS OF THE TRADE",
   aboutFootnote: "持续学习，慢慢构建。",
 } as const

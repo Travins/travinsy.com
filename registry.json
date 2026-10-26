@@ -206,41 +206,6 @@
       }
     },
     {
-      "name": "follow-me",
-      "type": "registry:ui",
-      "title": "手写标注",
-      "description": "放在内容容器外侧的手写体 follow me 与箭头装饰，纯装饰，不参与交互与无障碍阅读。",
-      "files": [
-        {
-          "path": "src/registry/ui/follow-me/follow-me.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "icon-link",
-      "type": "registry:ui",
-      "title": "图标链接",
-      "description": "带明确名称、悬停提示与键盘焦点样式的图标链接方块，图标本身对读屏隐藏。",
-      "cssVars": {
-        "theme": {
-          "color-edge": "var(--edge)"
-        },
-        "light": {
-          "edge": "color-mix(in oklch, var(--foreground) 12%, transparent)"
-        },
-        "dark": {
-          "edge": "color-mix(in oklch, var(--foreground) 18%, transparent)"
-        }
-      },
-      "files": [
-        {
-          "path": "src/registry/ui/icon-link/icon-link.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "profile-hero",
       "type": "registry:block",
       "title": "个人封面",
@@ -273,37 +238,6 @@
       }
     },
     {
-      "name": "social-follow",
-      "type": "registry:block",
-      "title": "社交关注",
-      "description": "一行社交图标方块，配合容器外侧的手写体 follow me 装饰。",
-      "registryDependencies": [
-        "https://travinsy.com/r/grid-layout.json",
-        "https://travinsy.com/r/icon-link.json",
-        "https://travinsy.com/r/follow-me.json"
-      ],
-      "files": [
-        {
-          "path": "src/registry/blocks/social-follow/social-follow.tsx",
-          "type": "registry:component",
-          "target": "components/social-follow/social-follow.tsx"
-        },
-        {
-          "path": "src/registry/blocks/social-follow/config.ts",
-          "type": "registry:component",
-          "target": "components/social-follow/config.ts"
-        },
-        {
-          "path": "src/registry/blocks/social-follow/brand-icons.tsx",
-          "type": "registry:component",
-          "target": "components/social-follow/brand-icons.tsx"
-        }
-      ],
-      "meta": {
-        "iframeHeight": "280px"
-      }
-    },
-    {
       "name": "feature-columns",
       "type": "registry:block",
       "title": "多栏介绍",
@@ -333,7 +267,6 @@
       "registryDependencies": [
         "https://travinsy.com/r/grid-layout.json",
         "https://travinsy.com/r/profile-hero.json",
-        "https://travinsy.com/r/social-follow.json",
         "https://travinsy.com/r/feature-columns.json"
       ],
       "files": [
@@ -371,6 +304,11 @@
           "path": "src/registry/templates/portfolio-grid/components/portfolio/about-section.tsx",
           "type": "registry:component",
           "target": "components/portfolio/about-section.tsx"
+        },
+        {
+          "path": "src/registry/templates/portfolio-grid/components/portfolio/social-links.tsx",
+          "type": "registry:component",
+          "target": "components/portfolio/social-links.tsx"
         }
       ],
       "meta": {

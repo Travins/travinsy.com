@@ -1,22 +1,17 @@
-import { Bot, Code2, Globe, Layers, Mail, Server } from "lucide-react"
+import { Bot, Code2, Layers, Server } from "lucide-react"
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
 
 import { FeatureColumns } from "@/registry/blocks/feature-columns/feature-columns"
 import { ProfileHero } from "@/registry/blocks/profile-hero/profile-hero"
-import {
-  GitHubMark,
-  XMark,
-} from "@/registry/blocks/social-follow/brand-icons"
-import { SocialFollow } from "@/registry/blocks/social-follow/social-follow"
 import { AboutSection } from "@/registry/templates/portfolio-grid/components/portfolio/about-section"
 import { SiteFooter } from "@/registry/templates/portfolio-grid/components/portfolio/site-footer"
 import { SiteHeader } from "@/registry/templates/portfolio-grid/components/portfolio/site-header"
+import { SocialLinks } from "@/registry/templates/portfolio-grid/components/portfolio/social-links"
 import { StackSection } from "@/registry/templates/portfolio-grid/components/portfolio/stack-section"
 import {
   siteConfig,
   type FocusIcon,
-  type SocialIcon,
 } from "@/registry/templates/portfolio-grid/lib/site.config"
 import {
   GridContainer,
@@ -28,12 +23,6 @@ export const metadata: Metadata = {
   description: siteConfig.bio,
 }
 
-const socialIcons: Record<SocialIcon, ReactNode> = {
-  github: <GitHubMark />,
-  x: <XMark />,
-  mail: <Mail strokeWidth={1.5} />,
-  link: <Globe strokeWidth={1.5} />,
-}
 const focusIcons: Record<FocusIcon, ReactNode> = {
   code: <Code2 strokeWidth={1.5} />,
   bot: <Bot strokeWidth={1.5} />,
@@ -55,14 +44,7 @@ export default function Page() {
             initials={siteConfig.initials}
             tagline={siteConfig.tagline}
           />
-          <SocialFollow
-            followMe={false}
-            socials={siteConfig.socials.map((social) => ({
-              name: social.name,
-              href: social.href,
-              icon: socialIcons[social.icon],
-            }))}
-          />
+          <SocialLinks socials={siteConfig.socials} />
           <FeatureColumns
             title={siteConfig.focus.title}
             items={siteConfig.focus.items.map((item) => ({

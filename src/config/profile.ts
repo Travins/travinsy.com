@@ -86,7 +86,7 @@ export const profile = {
     "grid-layout",
     "local-time",
     "greeting",
-    "icon-link",
+    "isometric-mark",
   ],
   about: [
     "你好，我是 Travins，travinsy.com 是我的个人站。我关注全栈开发、AI 应用与大模型部署，也喜欢把反复用到的界面细节整理成组件。",

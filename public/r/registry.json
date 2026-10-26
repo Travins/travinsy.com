@@ -223,45 +223,6 @@
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-      "name": "follow-me",
-      "title": "手写标注",
-      "description": "放在内容容器外侧的手写体 follow me 与箭头装饰，纯装饰，不参与交互与无障碍阅读。",
-      "files": [
-        {
-          "path": "src/registry/ui/follow-me/follow-me.tsx",
-          "content": "import { cn } from \"@/lib/utils\"\n\n/** 放在内容容器外侧的手写标注，不参与交互和无障碍阅读。 */\nfunction FollowMe({\n  className,\n  label = \"follow me\",\n}: {\n  /** 附加到根元素的样式类名 */\n  className?: string\n  /**\n   * 手写文字内容\n   * @default \"follow me\"\n   */\n  label?: string\n}) {\n  return (\n    <div\n      data-slot=\"follow-me\"\n      aria-hidden=\"true\"\n      className={cn(\n        \"pointer-events-none absolute top-1 -left-32 hidden w-28 -rotate-12 text-muted-foreground lg:block\",\n        className,\n      )}\n    >\n      {/* 手写体来自系统字体，用工具类表达，才能跟 className 一起被覆盖。 */}\n      <span\n        data-slot=\"follow-me-label\"\n        className=\"[font-family:Bradley_Hand,Segoe_Print,cursive] text-2xl italic\"\n      >\n        {label}\n      </span>\n      <svg\n        data-slot=\"follow-me-arrow\"\n        viewBox=\"0 0 100 60\"\n        fill=\"none\"\n        aria-hidden=\"true\"\n        className=\"ml-5 h-14 w-24\"\n        stroke=\"currentColor\"\n        strokeWidth=\"1.3\"\n        strokeLinecap=\"round\"\n        strokeLinejoin=\"round\"\n      >\n        <path d=\"M12 9C7 37 40 44 53 25c10-15-10-24-12-8-3 20 24 31 49 20M80 30l11 7-9 8\" />\n      </svg>\n    </div>\n  )\n}\n\nexport { FollowMe }\n",
-          "type": "registry:ui"
-        }
-      ],
-      "type": "registry:ui"
-    },
-    {
-      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-      "name": "icon-link",
-      "title": "图标链接",
-      "description": "带明确名称、悬停提示与键盘焦点样式的图标链接方块，图标本身对读屏隐藏。",
-      "files": [
-        {
-          "path": "src/registry/ui/icon-link/icon-link.tsx",
-          "content": "import type { ComponentProps, ReactNode } from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\n/** 有明确名称和键盘焦点的图标链接方块。 */\nfunction IconLink({\n  label,\n  children,\n  className,\n  ...props\n}: ComponentProps<\"a\"> & {\n  /** 同时作为 aria-label 与 title 的可读名称，必填 */\n  label: string\n  children: ReactNode\n}) {\n  return (\n    <a\n      data-slot=\"icon-link\"\n      aria-label={label}\n      title={label}\n      className={cn(\n        \"inline-flex size-11 items-center justify-center rounded-md border border-edge bg-muted/30 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring [&_svg]:size-5\",\n        className,\n      )}\n      {...props}\n    >\n      <span data-slot=\"icon-link-icon\" aria-hidden=\"true\">\n        {children}\n      </span>\n    </a>\n  )\n}\n\nexport { IconLink }\n",
-          "type": "registry:ui"
-        }
-      ],
-      "cssVars": {
-        "theme": {
-          "color-edge": "var(--edge)"
-        },
-        "light": {
-          "edge": "color-mix(in oklch, var(--foreground) 12%, transparent)"
-        },
-        "dark": {
-          "edge": "color-mix(in oklch, var(--foreground) 18%, transparent)"
-        }
-      },
-      "type": "registry:ui"
-    },
-    {
-      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
       "name": "profile-hero",
       "title": "个人封面",
       "description": "首页封面区：斜纹横幅、头像、名字、简介与职业标签轮播。",
@@ -298,41 +259,6 @@
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-      "name": "social-follow",
-      "title": "社交关注",
-      "description": "一行社交图标方块，配合容器外侧的手写体 follow me 装饰。",
-      "registryDependencies": [
-        "https://travinsy.com/r/grid-layout.json",
-        "https://travinsy.com/r/icon-link.json",
-        "https://travinsy.com/r/follow-me.json"
-      ],
-      "files": [
-        {
-          "path": "src/registry/blocks/social-follow/social-follow.tsx",
-          "content": "import type { ReactNode } from \"react\"\n\nimport { cn } from \"@/lib/utils\"\nimport { FollowMe } from \"@/registry/ui/follow-me/follow-me\"\nimport { GridSection } from \"@/registry/ui/grid-layout/grid-layout\"\nimport { IconLink } from \"@/registry/ui/icon-link/icon-link\"\n\nimport { resolveLabels, type SocialFollowLabels } from \"./config\"\n\ntype SocialLink = {\n  /** 链接名称，同时作为读屏名称与悬停提示 */\n  name: string\n  href: string\n  /** 图标节点，建议 strokeWidth={1.5} 的线性图标 */\n  icon: ReactNode\n}\n\n/** 社交方块一行 + 容器外侧手写体 follow me 装饰。放在 GridContainer 内使用。 */\nfunction SocialFollow({\n  socials,\n  note = \"在别处，也在这里\",\n  followMe = true,\n  labels,\n  className,\n}: {\n  socials: readonly SocialLink[]\n  /** 右侧的小字说明，设为空字符串可隐藏 */\n  note?: string\n  /** 是否在容器外侧显示手写体 follow me 装饰，默认显示 */\n  followMe?: boolean\n  /** 覆盖默认文案，见 config.ts 的 DEFAULT_LABELS */\n  labels?: Partial<SocialFollowLabels>\n  className?: string\n}) {\n  const text = resolveLabels(labels)\n  return (\n    <GridSection\n      data-slot=\"social-follow\"\n      aria-label={text.socialLinks}\n      className={cn(\"px-4 py-4 sm:px-6\", className)}\n    >\n      {followMe ? <FollowMe /> : null}\n      <div className=\"flex items-center justify-between gap-4\">\n        <div className=\"flex gap-2\">\n          {socials.map((social) => (\n            <IconLink\n              key={social.name}\n              href={social.href}\n              label={social.name}\n              target=\"_blank\"\n              rel=\"noreferrer noopener\"\n            >\n              {social.icon}\n            </IconLink>\n          ))}\n        </div>\n        {note ? (\n          <span className=\"font-mono text-[10px] text-muted-foreground\">\n            {note} <span aria-hidden=\"true\">↗</span>\n          </span>\n        ) : null}\n      </div>\n    </GridSection>\n  )\n}\n\nexport { SocialFollow }\nexport type { SocialLink }\n",
-          "type": "registry:component",
-          "target": "components/social-follow/social-follow.tsx"
-        },
-        {
-          "path": "src/registry/blocks/social-follow/config.ts",
-          "content": "/**\n * 社交关注区块的界面文案。\n * 链接名称、说明文字属于页面数据，通过 SocialFollow 的 props 传入，不放在这里。\n */\nconst DEFAULT_LABELS = {\n  socialLinks: \"社交链接\",\n} as const\n\ntype SocialFollowLabels = { [Key in keyof typeof DEFAULT_LABELS]: string }\n\n/** 合并用户传入的文案与默认文案。 */\nfunction resolveLabels(labels?: Partial<SocialFollowLabels>): SocialFollowLabels {\n  return { ...DEFAULT_LABELS, ...labels }\n}\n\nexport { DEFAULT_LABELS, resolveLabels }\nexport type { SocialFollowLabels }\n",
-          "type": "registry:component",
-          "target": "components/social-follow/config.ts"
-        },
-        {
-          "path": "src/registry/blocks/social-follow/brand-icons.tsx",
-          "content": "import type { SVGProps } from \"react\"\n\n/** 品牌标识用独立 SVG，不依赖图标库里的品牌图标。 */\nfunction GitHubMark(props: SVGProps<SVGSVGElement>) {\n  return (\n    <svg\n      data-slot=\"social-follow-github-mark\"\n      viewBox=\"0 0 24 24\"\n      fill=\"currentColor\"\n      aria-hidden=\"true\"\n      {...props}\n    >\n      <path d=\"M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.87c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.81c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.76c0 .27.18.58.69.48A10 10 0 0 0 12 2Z\" />\n    </svg>\n  )\n}\n\n/** X（原 Twitter）标识。 */\nfunction XMark(props: SVGProps<SVGSVGElement>) {\n  return (\n    <svg\n      data-slot=\"social-follow-x-mark\"\n      viewBox=\"0 0 24 24\"\n      fill=\"currentColor\"\n      aria-hidden=\"true\"\n      {...props}\n    >\n      <path d=\"M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.6 5.5 22H2.3l7.9-9L1.8 2h6.5l4.5 6.8L18.9 2Zm-1.1 18h1.7L7.3 3.9H5.5L17.8 20Z\" />\n    </svg>\n  )\n}\n\nexport { GitHubMark, XMark }\n",
-          "type": "registry:component",
-          "target": "components/social-follow/brand-icons.tsx"
-        }
-      ],
-      "meta": {
-        "iframeHeight": "280px"
-      },
-      "type": "registry:block"
-    },
-    {
-      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
       "name": "feature-columns",
       "title": "多栏介绍",
       "description": "虚线分隔的 2–4 栏介绍（如「我在做什么」），窄屏自动堆叠。",
@@ -363,13 +289,12 @@
       "registryDependencies": [
         "https://travinsy.com/r/grid-layout.json",
         "https://travinsy.com/r/profile-hero.json",
-        "https://travinsy.com/r/social-follow.json",
         "https://travinsy.com/r/feature-columns.json"
       ],
       "files": [
         {
           "path": "src/registry/templates/portfolio-grid/page.tsx",
-          "content": "import { Bot, Code2, Globe, Layers, Mail, Server } from \"lucide-react\"\nimport type { Metadata } from \"next\"\nimport type { ReactNode } from \"react\"\n\nimport { FeatureColumns } from \"@/registry/blocks/feature-columns/feature-columns\"\nimport { ProfileHero } from \"@/registry/blocks/profile-hero/profile-hero\"\nimport {\n  GitHubMark,\n  XMark,\n} from \"@/registry/blocks/social-follow/brand-icons\"\nimport { SocialFollow } from \"@/registry/blocks/social-follow/social-follow\"\nimport { AboutSection } from \"@/registry/templates/portfolio-grid/components/portfolio/about-section\"\nimport { SiteFooter } from \"@/registry/templates/portfolio-grid/components/portfolio/site-footer\"\nimport { SiteHeader } from \"@/registry/templates/portfolio-grid/components/portfolio/site-header\"\nimport { StackSection } from \"@/registry/templates/portfolio-grid/components/portfolio/stack-section\"\nimport {\n  siteConfig,\n  type FocusIcon,\n  type SocialIcon,\n} from \"@/registry/templates/portfolio-grid/lib/site.config\"\nimport {\n  GridContainer,\n  GridSeparator,\n} from \"@/registry/ui/grid-layout/grid-layout\"\n\nexport const metadata: Metadata = {\n  title: siteConfig.name,\n  description: siteConfig.bio,\n}\n\nconst socialIcons: Record<SocialIcon, ReactNode> = {\n  github: <GitHubMark />,\n  x: <XMark />,\n  mail: <Mail strokeWidth={1.5} />,\n  link: <Globe strokeWidth={1.5} />,\n}\nconst focusIcons: Record<FocusIcon, ReactNode> = {\n  code: <Code2 strokeWidth={1.5} />,\n  bot: <Bot strokeWidth={1.5} />,\n  server: <Server strokeWidth={1.5} />,\n  layout: <Layers strokeWidth={1.5} />,\n}\n\n/** 线条网格个人主页：所有内容来自 lib/site.config.ts，一般只需要改那个文件。 */\nexport default function Page() {\n  return (\n    <>\n      <SiteHeader />\n      <main data-slot=\"portfolio-grid\">\n        <GridContainer>\n          <ProfileHero\n            name={siteConfig.name}\n            bio={siteConfig.bio}\n            roles={siteConfig.roles}\n            initials={siteConfig.initials}\n            tagline={siteConfig.tagline}\n          />\n          <SocialFollow\n            followMe={false}\n            socials={siteConfig.socials.map((social) => ({\n              name: social.name,\n              href: social.href,\n              icon: socialIcons[social.icon],\n            }))}\n          />\n          <FeatureColumns\n            title={siteConfig.focus.title}\n            items={siteConfig.focus.items.map((item) => ({\n              title: item.title,\n              description: item.description,\n              icon: focusIcons[item.icon],\n            }))}\n            id=\"focus\"\n            className=\"scroll-mt-16\"\n          />\n          <StackSection\n            title={siteConfig.stack.title}\n            items={siteConfig.stack.items}\n          />\n          <GridSeparator />\n          <AboutSection\n            title={siteConfig.about.title}\n            paragraphs={siteConfig.about.paragraphs}\n          />\n        </GridContainer>\n      </main>\n      <SiteFooter />\n    </>\n  )\n}\n",
+          "content": "import { Bot, Code2, Layers, Server } from \"lucide-react\"\nimport type { Metadata } from \"next\"\nimport type { ReactNode } from \"react\"\n\nimport { FeatureColumns } from \"@/registry/blocks/feature-columns/feature-columns\"\nimport { ProfileHero } from \"@/registry/blocks/profile-hero/profile-hero\"\nimport { AboutSection } from \"@/registry/templates/portfolio-grid/components/portfolio/about-section\"\nimport { SiteFooter } from \"@/registry/templates/portfolio-grid/components/portfolio/site-footer\"\nimport { SiteHeader } from \"@/registry/templates/portfolio-grid/components/portfolio/site-header\"\nimport { SocialLinks } from \"@/registry/templates/portfolio-grid/components/portfolio/social-links\"\nimport { StackSection } from \"@/registry/templates/portfolio-grid/components/portfolio/stack-section\"\nimport {\n  siteConfig,\n  type FocusIcon,\n} from \"@/registry/templates/portfolio-grid/lib/site.config\"\nimport {\n  GridContainer,\n  GridSeparator,\n} from \"@/registry/ui/grid-layout/grid-layout\"\n\nexport const metadata: Metadata = {\n  title: siteConfig.name,\n  description: siteConfig.bio,\n}\n\nconst focusIcons: Record<FocusIcon, ReactNode> = {\n  code: <Code2 strokeWidth={1.5} />,\n  bot: <Bot strokeWidth={1.5} />,\n  server: <Server strokeWidth={1.5} />,\n  layout: <Layers strokeWidth={1.5} />,\n}\n\n/** 线条网格个人主页：所有内容来自 lib/site.config.ts，一般只需要改那个文件。 */\nexport default function Page() {\n  return (\n    <>\n      <SiteHeader />\n      <main data-slot=\"portfolio-grid\">\n        <GridContainer>\n          <ProfileHero\n            name={siteConfig.name}\n            bio={siteConfig.bio}\n            roles={siteConfig.roles}\n            initials={siteConfig.initials}\n            tagline={siteConfig.tagline}\n          />\n          <SocialLinks socials={siteConfig.socials} />\n          <FeatureColumns\n            title={siteConfig.focus.title}\n            items={siteConfig.focus.items.map((item) => ({\n              title: item.title,\n              description: item.description,\n              icon: focusIcons[item.icon],\n            }))}\n            id=\"focus\"\n            className=\"scroll-mt-16\"\n          />\n          <StackSection\n            title={siteConfig.stack.title}\n            items={siteConfig.stack.items}\n          />\n          <GridSeparator />\n          <AboutSection\n            title={siteConfig.about.title}\n            paragraphs={siteConfig.about.paragraphs}\n          />\n        </GridContainer>\n      </main>\n      <SiteFooter />\n    </>\n  )\n}\n",
           "type": "registry:page",
           "target": "app/page.tsx"
         },
@@ -381,7 +306,7 @@
         },
         {
           "path": "src/registry/templates/portfolio-grid/lib/config.ts",
-          "content": "/**\n * 个人主页里固定的界面文案。\n * 姓名、简介、区块标题、技术栈列表等个人信息都在 site.config.ts 里。\n */\nconst DEFAULT_LABELS = {\n  siteNav: \"页面导航\",\n  stackEyebrow: \"TOOLS OF THE TRADE\",\n  aboutFootnote: \"持续学习，慢慢构建。\",\n} as const\n\ntype PortfolioGridLabels = { [Key in keyof typeof DEFAULT_LABELS]: string }\n\n/** 合并用户传入的文案与默认文案。 */\nfunction resolveLabels(\n  labels?: Partial<PortfolioGridLabels>,\n): PortfolioGridLabels {\n  return { ...DEFAULT_LABELS, ...labels }\n}\n\nexport { DEFAULT_LABELS, resolveLabels }\nexport type { PortfolioGridLabels }\n",
+          "content": "/**\n * 个人主页里固定的界面文案。\n * 姓名、简介、区块标题、技术栈列表等个人信息都在 site.config.ts 里。\n */\nconst DEFAULT_LABELS = {\n  siteNav: \"页面导航\",\n  socialLinks: \"社交链接\",\n  stackEyebrow: \"TOOLS OF THE TRADE\",\n  aboutFootnote: \"持续学习，慢慢构建。\",\n} as const\n\ntype PortfolioGridLabels = { [Key in keyof typeof DEFAULT_LABELS]: string }\n\n/** 合并用户传入的文案与默认文案。 */\nfunction resolveLabels(\n  labels?: Partial<PortfolioGridLabels>,\n): PortfolioGridLabels {\n  return { ...DEFAULT_LABELS, ...labels }\n}\n\nexport { DEFAULT_LABELS, resolveLabels }\nexport type { PortfolioGridLabels }\n",
           "type": "registry:lib",
           "target": "lib/config.ts"
         },
@@ -408,6 +333,12 @@
           "content": "import { GridSection } from \"@/registry/ui/grid-layout/grid-layout\"\n\nimport { resolveLabels, type PortfolioGridLabels } from \"../../lib/config\"\n\n/** 关于我：几段正文 + 一行等宽小字收尾。 */\nfunction AboutSection({\n  title,\n  paragraphs,\n  labels,\n}: {\n  title: string\n  paragraphs: readonly string[]\n  /** 覆盖默认文案，见 lib/config.ts 的 DEFAULT_LABELS */\n  labels?: Partial<PortfolioGridLabels>\n}) {\n  const text = resolveLabels(labels)\n  return (\n    <GridSection\n      data-slot=\"portfolio-grid-about\"\n      id=\"about\"\n      aria-labelledby=\"about-title\"\n      className=\"scroll-mt-16 px-4 py-8 sm:px-6\"\n    >\n      <div className=\"mb-4 flex items-center justify-between\">\n        <h2 id=\"about-title\" className=\"text-sm font-medium\">\n          {title}\n        </h2>\n        <span aria-hidden=\"true\" className=\"text-muted-foreground\">\n          ↘\n        </span>\n      </div>\n      <div className=\"flex max-w-xl flex-col gap-3 text-sm leading-7 text-pretty text-muted-foreground\">\n        {paragraphs.map((paragraph) => (\n          <p key={paragraph}>{paragraph}</p>\n        ))}\n      </div>\n      <p className=\"mt-6 font-mono text-xs text-muted-foreground\">\n        {text.aboutFootnote}\n        <span className=\"ml-2 text-primary\">_</span>\n      </p>\n    </GridSection>\n  )\n}\n\nexport { AboutSection }\n",
           "type": "registry:component",
           "target": "components/portfolio/about-section.tsx"
+        },
+        {
+          "path": "src/registry/templates/portfolio-grid/components/portfolio/social-links.tsx",
+          "content": "import { Globe, Mail } from \"lucide-react\"\nimport type { ReactNode, SVGProps } from \"react\"\n\nimport { GridSection } from \"@/registry/ui/grid-layout/grid-layout\"\n\nimport { resolveLabels, type PortfolioGridLabels } from \"../../lib/config\"\nimport type { SocialIcon } from \"../../lib/site.config\"\n\n/** 品牌标识用独立 SVG，不依赖图标库里的品牌图标。 */\nfunction GitHubMark(props: SVGProps<SVGSVGElement>) {\n  return (\n    <svg\n      data-slot=\"portfolio-grid-github-mark\"\n      viewBox=\"0 0 24 24\"\n      fill=\"currentColor\"\n      aria-hidden=\"true\"\n      {...props}\n    >\n      <path d=\"M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.87c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.81c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.76c0 .27.18.58.69.48A10 10 0 0 0 12 2Z\" />\n    </svg>\n  )\n}\n\n/** X（原 Twitter）标识。 */\nfunction XMark(props: SVGProps<SVGSVGElement>) {\n  return (\n    <svg\n      data-slot=\"portfolio-grid-x-mark\"\n      viewBox=\"0 0 24 24\"\n      fill=\"currentColor\"\n      aria-hidden=\"true\"\n      {...props}\n    >\n      <path d=\"M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.6 5.5 22H2.3l7.9-9L1.8 2h6.5l4.5 6.8L18.9 2Zm-1.1 18h1.7L7.3 3.9H5.5L17.8 20Z\" />\n    </svg>\n  )\n}\n\nconst socialIcons: Record<SocialIcon, ReactNode> = {\n  github: <GitHubMark />,\n  x: <XMark />,\n  mail: <Mail strokeWidth={1.5} />,\n  link: <Globe strokeWidth={1.5} />,\n}\n\ntype SocialLink = {\n  /** 链接名称，同时作为读屏名称与悬停提示 */\n  name: string\n  href: string\n  icon: SocialIcon\n}\n\n/** 社交链接：一行图标方块。放在 GridContainer 内使用。 */\nfunction SocialLinks({\n  socials,\n  labels,\n}: {\n  socials: readonly SocialLink[]\n  /** 覆盖默认文案，见 lib/config.ts 的 DEFAULT_LABELS */\n  labels?: Partial<PortfolioGridLabels>\n}) {\n  const text = resolveLabels(labels)\n  return (\n    <GridSection\n      data-slot=\"portfolio-grid-social-links\"\n      aria-label={text.socialLinks}\n      className=\"px-4 py-4 sm:px-6\"\n    >\n      <ul className=\"flex gap-2\">\n        {socials.map((social) => {\n          // mailto 链接留在当前页，其余在新窗口打开\n          const external = !social.href.startsWith(\"mailto:\")\n          return (\n            <li key={social.name}>\n              <a\n                href={social.href}\n                aria-label={\n                  external ? `${social.name}（在新窗口打开）` : social.name\n                }\n                title={social.name}\n                {...(external\n                  ? { target: \"_blank\", rel: \"noreferrer noopener\" }\n                  : {})}\n                className=\"inline-flex size-9 items-center justify-center rounded-md border border-edge bg-muted/30 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:size-4.5\"\n              >\n                <span aria-hidden=\"true\" className=\"flex\">\n                  {socialIcons[social.icon]}\n                </span>\n              </a>\n            </li>\n          )\n        })}\n      </ul>\n    </GridSection>\n  )\n}\n\nexport { SocialLinks }\nexport type { SocialLink }\n",
+          "type": "registry:component",
+          "target": "components/portfolio/social-links.tsx"
         }
       ],
       "meta": {

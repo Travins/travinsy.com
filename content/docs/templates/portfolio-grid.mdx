@@ -8,12 +8,11 @@ description: 完整的线条网格个人主页：封面、社交、做什么、�
 
 这是本站首页风格的可复用版本：整页集中在一个地址下，之后只需要改一个配置文件，就能得到同款主页。
 
-页面由四个区块和几个小组件拼成：
+页面由两个区块和几个模板自带的小组件拼成：
 
 - 封面：[个人封面](/blocks/profile-hero/)
-- 社交：[社交关注](/blocks/social-follow/)
 - 我在做什么：[多栏介绍](/blocks/feature-columns/)
-- 技术栈、关于我、简易页头页脚：模板自带
+- 社交链接、技术栈、关于我、简易页头页脚：模板自带
 
 ## 安装
 
@@ -34,10 +33,10 @@ lib/config.ts                             # 界面文案 DEFAULT_LABELS
 components/portfolio/
 ├── site-header.tsx                       # 简易页头：站名 + 锚点导航
 ├── site-footer.tsx                       # 简易页脚
+├── social-links.tsx                      # 社交链接一行（含 GitHub / X 品牌标识）
 ├── stack-section.tsx                     # 技术栈
 └── about-section.tsx                     # 关于我
 components/profile-hero/…                 # 来自「个人封面」区块
-components/social-follow/…                # 来自「社交关注」区块
 components/feature-columns/…              # 来自「多栏介绍」区块
 components/ui/grid-layout/…               # 来自「线条网格布局」
 ```
@@ -51,7 +50,7 @@ components/ui/grid-layout/…               # 来自「线条网格布局」
 <main>
   <GridContainer>
     <ProfileHero name={siteConfig.name} bio={siteConfig.bio} roles={siteConfig.roles} />
-    <SocialFollow socials={…} />
+    <SocialLinks socials={siteConfig.socials} />
     <FeatureColumns title={siteConfig.focus.title} items={…} />
     <StackSection title={siteConfig.stack.title} items={siteConfig.stack.items} />
     <GridSeparator />
@@ -93,11 +92,12 @@ export { siteConfig }
 
 ### labels
 
-`SiteHeader`、`StackSection`、`AboutSection` 接受可选的 `labels`，覆盖 `lib/config.ts` 里的 `DEFAULT_LABELS`；区块标题（「技术栈」「关于我」等）属于 `siteConfig` 数据，通过 `title` 属性传入。
+`SiteHeader`、`SocialLinks`、`StackSection`、`AboutSection` 接受可选的 `labels`，覆盖 `lib/config.ts` 里的 `DEFAULT_LABELS`；区块标题（「技术栈」「关于我」等）属于 `siteConfig` 数据，通过 `title` 属性传入。
 
 <TypeTable
   type={{
     siteNav: { type: "string", description: "页头导航的 `aria-label`", default: '"页面导航"' },
+    socialLinks: { type: "string", description: "社交链接区块的 `aria-label`", default: '"社交链接"' },
     stackEyebrow: { type: "string", description: "技术栈区块右上角的等宽小字", default: '"TOOLS OF THE TRADE"' },
     aboutFootnote: { type: "string", description: "关于我区块结尾的一句小字", default: '"持续学习，慢慢构建。"' },
   }}
@@ -105,13 +105,14 @@ export { siteConfig }
 
 ### data-slot
 
-`portfolio-grid`（页面 `main`）、`portfolio-grid-site-header`、`portfolio-grid-site-nav`、`portfolio-grid-site-footer`、`portfolio-grid-stack`、`portfolio-grid-about`。
+`portfolio-grid`（页面 `main`）、`portfolio-grid-site-header`、`portfolio-grid-site-nav`、`portfolio-grid-site-footer`、`portfolio-grid-social-links`、`portfolio-grid-stack`、`portfolio-grid-about`。
 
 ## 可访问性
 
 - 页头导航是带 `aria-label` 的 `nav`，站名链接可以通过 `focus-visible` 看到焦点环。
 - 各区块用 `GridSection` 的 `section` 语义：技术栈与「关于我」用 `aria-labelledby` 指向自己的 `h2`，标题层级连续。
 - 页头在 `sticky` 定位下仍保留键盘焦点可见样式；锚点跳转通过 `scroll-mt-16` 避开吸顶页头。
+- 社交链接是带 `aria-label` 的 `ul` 列表，每个链接都有可读名称（新窗口打开的会注明），图标 `aria-hidden`，悬停与键盘焦点均有可见样式。
 - 技术栈方块里的两字母缩写、页脚装饰符号都是 `aria-hidden` 或纯装饰，信息由文字承载。
 - 颜色全部来自主题变量，切换颜色主题与亮暗模式后对比度保持一致。
 

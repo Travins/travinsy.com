@@ -19,8 +19,6 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "flow-diagram-router-demo": lazy(() => import("./examples/flow-diagram-router-demo")),
   "flow-diagram-showcase-demo": lazy(() => import("./examples/flow-diagram-showcase-demo")),
   "flow-diagram-tones-demo": lazy(() => import("./examples/flow-diagram-tones-demo")),
-  "follow-me-demo": lazy(() => import("./examples/follow-me-demo")),
-  "follow-me-showcase-demo": lazy(() => import("./examples/follow-me-showcase-demo")),
   "greeting-card-demo": lazy(() => import("./examples/greeting-card-demo")),
   "greeting-demo": lazy(() => import("./examples/greeting-demo")),
   "greeting-icon-demo": lazy(() => import("./examples/greeting-icon-demo")),
@@ -34,8 +32,6 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "grid-section-sidebar-demo": lazy(() => import("./examples/grid-section-sidebar-demo")),
   "grid-separator-label-demo": lazy(() => import("./examples/grid-separator-label-demo")),
   "grid-separator-patterns-demo": lazy(() => import("./examples/grid-separator-patterns-demo")),
-  "icon-link-demo": lazy(() => import("./examples/icon-link-demo")),
-  "icon-link-showcase-demo": lazy(() => import("./examples/icon-link-showcase-demo")),
   "isometric-mark-demo": lazy(() => import("./examples/isometric-mark-demo")),
   "isometric-mark-depth-demo": lazy(() => import("./examples/isometric-mark-depth-demo")),
   "isometric-mark-interaction-demo": lazy(() => import("./examples/isometric-mark-interaction-demo")),
@@ -59,5 +55,4 @@ export const registryViews: Record<string, LazyExoticComponent<ComponentType>> =
   "feature-columns": lazy(() => import("./blocks/feature-columns/demo")),
   "portfolio-grid": lazy(() => import("./templates/portfolio-grid/demo")),
   "profile-hero": lazy(() => import("./blocks/profile-hero/demo")),
-  "social-follow": lazy(() => import("./blocks/social-follow/demo")),
 }
