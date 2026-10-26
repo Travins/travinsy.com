@@ -668,6 +668,44 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "flow-diagram",
+      "type": "registry:ui",
+      "title": "流程动画图示",
+      "description": "节点、细线与流动光点组成的循环动画流程图：统一时间轴、进入视口才播放、减少动态效果时停在静帧，附带光点路径、逐字输入、加载圈与状态点等原语。",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/grid-layout.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/flow-diagram/flow-diagram.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/flow-diagram/elements.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/flow-diagram/beam.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/flow-diagram/route.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/flow-diagram/flow-clock.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/flow-diagram/tone.ts",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

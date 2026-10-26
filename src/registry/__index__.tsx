@@ -4,6 +4,16 @@ import { lazy, type ComponentType, type LazyExoticComponent } from "react"
 
 export const registryExamples: Record<string, LazyExoticComponent<ComponentType>> = {
   "contribution-graph-demo": lazy(() => import("./examples/contribution-graph-demo")),
+  "flow-diagram-agent-demo": lazy(() => import("./examples/flow-diagram-agent-demo")),
+  "flow-diagram-auth-demo": lazy(() => import("./examples/flow-diagram-auth-demo")),
+  "flow-diagram-cicd-demo": lazy(() => import("./examples/flow-diagram-cicd-demo")),
+  "flow-diagram-demo": lazy(() => import("./examples/flow-diagram-demo")),
+  "flow-diagram-deploy-demo": lazy(() => import("./examples/flow-diagram-deploy-demo")),
+  "flow-diagram-etl-demo": lazy(() => import("./examples/flow-diagram-etl-demo")),
+  "flow-diagram-fullstack-demo": lazy(() => import("./examples/flow-diagram-fullstack-demo")),
+  "flow-diagram-mcp-demo": lazy(() => import("./examples/flow-diagram-mcp-demo")),
+  "flow-diagram-microservice-demo": lazy(() => import("./examples/flow-diagram-microservice-demo")),
+  "flow-diagram-rag-demo": lazy(() => import("./examples/flow-diagram-rag-demo")),
   "follow-me-demo": lazy(() => import("./examples/follow-me-demo")),
   "greeting-demo": lazy(() => import("./examples/greeting-demo")),
   "grid-layout-demo": lazy(() => import("./examples/grid-layout-demo")),

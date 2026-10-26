@@ -1,0 +1,272 @@
+---
+title: 流程动画图示
+description: 节点、细线与流动光点组成的循环动画流程图：统一时间轴、进入视口才播放、减少动态效果时停在静帧，附带光点路径、逐字输入、加载圈与状态点等原语。
+links:
+  源码: https://travinsy.com/r/flow-diagram.json
+---
+
+<ComponentPreview name="flow-diagram-demo" />
+
+提炼自本站首页「我在做什么」里的三幅小插画。它不是一个“传数据就出图”的图表组件，而是一组 SVG 原语：你按设计坐标摆节点、连线、写标签，再给每一步指定出现的时刻，整张图就会按这条时间轴循环播放。
+
+## 安装
+
+<InstallCommand name="flow-diagram" />
+
+## 用法
+
+一张图由 `FlowDiagram` 外框和里面的原语组成。所有坐标都落在 `width × height` 的设计画布上，显示时整体等比缩小，所以 `FlowDiagram` 的宽度交给 `className` 控制即可。
+
+```tsx title="app/pipeline.tsx"
+import {
+  FlowBeam,
+  FlowDiagram,
+  FlowLabel,
+  FlowNode,
+  flowArrival,
+  flowRoute,
+} from "@/components/ui/flow-diagram/flow-diagram"
+
+// 路径在组件外创建：长度要提前算出，光点的到达时刻靠它换算
+const TO_PROCESS = flowRoute([[80, 50], [130, 50]])
+const PROCESS_AT = flowArrival(0.5, TO_PROCESS)
+
+export function Pipeline() {
+  return (
+    <FlowDiagram width={320} height={100} duration={4.4} exit={3.6} rest={3.4} className="w-full max-w-md">
+      <FlowBeam route={TO_PROCESS} at={0.5} />
+      <FlowNode x={50} y={50} width={60} litAt={0.2}>
+        <FlowLabel x={50} y={50}>输入</FlowLabel>
+      </FlowNode>
+      <FlowNode x={160} y={50} width={60} litAt={PROCESS_AT}>
+        <FlowLabel x={160} y={50}>处理</FlowLabel>
+      </FlowNode>
+    </FlowDiagram>
+  )
+}
+```
+
+约定很少：
+
+- **节点是容器，文字是子元素。** `FlowNode` 只画边框和点亮效果，里面的文字、图标按绝对坐标摆放，通常用 `FlowLabel` 或 lucide 图标（SVG 里直接给 `x`、`y`、`width`、`height` 即可）。
+- **点亮时刻来自光点。** 光点出发的时刻 `at` 加上路径长度除以速度，就是它抵达的时刻，`flowArrival(at, route)` 帮你算好，直接传给目标节点的 `litAt`。
+- **颜色全部来自主题。** 点亮用 `primary`，失败分支可以换成 `destructive`，亮暗模式和颜色主题切换后自动跟随。
+
+## 示例
+
+下面每个案例都是完整的源码，点「代码」标签可以看到写法。
+
+### 全栈开发
+
+需求分叉成前端和后端两条分支，汇合后敲出 `pnpm build`，再流向代码和上线。用到了分叉 / 汇合点 `FlowDiamond` 和逐字输入 `FlowTypedText`。
+
+<ComponentPreview name="flow-diagram-fullstack-demo" />
+
+### AI Agent
+
+文档与工具两路来源汇入输入框，逐字提问后进入“思考”，再依次给出答案条目。示例里的“星花变加载环”是用 `useFlowClock` 自己写的动画元素。
+
+<ComponentPreview name="flow-diagram-agent-demo" />
+
+### 大模型部署
+
+模型汇入推理引擎，再分发到 API、Chat、Agent 三个出口。同一条线上有两轮请求先后流过，第二轮用 `base={false}` 只画光点，避免底线叠粗。
+
+<ComponentPreview name="flow-diagram-deploy-demo" />
+
+### RAG 检索增强
+
+上排是入库：文档切片、嵌入、写入向量库；下排是问答：问题经检索拿到 top-3 片段，交给 LLM 生成，最后逐字打出回答。两条竖线分别负责“查询进入”和“结果取出”，不会重叠。
+
+<ComponentPreview name="flow-diagram-rag-demo" />
+
+### CI/CD 流水线
+
+push 之后 lint 与 test 并行，耗时不同；先跑完的先打勾，汇合点要等最慢的那个。build 完成后部署上线，状态点带涟漪。
+
+<ComponentPreview name="flow-diagram-cicd-demo" />
+
+### 登录鉴权
+
+第一次密码错误，Auth 返回 401，红色光点沿一条环路绕回用户；重试通过后签发 JWT，带着 Bearer 访问受保护资源。`FlowBeam` 的 `tone="destructive"` 用来标出失败分支。
+
+<ComponentPreview name="flow-diagram-auth-demo" />
+
+### 微服务请求链路
+
+网关扇出到三个服务并行处理，光点按路径长度反推出发时刻，所以同时到达；各服务按自己的耗时返回，耗时标签随返回的光点出现，汇合点等最慢的那个，最后得到总耗时。
+
+<ComponentPreview name="flow-diagram-microservice-demo" />
+
+### 数据管道 ETL
+
+竖向布局：三个数据源汇入清洗，进度条走完后写入数据仓库，再在看板上依次长出柱状图。进度条和柱子都是用 `useFlowClock` + `useTransform` 写的自定义元素。
+
+<ComponentPreview name="flow-diagram-etl-demo" />
+
+### MCP 工具调用
+
+请求与结果走同一条线：先 `tools/list` 向三个服务器发现能力，再 `tools/call` 调用数据库，结果沿原路返回。返回路径只是把端点倒过来，用 `base={false}` 复用已经画好的线。
+
+<ComponentPreview name="flow-diagram-mcp-demo" />
+
+## 时间轴
+
+一张图只有一个时钟：从 `0` 走到 `duration` 秒，到头回到 `0` 重新开始。所有元素都是这个时间的函数，没有各自的定时器，所以不同元素之间不会错位。
+
+<TypeTable
+  type={{
+    at: { type: "number", description: "元素出现 / 光点出发的时刻（秒），各原语的叫法略有不同：`FlowBeam` 的 `at`、`FlowNode` 的 `litAt`" },
+    exit: { type: "number", description: "这一刻起所有元素一起淡出，到 `duration` 时完全消失，下一轮从空白重新开始", default: "duration - 0.8" },
+    rest: { type: "number", description: "静帧时刻：首帧、服务端渲染和“减少动态效果”下显示的画面", default: "exit - 0.2" },
+    duration: { type: "number", description: "一轮循环的总时长（秒）", default: "8" },
+  }}
+/>
+
+三者的关系是 `最后一个元素出现 < rest < exit < duration`。
+
+- **`rest` 要选在“画面完整”的一刻**：所有节点都已点亮、没有光点在飞。减少动态效果时图示会永远停在这一帧，所以它就是图示的“封面”。
+- **`exit` 和 `duration` 之间留出淡出的时间**，默认 0.8 秒。
+- **时刻不用手写死。** 光点到达时刻用 `flowArrival(at, route)` 推算，下一步从上一步的时刻加一点间隔算出来；示例里的 `REST`、`EXIT`、`DURATION` 都是这样级联得到的，改一个起点，后面自动顺延。
+
+### 播放与暂停
+
+- 进入视口（可见面积达到 40%）才开始走，离开视口立即暂停，不占 CPU。
+- 初始时钟停在 `rest`，所以服务端渲染的静态 HTML、首帧水合结果、减少动态效果下的画面是同一帧，不会闪一下，也没有水合不一致。
+- 切回标签页后时钟从原地继续，不会一下子跳过一大段。
+- 开启系统的“减少动态效果”时不播放，也不显示光点，画面固定在 `rest`。
+
+### 自定义动画元素
+
+`useFlowClock()` 返回 `{ time, duration, exit }`，`time` 是 motion 的 `MotionValue<number>`。用 `useTransform(time, 输入区间, 输出区间)` 就能把任何属性绑到时间轴上：
+
+```tsx
+function Progress() {
+  const { time, exit, duration } = useFlowClock()
+  const scaleX = useTransform(time, [2, 3.5], [0, 1])
+  const opacity = useTransform(time, [exit, duration], [1, 0])
+  return (
+    <motion.g style={{ opacity }}>
+      <motion.rect
+        x={80} y={92} width={100} height={3}
+        className="fill-primary"
+        style={{ scaleX, transformBox: "fill-box", transformOrigin: "left" }}
+      />
+    </motion.g>
+  )
+}
+```
+
+别忘了在 `exit` 到 `duration` 之间把元素淡出，否则它会在下一轮开头突然消失。需要在渲染里读取时间做判断时，请像 `FlowTypedText` 那样用 `useMotionValueEvent`，不要在渲染期间调用 `Date.now()`，那会让服务端和客户端的结果对不上。
+
+## API
+
+### FlowDiagram
+
+<PropsTable name="flow-diagram" component="FlowDiagram" />
+
+其余属性透传到根 `div`。
+
+### FlowNode
+
+带细边框的小胶囊；`x`、`y` 是中心点。`litAt` 到达时，边框和底色换成主色。
+
+<PropsTable name="flow-diagram" component="FlowNode" />
+
+### FlowDiamond
+
+分叉 / 汇合点，旋转 45° 的小方块。
+
+<PropsTable name="flow-diagram" component="FlowDiamond" />
+
+### FlowLabel
+
+等宽小标签，颜色和字号用 `className` 覆盖（例如 `fill-muted-foreground text-[9px]`，注意 SVG 文字用的是 `fill-*` 而不是 `text-*`）。
+
+<PropsTable name="flow-diagram" component="FlowLabel" />
+
+### FlowBeam
+
+连线加一枚沿线流动的光点，带一小段拖尾。
+
+<PropsTable name="flow-diagram" component="FlowBeam" />
+
+### FlowEdge
+
+不带光点的静态连线，用来画背景关系、备用路径。
+
+<PropsTable name="flow-diagram" component="FlowEdge" />
+
+### FlowReveal
+
+在 `at` 时刻淡入的容器，淡出由时间轴统一负责。
+
+<PropsTable name="flow-diagram" component="FlowReveal" />
+
+### FlowTypedText
+
+逐字打出的文字，后面跟一个会闪烁的光标。已打出的字数由时间推导。
+
+<PropsTable name="flow-diagram" component="FlowTypedText" />
+
+### FlowSpinner
+
+旋转的加载圈，只在 `at` 到 `until` 之间显示。
+
+<PropsTable name="flow-diagram" component="FlowSpinner" />
+
+### FlowStatusDot
+
+状态点，可选向外扩散涟漪表示服务在运行。
+
+<PropsTable name="flow-diagram" component="FlowStatusDot" />
+
+### 路径工具
+
+```ts
+function flowRoute(points: readonly FlowPoint[], radius?: number): FlowRoute
+function flowArrival(at: number, route: FlowRoute): number
+const FLOW_BEAM_SPEED: number // 110，单位：设计像素 / 秒
+```
+
+`flowRoute` 把折线变成圆角路径并算出长度，`radius` 是拐角半径（默认 6）。它是纯函数，请在组件外调用。`flowArrival` 返回光点抵达终点的时刻。它们和 `FLOW_BEAM_SPEED` 都定义在不依赖 React 的 `route.ts` 里。`flow-diagram.tsx` 是客户端模块，服务端组件不能直接调用它再导出的函数：要在服务端组件里算路径，请改从 `route.ts` 引入；在带 `"use client"` 的文件里（案例都是这样）从 `flow-diagram.tsx` 引入即可。`FLOW_BEAM_SPEED` 在需要“让几束光点同时到达”时有用：`出发时刻 = 到达时刻 - route.length / FLOW_BEAM_SPEED`，参见微服务和 MCP 案例。
+
+```ts
+type FlowPoint = readonly [x: number, y: number]
+type FlowRoute = { d: string; length: number }
+type FlowTone = "primary" | "destructive"
+```
+
+### data-slot
+
+| 元素 | `data-slot` |
+| --- | --- |
+| 外框 | `flow-diagram` |
+| 节点 | `flow-node` |
+| 分叉点 | `flow-diamond` |
+| 标签 | `flow-label` |
+| 光点连线 | `flow-beam` |
+| 静态连线 | `flow-edge` |
+| 淡入容器 | `flow-reveal` |
+| 逐字文字 | `flow-typed-text` |
+| 加载圈 | `flow-spinner` |
+| 状态点 | `flow-status-dot` |
+
+## 可访问性
+
+- 默认整个图示 `aria-hidden`，读屏完全忽略，适合作为纯装饰。传入 `label` 后外框变成 `role="img"` 并带上 `aria-label`，内部的 SVG 内容不会再被逐个朗读，所以 `label` 应该概括整张图在讲什么，例如“请求从网关扇出到三个服务再汇合”。
+- 图示不承载任何交互，没有可聚焦元素。
+- 开启系统的“减少动态效果”时没有任何运动，画面固定在 `rest` 这一帧，信息完整。
+- 状态不只靠颜色：失败分支除了红色还有 “401” 之类的文字，完成状态有对勾。
+
+## 注意事项
+
+- 画布按设计尺寸绘制，窄屏时整体缩小，文字也会跟着缩小。设计时留意最窄的容器：10px 的文字缩到 0.7 倍就接近 7px，宽度小于 300px 的场景请把画布设计得更窄一些。
+- 文字使用等宽字体，`FlowTypedText` 的光标位置按“拉丁字符 6px、中文 10px”估算，混排时请留一点余量。
+- 点阵底纹使用 `bg-dots`，这个工具类由 `grid-layout` 提供，安装时会一并装上；不需要底纹时传 `dots={false}`。
+- 路径只支持直线和圆角，拐角由 `flowRoute` 的 `radius` 控制；复杂曲线请自己写 `path` 并放进 `FlowReveal`。
+- 外框默认没有边框和固定高度，首页的用法是 `className="h-48 border-b border-edge"`。
+
+## 源码
+
+<ComponentSource name="flow-diagram" />
