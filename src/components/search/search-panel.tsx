@@ -259,7 +259,7 @@ export function SearchPanel({
 
       <div
         ref={scroller}
-        className="max-h-[min(60vh,440px)] min-h-0 [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent] overflow-y-auto overscroll-contain"
+        className="max-h-[min(60vh,440px)] min-h-0 overflow-y-auto overscroll-contain"
       >
         {loading ? <Skeleton /> : null}
 

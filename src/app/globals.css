@@ -160,6 +160,10 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* 全站统一细滚动条：目录、代码块、搜索结果等可滚动区域都用它，颜色随主题 */
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--foreground) 20%, transparent)
+      transparent;
   }
   body {
     @apply bg-background text-foreground;
