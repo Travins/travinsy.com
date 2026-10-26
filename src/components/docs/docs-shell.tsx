@@ -1,12 +1,15 @@
 import Link from "next/link"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import type { ReactNode } from "react"
 import type { TOCItemType } from "fumadocs-core/toc"
 import { EntryIcon } from "@/lib/entry-icons"
+import { cn } from "@/lib/utils"
 import { GridSection } from "@/registry/ui/grid-layout/grid-layout"
 import {
   docsNeighbours,
   sectionHome,
   withSlash,
+  type NavItem,
   type NavSectionId,
 } from "./docs-nav"
 import { DocsMobileNav } from "./docs-mobile-nav"
@@ -139,26 +142,14 @@ export function DocsShell({
         {(previous || next) && (
           <nav
             aria-label="相邻文档"
-            className="mt-14 grid grid-cols-2 gap-4 border-t border-edge pt-6"
+            className="mt-14 grid gap-3 border-t border-edge pt-8 sm:grid-cols-2"
           >
             {previous ? (
-              <Link href={previous.url} className="text-sm">
-                <span className="mb-1.5 block text-xs text-muted-foreground">
-                  ← 上一页
-                </span>
-                {previous.title}
-              </Link>
+              <PagerLink item={previous} direction="previous" />
             ) : (
-              <span />
+              <span aria-hidden className="hidden sm:block" />
             )}
-            {next && (
-              <Link href={next.url} className="text-right text-sm">
-                <span className="mb-1.5 block text-xs text-muted-foreground">
-                  下一页 →
-                </span>
-                {next.title}
-              </Link>
-            )}
+            {next && <PagerLink item={next} direction="next" />}
           </nav>
         )}
       </main>
@@ -166,6 +157,72 @@ export function DocsShell({
         <DocsToc items={toc} />
       </aside>
     </GridSection>
+  )
+}
+
+/** 上一页 / 下一页卡片：方向与箭头在外侧，条目有专属图标和英文名时一并显示。 */
+function PagerLink({
+  item,
+  direction,
+}: {
+  item: NavItem
+  direction: "previous" | "next"
+}) {
+  const next = direction === "next"
+  const Arrow = next ? ArrowRight : ArrowLeft
+  // 图标总是贴着卡片外侧（靠近箭头），读序保持「中文名 英文名」
+  const icon = item.icon ? (
+    <EntryIcon
+      name={item.icon}
+      aria-hidden="true"
+      className="size-4 shrink-0 text-muted-foreground"
+      strokeWidth={1.5}
+    />
+  ) : null
+  return (
+    <Link
+      href={item.url}
+      className={cn(
+        "group flex min-w-0 items-center gap-3 rounded-xl border border-edge p-3 transition-colors hover:border-foreground/20 hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none",
+        next && "flex-row-reverse text-right sm:col-start-2",
+      )}
+    >
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors group-hover:text-foreground">
+        <Arrow
+          aria-hidden="true"
+          className={cn(
+            "size-4 transition-transform motion-reduce:transition-none",
+            next
+              ? "group-hover:translate-x-0.5"
+              : "group-hover:-translate-x-0.5",
+          )}
+        />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block font-mono text-[11px] text-muted-foreground">
+          {next ? "下一页 · Next" : "上一页 · Previous"}
+        </span>
+        <span
+          className={cn(
+            "mt-1 flex min-w-0 items-center gap-2 text-sm font-medium",
+            next && "justify-end",
+          )}
+        >
+          {!next && icon}
+          <span className="truncate">{item.title}</span>
+          {item.titleEn ? (
+            <span
+              lang="en"
+              translate="no"
+              className="hidden truncate font-mono text-[11px] font-normal text-muted-foreground md:inline"
+            >
+              {item.titleEn}
+            </span>
+          ) : null}
+          {next && icon}
+        </span>
+      </span>
+    </Link>
   )
 }
 
