@@ -54,19 +54,19 @@ export function Pipeline() {
 
 ### 全栈开发
 
-需求分叉成前端和后端两条分支，汇合后敲出 `pnpm build`，再流向代码和上线。用到了分叉 / 汇合点 `FlowDiamond` 和逐字输入 `FlowTypedText`。
+需求分叉成前端和后端两条分支，汇合后敲出 `pnpm build`，再流向代码和上线。用到了分叉 / 汇合点 `FlowDiamond` 和逐字输入 `FlowTypedText`。前端蓝、后端紫、构建与代码琥珀、上线绿，光点和连线跟随各自分支的色调，节点带 lucide 图标。
 
 <ComponentPreview name="flow-diagram-fullstack-demo" />
 
 ### AI Agent
 
-文档与工具两路来源汇入输入框，逐字提问后进入“思考”，再依次给出答案条目。示例里的“星花变加载环”是用 `useFlowClock` 自己写的动画元素。
+文档与工具两路来源汇入输入框，逐字提问后进入“思考”，再依次给出答案条目。示例里的“星花变加载环”是用 `useFlowClock` 自己写的动画元素。文档蓝、工具琥珀、提问紫、结果绿，答案条目的图标和标签沿用各自来源的颜色。
 
 <ComponentPreview name="flow-diagram-agent-demo" />
 
 ### 大模型部署
 
-模型汇入推理引擎，再分发到 API、Chat、Agent 三个出口。同一条线上有两轮请求先后流过，第二轮用 `base={false}` 只画光点，避免底线叠粗。推理引擎到三个出口的线是常驻连接，画好后用 `flow` 让虚线持续向前流动。
+模型汇入推理引擎，再分发到 API、Chat、Agent 三个出口。同一条线上有两轮请求先后流过，第二轮用 `base={false}` 只画光点，避免底线叠粗。推理引擎到三个出口的线是常驻连接，画好后用 `flow` 让虚线持续向前流动。两个模型各用一种冷色，节点图标取自 `simple-icons` 的品牌图标（示例里包成 `FlowIcon`），推理引擎是琥珀色，就绪的出口变绿。
 
 <ComponentPreview name="flow-diagram-deploy-demo" />
 

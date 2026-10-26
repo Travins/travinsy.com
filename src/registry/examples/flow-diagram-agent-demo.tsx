@@ -1,7 +1,14 @@
 "use client"
 
 import { motion, useTransform } from "motion/react"
-import { FileText, Loader, Search, Sparkles, Wrench } from "lucide-react"
+import {
+  CircleCheck,
+  FileText,
+  Loader,
+  Search,
+  Sparkles,
+  Wrench,
+} from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import {
@@ -23,14 +30,15 @@ const REST = 7.5
 
 const QUESTION = "如何接入新的工具？"
 const QUESTION_INTERVAL = 0.14
+// 色调表达来源：文档蓝、工具琥珀、提问与思考紫、最终结果绿；答案条目沿用各自来源的颜色
 const SOURCES = [
-  { x: 56, label: "文档", Icon: FileText },
-  { x: 160, label: "工具", Icon: Wrench },
+  { x: 56, label: "文档", icon: FileText, tone: "blue" },
+  { x: 160, label: "工具", icon: Wrench, tone: "amber" },
 ] as const
 const ANSWERS = [
-  { title: "在 tools/ 注册定义", tag: "文档" },
-  { title: "挂载到 Agent 循环", tag: "工具" },
-  { title: "运行并验证调用", tag: "结果" },
+  { title: "在 tools/ 注册定义", tag: "文档", icon: FileText, tone: "blue" },
+  { title: "挂载到 Agent 循环", tag: "工具", icon: Wrench, tone: "amber" },
+  { title: "运行并验证调用", tag: "结果", icon: CircleCheck, tone: "green" },
 ] as const
 
 const FEED = SOURCES.map(({ x }) =>
@@ -70,7 +78,8 @@ function Status() {
           width={12}
           height={12}
           strokeWidth={1.5}
-          className="text-muted-foreground"
+          aria-hidden="true"
+          className="text-(--flow-tone)"
         />
       </motion.g>
       <motion.g style={{ opacity: busy }}>
@@ -87,7 +96,8 @@ function Status() {
             width={12}
             height={12}
             strokeWidth={1.5}
-            className="text-primary"
+            aria-hidden="true"
+            className="text-(--flow-tone)"
           />
         </motion.g>
       </motion.g>
@@ -122,23 +132,26 @@ function FlowDiagramAgentDemo({ className }: { className?: string }) {
       rest={REST}
     >
       {FEED.map((path, i) => (
-        <FlowBeam key={`feed-${i}`} route={path} at={FEED_AT} />
+        <FlowBeam
+          key={`feed-${i}`}
+          route={path}
+          at={FEED_AT}
+          tone={SOURCES[i].tone}
+        />
       ))}
 
-      {SOURCES.map(({ x, label, Icon }) => (
-        <FlowNode key={label} x={x} y={22} width={64} height={22} litAt={0.2}>
-          <Icon
-            x={x - 24}
-            y={16}
-            width={12}
-            height={12}
-            strokeWidth={1.5}
-            className="text-muted-foreground"
-          />
-          <FlowLabel x={x + 8} y={22}>
-            {label}
-          </FlowLabel>
-        </FlowNode>
+      {SOURCES.map(({ x, label, icon, tone }) => (
+        <FlowNode
+          key={label}
+          x={x}
+          y={22}
+          width={64}
+          height={22}
+          icon={icon}
+          label={label}
+          tone={tone}
+          litAt={0.2}
+        />
       ))}
 
       {/* 答案出现之前的骨架行 */}
@@ -186,6 +199,7 @@ function FlowDiagramAgentDemo({ className }: { className?: string }) {
         width={188}
         height={26}
         radius={5}
+        tone="violet"
         litAt={flowArrival(FEED_AT, FEED[0])}
       >
         <Search
@@ -194,7 +208,8 @@ function FlowDiagramAgentDemo({ className }: { className?: string }) {
           width={12}
           height={12}
           strokeWidth={1.5}
-          className="text-muted-foreground"
+          aria-hidden="true"
+          className="text-(--flow-tone)"
         />
         <Placeholder />
         <FlowTypedText
@@ -207,36 +222,38 @@ function FlowDiagramAgentDemo({ className }: { className?: string }) {
         <Status />
       </FlowNode>
 
-      {ANSWERS.map(({ title, tag }, i) => (
+      {ANSWERS.map(({ title, tag, icon: Icon, tone }, i) => (
         <FlowReveal key={title} at={ANSWER_AT + i * 0.25} rise={5}>
-          <rect
-            x={14}
-            y={ROW_Y[i] - 11}
+          <FlowNode
+            x={108}
+            y={ROW_Y[i]}
             width={188}
             height={22}
-            rx={4}
-            strokeWidth={1}
-            className="fill-background stroke-foreground/30"
-          />
-          <FlowLabel
-            x={24}
-            y={ROW_Y[i]}
-            anchor="start"
-            className="fill-primary text-[9px]"
+            shape="box"
+            radius={4}
+            tone={tone}
           >
-            {String(i + 1).padStart(2, "0")}
-          </FlowLabel>
-          <FlowLabel x={44} y={ROW_Y[i]} anchor="start">
-            {title}
-          </FlowLabel>
-          <FlowLabel
-            x={194}
-            y={ROW_Y[i]}
-            anchor="end"
-            className="fill-muted-foreground text-[9px]"
-          >
-            {tag}
-          </FlowLabel>
+            <Icon
+              x={22}
+              y={ROW_Y[i] - 6}
+              width={12}
+              height={12}
+              strokeWidth={1.5}
+              aria-hidden="true"
+              className="text-(--flow-tone)"
+            />
+            <FlowLabel x={44} y={ROW_Y[i]} anchor="start">
+              {title}
+            </FlowLabel>
+            <FlowLabel
+              x={194}
+              y={ROW_Y[i]}
+              anchor="end"
+              className="fill-(--flow-tone) text-[9px]"
+            >
+              {tag}
+            </FlowLabel>
+          </FlowNode>
         </FlowReveal>
       ))}
     </FlowDiagram>

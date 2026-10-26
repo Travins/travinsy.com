@@ -1,6 +1,8 @@
 "use client"
 
-import { Fragment } from "react"
+import { Fragment, type SVGProps } from "react"
+import { Bot, Cpu, MessageSquare, Plug } from "lucide-react"
+import { siDeepseek, siQwen } from "simple-icons"
 
 import { cn } from "@/lib/utils"
 import {
@@ -11,6 +13,7 @@ import {
   FlowStatusDot,
   flowArrival,
   flowRoute,
+  type FlowIcon,
 } from "@/registry/ui/flow-diagram/flow-diagram"
 
 // 时间轴（秒）：两轮请求先后流过；REST 落在最后一束光点之后、淡出之前
@@ -22,14 +25,26 @@ const ROUNDS = [
   { intake: 3.6, dispatch: 4.9 },
 ] as const
 
+/** 把 simple-icons 的品牌路径包成 FlowNode 能用的图标，颜色跟随节点的色调。 */
+function brandIcon(path: string): FlowIcon {
+  return function BrandIcon(props: SVGProps<SVGSVGElement>) {
+    return (
+      <svg viewBox="0 0 24 24" {...props}>
+        <path d={path} fill="currentColor" stroke="none" />
+      </svg>
+    )
+  }
+}
+
+// 色调表达流向：两个模型用冷色（Qwen 紫、DeepSeek 蓝），推理引擎琥珀，就绪的出口绿
 const MODELS = [
-  { x: 56, label: "Qwen3" },
-  { x: 160, label: "DeepSeek" },
+  { x: 56, label: "Qwen3", icon: brandIcon(siQwen.path), tone: "violet" },
+  { x: 160, label: "DeepSeek", icon: brandIcon(siDeepseek.path), tone: "blue" },
 ] as const
 const TARGETS = [
-  { x: 36, label: "API" },
-  { x: 108, label: "Chat" },
-  { x: 180, label: "Agent" },
+  { x: 34, label: "API", icon: Plug },
+  { x: 108, label: "Chat", icon: MessageSquare },
+  { x: 182, label: "Agent", icon: Bot },
 ] as const
 
 // 模型 → 推理引擎：先下行，再在 y=56 汇到中线
@@ -76,6 +91,7 @@ function FlowDiagramDeployDemo({ className }: { className?: string }) {
               key={`in-${i}`}
               route={path}
               at={round.intake}
+              tone={MODELS[i].tone}
               base={index === 0}
             />
           ))}
@@ -84,6 +100,7 @@ function FlowDiagramDeployDemo({ className }: { className?: string }) {
               key={`out-${i}`}
               route={path}
               at={round.dispatch}
+              tone="green"
               base={index === 0}
               // 出口是常驻的服务连接：线画好后持续流动，只在第一轮设置，避免两层纹理叠加
               flow={index === 0}
@@ -92,39 +109,60 @@ function FlowDiagramDeployDemo({ className }: { className?: string }) {
         </Fragment>
       ))}
 
-      {MODELS.map(({ x, label }) => (
-        <FlowNode key={label} x={x} y={24} width={72} litAt={0.2}>
-          <FlowLabel x={x} y={24}>
-            {label}
-          </FlowLabel>
-        </FlowNode>
+      {MODELS.map(({ x, label, icon, tone }) => (
+        <FlowNode
+          key={label}
+          x={x}
+          y={24}
+          width={80}
+          icon={icon}
+          label={label}
+          tone={tone}
+          litAt={0.2}
+        />
       ))}
 
       <FlowNode
         x={108}
         y={93}
-        width={116}
+        width={124}
         height={34}
         radius={5}
+        tone="amber"
         litAt={engineLit}
       >
-        <FlowLabel x={108} y={88}>
+        <Cpu
+          x={54}
+          y={87}
+          width={12}
+          height={12}
+          strokeWidth={1.5}
+          aria-hidden="true"
+          className="text-(--flow-tone)"
+        />
+        <FlowLabel x={120} y={88}>
           vLLM / SGLang
         </FlowLabel>
-        <FlowLabel x={108} y={100} className="fill-muted-foreground text-[9px]">
+        <FlowLabel x={120} y={100} className="fill-muted-foreground text-[9px]">
           推理引擎
         </FlowLabel>
       </FlowNode>
 
-      {TARGETS.map(({ x, label }, i) => {
+      {TARGETS.map(({ x, label, icon }, i) => {
         const arrival = flowArrival(ROUNDS[0].dispatch, DISPATCH[i])
         return (
-          <FlowNode key={label} x={x} y={168} width={52} litAt={arrival}>
-            {/* 服务就绪后，胶囊左侧亮起一个状态点 */}
-            <FlowStatusDot x={x - 18} y={168} at={arrival} />
-            <FlowLabel x={x + 3} y={168}>
-              {label}
-            </FlowLabel>
+          <FlowNode
+            key={label}
+            x={x}
+            y={168}
+            width={56}
+            icon={icon}
+            label={label}
+            tone="green"
+            litAt={arrival}
+          >
+            {/* 服务就绪后，胶囊右上角亮起一个状态点 */}
+            <FlowStatusDot x={x + 25} y={160} at={arrival} />
           </FlowNode>
         )
       })}

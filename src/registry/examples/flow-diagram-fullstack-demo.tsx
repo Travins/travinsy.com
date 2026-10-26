@@ -1,6 +1,14 @@
 "use client"
 
-import { Check } from "lucide-react"
+import {
+  Check,
+  ClipboardList,
+  Code,
+  Monitor,
+  Rocket,
+  Server,
+  Terminal,
+} from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import {
@@ -26,6 +34,7 @@ const TITLE_INTERVAL = 0.12
 const COMMAND = "pnpm build"
 const COMMAND_INTERVAL = 0.1
 
+// 色调表达分工：前端蓝、后端紫、构建与产物琥珀、上线绿；需求与分叉点保持中性
 const TO_SPLIT = flowRoute([
   [108, 34],
   [108, 41],
@@ -61,8 +70,8 @@ const TO_INPUT = flowRoute([
 const TO_CODE = flowRoute([
   [108, 133],
   [108, 149],
-  [60, 149],
-  [60, 159],
+  [56, 149],
+  [56, 159],
 ])
 const TO_RESULT = flowRoute([
   [92, 169],
@@ -79,8 +88,8 @@ const RESULT_BEAM_AT = flowArrival(CODE_AT, TO_CODE) + 0.1
 const RESULT_AT = flowArrival(RESULT_BEAM_AT, TO_RESULT)
 
 const BRANCHES = [
-  { x: 56, label: "前端 UI" },
-  { x: 160, label: "后端 API" },
+  { x: 56, label: "前端 UI", icon: Monitor, tone: "blue" },
+  { x: 160, label: "后端 API", icon: Server, tone: "violet" },
 ] as const
 
 /** 全栈开发：需求分出前后端两条分支，汇合后敲命令，再流向代码和上线。 */
@@ -94,39 +103,57 @@ function FlowDiagramFullstackDemo({ className }: { className?: string }) {
     >
       <FlowBeam route={TO_SPLIT} at={SPLIT_AT} />
       {TO_BRANCHES.map((path, i) => (
-        <FlowBeam key={`branch-${i}`} route={path} at={BRANCH_AT} />
+        <FlowBeam
+          key={`branch-${i}`}
+          route={path}
+          at={BRANCH_AT}
+          tone={BRANCHES[i].tone}
+        />
       ))}
       {TO_MERGE.map((path, i) => (
-        <FlowBeam key={`merge-${i}`} route={path} at={MERGE_AT} />
+        <FlowBeam
+          key={`merge-${i}`}
+          route={path}
+          at={MERGE_AT}
+          tone={BRANCHES[i].tone}
+        />
       ))}
-      <FlowBeam route={TO_INPUT} at={INPUT_AT} />
-      <FlowBeam route={TO_CODE} at={CODE_AT} />
-      <FlowBeam route={TO_RESULT} at={RESULT_BEAM_AT} />
+      <FlowBeam route={TO_INPUT} at={INPUT_AT} tone="amber" />
+      <FlowBeam route={TO_CODE} at={CODE_AT} tone="amber" />
+      <FlowBeam route={TO_RESULT} at={RESULT_BEAM_AT} tone="green" />
 
       <FlowNode x={108} y={23} width={148} height={22}>
+        <ClipboardList
+          x={42}
+          y={17}
+          width={12}
+          height={12}
+          strokeWidth={1.5}
+          aria-hidden="true"
+          className="text-primary"
+        />
         <FlowTypedText
           text={TITLE}
           at={TITLE_AT}
           interval={TITLE_INTERVAL}
-          x={46}
+          x={60}
           y={23}
         />
       </FlowNode>
 
       <FlowDiamond x={108} y={47} litAt={flowArrival(SPLIT_AT, TO_SPLIT)} />
 
-      {BRANCHES.map(({ x, label }, i) => (
+      {BRANCHES.map(({ x, label, icon, tone }, i) => (
         <FlowNode
           key={label}
           x={x}
           y={71}
-          width={64}
+          width={76}
+          icon={icon}
+          label={label}
+          tone={tone}
           litAt={flowArrival(BRANCH_AT, TO_BRANCHES[i])}
-        >
-          <FlowLabel x={x} y={71}>
-            {label}
-          </FlowLabel>
-        </FlowNode>
+        />
       ))}
 
       <FlowDiamond x={108} y={95} litAt={flowArrival(MERGE_AT, TO_MERGE[0])} />
@@ -137,40 +164,61 @@ function FlowDiagramFullstackDemo({ className }: { className?: string }) {
         width={164}
         height={24}
         radius={4}
+        tone="amber"
         litAt={flowArrival(INPUT_AT, TO_INPUT)}
       >
-        <FlowLabel x={34} y={121} anchor="start" className="fill-primary">
-          $
-        </FlowLabel>
+        <Terminal
+          x={34}
+          y={115}
+          width={12}
+          height={12}
+          strokeWidth={1.5}
+          aria-hidden="true"
+          className="text-(--flow-tone)"
+        />
         <FlowTypedText
           text={COMMAND}
           at={COMMAND_AT}
           interval={COMMAND_INTERVAL}
-          x={44}
+          x={52}
           y={121}
         />
       </FlowNode>
 
-      <FlowNode x={60} y={169} width={64} litAt={flowArrival(CODE_AT, TO_CODE)}>
-        <FlowLabel x={60} y={169}>
-          代码
-        </FlowLabel>
-      </FlowNode>
+      <FlowNode
+        x={56}
+        y={169}
+        width={72}
+        icon={Code}
+        label="代码"
+        tone="amber"
+        litAt={flowArrival(CODE_AT, TO_CODE)}
+      />
 
-      <FlowNode x={156} y={169} width={64} litAt={RESULT_AT}>
+      <FlowNode x={160} y={169} width={72} tone="green" litAt={RESULT_AT}>
+        <Rocket
+          x={134}
+          y={163}
+          width={12}
+          height={12}
+          strokeWidth={1.5}
+          aria-hidden="true"
+          className="text-(--flow-tone)"
+        />
+        <FlowLabel x={150} y={169} anchor="start">
+          上线
+        </FlowLabel>
         <FlowReveal at={RESULT_AT}>
           <Check
-            x={136}
+            x={174}
             y={163}
             width={12}
             height={12}
             strokeWidth={2}
-            className="text-primary"
+            aria-hidden="true"
+            className="text-(--flow-tone)"
           />
         </FlowReveal>
-        <FlowLabel x={162} y={169}>
-          上线
-        </FlowLabel>
       </FlowNode>
     </FlowDiagram>
   )
