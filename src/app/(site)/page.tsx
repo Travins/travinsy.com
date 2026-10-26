@@ -1,20 +1,20 @@
 import Link from "next/link"
 import {
   ArrowUpRight,
-  Bot,
   CalendarDays,
   Clock,
-  Code2,
   Component,
   Globe,
   Grid2X2,
   Link2,
-  Server,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import type { ComponentType, SVGProps } from "react"
 
 import { GitHubMark, XMark } from "@/components/home/brand-icons"
+import { AgentIllustration } from "@/components/home/focus/agent-illustration"
+import { DeployIllustration } from "@/components/home/focus/deploy-illustration"
+import { FullstackIllustration } from "@/components/home/focus/fullstack-illustration"
 import { SectionFrame } from "@/components/home/section-frame"
 import { RoleRotator } from "@/registry/blocks/profile-hero/role-rotator"
 import { TechIcon, techBrandStyle } from "@/components/home/tech-icon"
@@ -34,10 +34,14 @@ const socialIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   x: XMark,
   github: GitHubMark,
 }
-const focusIcons: Record<string, LucideIcon> = {
-  code: Code2,
-  agent: Bot,
-  server: Server,
+// 「我在做什么」每格顶部的动画插画，按 focusAreas 的 illustration 字段选取
+const focusIllustrations: Record<
+  (typeof profile.focusAreas)[number]["illustration"],
+  ComponentType
+> = {
+  fullstack: FullstackIllustration,
+  agent: AgentIllustration,
+  deploy: DeployIllustration,
 }
 // 精选组件的图标按 Registry 条目名映射，未登记的条目回落到通用图标。
 const componentIcons: Record<string, LucideIcon> = {
@@ -138,25 +142,18 @@ export default function HomePage() {
       <SectionFrame index="01" name="FOCUS" title="我在做什么">
         <GridColumns className="sm:grid-cols-3">
           {profile.focusAreas.map((area) => {
-            const Icon = focusIcons[area.icon] ?? Code2
+            const Illustration = focusIllustrations[area.illustration]
             return (
-              <div
-                key={area.title}
-                className="flex min-w-0 flex-col items-start gap-3 p-4 sm:p-6"
-              >
-                <span className="inline-flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-muted-foreground">
-                  <Icon
-                    aria-hidden="true"
-                    className="size-4"
-                    strokeWidth={1.5}
-                  />
-                </span>
-                <h3 className="text-sm font-medium tracking-tight">
-                  {area.title}
-                </h3>
-                <p className="text-sm leading-7 text-muted-foreground">
-                  {area.description}
-                </p>
+              <div key={area.title} className="flex min-w-0 flex-col">
+                <Illustration />
+                <div className="flex flex-col items-start gap-3 p-4 sm:p-6">
+                  <h3 className="text-sm font-medium tracking-tight">
+                    {area.title}
+                  </h3>
+                  <p className="text-sm leading-7 text-muted-foreground">
+                    {area.description}
+                  </p>
+                </div>
               </div>
             )
           })}

@@ -35,17 +35,17 @@ export const profile = {
   focusAreas: [
     {
       title: "全栈开发",
-      icon: "code",
+      illustration: "fullstack",
       description: "从前端界面到后端服务，构建完整、可靠的产品体验。",
     },
     {
       title: "AI 应用与 Agent",
-      icon: "agent",
+      illustration: "agent",
       description: "连接模型、工具与业务流程，让 AI 进入真实的工作场景。",
     },
     {
       title: "大模型部署",
-      icon: "server",
+      illustration: "deploy",
       description: "关注推理服务与部署优化，把模型能力变成可用的基础设施。",
     },
   ],

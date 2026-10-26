@@ -1,7 +1,7 @@
 "use client"
 
 import { useReducedMotion } from "motion/react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useSyncExternalStore } from "react"
 
 import { GridCrosshair } from "@/registry/ui/grid-layout/grid-layout"
 
@@ -22,6 +22,8 @@ type Frame = {
   /** 光标是否停在这一行的命令末尾 */
   active: boolean
 }
+
+const noopSubscribe = () => () => {}
 
 function totalTicks(steps: readonly TerminalStep[]) {
   return steps.reduce(
@@ -104,7 +106,13 @@ function TerminalCard({
   title: string
   steps: readonly TerminalStep[]
 }) {
-  const reducedMotion = useReducedMotion()
+  // useReducedMotion 在服务端恒为 null、客户端首帧就能读到真实值；水合完成前按"未开启"渲染，避免首帧不一致
+  const hydrated = useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  )
+  const reducedMotion = useReducedMotion() && hydrated
   const total = totalTicks(steps)
   const [tick, setTick] = useState(-START_DELAY)
   const done = tick >= total
