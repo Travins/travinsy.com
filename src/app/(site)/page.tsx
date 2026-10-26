@@ -16,6 +16,7 @@ import type { ComponentType, SVGProps } from "react"
 
 import { GitHubMark, XMark } from "@/components/home/brand-icons"
 import { SectionFrame } from "@/components/home/section-frame"
+import { TechIcon } from "@/components/home/tech-icon"
 import { TerminalCard } from "@/components/home/terminal-card"
 import { buttonVariants } from "@/components/ui/button"
 import { profile } from "@/config/profile"
@@ -189,9 +190,9 @@ export default function HomePage() {
               >
                 <span
                   aria-hidden="true"
-                  className="flex size-7 items-center justify-center rounded border border-edge bg-muted/40 font-mono text-[10px] text-muted-foreground"
+                  className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80"
                 >
-                  {technology.slice(0, 2)}
+                  <TechIcon name={technology} className="size-4" />
                 </span>
                 <span className="font-mono text-xs break-words" translate="no">
                   {technology}
