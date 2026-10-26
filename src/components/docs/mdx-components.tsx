@@ -12,6 +12,26 @@ export const mdxComponents: MDXComponents = {
   InstallCommand,
   PropsTable,
   pre: MdxPre,
+  // fumadocs-mdx 会把 Markdown 图片转成静态导入（带宽高的对象），这里取出真实地址与尺寸
+  img: ({ src, width, height, alt, ...props }) => {
+    const image: { src?: string; width?: number; height?: number } =
+      typeof src === "object" && src !== null
+        ? (src as { src: string; width?: number; height?: number })
+        : { src: src as string | undefined }
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- 静态导出不使用图片优化
+      <img
+        src={image.src}
+        width={width ?? image.width}
+        height={height ?? image.height}
+        alt={alt ?? ""}
+        loading="lazy"
+        decoding="async"
+        className="h-auto max-w-full rounded-md border border-border"
+        {...props}
+      />
+    )
+  },
   h2: ({ children, id, ...props }) => (
     <h2 id={id} {...props}>
       <a href={`#${id}`}>{children}</a>

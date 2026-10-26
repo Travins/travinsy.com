@@ -10,6 +10,9 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "grid-separator-label-demo": lazy(() => import("./examples/grid-separator-label-demo")),
   "grid-separator-patterns-demo": lazy(() => import("./examples/grid-separator-patterns-demo")),
   "icon-link-demo": lazy(() => import("./examples/icon-link-demo")),
+  "isometric-mark-demo": lazy(() => import("./examples/isometric-mark-demo")),
+  "isometric-mark-simple-demo": lazy(() => import("./examples/isometric-mark-simple-demo")),
+  "isometric-mark-t-demo": lazy(() => import("./examples/isometric-mark-t-demo")),
   "local-time-demo": lazy(() => import("./examples/local-time-demo")),
 }
 

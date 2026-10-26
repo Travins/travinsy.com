@@ -649,6 +649,25 @@
       "meta": {
         "iframeHeight": "800px"
       }
+    },
+    {
+      "name": "isometric-mark",
+      "type": "registry:ui",
+      "title": "等轴测标志",
+      "description": "把任意平面多边形挤出成等轴测线条 3D，带斜纹顶面、跟随鼠标的线条高光与点击按下效果。",
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/isometric-mark/isometric-mark.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/isometric-mark/geometry.ts",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

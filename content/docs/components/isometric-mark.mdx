@@ -1,0 +1,129 @@
+---
+title: 等轴测标志
+description: 把任意平面多边形挤出成等轴测线条 3D，带斜纹顶面、跟随鼠标的线条高光与点击按下效果。
+links:
+  源码: https://travinsy.com/r/isometric-mark.json
+---
+
+<ComponentPreview name="isometric-mark-demo" />
+
+## 安装
+
+<InstallCommand name="isometric-mark" />
+
+## 用法
+
+传入平面形状即可，坐标就是平面 logo 自己的坐标（`y` 向下）。形状数组请定义在组件外面，避免每次渲染重新计算几何。
+
+```tsx title="app/brand-mark.tsx"
+import {
+  IsometricMark,
+  type IsometricShape,
+} from "@/components/ui/isometric-mark/isometric-mark"
+
+const SHAPES: readonly IsometricShape[] = [
+  {
+    outer: [
+      [0, 0],
+      [100, 0],
+      [100, 100],
+      [0, 100],
+    ],
+    holes: [
+      [
+        [35, 35],
+        [65, 35],
+        [65, 65],
+        [35, 65],
+      ],
+    ],
+  },
+]
+
+export function BrandMark() {
+  return <IsometricMark shapes={SHAPES} label="我的标志" className="w-64" />
+}
+```
+
+宽度由 `className` 控制，高度按 viewBox 自动适配。线宽、斜纹间距、虚线都跟着图形尺寸等比缩放，所以放大缩小时观感一致。
+
+### 朝向
+
+`rotation` 在投影前把图形绕中心旋转，用来选择它平躺在地上的朝向。建议只用 `0`、`90`、`180`、`-90`：这几个角度下图形的边始终沿等轴测的两条斜轴，看起来是一块平放的板；其他角度（例如 `-45`）会让顶面看起来像一堵立着的墙。
+
+`rotation={-90}` 时原图的横向沿右上方延伸、竖向沿右下方延伸，像把标志平铺在地上正着读，本页的示例都用这个朝向：
+
+```tsx
+<IsometricMark shapes={SHAPES} rotation={-90} label="易" guides />
+```
+
+## 示例
+
+### 多个形状
+
+`shapes` 可以放多块互不相连的多边形，它们之间的遮挡同样自动计算。下面是本站上一版标志：倾斜的横梁和竖笔是两块独立的多边形，中间留着一道 V 形缝。
+
+<ComponentPreview name="isometric-mark-t-demo" />
+
+### 简单图形与辅助线
+
+任何多边形都可以：带方孔的正方形，并打开 `guides` 显示背景里沿等轴测方向延伸的虚线。
+
+<ComponentPreview name="isometric-mark-simple-demo" />
+
+## 几何说明
+
+组件不依赖手工描的路径，所有面都由平面多边形自动算出：
+
+- **投影**：`X = (x - y)·cos30°`，`Y = (x + y)·sin30° - z`。观察者位于 `(+x, +y, +z)` 一侧，viewBox 按投影后的包围盒自动计算并留少量边距。
+- **面的组成**：顶面在 `z = depth`，外轮廓与孔一起用 `evenodd` 填充；每个环的每条边挤出一面侧墙，孔被挤成通孔。
+- **背面剔除**：外轮廓取正面积、孔取负面积，所有环的“实体外侧”法线统一为 `(ey, -ex)`，只保留朝向观察者的墙。与观察方向垂直的墙在屏幕上面积为零，不绘制。
+- **消隐**：画家算法。墙在屏幕上只占据 `x - y` 方向上的一段范围，范围重叠的两面墙比较重叠区间中点的 `x + y`，得到“谁挡住谁”，再做拓扑排序，凹多边形也能排对。顺序只取决于平面形状，按下动画时不用重排。顶面最后绘制。
+- **按下动画**：一个弹簧驱动的高度值同时重算所有侧墙路径（只是 O(边数) 的字符串重建），顶面路径不变，整体用 `y` 偏移下移，斜纹因此始终贴着轮廓。
+
+## API
+
+<PropsTable name="isometric-mark" component="IsometricMark" />
+
+其余属性透传到根 `svg`，`className` 与内置样式合并。
+
+### 类型
+
+```ts
+type IsometricPoint = readonly [number, number]
+
+type IsometricShape = {
+  /** 外轮廓，顺时针或逆时针都可以 */
+  outer: readonly IsometricPoint[]
+  /** 孔，会被挤成通孔 */
+  holes?: readonly (readonly IsometricPoint[])[]
+}
+```
+
+### data-slot
+
+| 元素 | `data-slot` |
+| --- | --- |
+| 根元素 | `isometric-mark` |
+| 单面侧墙 | `isometric-mark-wall` |
+| 顶面 | `isometric-mark-top` |
+| 背景辅助线 | `isometric-mark-guides` |
+
+## 可访问性
+
+- 不传 `label` 时根元素是 `aria-hidden`，读屏完全忽略，适合作为纯装饰；传入 `label` 后变成 `role="img"` 并带上 `aria-label`。
+- 按下效果只响应指针，没有键盘等价操作，不承载任何功能。需要可点击时请把它包进 `a` 或 `button`，由外层提供语义与键盘支持。
+- 高光在触屏设备（`(hover: none)`）与 `prefers-reduced-motion` 下自动关闭；减少动态效果时按下状态瞬间切换，不播放弹簧。
+- 所有颜色由 `--foreground` 与 `--background` 混合得到，亮暗模式与颜色主题下都有足够的线条对比。
+
+## 注意事项
+
+- 高光位置取鼠标在**窗口**中的相对位置并映射到图形范围，因此鼠标不在图形上时高光也会随之移动；图形不在视口内（含 80px 缓冲）时不监听鼠标。
+- 各面都用 `--background` 填充来遮挡后面的线，所以图形背后若有图案，会被侧墙与顶面盖住；背景辅助线画在最底层。
+- `depth` 默认取图形平面尺寸的 12%；`pressedDepth` 默认是 `depth` 的一半，设为 `0` 则会被完全压平。
+- 颜色变量 `--stroke`、`--pattern`、`--guide` 定义在根元素的 class 里，可以用 `className` 覆盖，例如 `[--stroke:var(--primary)]`。
+- 几何计算放在同目录的 `geometry.ts`，是不依赖 React 的纯函数。
+
+## 源码
+
+<ComponentSource name="isometric-mark" />
