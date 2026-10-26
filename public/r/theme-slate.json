@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "theme-slate",
   "title": "岩青 Slate",
-  "description": "偏青蓝的灰色，适合技术向、文档类站点。",
+  "description": "偏青蓝的灰色，适合技术站和文档站。",
   "cssVars": {
     "light": {
       "background": "oklch(1 0 0)",

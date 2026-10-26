@@ -115,7 +115,7 @@ export default function Page() {
 
 ### 主题与工具类
 
-安装命令会注册 `--edge` 变量、`border-edge` 主题映射，以及 `screen-line-top`、`screen-line-bottom` 两个横线工具类，六个分隔带纹理工具类 `pattern-ruler`、`pattern-hatch`、`pattern-dots`、`pattern-grid`、`pattern-plus`、`pattern-wave`（供 GridSeparator 使用），以及两个面积底纹 `bg-hatch`、`bg-dots`（可直接铺在任意元素上）（Tailwind CSS v4）。线条与纹路的颜色都来自 `--edge` / `--foreground`，随颜色主题和亮暗模式变化。
+安装命令会注册 `--edge` 变量与 `border-edge` 主题映射，以及以下 Tailwind CSS v4 工具类：两个横线工具类 `screen-line-top`、`screen-line-bottom`；六个分隔带纹理工具类 `pattern-ruler`、`pattern-hatch`、`pattern-dots`、`pattern-grid`、`pattern-plus`、`pattern-wave`（供 GridSeparator 使用）；两个面积底纹 `bg-hatch`、`bg-dots`，可直接铺在任意元素上。线条与纹路的颜色都来自 `--edge` / `--foreground`，随颜色主题和亮暗模式变化。
 
 全宽横线需要页面的 `html` 设置 `overflow-x: clip`；Registry 安装会一并写入该规则。
 

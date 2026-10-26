@@ -511,7 +511,7 @@ export const COLOR_THEMES = [
     id: "neutral",
     name: "中性",
     title: "Neutral",
-    description: "纯灰无色相的中性配色，shadcn 默认主题。",
+    description: "没有色相的中性灰，shadcn 的默认主题。",
     vars: NEUTRAL,
   }),
   defineTheme({
@@ -532,7 +532,7 @@ export const COLOR_THEMES = [
     id: "slate",
     name: "岩青",
     title: "Slate",
-    description: "偏青蓝的灰色，适合技术向、文档类站点。",
+    description: "偏青蓝的灰色，适合技术站和文档站。",
     vars: SLATE,
   }),
   defineTheme({

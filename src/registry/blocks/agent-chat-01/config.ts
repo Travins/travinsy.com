@@ -49,7 +49,7 @@ const DEFAULT_LABELS = {
   workspacePath: "/ 智能协作",
   demoWorkspace: "离线演示工作区",
   eyebrow: "从问题到线索",
-  workspaceTitle: "让排查，有迹可循。",
+  workspaceTitle: "让排查有迹可循。",
   workspaceDescription:
     "把助手放在工作流旁边。查看分析摘要、展开工具结果，再决定下一步。",
   layoutPrefix: "当前：",

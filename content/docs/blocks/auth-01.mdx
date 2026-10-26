@@ -5,7 +5,7 @@ description: 左侧品牌面板 + 右侧表单的分屏登录页：登录（密�
 
 <BlockViewer name="auth-01" />
 
-`Auth01` 提炼自我的一个企业监控平台项目的登录页，在原有「左侧品牌面板 + 右侧表单」结构上，补全了完整的账号流程：
+`Auth01` 提炼自我的一个企业监控平台项目的登录页，在原有「左侧品牌面板 + 右侧表单」结构上，补上了完整的账号流程：
 
 - **登录**：密码登录 / 验证码登录两个标签；账号（用户名或邮箱）、密码显示切换、记住我、忘记密码、第三方登录（GitHub、Google）、跳转注册。
 - **注册**：姓名、邮箱、密码（实时强度条）、确认密码、同意服务条款。
@@ -22,7 +22,7 @@ description: 左侧品牌面板 + 右侧表单的分屏登录页：登录（密�
 
 ## 用法
 
-最简单的用法是直接渲染，不传任何属性——所有回调会退回到「控制台打印 + 模拟 0.8 秒请求」的示例实现，方便先看效果：
+最简单的用法是直接渲染，不传任何属性。此时所有回调都退回「控制台打印 + 模拟 0.8 秒请求」的示例实现，方便先看效果：
 
 ```tsx title="app/login/page.tsx"
 import { Auth01 } from "@/components/auth-01/auth-01"
@@ -172,7 +172,7 @@ export default function LoginPage() {
 | --- | --- | --- |
 | `brandPanelLabel` | `{name} 品牌介绍` | 品牌面板的 `aria-label` |
 | `signInTitle` | `欢迎回来` | 登录视图标题（`h1`） |
-| `signInDescription` | `请输入您的账号信息登录` | 登录视图说明 |
+| `signInDescription` | `输入账号信息即可登录` | 登录视图说明 |
 | `signInMethodLabel` | `登录方式` | 登录方式标签条的 `aria-label` |
 | `signInPasswordTab` | `密码登录` | 密码登录标签 |
 | `signInCodeTab` | `验证码登录` | 验证码登录标签 |
@@ -187,7 +187,7 @@ export default function LoginPage() {
 | `socialDivider` | `或` | 第三方登录上方的分隔文字 |
 | `noAccount` / `signUpLink` | `还没有账号？` / `注册` | 跳转注册 |
 | `signUpTitle` | `创建账号` | 注册视图标题（`h1`） |
-| `signUpDescription` | `填写以下信息，几步完成注册` | 注册视图说明 |
+| `signUpDescription` | `填写以下信息即可完成注册` | 注册视图说明 |
 | `nameLabel` / `namePlaceholder` | `姓名` / `请输入姓名` | 姓名输入框 |
 | `emailLabel` / `emailPlaceholder` | `邮箱` / `name@example.com` | 邮箱输入框（注册与找回密码共用） |
 | `newPasswordPlaceholder` | `至少 8 位，包含字母和数字` | 注册密码框占位文字 |
@@ -259,7 +259,7 @@ components/auth-01/
 
 - **校验规则**：规则常量都在 `schemas.ts`。手机号默认是中国大陆 11 位规则，面向其他地区时替换 `PHONE_PATTERN` 并同步 `PHONE_LENGTH`；密码策略是 `PASSWORD_MIN_LENGTH` 与两条正则（必须含字母、必须含数字）；姓名最短长度是 `NAME_MIN_LENGTH`，验证码位数是 `CODE_LENGTH`。提示文案不用改，数字会跟着常量走；`newPasswordPlaceholder`（「至少 8 位，包含字母和数字」）是静态示例文案，改了最小长度记得一并改。
 - **强度条算法**：`password-strength.tsx` 的 `getPasswordStrength`，按长度（8、12）与大小写、数字、符号计分，颜色从 `destructive` 过渡到 `primary`。
-- **只要登录**：传 `allowSignUp={false}`，并去掉 `socialProviders`。
+- **只要登录**：传 `allowSignUp={false}`，再传 `socialProviders={[]}` 隐藏第三方登录（省略时默认会显示 GitHub 和 Google）。
 - **增减第三方平台**：在 `social-buttons.tsx` 的 `providers` 里补一项，并扩展 `SocialProvider` 类型。
 - **改文案**：优先用 `labels`，校验提示也一样，见上方[换成英文](#换成英文)；整站换语言时也可以直接改 `config.ts` 的 `DEFAULT_LABELS`。
 - **表单状态**：刻意只用受控状态 + zod，没有引入 react-hook-form。字段首次失焦时校验该字段，提交失败后改为输入时实时校验。

@@ -62,7 +62,7 @@ export function SocialLinks() {
 
 - `label` 是唯一的信息来源：读屏读到的是“个人网站”，而不是图标。
 - 传入的图标被包在 `aria-hidden` 的 `<span>` 里，不会被重复朗读。
-- 焦点样式用 `focus-visible:outline-2 outline-offset-4 outline-ring`，键盘 Tab 到时会明显偏移一圈，鼠标点击不会出现。
+- 焦点样式用 `focus-visible:outline-2 outline-offset-4 outline-ring`，键盘 Tab 聚焦时出现一圈外扩的描边，鼠标点击不会出现。
 - 图标尺寸由 `[&_svg]:size-5` 统一，换用任何 SVG 图标库都不需要单独调尺寸。
 - 渲染的是真正的 `<a>`，Enter 激活、右键“在新标签页打开”等原生行为都保留；悬浮提示 `title` 只是补充，不能替代 `label`。
 - 组件只有 `transition-colors` 的悬停过渡，不涉及位移或缩放，`prefers-reduced-motion` 下没有额外处理。

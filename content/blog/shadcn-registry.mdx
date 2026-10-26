@@ -11,7 +11,7 @@ tags: [shadcn, Registry, Next.js]
 
 本站把对外发布的实现放在 `src/registry/`。例如，线条网格原语位于 `src/registry/ui/grid-layout/`。首页和文档演示也直接导入这里的组件，避免演示与安装内容各维护一份。
 
-仓库根目录的 `registry.json` 描述每个条目的名称、类型、说明与文件路径。组件通常使用 `registry:ui` 类型；如果需要额外依赖、CSS 工具类或主题变量，也应在条目中声明。仅列出 TSX 文件，无法保证安装后的视觉完整。
+仓库根目录的 `registry.json` 描述每个条目的名称、类型、说明与文件路径。组件通常使用 `registry:ui` 类型；如果需要额外依赖、CSS 工具类或主题变量，也应在条目中声明。如果条目里只列 TSX 文件，安装后的视觉完整性就无法保证。
 
 ## 把清单变成可安装文件
 
@@ -23,7 +23,7 @@ pnpm exec shadcn build
 
 本站还在 `pnpm registry:build` 中串联了 CSS 同步与索引生成。发布前应运行项目脚本，避免遗漏网格工具类。`public/r/*.json` 是生成物，不是编辑入口；修改组件后需要重新构建。
 
-使用者可以直接通过 URL 安装，无需先配置命名空间：
+你也可以直接用 URL 安装，不用先配置命名空间：
 
 ```bash title="终端"
 pnpm dlx shadcn@latest add https://travinsy.com/r/grid-layout.json
@@ -47,12 +47,12 @@ pnpm dlx shadcn@latest add https://travinsy.com/r/grid-layout.json
 pnpm dlx shadcn@latest add @travinsy/grid-layout
 ```
 
-安装前需要在目标项目里初始化 shadcn。安装后得到的文件属于目标项目，使用者可以改布局、换样式，或删掉不需要的部分。
+安装前需要在目标项目里初始化 shadcn。安装后得到的文件属于目标项目，你可以改布局、换样式，或删掉不需要的部分。
 
 ## 与静态站一起发布
 
 这个网站使用 Next.js 的 `output: "export"`，并开启 `trailingSlash: true`。构建后，页面变成 `out/` 中的 HTML，registry JSON 也作为静态资源进入同一个目录，之后可上传到阿里云 OSS。
 
-这条链路不需要运行时服务：编辑源码，更新清单，生成 registry，再构建网站。文档、预览与安装文件围绕同一份源码组织，才是比发布命令更值得维护的约束。
+这条链路不需要运行时服务：编辑源码，更新清单，生成 registry，再构建网站。文档、预览和安装文件都围绕同一份源码组织，这比记住一条发布命令更值得维护。
 
 具体配置可查看[安装文档](/docs/installation/)与 [Registry 文档](/docs/registry/)，网格原语的用法见[线条网格布局](/components/grid-layout/)。

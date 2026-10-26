@@ -9,7 +9,7 @@ const DEFAULT_LABELS = {
   brandPanelLabel: "{name} 品牌介绍",
   // 登录
   signInTitle: "欢迎回来",
-  signInDescription: "请输入您的账号信息登录",
+  signInDescription: "输入账号信息即可登录",
   signInMethodLabel: "登录方式",
   signInPasswordTab: "密码登录",
   signInCodeTab: "验证码登录",
@@ -33,7 +33,7 @@ const DEFAULT_LABELS = {
   signUpLink: "注册",
   // 注册
   signUpTitle: "创建账号",
-  signUpDescription: "填写以下信息，几步完成注册",
+  signUpDescription: "填写以下信息即可完成注册",
   nameLabel: "姓名",
   namePlaceholder: "请输入姓名",
   emailLabel: "邮箱",
