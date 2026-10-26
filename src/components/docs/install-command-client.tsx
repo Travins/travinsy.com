@@ -108,10 +108,10 @@ function CommandFrame({
       className={cn(flat ? "flex flex-col gap-0" : docFrameClass, "my-0", className)}
     >
       <DocFrameBar>
-        <div className="flex min-w-0 items-center gap-1.5">
+        <div className="flex min-w-0 items-stretch gap-1.5 self-stretch">
           <Terminal
             aria-hidden="true"
-            className="ml-1 size-3.5 shrink-0 text-muted-foreground"
+            className="ml-1 size-3.5 shrink-0 self-center text-muted-foreground"
           />
           <DocTabsList aria-label="选择包管理器">
             {managerNames.map((name) => (

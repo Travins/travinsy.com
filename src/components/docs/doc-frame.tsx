@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 export const docFrameClass =
   "not-prose my-6 flex min-w-0 flex-col gap-0 rounded-xl border border-edge bg-muted/40 p-1"
 export const docFrameBarClass =
-  "flex min-h-9 flex-wrap items-center justify-between gap-x-2 gap-y-1 px-1.5 has-[>[data-slot=tabs-list]]:pl-0"
+  "flex min-h-9 flex-wrap items-center justify-between gap-x-2 gap-y-1 px-1.5"
 export const docFramePanelClass =
   "min-w-0 overflow-hidden rounded-lg border border-edge bg-background"
 
@@ -45,9 +45,8 @@ export function DocFramePanel({ className, ...props }: ComponentProps<"div">) {
 }
 
 /**
- * 工具栏里的标签：容器透明，选中项与下方内容面板同为 background 底 + 1px edge 边框，
- * 读起来像面板的「页签」。不用阴影和小数高度，避免边缘发虚；
- * 工具栏以标签开头时左内边距归零，让选中项的左边框与面板左边框对齐。
+ * 工具栏里的标签：下划线式。标签撑满工具栏高度，选中项的 2px 下划线向下压住内容面板的上边框，
+ * 看起来像从面板边框上「长」出来；z-10 保证它画在面板边框之上。
  */
 export function DocTabsList({
   className,
@@ -55,8 +54,9 @@ export function DocTabsList({
 }: ComponentProps<typeof TabsList>) {
   return (
     <TabsList
+      variant="line"
       className={cn(
-        "h-7 gap-1 rounded-none bg-transparent p-0 group-data-horizontal/tabs:h-7",
+        "h-auto gap-0 self-stretch p-0 group-data-horizontal/tabs:h-auto",
         className,
       )}
       {...props}
@@ -71,9 +71,8 @@ export function DocTabsTrigger({
   return (
     <TabsTrigger
       className={cn(
-        "h-7 flex-none rounded-md px-3 text-[13px] text-muted-foreground transition-colors hover:bg-background/60 hover:text-foreground",
-        "data-active:border-edge data-active:bg-background data-active:text-foreground data-active:shadow-none group-data-[variant=default]/tabs-list:data-active:shadow-none",
-        "dark:data-active:border-edge dark:data-active:bg-background",
+        "h-auto flex-none self-stretch rounded-none border-0 px-2.5 text-[13px] text-muted-foreground hover:text-foreground data-active:text-foreground",
+        "after:z-10 group-data-horizontal/tabs:after:inset-x-2.5 group-data-horizontal/tabs:after:-bottom-px group-data-horizontal/tabs:after:h-0.5",
         className,
       )}
       {...props}
