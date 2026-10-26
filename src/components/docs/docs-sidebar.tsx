@@ -1,11 +1,17 @@
 import Link from "next/link"
-import { docsNav } from "./docs-nav"
+import { sectionNav, sectionHome, type NavSectionId } from "./docs-nav"
 
-/** 全站文档共用的侧栏：纯文本分组标题 + 当前页高亮。 */
-export function DocsSidebarNav({ current }: { current: string }) {
+/** 当前分区的侧栏：纯文本分组标题 + 当前页高亮。 */
+export function DocsSidebarNav({
+  current,
+  section,
+}: {
+  current: string
+  section: NavSectionId
+}) {
   return (
-    <nav aria-label="文档导航">
-      {docsNav().map((group) => (
+    <nav aria-label={`${sectionHome[section].title}导航`}>
+      {sectionNav(section).map((group) => (
         <div key={group.id} className="docs-nav-group">
           <p className="docs-nav-title">{group.title}</p>
           <ul>

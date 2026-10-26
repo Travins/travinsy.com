@@ -3,21 +3,18 @@ import { sectionItems, type EntrySection } from "./registry-items"
 
 export type NavItem = { title: string; url: string }
 export type NavSectionId =
-  | "docs"
-  | "components"
-  | "blocks"
-  | "templates"
-  | "agents"
+  "docs" | "components" | "blocks" | "templates" | "agents"
 export type NavGroup = { id: NavSectionId; title: string; items: NavItem[] }
 
-/** 各分区的概览页：卡片目录，不出现在侧栏，面包屑第一级指向它。 */
-export const sectionHome: Record<NavSectionId, { title: string; url: string }> = {
-  docs: { title: "入门", url: "/docs/" },
-  components: { title: "组件", url: "/components/" },
-  blocks: { title: "区块", url: "/blocks/" },
-  templates: { title: "模板", url: "/templates/" },
-  agents: { title: "Agent 开发", url: "/agents/" },
-}
+/** 各分区主页：返回链接和面包屑第一级指向它，文档介绍也列在入门侧栏。 */
+export const sectionHome: Record<NavSectionId, { title: string; url: string }> =
+  {
+    docs: { title: "入门", url: "/docs/" },
+    components: { title: "组件", url: "/components/" },
+    blocks: { title: "区块", url: "/blocks/" },
+    templates: { title: "模板", url: "/templates/" },
+    agents: { title: "Agent 开发", url: "/agents/" },
+  }
 
 /** fumadocs 生成的 page.url 没有末尾斜杠，而站点路由（trailingSlash）统一带斜杠。 */
 export const withSlash = (url: string) => (url.endsWith("/") ? url : `${url}/`)
@@ -35,40 +32,18 @@ function entryItems(section: EntrySection): NavItem[] {
   }))
 }
 
-/** 所有文档页共用的一棵侧栏树。 */
-export function docsNav(): NavGroup[] {
-  const groups: NavGroup[] = [
-    { id: "docs", title: sectionHome.docs.title, items: mdxItems("docs", true) },
-    {
-      id: "components",
-      title: sectionHome.components.title,
-      items: mdxItems("components", false),
-    },
-    {
-      id: "blocks",
-      title: sectionHome.blocks.title,
-      items: entryItems("blocks"),
-    },
-    {
-      id: "templates",
-      title: sectionHome.templates.title,
-      items: entryItems("templates"),
-    },
-    {
-      id: "agents",
-      title: sectionHome.agents.title,
-      items: sectionPages("agents").map((page) => ({
-        title: page.slugs.length === 1 ? "开发指南" : page.data.title,
-        url: withSlash(page.url),
-      })),
-    },
-  ]
-  return groups
+/** 侧栏、移动导航和相邻页共用当前分区的顺序。 */
+export function sectionNav(section: NavSectionId): NavGroup[] {
+  const items =
+    section === "blocks" || section === "templates"
+      ? entryItems(section)
+      : mdxItems(section, section === "docs")
+  return [{ id: section, title: sectionHome[section].title, items }]
 }
 
-/** 上一页 / 下一页：按侧栏树的顺序跨分组连续。 */
-export function docsNeighbours(url: string) {
-  const flat = docsNav().flatMap((group) => group.items)
+/** 上一页 / 下一页仅在当前分区内连续。 */
+export function docsNeighbours(section: NavSectionId, url: string) {
+  const flat = sectionNav(section).flatMap((group) => group.items)
   const index = flat.findIndex((item) => item.url === withSlash(url))
   if (index < 0) return {}
   return { previous: flat[index - 1], next: flat[index + 1] }

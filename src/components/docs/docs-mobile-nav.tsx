@@ -13,14 +13,24 @@ import {
 } from "@/components/ui/sheet"
 
 /** < md：吸顶的「菜单」按钮条，点开后从左侧滑出完整文档导航。 */
-export function DocsMobileNav({ children }: { children: ReactNode }) {
+export function DocsMobileNav({
+  children,
+  title,
+}: {
+  children: ReactNode
+  title: string
+}) {
   const [open, setOpen] = useState(false)
   return (
     <div className="docs-mobile-bar">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger
           render={
-            <Button variant="ghost" size="sm" className="-ml-2 gap-2 text-[13px]" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="-ml-2 gap-2 text-[13px]"
+            />
           }
         >
           <MenuIcon />
@@ -28,7 +38,7 @@ export function DocsMobileNav({ children }: { children: ReactNode }) {
         </SheetTrigger>
         <SheetContent side="left" className="w-72 gap-0">
           <SheetHeader>
-            <SheetTitle>文档导航</SheetTitle>
+            <SheetTitle>{title}</SheetTitle>
             <SheetDescription className="sr-only">
               选择要阅读的文档页面
             </SheetDescription>

@@ -55,14 +55,14 @@ export function DocsShell({
 }: DocsShellProps) {
   const url = withSlash(rawUrl)
   const home = sectionHome[section]
-  const { previous, next } = overview ? {} : docsNeighbours(url)
+  const { previous, next } = overview ? {} : docsNeighbours(section, url)
   return (
     <GridSection className="docs-layout">
-      <DocsMobileNav>
-        <DocsSidebarNav current={url} />
+      <DocsMobileNav title={`${home.title}导航`}>
+        <DocsSidebarNav current={url} section={section} />
       </DocsMobileNav>
       <aside className="docs-sidebar">
-        <DocsSidebarNav current={url} />
+        <DocsSidebarNav current={url} section={section} />
       </aside>
       <main id="main-content" className="docs-main">
         <PageActions
@@ -76,6 +76,23 @@ export function DocsShell({
           previous={previous}
           next={next}
         />
+        <nav
+          aria-label="面包屑"
+          className="mb-5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
+        >
+          <Link
+            href={home.url}
+            className="rounded-sm hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+          >
+            {home.title}
+          </Link>
+          {url !== home.url && (
+            <>
+              <span aria-hidden="true">/</span>
+              <span aria-current="page">{title}</span>
+            </>
+          )}
+        </nav>
         <header className="docs-header">
           <h1>{title}</h1>
           <p>{description}</p>

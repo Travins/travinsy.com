@@ -37,7 +37,7 @@ export const searchShortcuts: {
   { title: "区块", url: "/blocks/", group: "区块" },
   { title: "模板", url: "/templates/", group: "模板" },
   { title: "颜色主题", url: "/themes/", group: "主题" },
-  { title: "Agent 开发指南", url: "/agents/", group: "Agent" },
+  { title: "Agent", url: "/agents/", group: "Agent" },
   { title: "博客", url: "/blog/", group: "博客" },
 ]
 

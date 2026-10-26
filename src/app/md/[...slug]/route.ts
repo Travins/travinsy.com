@@ -4,7 +4,7 @@ import { docsPages } from "@/lib/site-content"
 export const dynamic = "force-static"
 export const dynamicParams = false
 
-// 分区概览页（卡片目录）没有正文，不生成 Markdown
+// 原有卡片目录不生成 Markdown；保留 /md/agents.md 作为 Agent 入口说明。
 const overviewSections = new Set(["components", "blocks", "templates"])
 
 const markdownPages = () =>
@@ -24,7 +24,9 @@ export async function GET(
   { params }: { params: Promise<{ slug: string[] }> },
 ) {
   const { slug } = await params
-  const key = [...slug.slice(0, -1), slug.at(-1)!.replace(/\.md$/, "")].join("/")
+  const key = [...slug.slice(0, -1), slug.at(-1)!.replace(/\.md$/, "")].join(
+    "/",
+  )
   const page = markdownPages().find((item) => item.slugs.join("/") === key)
   if (!page) return new Response("Not Found", { status: 404 })
   return new Response(`${await pageMarkdown(page)}\n`, {
