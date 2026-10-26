@@ -185,28 +185,43 @@ export default function HomePage() {
           <ul className="-mr-px -mb-px grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
             {profile.technologies.map((technology) => (
               <li
-                key={technology}
-                style={techBrandStyle(technology)}
-                className="group relative flex min-w-0 flex-col items-start gap-3 border-r border-b border-edge p-4 transition-colors duration-300 hover:bg-(--brand)/[0.06]"
+                key={technology.name}
+                style={techBrandStyle(technology.name)}
+                className="border-r border-b border-edge"
               >
-                {/* 悬停时顶边亮起一条品牌色细线，从左向右展开 */}
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-(--brand) transition-transform duration-500 ease-out group-hover:scale-x-100 motion-reduce:transition-none"
-                />
-                <span
-                  aria-hidden="true"
-                  className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80 transition-[color,background-color,border-color] duration-300 ease-out group-hover:border-transparent group-hover:bg-transparent group-hover:text-(--brand)"
+                <a
+                  href={technology.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative flex h-full min-w-0 flex-col items-start gap-3 p-4 transition-colors duration-300 hover:bg-(--brand)/[0.06] focus-visible:bg-(--brand)/[0.06] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
                 >
-                  {/* 边框和底色淡出的同时图标放大填满原来的框，形成“图标挣脱外框”的错觉 */}
-                  <TechIcon
-                    name={technology}
-                    className="size-4 transition-[scale,translate,filter] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:drop-shadow-[0_4px_8px_color-mix(in_oklab,var(--brand)_45%,transparent)] motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:scale-[1.75]"
+                  {/* 悬停时顶边亮起一条品牌色细线，从左向右展开 */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-(--brand) transition-transform duration-500 ease-out group-hover:scale-x-100 motion-reduce:transition-none"
                   />
-                </span>
-                <span className="font-mono text-xs break-words" translate="no">
-                  {technology}
-                </span>
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    className="absolute top-3 right-3 size-3.5 text-(--brand) opacity-0 transition-[opacity,translate] duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 motion-safe:-translate-x-0.5 motion-safe:translate-y-0.5 motion-safe:group-hover:translate-0"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80 transition-[color,background-color,border-color] duration-300 ease-out group-hover:border-transparent group-hover:bg-transparent group-hover:text-(--brand)"
+                  >
+                    {/* 边框和底色淡出的同时图标放大填满原来的框，形成“图标挣脱外框”的错觉 */}
+                    <TechIcon
+                      name={technology.name}
+                      className="size-4 transition-[scale,translate,filter] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:drop-shadow-[0_4px_8px_color-mix(in_oklab,var(--brand)_45%,transparent)] motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:scale-[1.75]"
+                    />
+                  </span>
+                  <span
+                    className="font-mono text-xs break-words"
+                    translate="no"
+                  >
+                    {technology.name}
+                    <span className="sr-only">（在新窗口打开官网）</span>
+                  </span>
+                </a>
               </li>
             ))}
           </ul>
