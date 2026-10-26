@@ -19,7 +19,7 @@ export function ThemeSwatch({
       aria-hidden
       data-slot="theme-swatch"
       className={cn(
-        "size-4 shrink-0 rounded-full bg-(image:--swatch-light) ring-1 ring-foreground/20 dark:bg-(image:--swatch-dark)",
+        "size-3.5 shrink-0 rounded-full bg-(image:--swatch-light) ring-1 ring-foreground/20 dark:bg-(image:--swatch-dark)",
         className
       )}
       style={

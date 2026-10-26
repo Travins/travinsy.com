@@ -35,33 +35,21 @@ description: 主题变量如何控制颜色与线条，亮暗模式与颜色主�
 
 三个灰族决定整套界面灰阶的色偏：背景、卡片、`muted`、边框、次要文字和 `primary` 都取自同一个灰族，选择器里用「浅 / 中 / 深」三段色带展示色偏。
 
-| 主题 | id | 亮色 primary | 暗色 primary | 说明 |
-|---|---|---|---|---|
-| 中性 · Neutral | `neutral` | neutral-900 | neutral-200 | 没有色相的纯灰，默认外观 |
-| 石色 · Stone | `stone` | stone-900 | stone-200 | 偏暖的灰，米褐调。Tailwind 原版色度太低（几乎与中性无差别），这里放大约 2 倍 |
-| 板岩 · Slate | `slate` | slate-900 | slate-200 | 偏冷的蓝灰，背景、边框、文字都带蓝调 |
+| 主题 | id | 亮色 primary | 暗色 primary |
+|---|---|---|---|
+| 红色 · Red | `red` | red-600 | red-500 |
+| 橙色 · Orange | `orange` | orange-600 | orange-600 |
+| 琥珀 · Amber | `amber` | amber-600 | amber-600 |
+| 青柠 · Lime | `lime` | lime-600 | lime-600 |
+| 绿色 · Green | `green` | green-700 | green-600 |
+| 青绿 · Teal | `teal` | teal-600 | teal-600 |
+| 天蓝 · Sky | `sky` | sky-600 | sky-600 |
+| 蓝色 · Blue | `blue` | blue-600 | blue-500 |
+| 紫罗兰 · Violet | `violet` | violet-600 | violet-500 |
+| 紫红 · Fuchsia | `fuchsia` | fuchsia-600 | fuchsia-500 |
+| 粉红 · Pink | `pink` | pink-600（明度下调 0.012） | pink-500 |
 
-原先的 `zinc`、`gray` 与 `neutral`、`slate` 只差一点点色偏，放在一起分不开，所以不再单列。
-
-### 彩色 · Colors
-
-按色相环从红到粉红排列，相邻色相太近的（如 red / rose、blue / indigo / violet、green / emerald）只取其一。灰阶表面（`secondary`、`muted`、`accent`、`border`、暗色背景）带一点同色相的色偏，`chart-1` 到 `chart-5` 是同色相的明度阶梯。
-
-| 主题 | id | 亮色 primary | 暗色 primary | 按钮文字 |
-|---|---|---|---|---|
-| 红色 · Red | `red` | red-600 | red-500 | 亮色白字 / 暗色深字 |
-| 橙色 · Orange | `orange` | orange-600 | orange-500 | 深字 |
-| 琥珀 · Amber | `amber` | amber-600 | amber-500 | 深字 |
-| 青柠 · Lime | `lime` | lime-600 | lime-500 | 深字 |
-| 绿色 · Green | `green` | green-700 | green-500 | 亮色白字 / 暗色深字 |
-| 青绿 · Teal | `teal` | teal-600 | teal-500 | 深字 |
-| 天蓝 · Sky | `sky` | sky-600 | sky-500 | 深字 |
-| 蓝色 · Blue | `blue` | blue-600 | blue-500 | 亮色白字 / 暗色深字 |
-| 紫罗兰 · Violet | `violet` | violet-600 | violet-400 | 亮色白字 / 暗色深字 |
-| 紫红 · Fuchsia | `fuchsia` | fuchsia-600 | fuchsia-500 | 亮色白字 / 暗色深字 |
-| 粉红 · Pink | `pink` | pink-600（明度下调 0.012） | pink-500 | 亮色白字 / 暗色深字 |
-
-- 暗色下的 `primary` 取 400–500 档，保证足够明亮；按钮文字按 WCAG AA（4.5:1）在白字和深字之间选。主色本身作为文字或图形（链接按钮、进度条）时，对背景至少 3:1。
+- 彩色主题的按钮一律白字：深色字压在饱和色上发脏，统一白字更协调。为此每个主题取能让白字达到 3:1 的档位（按钮文字是 14px 中粗字，按 WCAG AA 大字 / 界面组件标准）；正文和次要文字仍保证 4.5:1，主色作为文字或图形时对背景至少 3:1。
 - 红色主题的主色和危险色（`destructive`）本来是同一种红，所以把危险色拉开：亮色改用 red-800，暗色改用 red-300。
 - 校验脚本：`pnpm tsx scripts/theme-contrast.ts` 会列出全部主题在亮、暗下的对比度，任何一项不达标就以非零状态退出。
 

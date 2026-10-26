@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "theme-lime",
   "title": "青柠 · Lime",
-  "description": "偏黄的亮绿色主色，配深色文字。",
+  "description": "偏黄的亮绿色主色，配白字。",
   "cssVars": {
     "light": {
       "background": "oklch(1 0 0)",
@@ -12,7 +12,7 @@
       "popover": "oklch(1 0 0)",
       "popover-foreground": "oklch(0.15 0.02 130.85)",
       "primary": "oklch(0.648 0.2 131.684)",
-      "primary-foreground": "oklch(0.17 0.04 130.85)",
+      "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.967 0.012 130.85)",
       "secondary-foreground": "oklch(0.25 0.04 130.85)",
       "muted": "oklch(0.967 0.012 130.85)",
@@ -31,7 +31,7 @@
       "sidebar": "oklch(0.985 0.006 130.85)",
       "sidebar-foreground": "oklch(0.15 0.02 130.85)",
       "sidebar-primary": "oklch(0.648 0.2 131.684)",
-      "sidebar-primary-foreground": "oklch(0.17 0.04 130.85)",
+      "sidebar-primary-foreground": "oklch(1 0 0)",
       "sidebar-accent": "oklch(0.955 0.025 130.85)",
       "sidebar-accent-foreground": "oklch(0.25 0.04 130.85)",
       "sidebar-border": "oklch(0.915 0.012 130.85)",
@@ -44,8 +44,8 @@
       "card-foreground": "oklch(0.985 0.004 130.85)",
       "popover": "oklch(0.2 0.02 130.85)",
       "popover-foreground": "oklch(0.985 0.004 130.85)",
-      "primary": "oklch(0.768 0.233 130.85)",
-      "primary-foreground": "oklch(0.17 0.04 130.85)",
+      "primary": "oklch(0.648 0.2 131.684)",
+      "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.27 0.025 130.85)",
       "secondary-foreground": "oklch(0.985 0.004 130.85)",
       "muted": "oklch(0.27 0.025 130.85)",
@@ -55,7 +55,7 @@
       "destructive": "oklch(0.704 0.191 22.216)",
       "border": "oklch(1 0 0 / 10%)",
       "input": "oklch(1 0 0 / 15%)",
-      "ring": "oklch(0.768 0.233 130.85)",
+      "ring": "oklch(0.648 0.2 131.684)",
       "chart-1": "oklch(0.938 0.127 124.321)",
       "chart-2": "oklch(0.897 0.196 126.665)",
       "chart-3": "oklch(0.841 0.238 128.85)",
@@ -63,12 +63,12 @@
       "chart-5": "oklch(0.648 0.2 131.684)",
       "sidebar": "oklch(0.2 0.02 130.85)",
       "sidebar-foreground": "oklch(0.985 0.004 130.85)",
-      "sidebar-primary": "oklch(0.768 0.233 130.85)",
-      "sidebar-primary-foreground": "oklch(0.17 0.04 130.85)",
+      "sidebar-primary": "oklch(0.648 0.2 131.684)",
+      "sidebar-primary-foreground": "oklch(1 0 0)",
       "sidebar-accent": "oklch(0.3 0.04 130.85)",
       "sidebar-accent-foreground": "oklch(0.985 0.004 130.85)",
       "sidebar-border": "oklch(1 0 0 / 10%)",
-      "sidebar-ring": "oklch(0.768 0.233 130.85)"
+      "sidebar-ring": "oklch(0.648 0.2 131.684)"
     }
   },
   "type": "registry:theme"

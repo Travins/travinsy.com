@@ -91,7 +91,7 @@ export function ThemeRadioGroup({
               <span className="text-muted-foreground/80">{group.description}</span>
             </p>
           ) : (
-            <p className="px-1 text-xs text-muted-foreground">
+            <p className="px-1 text-[11px] text-muted-foreground">
               {group.name} · {group.title}
             </p>
           )}
@@ -118,10 +118,10 @@ export function ThemeRadioGroup({
                   title={theme.description}
                   onClick={() => onValueChange(theme.id)}
                   className={cn(
-                    "flex items-center gap-2 text-left text-sm outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none",
+                    "flex items-center gap-2 text-left text-xs outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none",
                     variant === "card"
                       ? "rounded-lg border border-edge bg-background px-3 py-2.5 hover:bg-muted"
-                      : "h-8 rounded-md px-2 hover:bg-muted",
+                      : "h-7 rounded-md px-2 hover:bg-muted",
                     checked &&
                       (variant === "card"
                         ? "border-foreground/60 bg-muted font-medium"

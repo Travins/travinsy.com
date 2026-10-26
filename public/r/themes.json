@@ -55,7 +55,7 @@
       "group": "color",
       "name": "橙色",
       "title": "Orange",
-      "description": "明亮的橙色主色，配深色文字以保证对比度。",
+      "description": "明亮的橙色主色，配白字。",
       "url": "https://travinsy.com/r/theme-orange.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-orange.json",
@@ -67,7 +67,7 @@
       "group": "color",
       "name": "琥珀",
       "title": "Amber",
-      "description": "金黄偏橙的琥珀色主色，配深色文字。",
+      "description": "金黄偏橙的琥珀色主色，配白字。",
       "url": "https://travinsy.com/r/theme-amber.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-amber.json",
@@ -79,7 +79,7 @@
       "group": "color",
       "name": "青柠",
       "title": "Lime",
-      "description": "偏黄的亮绿色主色，配深色文字。",
+      "description": "偏黄的亮绿色主色，配白字。",
       "url": "https://travinsy.com/r/theme-lime.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-lime.json",
@@ -91,7 +91,7 @@
       "group": "color",
       "name": "绿色",
       "title": "Green",
-      "description": "沉稳的森林绿主色，亮色取 700 配白字。",
+      "description": "沉稳的森林绿主色，亮色取 700、暗色取 600，配白字。",
       "url": "https://travinsy.com/r/theme-green.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-green.json",
@@ -103,7 +103,7 @@
       "group": "color",
       "name": "青绿",
       "title": "Teal",
-      "description": "介于绿与蓝之间的青绿色主色，配深色文字。",
+      "description": "介于绿与蓝之间的青绿色主色，配白字。",
       "url": "https://travinsy.com/r/theme-teal.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-teal.json",
@@ -115,7 +115,7 @@
       "group": "color",
       "name": "天蓝",
       "title": "Sky",
-      "description": "明亮清爽的天蓝色主色，配深色文字。",
+      "description": "明亮清爽的天蓝色主色，配白字。",
       "url": "https://travinsy.com/r/theme-sky.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-sky.json",
@@ -127,7 +127,7 @@
       "group": "color",
       "name": "蓝色",
       "title": "Blue",
-      "description": "经典的饱和蓝色主色，亮色配白字，暗色提亮并配深色文字。",
+      "description": "经典的饱和蓝色主色，亮暗模式都配白字。",
       "url": "https://travinsy.com/r/theme-blue.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-blue.json",
@@ -139,7 +139,7 @@
       "group": "color",
       "name": "紫罗兰",
       "title": "Violet",
-      "description": "浓郁的蓝紫色主色，亮色配白字，暗色提亮并配深色文字。",
+      "description": "浓郁的蓝紫色主色，亮暗模式都配白字。",
       "url": "https://travinsy.com/r/theme-violet.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-violet.json",
@@ -151,7 +151,7 @@
       "group": "color",
       "name": "紫红",
       "title": "Fuchsia",
-      "description": "高饱和的紫红色主色，亮色配白字，暗色提亮并配深色文字。",
+      "description": "高饱和的紫红色主色，亮暗模式都配白字。",
       "url": "https://travinsy.com/r/theme-fuchsia.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-fuchsia.json",
@@ -163,7 +163,7 @@
       "group": "color",
       "name": "粉红",
       "title": "Pink",
-      "description": "偏洋红的粉红色主色，亮色配白字，暗色提亮并配深色文字。",
+      "description": "偏洋红的粉红色主色，亮暗模式都配白字。",
       "url": "https://travinsy.com/r/theme-pink.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-pink.json",

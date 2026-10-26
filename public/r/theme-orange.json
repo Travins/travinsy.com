@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "theme-orange",
   "title": "橙色 · Orange",
-  "description": "明亮的橙色主色，配深色文字以保证对比度。",
+  "description": "明亮的橙色主色，配白字。",
   "cssVars": {
     "light": {
       "background": "oklch(1 0 0)",
@@ -12,7 +12,7 @@
       "popover": "oklch(1 0 0)",
       "popover-foreground": "oklch(0.15 0.02 47.604)",
       "primary": "oklch(0.646 0.222 41.116)",
-      "primary-foreground": "oklch(0.17 0.04 47.604)",
+      "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.967 0.012 47.604)",
       "secondary-foreground": "oklch(0.25 0.04 47.604)",
       "muted": "oklch(0.967 0.012 47.604)",
@@ -31,7 +31,7 @@
       "sidebar": "oklch(0.985 0.006 47.604)",
       "sidebar-foreground": "oklch(0.15 0.02 47.604)",
       "sidebar-primary": "oklch(0.646 0.222 41.116)",
-      "sidebar-primary-foreground": "oklch(0.17 0.04 47.604)",
+      "sidebar-primary-foreground": "oklch(1 0 0)",
       "sidebar-accent": "oklch(0.955 0.025 47.604)",
       "sidebar-accent-foreground": "oklch(0.25 0.04 47.604)",
       "sidebar-border": "oklch(0.915 0.012 47.604)",
@@ -44,8 +44,8 @@
       "card-foreground": "oklch(0.985 0.004 47.604)",
       "popover": "oklch(0.2 0.02 47.604)",
       "popover-foreground": "oklch(0.985 0.004 47.604)",
-      "primary": "oklch(0.705 0.213 47.604)",
-      "primary-foreground": "oklch(0.17 0.04 47.604)",
+      "primary": "oklch(0.646 0.222 41.116)",
+      "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.27 0.025 47.604)",
       "secondary-foreground": "oklch(0.985 0.004 47.604)",
       "muted": "oklch(0.27 0.025 47.604)",
@@ -55,7 +55,7 @@
       "destructive": "oklch(0.704 0.191 22.216)",
       "border": "oklch(1 0 0 / 10%)",
       "input": "oklch(1 0 0 / 15%)",
-      "ring": "oklch(0.705 0.213 47.604)",
+      "ring": "oklch(0.646 0.222 41.116)",
       "chart-1": "oklch(0.901 0.076 70.697)",
       "chart-2": "oklch(0.837 0.128 66.29)",
       "chart-3": "oklch(0.75 0.183 55.934)",
@@ -63,12 +63,12 @@
       "chart-5": "oklch(0.646 0.222 41.116)",
       "sidebar": "oklch(0.2 0.02 47.604)",
       "sidebar-foreground": "oklch(0.985 0.004 47.604)",
-      "sidebar-primary": "oklch(0.705 0.213 47.604)",
-      "sidebar-primary-foreground": "oklch(0.17 0.04 47.604)",
+      "sidebar-primary": "oklch(0.646 0.222 41.116)",
+      "sidebar-primary-foreground": "oklch(1 0 0)",
       "sidebar-accent": "oklch(0.3 0.04 47.604)",
       "sidebar-accent-foreground": "oklch(0.985 0.004 47.604)",
       "sidebar-border": "oklch(1 0 0 / 10%)",
-      "sidebar-ring": "oklch(0.705 0.213 47.604)"
+      "sidebar-ring": "oklch(0.646 0.222 41.116)"
     }
   },
   "type": "registry:theme"

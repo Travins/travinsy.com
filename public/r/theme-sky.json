@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "theme-sky",
   "title": "天蓝 · Sky",
-  "description": "明亮清爽的天蓝色主色，配深色文字。",
+  "description": "明亮清爽的天蓝色主色，配白字。",
   "cssVars": {
     "light": {
       "background": "oklch(1 0 0)",
@@ -12,7 +12,7 @@
       "popover": "oklch(1 0 0)",
       "popover-foreground": "oklch(0.15 0.02 237.323)",
       "primary": "oklch(0.588 0.158 241.966)",
-      "primary-foreground": "oklch(0.17 0.04 237.323)",
+      "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.967 0.012 237.323)",
       "secondary-foreground": "oklch(0.25 0.04 237.323)",
       "muted": "oklch(0.967 0.012 237.323)",
@@ -31,7 +31,7 @@
       "sidebar": "oklch(0.985 0.006 237.323)",
       "sidebar-foreground": "oklch(0.15 0.02 237.323)",
       "sidebar-primary": "oklch(0.588 0.158 241.966)",
-      "sidebar-primary-foreground": "oklch(0.17 0.04 237.323)",
+      "sidebar-primary-foreground": "oklch(1 0 0)",
       "sidebar-accent": "oklch(0.955 0.025 237.323)",
       "sidebar-accent-foreground": "oklch(0.25 0.04 237.323)",
       "sidebar-border": "oklch(0.915 0.012 237.323)",
@@ -44,8 +44,8 @@
       "card-foreground": "oklch(0.985 0.004 237.323)",
       "popover": "oklch(0.2 0.02 237.323)",
       "popover-foreground": "oklch(0.985 0.004 237.323)",
-      "primary": "oklch(0.685 0.169 237.323)",
-      "primary-foreground": "oklch(0.17 0.04 237.323)",
+      "primary": "oklch(0.588 0.158 241.966)",
+      "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.27 0.025 237.323)",
       "secondary-foreground": "oklch(0.985 0.004 237.323)",
       "muted": "oklch(0.27 0.025 237.323)",
@@ -55,7 +55,7 @@
       "destructive": "oklch(0.704 0.191 22.216)",
       "border": "oklch(1 0 0 / 10%)",
       "input": "oklch(1 0 0 / 15%)",
-      "ring": "oklch(0.685 0.169 237.323)",
+      "ring": "oklch(0.588 0.158 241.966)",
       "chart-1": "oklch(0.901 0.058 230.902)",
       "chart-2": "oklch(0.828 0.111 230.318)",
       "chart-3": "oklch(0.746 0.16 232.661)",
@@ -63,12 +63,12 @@
       "chart-5": "oklch(0.588 0.158 241.966)",
       "sidebar": "oklch(0.2 0.02 237.323)",
       "sidebar-foreground": "oklch(0.985 0.004 237.323)",
-      "sidebar-primary": "oklch(0.685 0.169 237.323)",
-      "sidebar-primary-foreground": "oklch(0.17 0.04 237.323)",
+      "sidebar-primary": "oklch(0.588 0.158 241.966)",
+      "sidebar-primary-foreground": "oklch(1 0 0)",
       "sidebar-accent": "oklch(0.3 0.04 237.323)",
       "sidebar-accent-foreground": "oklch(0.985 0.004 237.323)",
       "sidebar-border": "oklch(1 0 0 / 10%)",
-      "sidebar-ring": "oklch(0.685 0.169 237.323)"
+      "sidebar-ring": "oklch(0.588 0.158 241.966)"
     }
   },
   "type": "registry:theme"

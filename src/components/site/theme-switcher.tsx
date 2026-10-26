@@ -32,7 +32,7 @@ export function ThemeSwitcher() {
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="max-h-(--available-height) w-80 gap-3 overflow-y-auto"
+        className="max-h-(--available-height) w-72 gap-3 overflow-y-auto"
       >
         <PopoverTitle className="px-1 text-xs text-muted-foreground">
           颜色主题 · Color theme
