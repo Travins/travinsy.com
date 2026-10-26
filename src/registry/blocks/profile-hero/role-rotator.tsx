@@ -57,9 +57,24 @@ function RoleRotator({
           onClick={() => setPaused((value) => !value)}
           aria-label={paused ? text.playRoles : text.pauseRoles}
           aria-pressed={paused}
-          className="inline-flex size-7 items-center justify-center rounded text-xs text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring motion-reduce:hidden"
+          className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring motion-reduce:hidden"
         >
-          <span aria-hidden="true">{paused ? "▶" : "❚❚"}</span>
+          {/* 两个图标同一画布、同一尺寸、同为实心，切换时按钮外观不跳动 */}
+          <svg
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+            className="size-3.5"
+          >
+            {paused ? (
+              <path d="M7 5.6v12.8a1 1 0 0 0 1.5.86l10.8-6.4a1 1 0 0 0 0-1.72L8.5 4.74A1 1 0 0 0 7 5.6Z" />
+            ) : (
+              <>
+                <rect x="6" y="5" width="4" height="14" rx="1" />
+                <rect x="14" y="5" width="4" height="14" rx="1" />
+              </>
+            )}
+          </svg>
         </button>
       ) : null}
     </div>
