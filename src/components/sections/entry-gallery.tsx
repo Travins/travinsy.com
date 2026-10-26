@@ -73,16 +73,21 @@ export function EntryGallery({ section }: { section: EntrySection }) {
                     />
                   </span>
                   <div className="min-w-0">
+                    {/* 英文名为主标题（更直观），中文名小一号放在下一行 */}
                     <h2 className="text-xl leading-6 font-medium tracking-tight">
-                      {item.title}
+                      {entryTitleEn(section, item.name) ? (
+                        <>
+                          <span lang="en" translate="no">
+                            {entryTitleEn(section, item.name)}
+                          </span>
+                          <span className="mt-0.5 block text-[13px] leading-5 font-normal tracking-normal text-muted-foreground">
+                            {item.title}
+                          </span>
+                        </>
+                      ) : (
+                        item.title
+                      )}
                     </h2>
-                    <p
-                      lang="en"
-                      translate="no"
-                      className="mt-0.5 font-mono text-xs text-muted-foreground"
-                    >
-                      {entryTitleEn(section, item.name)}
-                    </p>
                   </div>
                 </div>
                 <p className="mt-4 text-sm leading-7 text-muted-foreground">

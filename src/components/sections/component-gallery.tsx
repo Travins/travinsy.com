@@ -84,21 +84,24 @@ export function ComponentGallery() {
                               />
                             </span>
                             <div className="min-w-0">
+                              {/* 英文名为主标题（更直观），中文名小一号放在下一行 */}
                               <CardTitle
                                 id={titleId}
                                 className="text-lg leading-6 font-medium tracking-tight"
                               >
-                                {page.data.title}
+                                {page.data.titleEn ? (
+                                  <>
+                                    <span lang="en" translate="no">
+                                      {page.data.titleEn}
+                                    </span>
+                                    <span className="mt-0.5 block truncate text-[13px] leading-5 font-normal tracking-normal text-muted-foreground">
+                                      {page.data.title}
+                                    </span>
+                                  </>
+                                ) : (
+                                  page.data.title
+                                )}
                               </CardTitle>
-                              {page.data.titleEn ? (
-                                <p
-                                  lang="en"
-                                  translate="no"
-                                  className="mt-0.5 truncate font-mono text-xs text-muted-foreground"
-                                >
-                                  {page.data.titleEn}
-                                </p>
-                              ) : null}
                             </div>
                           </div>
                           <ArrowUpRight

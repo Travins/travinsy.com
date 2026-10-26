@@ -43,18 +43,19 @@ const focusClass =
 const cardFocusClass =
   "transition-colors hover:bg-muted/30 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ring"
 
-/** 精选卡片标题后的英文名：淡色等宽小字，与中文标题同一行，放不下时折到下一行。 */
-function EnglishName({ name }: { name: string }) {
+/** 精选卡片标题：英文名为主（更直观），中文名小一号放在下一行；没有英文名时只显示中文。 */
+function EntryTitle({ name, title }: { name: string; title: string }) {
   const titleEn = entryTitleEn("components", name)
-  if (!titleEn) return null
+  if (!titleEn) return <>{title}</>
   return (
-    <span
-      lang="en"
-      translate="no"
-      className="ml-2 inline-block font-mono text-xs font-normal text-muted-foreground"
-    >
-      {titleEn}
-    </span>
+    <>
+      <span lang="en" translate="no">
+        {titleEn}
+      </span>
+      <span className="mt-0.5 block text-[13px] font-normal text-muted-foreground">
+        {title}
+      </span>
+    </>
   )
 }
 
@@ -104,7 +105,10 @@ export default function HomePage() {
               >
                 阅读笔记
               </Link>
-              <span aria-hidden="true" className="mx-1 w-px self-stretch bg-edge" />
+              <span
+                aria-hidden="true"
+                className="mx-1 w-px self-stretch bg-edge"
+              />
               <ul aria-label="社交账号" className="flex items-center gap-1">
                 {profile.socials.map((social) => {
                   const Icon = socialIcons[social.icon] ?? Globe
@@ -119,7 +123,8 @@ export default function HomePage() {
                         className={buttonVariants({
                           variant: "ghost",
                           size: "icon-lg",
-                          className: "text-muted-foreground hover:text-foreground",
+                          className:
+                            "text-muted-foreground hover:text-foreground",
                         })}
                       >
                         <Icon aria-hidden="true" className="size-4.5" />
@@ -248,8 +253,7 @@ export default function HomePage() {
                   组件 / 01
                 </p>
                 <h3 className="text-base font-medium tracking-tight">
-                  {lead.title}
-                  <EnglishName name={lead.name} />
+                  <EntryTitle name={lead.name} title={lead.title} />
                 </h3>
                 <p className="mt-2 text-sm leading-7 text-muted-foreground">
                   {lead.description}
@@ -297,8 +301,7 @@ export default function HomePage() {
                         组件 / {String(offset + index + 2).padStart(2, "0")}
                       </p>
                       <h3 className="text-base font-medium tracking-tight">
-                        {item.title}
-                        <EnglishName name={item.name} />
+                        <EntryTitle name={item.name} title={item.title} />
                       </h3>
                       <p className="mt-2 text-sm leading-7 text-muted-foreground">
                         {item.description}

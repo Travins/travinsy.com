@@ -210,16 +210,18 @@ function PagerLink({
           )}
         >
           {!next && icon}
-          <span className="truncate">{item.title}</span>
           {item.titleEn ? (
-            <span
-              lang="en"
-              translate="no"
-              className="hidden truncate font-mono text-[11px] font-normal text-muted-foreground md:inline"
-            >
-              {item.titleEn}
-            </span>
-          ) : null}
+            <>
+              <span className="truncate" lang="en" translate="no">
+                {item.titleEn}
+              </span>
+              <span className="hidden truncate text-xs font-normal text-muted-foreground md:inline">
+                {item.title}
+              </span>
+            </>
+          ) : (
+            <span className="truncate">{item.title}</span>
+          )}
           {next && icon}
         </span>
       </span>
