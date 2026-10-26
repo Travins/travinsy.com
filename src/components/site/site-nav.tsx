@@ -31,7 +31,7 @@ export function SiteNav() {
   const isActive = useIsActive()
 
   return (
-    <nav aria-label="主导航" className="hidden items-stretch md:flex">
+    <nav aria-label="主导航" className="hidden items-stretch whitespace-nowrap lg:flex">
       {SITE_NAV.map((item) => {
         const active = isActive(item.href)
         return (
@@ -75,7 +75,7 @@ export function MobileNav() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="lg:hidden"
             aria-label="打开导航菜单"
           />
         }

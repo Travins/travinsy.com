@@ -15,19 +15,26 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       {/* screen-line-bottom 自带 position: relative，所以放在内层，避免和 sticky 冲突 */}
       <div className="screen-line-bottom">
-        {/* 高度取 --header-height（globals.css）；导航项占满整高，工具区垂直居中 */}
+        {/* 高度取 --header-height（globals.css）；Logo 靠左，菜单与工具区靠右，导航项占满整高 */}
         <GridContainer className="flex h-(--header-height) items-stretch gap-2 px-4">
           <Link
             href="/"
             aria-label={`${SITE_NAME} 首页`}
-            className="group/logo flex shrink-0 items-center pr-3 text-foreground outline-none md:border-r md:border-edge md:pr-5"
+            className="group/logo flex shrink-0 items-center pr-3 text-foreground outline-none"
           >
             <SiteLogo className="size-8 rounded-sm transition-transform duration-200 group-focus-visible/logo:ring-3 group-focus-visible/logo:ring-ring/50 motion-safe:group-hover/logo:-rotate-3" />
           </Link>
 
-          <SiteNav />
+          {/* 菜单靠右，与右侧工具图标之间用一条整高竖线隔开 */}
+          <div className="ml-auto flex items-stretch">
+            <SiteNav />
+          </div>
+          <span
+            aria-hidden="true"
+            className="hidden w-px self-stretch bg-edge lg:block"
+          />
 
-          <div className="ml-auto flex items-center gap-1">
+          <div className="flex items-center gap-1 lg:pl-2">
             <SearchButton />
             <ThemeSwitcher />
             <ModeToggle />
