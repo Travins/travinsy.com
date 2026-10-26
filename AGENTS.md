@@ -73,8 +73,9 @@ scripts/                     构建辅助脚本
 ## 4. 硬性规则
 
 ### 禁止提及参考站点（任何文件都必须满足）
-- 网站的任何地方（页面文案、博客、文档、代码注释、registry、技能文件、提交信息）都**不得出现 参考站点**，也不写“参考/借鉴某个人网站”之类的说法。本条规则是仓库里唯一允许出现这个名字的地方
-- 设计来源只描述做法本身（如“线条网格”“等轴测挤出”），不写出处；提交前用 `grep -rIil 参考站点 --exclude-dir={node_modules,.next,.source,.git} --exclude=AGENTS.md .` 自查，结果必须为空（包括构建产物 `out/`）
+- 网站和仓库的任何地方（页面文案、博客、文档、代码注释、registry、技能文件、提交信息）都**不得提及设计参考站点的名字**，也不写“参考/借鉴某个人网站”之类的说法
+- 设计来源只描述做法本身（如“线条网格”“等轴测挤出”），不写出处
+- 禁提词清单在仓库根目录的 `.forbidden-terms`（已 gitignore，只存在于维护者本机）。提交前用 `grep -rIil -f .forbidden-terms --exclude-dir={node_modules,.next,.source,.git} --exclude=.forbidden-terms .` 自查，结果必须为空（包括构建产物 `out/`）；本机没有该文件时跳过此项
 
 ### 静态导出（任何代码都必须满足）
 - 禁止：Server Actions、`cookies()`/`headers()`、依赖 Request 的 Route Handler、`proxy`/middleware、rewrites/redirects/headers 配置、ISR、默认 loader 的图片优化

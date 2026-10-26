@@ -45,3 +45,6 @@ next-env.d.ts
 
 # logo 等设计迭代草稿，体积大，不进仓库
 /design/
+
+# 禁提词清单，只在本机，不进仓库
+/.forbidden-terms
