@@ -20,7 +20,7 @@ const cellClass: Record<FeaturedSize, string> = {
 const previewClass: Record<FeaturedSize, string> = {
   lead: "h-64 sm:h-72 lg:h-auto",
   tall: "h-60 md:h-64 lg:h-auto",
-  cell: "h-72 md:h-80 lg:h-auto",
+  cell: "h-80 md:h-88 lg:h-auto",
 }
 
 const CLOCK_ZONES = [
@@ -41,14 +41,14 @@ function DotsBackdrop() {
 /** 两只不同时区的表盘，下方是当地时间。 */
 function LocalTimePreview() {
   return (
-    <div className="relative flex size-full items-center justify-center gap-6 px-4 sm:gap-14 md:gap-6 lg:gap-14">
+    <div className="relative flex size-full items-center justify-center gap-8 px-6 py-10 sm:gap-14 md:gap-8 lg:gap-16">
       <DotsBackdrop />
       {CLOCK_ZONES.map(({ label, timeZone }) => (
         <figure key={timeZone} className="relative flex flex-col items-center gap-3">
           <AnalogClock
             timeZone={timeZone}
             label={label}
-            className="size-24 sm:size-32 md:size-24 lg:size-36"
+            className="size-20 sm:size-24 md:size-20 lg:size-28"
           />
           <figcaption className="flex flex-col items-center gap-0.5 font-mono text-[11px] text-muted-foreground">
             <span>{label}</span>
@@ -77,17 +77,13 @@ function IsometricMarkPreview() {
   )
 }
 
-/** 问候卡：色调与时段图标随访客时间变化，底部是四时段指示条。 */
+/** 问候：去掉卡片外框，内容直接铺在格子里；色调与时段图标随访客时间变化，底部是四时段指示条。 */
 function GreetingPreview() {
   return (
-    <div className="relative flex size-full items-center justify-center">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-hatch opacity-60 [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)]"
-      />
+    <div className="relative flex size-full items-center px-6 py-10 sm:px-10 lg:px-12">
       <GreetingCard
         name="Travins"
-        className="relative w-[min(100%-2rem,24rem)] shadow-xs lg:w-[min(100%-3rem,28rem)]"
+        className="w-full max-w-md overflow-visible rounded-none border-0 bg-transparent p-0"
       />
     </div>
   )
@@ -132,7 +128,7 @@ function FeaturedBento() {
 
   return (
     <div className="overflow-hidden">
-      <ul className="-mr-px -mb-px grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 lg:grid-rows-[17rem_17rem_19rem]">
+      <ul className="-mr-px -mb-px grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 lg:grid-rows-[17rem_17rem_22rem]">
         {items.map(({ item, size, preview }) => (
           <li
             key={item.name}
