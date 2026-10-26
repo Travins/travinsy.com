@@ -111,11 +111,15 @@
   background-size: 8px 8px;
 }
 
-/* 点阵底纹：8px 间距 */
+/*
+ * 点阵底纹：8px 间距，与分隔带 pattern-dots 同款——1px 方点、同一透明度，
+ * 横向落在竖线 +4px 处。用 conic-gradient 只填充每格左上角 1×1 像素，边缘锐利、不发虚。
+ */
 @utility bg-dots {
-  background-image: radial-gradient(
-    color-mix(in oklab, var(--foreground) 24%, transparent) 1px,
-    transparent 1.3px
+  background-image: conic-gradient(
+    at 1px 1px,
+    transparent 75%,
+    color-mix(in oklab, var(--foreground) 34%, transparent) 0
   );
   background-size: 8px 8px;
   background-position: 4px 4px;

@@ -98,7 +98,7 @@
       "background-size": "8px 8px"
     },
     "@utility bg-dots": {
-      "background-image": "radial-gradient(\n    color-mix(in oklab, var(--foreground) 24%, transparent) 1px,\n    transparent 1.3px\n  )",
+      "background-image": "conic-gradient(\n    at 1px 1px,\n    transparent 75%,\n    color-mix(in oklab, var(--foreground) 34%, transparent) 0\n  )",
       "background-size": "8px 8px",
       "background-position": "4px 4px"
     },
