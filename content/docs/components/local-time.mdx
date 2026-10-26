@@ -51,7 +51,7 @@ export function Header() {
 
 ### 世界时钟
 
-`WorldClock` 接收 `zones` 数组，每一项一行：城市名、时区与 UTC 偏移、当前时间、昼夜图标，右下角是日期差（昨天 / 明天）和与访客的时差。`highlighted` 给某一项加上强调色竖条。
+`WorldClock` 接收 `zones` 数组（本页顶部的预览就是它），每一项一行：城市名、时区与 UTC 偏移、当前时间、昼夜图标，右下角是日期差（昨天 / 明天）和与访客的时差。`highlighted` 给某一项加上强调色竖条。
 
 ```tsx title="app/clocks.tsx"
 import { WorldClock } from "@/components/ui/local-time/local-time"

@@ -61,6 +61,22 @@ export default function Page() {
 
 `crosshair` 控制容器竖线与横线交点处的「+」：`GridSeparator` 默认关闭，传 `crosshair` 开启；`GridSection` 传 `crosshair` 会在底线两端绘制。也可以直接使用 `GridCrosshair` 原语，放在任何 `position: relative` 的容器的四个角。
 
+<ComponentPreview name="grid-crosshair-demo" />
+
+给带自己边框的卡片放十字时传 `anchor="border"`，十字会对齐卡片的边框而不是底线。
+
+### 分栏
+
+`GridColumns` 默认两栏，栏间是虚线，窄屏自动堆叠。要三栏就用 `className` 覆盖列数：`sm:grid-cols-3`。每栏的内边距自己写，一行一个 `GridSection`。
+
+<ComponentPreview name="grid-columns-demo" />
+
+### 侧边编号栏
+
+章节类页面可以用「左侧窄编号栏 + 右侧内容」的两栏结构：宽屏用竖线隔开，窄屏编号移到标题上方。一章一个 `GridSection`，相邻章节只靠底线分开。
+
+<ComponentPreview name="grid-section-sidebar-demo" />
+
 ## API
 
 五个组件都支持对应 HTML 元素的原生属性，包括 `className`、`children`、`id` 和无障碍属性。

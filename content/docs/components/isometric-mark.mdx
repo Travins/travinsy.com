@@ -57,6 +57,10 @@ export function BrandMark() {
 <IsometricMark shapes={SHAPES} rotation={-90} label="易" guides />
 ```
 
+下面用一个不对称的 L 形对比四个朝向：
+
+<ComponentPreview name="isometric-mark-rotation-demo" />
+
 ## 示例
 
 ### 多个形状
@@ -70,6 +74,18 @@ export function BrandMark() {
 任何多边形都可以：带方孔的正方形，并打开 `guides` 显示背景里沿等轴测方向延伸的虚线。
 
 <ComponentPreview name="isometric-mark-simple-demo" />
+
+### 挤出高度
+
+`depth` 是挤出高度，单位与形状坐标相同，默认取图形平面尺寸的 12%。按下时的高度由 `pressedDepth` 决定，默认是 `depth` 的一半，设为 `0` 会被完全压平。
+
+<ComponentPreview name="isometric-mark-depth-demo" />
+
+### 悬停与按下
+
+线条高光跟随鼠标在窗口中的位置，按住指针时图形被压下去，松开或移出后弹回。在左边的方块上试试；右边关掉了 `interactive` 与 `highlight`，适合当纯静态图形。触屏与“减少动态效果”下高光自动关闭，按下状态瞬间切换。
+
+<ComponentPreview name="isometric-mark-interaction-demo" />
 
 ## 几何说明
 
