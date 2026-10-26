@@ -29,6 +29,7 @@ const REST = 3.4
 export default function FlowDiagramDemo() {
   return (
     <FlowDiagram
+      background="grid"
       width={320}
       height={100}
       duration={DURATION}

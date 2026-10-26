@@ -38,6 +38,7 @@ const DURATION = EXIT + 0.8
 export default function FlowDiagramBrandDemo() {
   return (
     <FlowDiagram
+      background="hatch"
       width={320}
       height={90}
       duration={DURATION}

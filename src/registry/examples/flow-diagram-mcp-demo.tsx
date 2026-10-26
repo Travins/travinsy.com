@@ -88,6 +88,7 @@ const DURATION = EXIT + 0.8
 export default function FlowDiagramMcpDemo() {
   return (
     <FlowDiagram
+      background="none"
       width={320}
       height={190}
       duration={DURATION}

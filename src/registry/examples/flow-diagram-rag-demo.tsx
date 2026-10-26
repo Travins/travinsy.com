@@ -67,6 +67,7 @@ const DURATION = EXIT + 0.8
 export default function FlowDiagramRagDemo() {
   return (
     <FlowDiagram
+      background="lines"
       width={320}
       height={204}
       duration={DURATION}

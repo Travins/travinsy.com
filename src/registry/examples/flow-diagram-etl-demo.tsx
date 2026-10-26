@@ -121,6 +121,7 @@ function GrowingBar({
 export default function FlowDiagramEtlDemo() {
   return (
     <FlowDiagram
+      background="lines"
       width={260}
       height={236}
       duration={DURATION}

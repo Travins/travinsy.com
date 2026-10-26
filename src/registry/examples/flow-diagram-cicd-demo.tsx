@@ -102,6 +102,7 @@ function JobStatus({
 export default function FlowDiagramCicdDemo() {
   return (
     <FlowDiagram
+      background="grid"
       width={320}
       height={200}
       duration={DURATION}

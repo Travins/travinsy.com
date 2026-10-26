@@ -39,6 +39,7 @@ const DURATION = EXIT + 0.8
 export default function FlowDiagramTonesDemo() {
   return (
     <FlowDiagram
+      background="none"
       width={320}
       height={142}
       duration={DURATION}

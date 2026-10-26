@@ -52,6 +52,10 @@ const DURATION = EXIT + 0.8
 export default function FlowDiagramRouterDemo() {
   return (
     <FlowDiagram
+      background={
+        // 自定义底纹：中心一圈淡紫，呼应路由到的多个模型
+        <div className="size-full bg-radial from-(--flow-violet)/12 to-transparent to-70%" />
+      }
       width={320}
       height={200}
       duration={DURATION}
