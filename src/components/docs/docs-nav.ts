@@ -1,4 +1,6 @@
-import { entryTitleEn, sectionPages } from "@/lib/source"
+import { entryTitleEn, source, sectionPages } from "@/lib/source"
+import { siteConfig } from "@/config/site"
+import { groupEntries, type EntryGroup } from "./docs-groups"
 import { sectionItems, type EntrySection } from "./registry-items"
 
 /** titleEn / icon 只有组件、区块、模板有：英文副标与专属图标（icon 是条目名）。 */
@@ -10,12 +12,16 @@ export type NavItem = {
 }
 export type NavSectionId =
   "docs" | "components" | "blocks" | "templates" | "agents"
-export type NavGroup = {
+/** 分区内的一组条目（小标题可选）；编号在整个分区内连续，不按组重置。 */
+export type NavGroup = EntryGroup<NavItem>
+export type NavSection = {
   id: NavSectionId
   title: string
-  /** 英文标签（侧栏分组标题用，如 COMPONENTS） */
+  /** 英文标签（侧栏分区标题用，如 COMPONENTS） */
   titleEn: string
-  items: NavItem[]
+  /** 分区主页地址 */
+  url: string
+  groups: NavGroup[]
 }
 
 /** 各分区主页：返回链接和面包屑第一级指向它，文档介绍也列在入门侧栏。 */
@@ -33,40 +39,56 @@ export const sectionHome: Record<
 /** fumadocs 生成的 page.url 没有末尾斜杠，而站点路由（trailingSlash）统一带斜杠。 */
 export const withSlash = (url: string) => (url.endsWith("/") ? url : `${url}/`)
 
-function mdxItems(section: NavSectionId, includeIndex: boolean): NavItem[] {
+type GroupedItem = { item: NavItem; group?: string }
+
+function mdxItems(section: NavSectionId, includeIndex: boolean): GroupedItem[] {
   return sectionPages(section)
     .filter((page) => includeIndex || page.slugs.length > 1)
     .map((page) => ({
-      title: page.data.title,
-      url: withSlash(page.url),
-      ...(page.data.titleEn
-        ? { titleEn: page.data.titleEn, icon: page.slugs.at(-1) }
-        : {}),
+      group: page.data.group,
+      item: {
+        title: page.data.title,
+        url: withSlash(page.url),
+        ...(page.data.titleEn
+          ? { titleEn: page.data.titleEn, icon: page.slugs.at(-1) }
+          : {}),
+      },
     }))
 }
 
-function entryItems(section: EntrySection): NavItem[] {
-  return sectionItems(section).map((item) => ({
-    title: item.title,
-    url: `/${section}/${item.name}/`,
-    titleEn: entryTitleEn(section, item.name),
-    icon: item.name,
+function entryItems(section: EntrySection): GroupedItem[] {
+  return sectionItems(section).map((entry) => ({
+    // 区块 / 模板的 group 写在各自的 MDX frontmatter 里
+    group: source.getPage([section, entry.name], siteConfig.defaultLanguage)
+      ?.data.group,
+    item: {
+      title: entry.title,
+      url: `/${section}/${entry.name}/`,
+      titleEn: entryTitleEn(section, entry.name),
+      icon: entry.name,
+    },
   }))
 }
 
-/** 侧栏、移动导航和相邻页共用当前分区的顺序。 */
-export function sectionNav(section: NavSectionId): NavGroup[] {
-  const items =
+/** 侧栏、移动导航和相邻页共用当前分区的顺序（先按分组表排，再按分区内原顺序）。 */
+export function sectionNav(section: NavSectionId): NavSection {
+  const entries =
     section === "blocks" || section === "templates"
       ? entryItems(section)
       : mdxItems(section, section === "docs")
-  const { title, titleEn } = sectionHome[section]
-  return [{ id: section, title, titleEn, items }]
+  const home = sectionHome[section]
+  return {
+    id: section,
+    ...home,
+    groups: groupEntries(section, entries, (entry) => entry.group).map(
+      (group) => ({ ...group, items: group.items.map((entry) => entry.item) }),
+    ),
+  }
 }
 
-/** 上一页 / 下一页仅在当前分区内连续。 */
+/** 上一页 / 下一页仅在当前分区内连续，顺序与侧栏一致。 */
 export function docsNeighbours(section: NavSectionId, url: string) {
-  const flat = sectionNav(section).flatMap((group) => group.items)
+  const flat = sectionNav(section).groups.flatMap((group) => group.items)
   const index = flat.findIndex((item) => item.url === withSlash(url))
   if (index < 0) return {}
   return { previous: flat[index - 1], next: flat[index + 1] }

@@ -10,6 +10,8 @@ export const docs = defineDocs({
       description: z.string(),
       /** 英文名（Title Case）：组件、区块、模板的中英文对照 */
       titleEn: z.string().optional(),
+      /** 分组 id：登记在 src/components/docs/docs-groups.ts，决定侧栏与列表页的分组 */
+      group: z.string().optional(),
       links: z.record(z.string(), z.url()).optional(),
     }),
   },
