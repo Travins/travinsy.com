@@ -160,10 +160,34 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    /* 全站统一细滚动条：目录、代码块、搜索结果等可滚动区域都用它，颜色随主题 */
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in oklab, var(--foreground) 20%, transparent)
-      transparent;
+  }
+  /*
+   * 全站统一细滚动条：目录、代码块、搜索结果等可滚动区域都用它，颜色随主题。
+   * Chrome / Safari 用 ::-webkit-scrollbar 精确控制到 6px（一旦设了标准的
+   * scrollbar-width，Chrome 会忽略这些伪元素，而它的 thin 在 macOS 上仍然偏粗）；
+   * 不支持伪元素的浏览器（Firefox）退回标准属性。
+   */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--foreground) 18%, transparent);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--foreground) 32%, transparent);
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(in oklab, var(--foreground) 18%, transparent)
+        transparent;
+    }
   }
   body {
     @apply bg-background text-foreground;
