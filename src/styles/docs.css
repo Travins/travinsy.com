@@ -75,17 +75,16 @@
   font-variant-numeric: tabular-nums;
   color: var(--foreground);
 }
-/* 刻度尺：自上沿向下悬挂，8px 一根短刻度、32px 一根长刻度，与分隔带 pattern-ruler 同色 */
+/* 刻度：自上沿向下悬挂，只保留 32px 一根的疏刻度，颜色压淡，作为点缀而不抢视线 */
 .docs-nav-ruler {
-  --tick: color-mix(in oklab, var(--foreground) 34%, transparent);
-  height: 6px;
+  height: 4px;
   flex: none;
-  background-image:
-    linear-gradient(90deg, var(--tick) 0 1px, transparent 1px),
-    linear-gradient(90deg, var(--tick) 0 1px, transparent 1px);
-  background-size:
-    8px 3px,
-    32px 6px;
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--foreground) 20%, transparent) 0 1px,
+    transparent 1px
+  );
+  background-size: 32px 4px;
   background-repeat: repeat-x;
 }
 .docs-nav-list {
