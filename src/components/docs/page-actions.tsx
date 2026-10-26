@@ -219,7 +219,7 @@ export function PageActions({
                       className={menuItem}
                       render={
                         <a
-                          href={`${REPO_URL}/blob/main/content/docs/${sourcePath}`}
+                          href={`${REPO_URL}/blob/master/content/docs/${sourcePath}`}
                           {...external}
                         />
                       }
