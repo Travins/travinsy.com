@@ -111,12 +111,13 @@ export function DocsShell({
                   <EntryIcon name={icon} strokeWidth={1.5} />
                 </span>
               ) : null}
-              <div className="min-w-0">
-                <h1>{title}</h1>
-                <span className="docs-header-en" lang="en" translate="no">
+              {/* 组件类条目英文名为主标题（更直观），中文名稍小，紧随其后，同属一个 h1 */}
+              <h1 className="docs-header-bilingual">
+                <span lang="en" translate="no">
                   {titleEn}
                 </span>
-              </div>
+                <span className="docs-header-zh">{title}</span>
+              </h1>
             </div>
           ) : (
             <h1>{title}</h1>

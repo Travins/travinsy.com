@@ -307,14 +307,18 @@ a.docs-nav-head[aria-current="page"]::after {
   width: 1.375rem;
   height: 1.375rem;
 }
-.docs-header-en {
-  display: block;
-  margin-top: 0.25rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 1rem;
-  letter-spacing: 0.02em;
-  color: var(--muted-foreground);
+.docs-header-bilingual {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+.docs-header-zh {
+  margin-top: 0.125rem;
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: color-mix(in oklab, var(--foreground) 70%, transparent);
 }
 .docs-header p {
   max-width: 40rem;
