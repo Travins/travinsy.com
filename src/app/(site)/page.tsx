@@ -249,13 +249,10 @@ export default function HomePage() {
                 />
               </div>
               <div>
-                <p className="mb-2 font-mono text-[10px] text-muted-foreground">
-                  组件 / 01
-                </p>
                 <h3 className="text-base font-medium tracking-tight">
                   <EntryTitle name={lead.name} title={lead.title} />
                 </h3>
-                <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                <p className="mt-2 text-[13px] leading-6 text-muted-foreground">
                   {lead.description}
                 </p>
               </div>
@@ -276,7 +273,7 @@ export default function HomePage() {
           </FeaturedFlowCard>
           {[0, 2].map((offset) => (
             <GridColumns key={offset}>
-              {others.slice(offset, offset + 2).map((item, index) => {
+              {others.slice(offset, offset + 2).map((item) => {
                 return (
                   <Link
                     key={item.name}
@@ -297,13 +294,10 @@ export default function HomePage() {
                       />
                     </div>
                     <div>
-                      <p className="mb-2 font-mono text-[10px] text-muted-foreground">
-                        组件 / {String(offset + index + 2).padStart(2, "0")}
-                      </p>
                       <h3 className="text-base font-medium tracking-tight">
                         <EntryTitle name={item.name} title={item.title} />
                       </h3>
-                      <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                      <p className="mt-2 text-[13px] leading-6 text-muted-foreground">
                         {item.description}
                       </p>
                     </div>

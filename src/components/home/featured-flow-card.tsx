@@ -38,7 +38,8 @@ function FeaturedFlowCard({
       />
       <div
         aria-hidden="true"
-        className="relative h-64 border-b border-edge bg-muted/20 sm:h-72 lg:order-last lg:h-auto lg:min-h-80 lg:border-b-0 lg:border-l"
+        // 预览四周留出呼吸空间，流程图不贴边
+        className="relative h-72 border-b border-edge bg-muted/20 p-6 sm:h-80 sm:p-8 lg:order-last lg:h-auto lg:min-h-96 lg:border-b-0 lg:border-l lg:px-12 lg:py-10"
       >
         <FlowDiagramShowcaseDemo
           speed={active ? HOVER_SPEED : 1}
