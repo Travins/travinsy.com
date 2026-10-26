@@ -4,6 +4,7 @@ import { SearchButton } from "@/components/search/search-button"
 import { GithubIcon } from "@/components/site/github-icon"
 import { ModeToggle } from "@/components/site/mode-toggle"
 import { GITHUB_URL, SITE_NAME } from "@/components/site/site-config"
+import { SiteLogo } from "@/components/site/site-logo"
 import { MobileNav, SiteNav } from "@/components/site/site-nav"
 import { ThemeSwitcher } from "@/components/site/theme-switcher"
 import { buttonVariants } from "@/components/ui/button"
@@ -17,9 +18,10 @@ export function SiteHeader() {
         <GridContainer className="flex h-14 items-center justify-between gap-2 px-4">
           <Link
             href="/"
-            className="rounded-md font-mono text-sm font-semibold tracking-tight outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            aria-label={`${SITE_NAME} 首页`}
+            className="-m-1 rounded-md p-1 text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
-            {SITE_NAME}
+            <SiteLogo className="size-7" />
           </Link>
 
           <div className="flex items-center gap-1">
