@@ -2,10 +2,10 @@
 export const profile = {
   name: "Travins",
   brand: "travinsy",
-  bio: "全栈开发者，专注 AI 应用与大模型落地。从界面到推理服务，把想法做成可用的产品。",
+  bio: "全栈开发者，做 AI 应用和大模型部署，前端界面和推理服务都自己写。常用的界面顺手整理成了这套组件库。",
   roles: ["全栈开发", "AI Agent 开发", "大模型部署", "组件设计"],
-  /** 封面左上角的小标题，像规格书的文档标题栏 */
-  eyebrow: "PROFILE / 个人规格书",
+  /** 封面左上角的等宽小标题 */
+  eyebrow: "PORTFOLIO",
   /** 封面右侧终端卡片：依次打出命令，再显示输出 */
   terminal: {
     title: "travins@dev ~",
