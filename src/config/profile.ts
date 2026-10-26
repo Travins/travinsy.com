@@ -29,7 +29,7 @@ export const profile = {
   websiteLabel: "travinsy.com",
   githubUsername: "Travins",
   socials: [
-    { name: "X", icon: "x", href: "https://x.com/travinsy" },
+    { name: "X", icon: "x", href: "https://x.com/TravinsE" },
     { name: "GitHub", icon: "github", href: "https://github.com/Travins" },
   ],
   focusAreas: [
