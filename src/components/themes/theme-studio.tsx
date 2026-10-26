@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useSyncExternalStore } from "react"
 import { CheckIcon, CodeIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 
@@ -18,6 +18,17 @@ import {
 
 type Mode = "light" | "dark"
 
+const noopSubscribe = () => () => {}
+
+/** 水合期间返回 false：next-themes 的 resolvedTheme 在服务端为 undefined，客户端首帧就能读到，直接用会导致水合不一致。 */
+function useHydrated() {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  )
+}
+
 const MODES = [
   { value: "light", label: "亮色", Icon: SunIcon },
   { value: "dark", label: "暗色", Icon: MoonIcon },
@@ -31,6 +42,7 @@ const MODES = [
 export function ThemeStudio() {
   const { theme: siteTheme, setTheme } = useColorTheme()
   const { resolvedTheme } = useTheme()
+  const hydrated = useHydrated()
   // null 表示跟随整站，直到用户主动选择
   const [selectedId, setSelectedId] = useState<ColorThemeId | null>(null)
   const [modeOverride, setModeOverride] = useState<Mode | null>(null)
@@ -38,7 +50,7 @@ export function ThemeStudio() {
 
   const activeId = selectedId ?? siteTheme
   const active = COLOR_THEMES.find((item) => item.id === activeId) ?? COLOR_THEMES[0]
-  const siteMode: Mode = resolvedTheme === "dark" ? "dark" : "light"
+  const siteMode: Mode = hydrated && resolvedTheme === "dark" ? "dark" : "light"
   const mode = modeOverride ?? siteMode
   const applied = activeId === siteTheme
 

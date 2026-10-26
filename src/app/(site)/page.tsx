@@ -16,6 +16,7 @@ import type { ComponentType, SVGProps } from "react"
 
 import { GitHubMark, XMark } from "@/components/home/brand-icons"
 import { SectionFrame } from "@/components/home/section-frame"
+import { RoleRotator } from "@/registry/blocks/profile-hero/role-rotator"
 import { TechIcon, techBrandStyle } from "@/components/home/tech-icon"
 import { TerminalCard } from "@/components/home/terminal-card"
 import { buttonVariants } from "@/components/ui/button"
@@ -79,6 +80,7 @@ export default function HomePage() {
             <p className="max-w-md text-base leading-7 text-pretty text-muted-foreground">
               {profile.bio}
             </p>
+            <RoleRotator roles={profile.roles} />
             <ul aria-label="技能标签" className="flex flex-wrap gap-2">
               {profile.roles.map((role) => (
                 <li
@@ -103,6 +105,30 @@ export default function HomePage() {
               >
                 阅读笔记
               </Link>
+              <span aria-hidden="true" className="mx-1 w-px self-stretch bg-edge" />
+              <ul aria-label="社交账号" className="flex items-center gap-1">
+                {profile.socials.map((social) => {
+                  const Icon = socialIcons[social.icon] ?? Globe
+                  return (
+                    <li key={social.name}>
+                      <a
+                        href={social.href}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        aria-label={`${social.name}（在新窗口打开）`}
+                        title={social.name}
+                        className={buttonVariants({
+                          variant: "ghost",
+                          size: "icon-lg",
+                          className: "text-muted-foreground hover:text-foreground",
+                        })}
+                      >
+                        <Icon aria-hidden="true" className="size-4.5" />
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
             </div>
           </div>
           <div className="relative flex items-center justify-center border-t border-dashed border-edge px-4 py-10 sm:px-6 lg:border-t-0 lg:border-l lg:border-solid lg:px-10">
@@ -117,39 +143,6 @@ export default function HomePage() {
             />
           </div>
         </div>
-      </GridSection>
-      <GridSection aria-label="社交链接">
-        <GridColumns>
-          {profile.socials.map((social) => {
-            const Icon = socialIcons[social.icon] ?? Globe
-            return (
-              <a
-                key={social.name}
-                href={social.href}
-                target="_blank"
-                rel="noreferrer noopener"
-                className={`group flex min-w-0 items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10 ${cardFocusClass}`}
-              >
-                <span className="flex min-w-0 flex-col gap-1 font-mono">
-                  <span className="text-[10px] tracking-[0.2em] text-muted-foreground">
-                    {social.name.toUpperCase()}
-                  </span>
-                  <span className="truncate text-sm" translate="no">
-                    {social.href.replace(/^https?:\/\//, "")}
-                    <ArrowUpRight
-                      aria-hidden="true"
-                      className="ml-1 inline size-3.5 text-muted-foreground transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
-                    />
-                  </span>
-                </span>
-                <Icon
-                  aria-hidden="true"
-                  className="size-5 shrink-0 text-muted-foreground"
-                />
-              </a>
-            )
-          })}
-        </GridColumns>
       </GridSection>
       <GridSeparator label="CAPABILITIES / 能力" />
       <SectionFrame index="01" name="FOCUS" title="我在做什么">
