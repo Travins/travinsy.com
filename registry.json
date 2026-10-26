@@ -114,43 +114,96 @@
       }
     },
     {
-      "name": "contribution-graph",
-      "type": "registry:ui",
-      "title": "贡献热力图",
-      "description": "GitHub 风格的年度贡献日历，支持键盘方向键、悬浮提示与可展开的数据表。",
-      "registryDependencies": [
-        "tooltip"
-      ],
-      "files": [
-        {
-          "path": "src/registry/ui/contribution-graph/contribution-graph.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "local-time",
       "type": "registry:ui",
       "title": "实时当地时间",
-      "description": "按指定 IANA 时区显示每秒刷新的时间，并标注与访客时区之间的时差。",
+      "description": "按指定 IANA 时区显示实时时间：行内时间可带 UTC 偏移、昼夜图标与同访客的时差；另提供世界时钟（列表 / 卡片）和平滑转动的 SVG 模拟表盘。",
       "files": [
         {
           "path": "src/registry/ui/local-time/local-time.tsx",
           "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/local-time/world-clock.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/local-time/analog-clock.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/local-time/time-parts.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/local-time/zone.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/local-time/config.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-now.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-now.ts"
         }
+      ],
+      "dependencies": [
+        "lucide-react",
+        "motion"
       ]
     },
     {
       "name": "greeting",
       "type": "registry:ui",
       "title": "时段问候",
-      "description": "按访客本地时间显示早上好、中午好、下午好或晚上好，首屏使用静态文案避免水合差异。",
+      "description": "按访客本地时间问候：时段图标与色调、可配置的分段时间与称呼；附带四时段指示条和会轮换副标题的问候卡片，首屏用静态文案避免水合差异。",
       "files": [
         {
           "path": "src/registry/ui/greeting/greeting.tsx",
           "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/greeting/use-greeting-period.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/greeting/period.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/greeting/config.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-now.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-now.ts"
         }
-      ]
+      ],
+      "dependencies": [
+        "lucide-react",
+        "motion"
+      ],
+      "cssVars": {
+        "light": {
+          "flow-blue": "oklch(0.56 0.2 258)",
+          "flow-green": "oklch(0.62 0.16 150)",
+          "flow-amber": "oklch(0.7 0.16 70)",
+          "flow-rose": "oklch(0.62 0.21 5)",
+          "flow-violet": "oklch(0.56 0.22 292)",
+          "flow-cyan": "oklch(0.66 0.12 215)"
+        },
+        "dark": {
+          "flow-blue": "oklch(0.72 0.15 255)",
+          "flow-green": "oklch(0.77 0.17 152)",
+          "flow-amber": "oklch(0.82 0.15 82)",
+          "flow-rose": "oklch(0.74 0.16 8)",
+          "flow-violet": "oklch(0.74 0.15 295)",
+          "flow-cyan": "oklch(0.82 0.11 208)"
+        }
+      }
     },
     {
       "name": "follow-me",

@@ -84,8 +84,8 @@ export const profile = {
   featuredComponents: [
     "flow-diagram",
     "grid-layout",
-    "contribution-graph",
     "local-time",
+    "greeting",
     "icon-link",
   ],
   about: [

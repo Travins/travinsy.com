@@ -7,7 +7,6 @@ import { registryExamples } from "@/registry/__index__"
 
 // 未指定时缩略图取 `${name}-demo`；基础演示太素的组件在这里换成专为封面设计的示例。
 const thumbnailExamples: Record<string, string> = {
-  "contribution-graph": "contribution-graph-showcase-demo",
   "flow-diagram": "flow-diagram-showcase-demo",
   "follow-me": "follow-me-showcase-demo",
   greeting: "greeting-showcase-demo",
@@ -20,7 +19,6 @@ const thumbnailExamples: Record<string, string> = {
 const fillExample = "size-full *:size-full! *:max-w-none!"
 // 其余示例固定演示的布局宽度，缩小后的内容始终留在卡片的裁切区域内。
 const previewClasses: Record<string, string> = {
-  "contribution-graph": fillExample,
   "flow-diagram": fillExample,
   "follow-me": fillExample,
   greeting: fillExample,

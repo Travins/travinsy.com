@@ -3,8 +3,6 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from "react"
 
 export const registryExamples: Record<string, LazyExoticComponent<ComponentType>> = {
-  "contribution-graph-demo": lazy(() => import("./examples/contribution-graph-demo")),
-  "contribution-graph-showcase-demo": lazy(() => import("./examples/contribution-graph-showcase-demo")),
   "flow-diagram-agent-demo": lazy(() => import("./examples/flow-diagram-agent-demo")),
   "flow-diagram-auth-demo": lazy(() => import("./examples/flow-diagram-auth-demo")),
   "flow-diagram-background-demo": lazy(() => import("./examples/flow-diagram-background-demo")),
@@ -23,7 +21,11 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "flow-diagram-tones-demo": lazy(() => import("./examples/flow-diagram-tones-demo")),
   "follow-me-demo": lazy(() => import("./examples/follow-me-demo")),
   "follow-me-showcase-demo": lazy(() => import("./examples/follow-me-showcase-demo")),
+  "greeting-card-demo": lazy(() => import("./examples/greeting-card-demo")),
   "greeting-demo": lazy(() => import("./examples/greeting-demo")),
+  "greeting-icon-demo": lazy(() => import("./examples/greeting-icon-demo")),
+  "greeting-periods-demo": lazy(() => import("./examples/greeting-periods-demo")),
+  "greeting-preview-demo": lazy(() => import("./examples/greeting-preview-demo")),
   "greeting-showcase-demo": lazy(() => import("./examples/greeting-showcase-demo")),
   "grid-layout-demo": lazy(() => import("./examples/grid-layout-demo")),
   "grid-layout-showcase-demo": lazy(() => import("./examples/grid-layout-showcase-demo")),
@@ -34,8 +36,13 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "isometric-mark-demo": lazy(() => import("./examples/isometric-mark-demo")),
   "isometric-mark-simple-demo": lazy(() => import("./examples/isometric-mark-simple-demo")),
   "isometric-mark-t-demo": lazy(() => import("./examples/isometric-mark-t-demo")),
+  "local-time-analog-demo": lazy(() => import("./examples/local-time-analog-demo")),
+  "local-time-cards-demo": lazy(() => import("./examples/local-time-cards-demo")),
+  "local-time-compose-demo": lazy(() => import("./examples/local-time-compose-demo")),
   "local-time-demo": lazy(() => import("./examples/local-time-demo")),
+  "local-time-inline-demo": lazy(() => import("./examples/local-time-inline-demo")),
   "local-time-showcase-demo": lazy(() => import("./examples/local-time-showcase-demo")),
+  "local-time-world-clock-demo": lazy(() => import("./examples/local-time-world-clock-demo")),
 }
 
 // 区块 / 页面模板的整页预览，键为 registry 条目名

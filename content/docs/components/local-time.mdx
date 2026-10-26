@@ -1,13 +1,13 @@
 ---
 title: 实时当地时间
 titleEn: Local Time
-description: 按指定 IANA 时区显示每秒刷新的时间，并标注它与访客当前时区之间的时差。
+description: 按指定 IANA 时区显示实时时间：行内时间可带 UTC 偏移、昼夜图标与同访客的时差；另提供世界时钟（列表 / 卡片）和平滑转动的 SVG 模拟表盘。
 links:
   源码: https://travinsy.com/r/local-time.json
   时区列表: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 ---
 
-<ComponentPreview name="local-time-demo" />
+<ComponentPreview name="local-time-world-clock-demo" />
 
 ## 安装
 
@@ -15,9 +15,17 @@ links:
 
 ## 用法
 
+组件分三种形态，都从同一个入口导入：
+
+| 组件                            | 形态                           |
+| ------------------------------- | ------------------------------ |
+| `LocalTime`                     | 行内时间，可以放进任何一行文字 |
+| `WorldClock` + `WorldClockItem` | 多个时区的世界时钟，列表或卡片 |
+| `AnalogClock`                   | SVG 模拟表盘                   |
+
 `timeZone` 接收 IANA 时区名，不是 `+08:00` 这类固定偏移。
 
-```tsx title="app/local-time.tsx"
+```tsx title="app/header.tsx"
 import { LocalTime } from "@/components/ui/local-time/local-time"
 
 export function Header() {
@@ -29,28 +37,86 @@ export function Header() {
 }
 ```
 
-输出形如 `21:04:33 // 早 0.5 小时`：前半段是目标时区的当前时间，`//` 后是它与访客时区的差值。数字使用 `tabular-nums`，秒数跳动时不会顶动后面的文字。
+输出形如 `21:04:33 // 早 0.5 小时`：前半段是目标时区的当前时间，`//` 后是它与访客时区的差值。
 
-### 时差怎么算
+<ComponentPreview name="local-time-demo" />
 
-组件把目标时区的 UTC 偏移和 `Date.prototype.getTimezoneOffset()` 相减得到小时数，因此夏令时（例如 `Europe/London`）也能自动跟随。差值为 0 时显示 `与你同一时间`。
+## 示例
+
+### 行内时间的选项
+
+`showDayNight` 在时间前加昼夜图标，`showZone` 附上 UTC 偏移，`animated` 让变化的数字轻微下落淡入，`hour12` 切换 12 小时制，`showSeconds={false}` 去掉秒（此时每分钟才刷新）。
+
+<ComponentPreview name="local-time-inline-demo" />
+
+### 世界时钟
+
+`WorldClock` 接收 `zones` 数组，每一项一行：城市名、时区与 UTC 偏移、当前时间、昼夜图标，右下角是日期差（昨天 / 明天）和与访客的时差。`highlighted` 给某一项加上强调色竖条。
+
+```tsx title="app/clocks.tsx"
+import { WorldClock } from "@/components/ui/local-time/local-time"
+
+const zones = [
+  { label: "杭州", timeZone: "Asia/Shanghai", highlighted: true },
+  { label: "伦敦", timeZone: "Europe/London" },
+  { label: "纽约", timeZone: "America/New_York" },
+]
+
+export function Clocks() {
+  return <WorldClock zones={zones} className="max-w-sm" />
+}
+```
+
+### 用组合方式写
+
+需要给某一项加自己的属性时，直接把 `WorldClockItem` 作为 children 写出来；`hour12`、`showSeconds` 等设置由 `WorldClock` 统一下发。
+
+<ComponentPreview name="local-time-compose-demo" />
+
+### 卡片形态
+
+`variant="cards"` 把每个城市排成带模拟表盘的卡片，两列布局，最后一张落单时自动撑满整行。
+
+<ComponentPreview name="local-time-cards-demo" />
+
+### 模拟表盘
+
+`AnalogClock` 默认平滑转动：指针每帧由 `requestAnimationFrame` 直接写入，不触发 React 渲染，离开视口时暂停。`smooth={false}` 或系统开启“减少动态效果”时改为按秒跳格；表盘随昼夜轻微变色，秒针使用主题强调色。
+
+<ComponentPreview name="local-time-analog-demo" />
 
 ### 文案与区域格式
 
-`//` 后的说明、占位文案和时差单位都是带默认值的中文 props；`locale` 决定 `Intl.DateTimeFormat` 与 `Intl.NumberFormat` 的格式化结果：
+可见文案集中在 `labels`，`locale` 决定 `Intl.DateTimeFormat` 与 `Intl.NumberFormat` 的结果。旧版单独的文案 props（`placeholderLabel`、`sameTimeLabel`、`aheadLabel`、`behindLabel`、`hourUnit`）继续可用，优先级高于 `labels` 里对应的字段。
 
 ```tsx
 <LocalTime
   timeZone="Europe/London"
   locale="en-GB"
-  placeholder="--:--:--"
-  placeholderLabel="local time"
-  sameTimeLabel="same as your time"
-  aheadLabel="ahead"
-  behindLabel="behind"
-  hourUnit="h"
+  labels={{
+    pending: "local time",
+    same: "same as you",
+    ahead: "ahead",
+    behind: "behind",
+    hourUnit: "h",
+  }}
 />
 ```
+
+| `labels` 字段                      | 默认值                   | 用于                  |
+| ---------------------------------- | ------------------------ | --------------------- |
+| `pending`                          | `当地时间`               | 挂载前占位时间之后    |
+| `same`                             | `与你同一时间`           | 与访客同一时间        |
+| `ahead` / `behind`                 | `早` / `晚`              | 目标时区更靠前 / 靠后 |
+| `hourUnit`                         | `小时`                   | 时差的单位            |
+| `day` / `night`                    | `白天` / `夜间`          | 昼夜图标的读屏文字    |
+| `yesterday` / `today` / `tomorrow` | `昨天` / `今天` / `明天` | 世界时钟的日期差      |
+| `worldClock` / `live`              | `WORLD CLOCK` / `LIVE`   | 世界时钟标题栏        |
+| `clock`                            | `当地时间`               | 模拟表盘的读屏名称    |
+
+### 时差怎么算
+
+组件把目标时区的 UTC 偏移和 `Date.prototype.getTimezoneOffset()` 相减得到小时数，夏令时（例如 `Europe/London`）自动跟随。差值为 0 时显示 `与你同一时间`。昼夜以目标时区的 6:00–17:59 为白天，只是视觉提示，不区分半球与季节。
 
 ## API
 
@@ -58,30 +124,65 @@ export function Header() {
 
 <PropsTable name="local-time" component="LocalTime" />
 
-| 元素 | `data-slot` | 其他属性 |
-| --- | --- | --- |
-| 根元素 | `local-time` | `data-state="pending"` / `"ready"` |
-| 当前时间 `<time>` | `local-time-time` | `dateTime`（ISO 字符串） |
-| `//` 后的说明 | `local-time-note` | — |
+| 元素              | `data-slot`       | 其他属性                                                                                       |
+| ----------------- | ----------------- | ---------------------------------------------------------------------------------------------- |
+| 根元素            | `local-time`      | `data-state="pending"` / `"ready"`；开启 `showDayNight` 时有 `data-daylight="day"` / `"night"` |
+| 当前时间 `<time>` | `local-time-time` | `dateTime`（ISO 字符串）                                                                       |
+| UTC 偏移          | `local-time-zone` | —                                                                                              |
+| `//` 后的说明     | `local-time-note` | —                                                                                              |
+| 昼夜图标          | `day-night-mark`  | `data-daylight`                                                                                |
+
+### WorldClock
+
+<PropsTable name="local-time" component="WorldClock" />
+
+根元素是 `role="group"` 的 `<div data-slot="world-clock">`，带 `data-variant`；标题栏 `world-clock-header`，列表 `world-clock-list`。
+
+### WorldClockItem
+
+<PropsTable name="local-time" component="WorldClockItem" />
+
+根元素是 `<li data-slot="world-clock-item">`，带 `data-state`（`pending` / `ready`）、`data-highlighted` 与 `data-daylight`。必须放在 `WorldClock` 里。
+
+### AnalogClock
+
+<PropsTable name="local-time" component="AnalogClock" />
+
+根元素是 `<svg data-slot="analog-clock">`，带 `data-state` 与 `data-daylight`；尺寸用 `className` 控制（默认 `size-28`）。
+
+### useNow
+
+时钟共用的 hook，随条目一起安装到 `hooks/use-now.ts`：
+
+```tsx
+import { useNow } from "@/hooks/use-now"
+
+const now = useNow(1000) // 毫秒时间戳；服务端与水合期间为 null
+```
+
+全页面共用一个对齐整秒的定时器，多个时钟同时存在也只有一个 `setTimeout` 在跑，所有实例的秒数在同一帧跳动。
 
 ## 可访问性
 
 - 时间用语义化的 `<time>` 加机器可读的 `dateTime`，读屏与复制粘贴拿到的都是标准格式。
-- 每秒变化的内容**没有**加 `aria-live`：真正的实时时钟如果每秒播报会完全打断读屏用户。需要提醒时请在外层自行加 `aria-live="polite"`，并考虑降低更新频率。
-- 占位文案（`--:--:-- // 当地时间`）与就位后的文本都使用 `tabular-nums` 且宽度一致，切换时不引起布局跳动，也不会成为空的焦点目标。
-- 组件不含动画与位移，`prefers-reduced-motion` 下表现一致。
+- 每秒变化的内容**没有**加 `aria-live`：真正的实时时钟如果每秒播报会完全打断读屏用户。需要提醒时请在外层自行加 `aria-live="polite"`，并考虑把 `showSeconds` 关掉降低更新频率。
+- 昼夜图标是装饰，同时输出 `白天` / `夜间` 的 `sr-only` 文字，颜色不是唯一信息。
+- 世界时钟是 `role="group"`，用标题栏文字作名称；`AnalogClock` 是 `role="img"`，名称是 `label` 加上分钟精度的时间，指针每秒的变化不会被播报。
+- 开启“减少动态效果”后：数字过渡关闭、模拟表盘按秒跳格、标题栏的“实时”圆点不再闪烁。
+- 占位文案（`--:--:--`）与就位后的文本都使用 `tabular-nums` 且宽度一致，切换时不引起布局跳动。
 
 ## 注意事项
 
 ### 为什么必须在客户端渲染
 
-时间依赖访客的浏览器时钟，服务端渲染出来的秒数一定会过期。组件采用“先占位、再更新”的策略：初始渲染输出 `--:--:--` 占位，挂载后再每秒刷新。这样静态导出的 HTML 与客户端首屏完全一致，不会出现水合警告，也不会先闪出一个错误的时间。
+时间依赖访客的浏览器时钟，服务端渲染出来的秒数一定会过期。`useNow` 在服务端和水合期间返回 `null`，组件输出 `--:--:--` 占位，水合完成后再换成真实时间。这样静态导出的 HTML 与客户端首屏完全一致，不会出现水合警告，也不会先闪出一个错误的时间。
 
 ### 其他
 
 - `timeZone` 必须是合法的 IANA 名称，传错会在浏览器抛 `RangeError`。
-- 每个实例各自持有一个 1 秒定时器；同一页面渲染多个时区时建议控制在几个以内。
-- 时间格式是 24 小时制（`hourCycle: "h23"`），不受 `locale` 影响；需要 12 小时制请在源码里改 `Intl.DateTimeFormat` 的选项。
+- 所有实例共用一个定时器，同一页面放多个时钟的开销只来自各自的格式化；`Intl.DateTimeFormat` 实例按参数缓存。
+- `AnalogClock` 的平滑模式用 `requestAnimationFrame`，每帧只做三次 `setAttribute`；整页放很多块表盘时可以给部分设置 `smooth={false}`。
+- 12 小时制由 `hour12` 控制，24 小时制使用 `hourCycle: "h23"`，两者的上午 / 下午文字由 `locale` 决定。
 
 ## 源码
 

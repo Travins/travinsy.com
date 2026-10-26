@@ -1,12 +1,12 @@
 ---
 title: 时段问候
 titleEn: Greeting
-description: 按访客本地时间显示早上好、中午好、下午好或晚上好，首屏用静态文案避免水合差异。
+description: 按访客本地时间问候：时段图标与色调、可配置的分段时间与称呼；附带四时段指示条和会轮换副标题的问候卡片，首屏用静态文案避免水合差异。
 links:
   源码: https://travinsy.com/r/greeting.json
 ---
 
-<ComponentPreview name="greeting-demo" />
+<ComponentPreview name="greeting-card-demo" />
 
 ## 安装
 
@@ -14,7 +14,15 @@ links:
 
 ## 用法
 
-默认输出 `你好，很高兴在这里遇见你。`，挂载后会换成与访客时段相符的问候语。
+组件分三层，按需取用：
+
+| 组件              | 形态                                                        |
+| ----------------- | ----------------------------------------------------------- |
+| `Greeting`        | 行内文字，放进任何标题或段落                                |
+| `GreetingPeriods` | 早 / 中 / 下午 / 晚四个时段的指示条，当前时段亮起并显示进度 |
+| `GreetingCard`    | 问候卡片：图标、色调、大字问候、轮换的副标题，加上时段指示  |
+
+`Greeting` 默认输出 `你好，很高兴在这里遇见你。`，挂载后换成与访客时段相符的问候语。
 
 ```tsx title="app/greeting.tsx"
 import { Greeting } from "@/components/ui/greeting/greeting"
@@ -28,26 +36,67 @@ export function Intro() {
 }
 ```
 
-需要换文案时传入 `fallback` 与 `suffix`，两者都是纯文本：
+<ComponentPreview name="greeting-demo" />
 
-```tsx title="app/intro.tsx"
-<Greeting fallback="嗨" suffix="，今天想写点什么？" />
-```
+## 示例
 
-四个时段的问候语也可以分别覆盖，适合换口吻或多语言，例如把晚上换成更亲近的说法：
+### 图标与称呼
+
+`showIcon` 在问候语前加当前时段的图标（日出 / 太阳 / 日落 / 月亮），颜色随时段变化；`name` 拼上称呼，`nameSeparator` 控制两者之间的分隔。四个时段的问候语、`fallback` 与 `suffix` 都可以覆盖，`boundaries` 重新划分时段。
+
+<ComponentPreview name="greeting-icon-demo" />
 
 ```tsx
-<Greeting evening="早点休息" suffix="，今天也辛苦了。" />
+<Greeting
+  showIcon
+  name="Travins"
+  evening="夜深了"
+  boundaries={{ morning: 6, noon: 12, afternoon: 15, evening: 20 }}
+  suffix="，今天也辛苦了。"
+/>
 ```
+
+### 时段指示
+
+`GreetingPeriods` 单独使用时就是一条时间轴：每格有图标、名称和区间，当前时段亮起主题之外的专属色调，格子底部的细线是这个时段已经过去的比例（每分钟更新）。区间文字跟着 `boundaries` 走。
+
+<ComponentPreview name="greeting-periods-demo" />
+
+### 问候卡片
+
+`GreetingCard` 把前面的东西组合起来：右上角的大图标与光晕随时段换色，副标题每 6 秒轮换一次（淡入淡出），底部是四时段指示。`showPeriods={false}` 去掉指示，`rotate={false}` 固定在第一条副标题。
+
+### 固定在某个时刻
+
+`hour` 接收 0–24 的小时数（可带小数，如 `12.5`）。传入后结果是确定的，服务端也会直接渲染，不再等待客户端挂载——设计预览、截图和测试都用得上。下面的按钮在真实时间和四个固定时刻之间切换：
+
+<ComponentPreview name="greeting-preview-demo" />
 
 ### 时段划分
 
-| 本地时间 | 问候语 | 对应 prop |
-| --- | --- | --- |
-| 05:00–10:59 | 早上好 | `morning` |
-| 11:00–13:59 | 中午好 | `noon` |
-| 14:00–17:59 | 下午好 | `afternoon` |
-| 18:00–次日 04:59 | 晚上好 | `evening` |
+| 默认本地时间     | 问候语 | 对应 prop   | 色调 |
+| ---------------- | ------ | ----------- | ---- |
+| 05:00–10:59      | 早上好 | `morning`   | 琥珀 |
+| 11:00–13:59      | 中午好 | `noon`      | 天蓝 |
+| 14:00–17:59      | 下午好 | `afternoon` | 玫红 |
+| 18:00–次日 04:59 | 晚上好 | `evening`   | 紫   |
+
+`boundaries` 的四个值是各时段的起始小时，必须严格递增且落在 0–23；传错时回落到默认划分。`evening` 持续到次日 `morning` 开始。
+
+色调来自 `--flow-amber` / `--flow-blue` / `--flow-rose` / `--flow-violet`，安装时随条目一起写入全局样式（与流程动画图示共用同一组变量），也可以在自己的样式里改写。没有这些变量时回落到主题强调色。
+
+### 文案
+
+`Greeting` 的文案用单独的 props；`GreetingPeriods` 与 `GreetingCard` 的文案集中在 `labels`，按字段整体覆盖：
+
+| `labels` 字段         | 用于                                         |
+| --------------------- | -------------------------------------------- |
+| `eyebrow` / `pending` | 卡片顶部小标题，以及挂载前的占位             |
+| `periods`             | 时段指示的读屏名称                           |
+| `names`               | 四个时段的短名称（`{ morning: "早上", … }`） |
+| `tags`                | 小标题后的英文标记（`MORNING` …）            |
+| `messages`            | 各时段轮换的副标题，每个时段至少一条         |
+| `fallbackMessage`     | 挂载前的副标题                               |
 
 ## API
 
@@ -55,32 +104,58 @@ export function Intro() {
 
 <PropsTable name="greeting" component="Greeting" />
 
-根元素是 `<span data-slot="greeting">`，`data-state` 在挂载前是 `pending`、拿到本地小时后变成 `ready`。
+根元素是 `<span data-slot="greeting">`，`data-state` 在挂载前是 `pending`、拿到时段后变成 `ready`，同时带上 `data-period`（`morning` / `noon` / `afternoon` / `evening`）。
+
+### GreetingPeriods
+
+<PropsTable name="greeting" component="GreetingPeriods" />
+
+根元素是 `<ol data-slot="greeting-periods">`，每格 `greeting-period`（`data-period`、`data-active`），进度条 `greeting-progress`。
+
+### GreetingCard
+
+<PropsTable name="greeting" component="GreetingCard" />
+
+根元素是 `<div data-slot="greeting-card">`，带 `data-state` 与 `data-period`。
+
+### useGreetingPeriod
+
+```tsx
+import { useGreetingPeriod } from "@/components/ui/greeting/greeting"
+
+const { period, progress } = useGreetingPeriod() // period 在挂载前为 null
+```
+
+返回当前时段和已过去的比例（0–1），第一个参数是 `boundaries`，第二个是 `hour`。时间来自随条目安装的 `useNow` hook，全页面共用一个定时器。
 
 ## 可访问性
 
 - 渲染的是内联 `<span>`，可以放进 `<p>`、`<h2>` 等任何文本容器，不改变标题层级。
 - 挂载后的文案替换**没有**加 `aria-live`：它是页面的主文案而不是通知，逐字播报会打断读屏用户。确实需要播报时，在外层容器上自己加 `aria-live="polite"`。
-- 时段判断只读本地小时，和键盘、焦点、动效无关；组件不含动画，`prefers-reduced-motion` 下表现一致。
+- 时段图标与光晕都是装饰，`aria-hidden`；颜色之外，当前时段还有 `aria-current="true"` 和文字名称。
+- `GreetingPeriods` 是带 `aria-label` 的有序列表，进度条只是视觉辅助，不进入无障碍树。
+- 开启“减少动态效果”后副标题不再轮换，固定显示第一条；其余部分没有位移动画。
 - 首屏文案与静态 HTML 一致，读屏和搜索引擎看到的是同一段文字，不会出现空内容。
 
 ## 注意事项
 
 ### 为什么必须在客户端渲染
 
-问候语取决于访客设备上的 `new Date().getHours()`，服务端渲染时无从得知。静态导出会把 HTML 在构建时生成一次，如果首屏直接用浏览器时间渲染，客户端水合时拿到的文本就会和 HTML 不一致。
+问候语取决于访客设备上的本地时间，服务端渲染时无从得知。静态导出会把 HTML 在构建时生成一次，如果首屏直接用浏览器时间渲染，客户端水合时拿到的文本就会和 HTML 不一致。
 
-组件因此把 `fallback` 作为初始文案，挂载后再由 `useEffect` 替换，并每分钟校准一次。
+组件因此把 `fallback` 作为初始文案，挂载后再替换，并每分钟校准一次。
 
 <Callout variant="tip" title="把 fallback 写成中性问候">
-  副作用是首屏会短暂显示 `fallback`：把它设成一句中性、通用的问候（例如默认的“你好”）就不会显得突兀。
+  副作用是首屏会短暂显示
+  `fallback`：把它设成一句中性、通用的问候（例如默认的“你好”）就不会显得突兀。传入
+  `hour` 可以绕开这个问题。
 </Callout>
 
-### 文案与结构
+### 其他
 
-- `fallback`、`suffix` 与四个时段文案都是纯字符串，不接受 JSX。需要强调某一段时，在外层用 `<span>` 包裹。
+- 问候语和 `fallback`、`suffix` 都是纯字符串，不接受 JSX。需要强调某一段时，在外层用 `<span>` 包裹。
 - 时区以访客设备为准，不做服务端时区推断，因此不需要 `timeZone` 参数。
-- 组件返回内联 `<span>`，不是块级容器；需要自己的布局时在外部套一层元素。
+- `Greeting` 返回内联 `<span>`，不是块级容器。
 
 ## 源码
 

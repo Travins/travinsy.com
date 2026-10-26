@@ -82,7 +82,7 @@ scripts/                     构建辅助脚本
 - 动态路由必须有 `generateStaticParams()` 且 `dynamicParams = false`
 - 生成文本文件的 Route Handler（如 `llms.txt`、`rss.xml`）必须 `export const dynamic = "force-static"`
 - `trailingSlash: true`（OSS 用 `xxx/index.html` 路由）
-- 外部动态数据（如 GitHub 贡献图）只在**构建时**获取，失败时要有兜底数据，不能让构建挂掉
+- 外部动态数据（如 GitHub 的公开统计）只在**构建时**获取，失败时要有兜底数据，不能让构建挂掉
 
 ### 设计系统
 - 视觉语言：**线条网格**。内容区左右竖线、全宽横线分隔、斜纹分隔带。只用 `@/registry/ui/grid-layout` 里的原语和 `src/styles/grid.css` 里的工具类实现，不要每个页面手写边框

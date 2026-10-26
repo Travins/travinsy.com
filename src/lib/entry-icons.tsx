@@ -29,78 +29,6 @@ const GridLayoutIcon = createLucideIcon("entry-grid-layout", [
   ["path", { d: "M11 12h2", key: "dot" }],
 ])
 
-/** 贡献热力图：3×3 方块，填充深浅不同。 */
-const ContributionGraphIcon = createLucideIcon("entry-contribution-graph", [
-  ["rect", { x: "3", y: "3", width: "5", height: "5", rx: "1", key: "a" }],
-  [
-    "rect",
-    {
-      x: "9.5",
-      y: "3",
-      width: "5",
-      height: "5",
-      rx: "1",
-      fill: "currentColor",
-      fillOpacity: "0.25",
-      key: "b",
-    },
-  ],
-  ["rect", { x: "16", y: "3", width: "5", height: "5", rx: "1", key: "c" }],
-  [
-    "rect",
-    {
-      x: "3",
-      y: "9.5",
-      width: "5",
-      height: "5",
-      rx: "1",
-      fill: "currentColor",
-      fillOpacity: "0.55",
-      key: "d",
-    },
-  ],
-  ["rect", { x: "9.5", y: "9.5", width: "5", height: "5", rx: "1", key: "e" }],
-  [
-    "rect",
-    {
-      x: "16",
-      y: "9.5",
-      width: "5",
-      height: "5",
-      rx: "1",
-      fill: "currentColor",
-      fillOpacity: "0.25",
-      key: "f",
-    },
-  ],
-  ["rect", { x: "3", y: "16", width: "5", height: "5", rx: "1", key: "g" }],
-  [
-    "rect",
-    {
-      x: "9.5",
-      y: "16",
-      width: "5",
-      height: "5",
-      rx: "1",
-      fill: "currentColor",
-      key: "h",
-    },
-  ],
-  [
-    "rect",
-    {
-      x: "16",
-      y: "16",
-      width: "5",
-      height: "5",
-      rx: "1",
-      fill: "currentColor",
-      fillOpacity: "0.55",
-      key: "i",
-    },
-  ],
-])
-
 /** 等轴测标志：一块挤出的薄板，顶面菱形加两个侧面。 */
 const IsometricMarkIcon = createLucideIcon("entry-isometric-mark", [
   ["path", { d: "M12 4 21 8.5 12 13 3 8.5Z", key: "top" }],
@@ -113,7 +41,6 @@ const IsometricMarkIcon = createLucideIcon("entry-isometric-mark", [
 const entryIcons: Record<string, LucideIcon> = {
   // 组件
   "grid-layout": GridLayoutIcon,
-  "contribution-graph": ContributionGraphIcon,
   "local-time": Clock,
   greeting: SunMoon,
   "follow-me": Signature,
