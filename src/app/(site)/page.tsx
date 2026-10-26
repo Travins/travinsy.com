@@ -183,7 +183,7 @@ export default function HomePage() {
         {/* 单元格自带右、下边线，再用负外边距把最外一圈挤出裁剪区，避免和容器的线叠成双线 */}
         <div className="overflow-hidden">
           <ul className="-mr-px -mb-px grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-            {profile.technologies.map((technology, index) => (
+            {profile.technologies.map((technology) => (
               <li
                 key={technology}
                 style={techBrandStyle(technology)}
@@ -196,17 +196,12 @@ export default function HomePage() {
                 />
                 <span
                   aria-hidden="true"
-                  className="absolute top-3 right-3 font-mono text-[10px] text-muted-foreground/60 tabular-nums transition-colors duration-300 group-hover:text-(--brand)"
+                  className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80 transition-[color,background-color,border-color] duration-300 ease-out group-hover:border-transparent group-hover:bg-transparent group-hover:text-(--brand)"
                 >
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80 transition-[color,background-color,border-color,translate,box-shadow] duration-300 ease-out group-hover:border-(--brand)/40 group-hover:bg-(--brand)/10 group-hover:text-(--brand) group-hover:shadow-[0_6px_16px_-8px_var(--brand)] motion-safe:group-hover:-translate-y-0.5"
-                >
+                  {/* 边框和底色淡出的同时图标放大填满原来的框，形成“图标挣脱外框”的错觉 */}
                   <TechIcon
                     name={technology}
-                    className="size-4 transition-transform duration-300 ease-out motion-safe:group-hover:scale-110"
+                    className="size-4 transition-[scale,translate,filter] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:drop-shadow-[0_4px_8px_color-mix(in_oklab,var(--brand)_45%,transparent)] motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:scale-[1.75]"
                   />
                 </span>
                 <span className="font-mono text-xs break-words" translate="no">
