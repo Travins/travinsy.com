@@ -307,7 +307,7 @@ function GreetingCard({
           />
           {text.eyebrow} / {period ? text.tags[period] : text.pending}
         </p>
-        <p className="mt-3 text-4xl font-semibold tracking-tight">
+        <p className="mt-3 pr-14 text-4xl font-semibold tracking-tight">
           <Greeting
             fallback={fallback}
             morning={morning}

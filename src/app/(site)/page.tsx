@@ -3,7 +3,7 @@ import { ArrowUpRight, Globe } from "lucide-react"
 import type { ComponentType, SVGProps } from "react"
 
 import { GitHubMark, XMark } from "@/components/home/brand-icons"
-import { FeaturedFlowCard } from "@/components/home/featured-flow-card"
+import { FeaturedBento } from "@/components/home/featured-bento"
 import { SectionFrame } from "@/components/home/section-frame"
 import FlowDiagramAgentDemo from "@/registry/examples/flow-diagram-agent-demo"
 import FlowDiagramDeployDemo from "@/registry/examples/flow-diagram-deploy-demo"
@@ -13,8 +13,7 @@ import { TechIcon, techBrandStyle } from "@/components/home/tech-icon"
 import { TerminalCard } from "@/components/home/terminal-card"
 import { buttonVariants } from "@/components/ui/button"
 import { profile } from "@/config/profile"
-import { blogPosts, entryTitleEn } from "@/lib/source"
-import registry from "../../../registry.json"
+import { blogPosts } from "@/lib/source"
 import {
   GridColumns,
   GridContainer,
@@ -35,38 +34,12 @@ const focusIllustrations: Record<
   agent: FlowDiagramAgentDemo,
   deploy: FlowDiagramDeployDemo,
 }
-// 首位大卡上的特性标签
-const leadTags = ["多彩色调", "光点路径", "进入视口才播放"]
 const focusClass =
   "rounded-sm transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 const cardFocusClass =
   "transition-colors hover:bg-muted/30 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ring"
 
-/** 精选卡片标题：英文名为主（更直观），中文名小一号放在下一行；没有英文名时只显示中文。 */
-function EntryTitle({ name, title }: { name: string; title: string }) {
-  const titleEn = entryTitleEn("components", name)
-  if (!titleEn) return <>{title}</>
-  return (
-    <>
-      <span lang="en" translate="no">
-        {titleEn}
-      </span>
-      <span className="mt-0.5 block text-[13px] font-normal text-muted-foreground">
-        {title}
-      </span>
-    </>
-  )
-}
-
 export default function HomePage() {
-  // 精选组件的标题与描述都来自 Registry，保持与文档、安装产物同源。
-  const featured = profile.featuredComponents.map((name) => {
-    const item = registry.items.find((entry) => entry.name === name)
-    if (!item) throw new Error(`未登记的 Registry 条目：${name}`)
-    return item
-  })
-  // 首位的组件以大卡展示实时预览，其余是图标卡片。
-  const [lead, ...others] = featured
   // 最新文章按发布日期倒序，只取首页展示的两篇。
   const posts = blogPosts().slice(0, 2)
   return (
@@ -231,70 +204,7 @@ export default function HomePage() {
           </Link>
         }
       >
-        <div className="divide-y divide-edge">
-          <FeaturedFlowCard href={`/components/${lead.name}/`}>
-            <div className="flex min-w-0 flex-col gap-5 p-4 sm:p-6 lg:justify-center">
-              <div>
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-base font-medium tracking-tight">
-                    <EntryTitle name={lead.name} title={lead.title} />
-                  </h3>
-                  <ArrowUpRight
-                    aria-hidden="true"
-                    className="mt-1 size-4 shrink-0 text-muted-foreground transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
-                  />
-                </div>
-                <p className="mt-2 text-[13px] leading-6 text-muted-foreground">
-                  {lead.description}
-                </p>
-              </div>
-              <ul
-                aria-label="特性"
-                className="flex flex-wrap gap-2 font-mono text-[10px] text-muted-foreground"
-              >
-                {leadTags.map((tag) => (
-                  <li
-                    key={tag}
-                    className="rounded-sm border border-edge px-1.5 py-0.5"
-                  >
-                    {tag}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </FeaturedFlowCard>
-          {[0, 2].map((offset) => (
-            <GridColumns key={offset}>
-              {others.slice(offset, offset + 2).map((item) => {
-                return (
-                  <Link
-                    key={item.name}
-                    href={`/components/${item.name}/`}
-                    className={`group flex min-w-0 flex-col gap-5 p-4 sm:p-6 ${cardFocusClass}`}
-                  >
-                    <div>
-                      <div className="flex items-start justify-between gap-4">
-                        <h3 className="text-base font-medium tracking-tight">
-                          <EntryTitle name={item.name} title={item.title} />
-                        </h3>
-                        <ArrowUpRight
-                          aria-hidden="true"
-                          className="mt-1 size-4 shrink-0 text-muted-foreground transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
-                        />
-                      </div>
-                      <p className="mt-2 text-[13px] leading-6 text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                    <p className="mt-auto font-mono text-[10px] text-muted-foreground">
-                      {item.files[0].path.split("/").at(-1)}
-                    </p>
-                  </Link>
-                )
-              })}
-            </GridColumns>
-          ))}
-        </div>
+        <FeaturedBento />
       </SectionFrame>
       {posts.length > 0 && (
         <SectionFrame

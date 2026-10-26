@@ -77,16 +77,16 @@ export const profile = {
     { name: "Cursor", href: "https://cursor.com" },
   ],
   /**
-   * 首页「精选组件」：名称对应 registry.json 的条目，
-   * 标题、描述与链接都直接取自 Registry，避免再维护一份文案。
-   * 第一项以带实时预览的大卡展示，其余是图标卡片，每两个一行。
+   * 首页「精选组件」Bento：名称对应 registry.json 的条目，标题与链接都直接取自 Registry。
+   * size 决定占的格子（宽屏三列）：lead 2×2、tall 1×2、cell 1×1；平板里 lead 通栏，其余各占一格。
+   * 顺序即网格的填充顺序；每个条目在 featured-bento.tsx 里要有对应的预览。
    */
   featuredComponents: [
-    "flow-diagram",
-    "grid-layout",
-    "local-time",
-    "greeting",
-    "isometric-mark",
+    { name: "flow-diagram", size: "lead" },
+    { name: "isometric-mark", size: "tall" },
+    { name: "local-time", size: "cell" },
+    { name: "grid-layout", size: "cell" },
+    { name: "greeting", size: "cell" },
   ],
   about: [
     "你好，我是 Travins，travinsy.com 是我的个人站。我关注全栈开发、AI 应用与大模型部署，也喜欢把反复用到的界面细节整理成组件。",
