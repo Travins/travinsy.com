@@ -1,5 +1,5 @@
 export const SITE_NAME = "travinsy"
-export const GITHUB_URL = "https://github.com/travinsy"
+export const GITHUB_URL = "https://github.com/Travins"
 
 export const SITE_NAV = [
   { label: "文档", href: "/docs/" },
