@@ -7,7 +7,7 @@ import {
 const MARK_SHAPES: readonly IsometricShape[] = [
   {
     outer: [
-      [17, 0],
+      [60, 0],
       [315, 0],
       [315, 281],
       [264, 332],
@@ -24,6 +24,7 @@ const MARK_SHAPES: readonly IsometricShape[] = [
       [17, 217],
       [64, 170],
       [17, 170],
+      [17, 43],
     ],
     holes: [
       [
