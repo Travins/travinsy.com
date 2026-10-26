@@ -2,6 +2,8 @@
 
 import dynamic from "next/dynamic"
 import { SearchIcon } from "lucide-react"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 
 const loadDialog = () => import("./search-dialog")
@@ -68,11 +70,13 @@ export function SearchButton() {
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-keyshortcuts="Meta+k Control+k /"
-        // 无边框的轻量入口：图标 + 快捷键，宽屏再露出文字；悬停才出底色
-        className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md px-1.5 text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 aria-expanded:bg-muted aria-expanded:text-foreground"
+        // 与右侧图标按钮同款 ghost 按钮、同为 default 档（32px），悬停底色高度一致
+        className={cn(
+          buttonVariants({ variant: "ghost", size: "default" }),
+          "gap-1.5 px-2 aria-expanded:bg-muted",
+        )}
       >
         <SearchIcon className="size-4 shrink-0" aria-hidden />
-        <span className="hidden text-sm font-medium xl:inline">搜索…</span>
         <span aria-hidden className="hidden items-center gap-0.5 md:flex">
           {(isMac ? ["⌘", "K"] : ["Ctrl", "K"]).map((key) => (
             <kbd
