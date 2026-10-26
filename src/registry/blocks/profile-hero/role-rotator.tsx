@@ -37,11 +37,17 @@ function RoleRotator({
       </span>
       {/* 读屏一次性读出全部标签，视觉上的轮播对读屏隐藏 */}
       <span className="sr-only">{roles.join("、")}</span>
-      <span aria-hidden="true" className="min-w-0">
+      {/* 所有标签叠在同一个 grid 单元里：隐形副本把宽度撑到最长那项，切换时暂停按钮不会左右跳 */}
+      <span aria-hidden="true" className="grid min-w-0">
+        {roles.map((role) => (
+          <span key={role} className="invisible col-start-1 row-start-1">
+            {role}
+          </span>
+        ))}
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
             key={index}
-            className="inline-block"
+            className="col-start-1 row-start-1"
             initial={{ opacity: 0, y: reducedMotion ? 0 : 5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: reducedMotion ? 0 : -5 }}
