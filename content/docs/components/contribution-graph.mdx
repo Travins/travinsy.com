@@ -36,11 +36,13 @@ export function Contributions() {
 
 ### 数据形状
 
-| 字段 | 类型 | 说明 |
-| --- | --- | --- |
-| `date` | `string` | `YYYY-MM-DD`，按 UTC 解析 |
-| `count` | `number` | 当天数量，用于悬浮提示与数据表 |
-| `level` | `number` | 0–4，只决定方块深浅 |
+<TypeTable
+  type={{
+    date: { type: "string", description: "`YYYY-MM-DD`，按 UTC 解析", required: true },
+    count: { type: "number", description: "当天数量，用于悬浮提示与数据表", required: true },
+    level: { type: "number", description: "0–4，只决定方块深浅", required: true },
+  }}
+/>
 
 `level` 与颜色一一对应，语义始终由 `count` 提供。站点构建时即使从 GitHub 抓取失败，也可以直接复用旧数据；组件不会因为空数组而崩溃。
 
@@ -63,6 +65,8 @@ export function Contributions() {
 `locale` 只影响 `Intl` 的格式化结果：月份表头（`1月` / `Jan`）、星期表头与数字分组（`1,234`）。
 
 ## API
+
+### ContributionGraph
 
 <PropsTable name="contribution-graph" component="ContributionGraph" />
 
@@ -92,7 +96,11 @@ export function Contributions() {
 
 ## 注意事项
 
-没有有效数据时组件渲染一行静态文案，不会抛错。日期必须是能被 `Date.parse` 解析的完整日期，例如 `2025-12-31`；`2025-12` 这类简写会被过滤掉。
+没有有效数据时组件渲染一行静态文案，不会抛错。
+
+<Callout variant="warning" title="日期必须是完整日期">
+  日期必须是能被 `Date.parse` 解析的完整日期，例如 `2025-12-31`；`2025-12` 这类简写会被过滤掉。
+</Callout>
 
 数据只在**构建时**或父组件传入时确定，组件本身不发起请求，符合静态导出的约束。
 

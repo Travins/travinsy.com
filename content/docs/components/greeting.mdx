@@ -50,6 +50,8 @@ export function Intro() {
 
 ## API
 
+### Greeting
+
 <PropsTable name="greeting" component="Greeting" />
 
 根元素是 `<span data-slot="greeting">`，`data-state` 在挂载前是 `pending`、拿到本地小时后变成 `ready`。
@@ -67,7 +69,11 @@ export function Intro() {
 
 问候语取决于访客设备上的 `new Date().getHours()`，服务端渲染时无从得知。静态导出会把 HTML 在构建时生成一次，如果首屏直接用浏览器时间渲染，客户端水合时拿到的文本就会和 HTML 不一致。
 
-组件因此把 `fallback` 作为初始文案，挂载后再由 `useEffect` 替换，并每分钟校准一次。副作用是首屏会短暂显示 `fallback`：把它设成一句中性、通用的问候（例如默认的“你好”）就不会显得突兀。
+组件因此把 `fallback` 作为初始文案，挂载后再由 `useEffect` 替换，并每分钟校准一次。
+
+<Callout variant="tip" title="把 fallback 写成中性问候">
+  副作用是首屏会短暂显示 `fallback`：把它设成一句中性、通用的问候（例如默认的“你好”）就不会显得突兀。
+</Callout>
 
 ### 文案与结构
 

@@ -94,11 +94,13 @@ export { siteConfig }
 
 `SiteHeader`、`StackSection`、`AboutSection` 接受可选的 `labels`，覆盖 `lib/config.ts` 里的 `DEFAULT_LABELS`；区块标题（「技术栈」「关于我」等）属于 `siteConfig` 数据，通过 `title` 属性传入。
 
-| 键 | 默认值 | 使用位置 |
-| --- | --- | --- |
-| `siteNav` | `页面导航` | 页头导航的 `aria-label` |
-| `stackEyebrow` | `TOOLS OF THE TRADE` | 技术栈区块右上角的等宽小字 |
-| `aboutFootnote` | `持续学习，慢慢构建。` | 关于我区块结尾的一句小字 |
+<TypeTable
+  type={{
+    siteNav: { type: "string", description: "页头导航的 `aria-label`", default: '"页面导航"' },
+    stackEyebrow: { type: "string", description: "技术栈区块右上角的等宽小字", default: '"TOOLS OF THE TRADE"' },
+    aboutFootnote: { type: "string", description: "关于我区块结尾的一句小字", default: '"持续学习，慢慢构建。"' },
+  }}
+/>
 
 ### data-slot
 

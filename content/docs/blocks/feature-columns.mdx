@@ -38,12 +38,16 @@ export default function Page() {
 
 ## API
 
-| 属性 | 类型 | 说明 |
-| --- | --- | --- |
-| `title` | `string` | 区块标题 |
-| `items` | `{ title: string; description: string; icon?: ReactNode }[]` | 每一栏的内容，建议 2–4 项 |
-| `id` | `string` | 锚点 id，供页头导航跳转 |
-| `className` | `string` | 追加到外层 `GridSection` |
+### FeatureColumns
+
+<TypeTable
+  type={{
+    title: { type: "string", description: "区块标题", required: true },
+    items: { type: "{ title: string; description: string; icon?: ReactNode }[]", description: "每一栏的内容，建议 2–4 项", required: true },
+    id: { type: "string", description: "锚点 id，供页头导航跳转" },
+    className: { type: "string", description: "追加到外层 `GridSection`" },
+  }}
+/>
 
 区块里的文字全部来自 `title` 与 `items`（页面数据），没有内置文案，所以不需要 `labels`。
 

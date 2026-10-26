@@ -37,17 +37,27 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    * 投影前绕图形中心旋转的角度（度），用来选择图形平躺在地上的朝向。
    * 取 90 的整数倍时图形的横竖边始终沿等轴测斜轴，看起来是一块平放的板；
    * 传 -90 时原图的横向沿右上方延伸、竖向沿右下方延伸，最接近“正着读”。
+   * @default 0
    */
   rotation?: number
   /** 挤出高度，默认取图形平面尺寸的 12% */
   depth?: number
   /** 按下后的挤出高度，默认是 `depth` 的一半 */
   pressedDepth?: number
-  /** 点击 / 触摸时是否有按下效果，默认开启 */
+  /**
+   * 点击 / 触摸时是否有按下效果
+   * @default true
+   */
   interactive?: boolean
-  /** 线条是否有跟随鼠标的高光，默认开启；触屏与“减少动态效果”下自动关闭 */
+  /**
+   * 线条是否有跟随鼠标的高光；触屏与“减少动态效果”下自动关闭
+   * @default true
+   */
   highlight?: boolean
-  /** 是否显示背景里沿等轴测方向延伸的虚线辅助线，默认关闭 */
+  /**
+   * 是否显示背景里沿等轴测方向延伸的虚线辅助线
+   * @default false
+   */
   guides?: boolean
   /** 可访问名称；不传时整个图形对读屏隐藏 */
   label?: string

@@ -97,17 +97,21 @@ export function Workspace() {
 
 ### AgentChatProvider
 
-| 属性              | 类型                       | 默认值 / 说明                          |
-| ----------------- | -------------------------- | -------------------------------------- |
-| `defaultMode`     | `"embedded" \| "floating"` | `"floating"`                           |
-| `defaultOpen`     | `boolean`                  | `false`                                |
-| `transport`       | `ChatTransport<UIMessage>` | 内置 mock transport                    |
-| `suggestions`     | `string[]`                 | 三个示例问题，传 `[]` 隐藏             |
-| `title`           | `string`                   | `"AI 助手"`                            |
-| `initialMessages` | `UIMessage[]`              | 可选的初始记录，演示页用它预填一轮对话 |
-| `children`        | `ReactNode`                | 工作区内容                             |
+<TypeTable
+  type={{
+    defaultMode: { type: '"embedded" | "floating"', description: "初始布局模式", default: '"floating"' },
+    defaultOpen: { type: "boolean", description: "初始是否展开", default: "false" },
+    transport: { type: "ChatTransport<UIMessage>", description: "聊天传输层；不传则使用内置 mock transport" },
+    suggestions: { type: "string[]", description: "建议问题；不传时显示三个示例问题，传 `[]` 隐藏" },
+    title: { type: "string", description: "面板标题", default: '"AI 助手"' },
+    initialMessages: { type: "UIMessage[]", description: "可选的初始记录，演示页用它预填一轮对话" },
+    children: { type: "ReactNode", description: "工作区内容", required: true },
+  }}
+/>
 
-`default*` 与 `initialMessages` 只用于初始化。更换会话或 transport 配置时，可通过 Provider 的 React `key` 重新创建实例。会话状态仅在当前 Provider 生命周期内保存，刷新后重置；浮动窗口位置单独保存在 `localStorage`（`travinsy:agent-chat:position`），刷新或切换布局后仍会恢复。读取时以及窗口尺寸变化时，都会把位置约束在视口内。存储不可用时仍可在当前页面移动。
+<Callout title="初始化与持久化">
+  `default*` 与 `initialMessages` 只用于初始化。更换会话或 transport 配置时，可通过 Provider 的 React `key` 重新创建实例。会话状态仅在当前 Provider 生命周期内保存，刷新后重置；浮动窗口位置单独保存在 `localStorage`（`travinsy:agent-chat:position`），刷新或切换布局后仍会恢复。读取时以及窗口尺寸变化时，都会把位置约束在视口内。存储不可用时仍可在当前页面移动。
+</Callout>
 
 ### labels
 

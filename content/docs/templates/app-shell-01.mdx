@@ -257,9 +257,11 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 
 ### AppShellScript
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `storageKey` | `string` | `"travinsy:app-shell:collapsed"` | 读取折叠状态的 `localStorage` 键，需与 `AppShell` 的 `storageKey` 一致 |
+<TypeTable
+  type={{
+    storageKey: { type: "string", description: "读取折叠状态的 `localStorage` 键，需与 `AppShell` 的 `storageKey` 一致", default: '"travinsy:app-shell:collapsed"' },
+  }}
+/>
 
 通常不需要直接使用，`AppShell` 在非受控时会自动渲染它。
 
@@ -282,41 +284,67 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 
 **外壳**
 
-| 键 | 默认值 | 说明 |
-| --- | --- | --- |
-| `skipToContent` | `跳转到主内容` | 键盘跳转链接 |
-| `mainContent` | `主内容` | `main` 的 `aria-label` |
-| `mainNavigation` / `mainNavigationDescription` | `主导航` / `选择要访问的页面` | 一级导航名称、窄屏抽屉说明 |
-| `openNavigation` | `打开导航` | 窄屏打开抽屉按钮 |
-| `collapseSidebar` / `expandSidebar` | `收起侧边栏` / `展开侧边栏` | 折叠按钮名称，随状态切换 |
-| `breadcrumb` | `面包屑` | 面包屑的 `aria-label` |
-| `brandHome` | `{name}，回到首页` | 品牌链接的 `aria-label` |
-| `workspaceNavigation` / `workspaceSidebar` | `{name}导航` / `{name}侧栏` | 二级导航与二级侧栏的 `aria-label` |
-| `toggleTheme` | `切换亮暗模式` | 亮暗模式按钮 |
-| `userMenu` / `signOut` | `用户菜单：{name}` / `退出登录` | 用户菜单 |
-| `pageToolbar` / `totalUnit` | `列表控制` / `条` | 工具栏名称与总数单位 |
-| `previousPage` / `nextPage` | `上一页` / `下一页` | 翻页按钮 |
-| `search` | `搜索` | 搜索框默认名称 |
-| `serviceStatus` / `serviceStatusAria` / `checkedAt` | `服务状态` / `查看服务状态：{name}` / `检查于 {name}` | 顶栏服务状态 |
-| `stateHealthy` / `stateWarning` / `stateUnavailable` / `stateUnknown` | `可用` / `需关注` / `不可用` / `未知` | 服务状态文字 |
+<TypeTable
+  type={{
+    skipToContent: { type: "string", description: "键盘跳转链接", default: '"跳转到主内容"' },
+    mainContent: { type: "string", description: "`main` 的 `aria-label`", default: '"主内容"' },
+    mainNavigation: { type: "string", description: "一级导航名称、窄屏抽屉说明", default: '"主导航"' },
+    mainNavigationDescription: { type: "string", description: "一级导航名称、窄屏抽屉说明", default: '"选择要访问的页面"' },
+    openNavigation: { type: "string", description: "窄屏打开抽屉按钮", default: '"打开导航"' },
+    collapseSidebar: { type: "string", description: "折叠按钮名称，随状态切换", default: '"收起侧边栏"' },
+    expandSidebar: { type: "string", description: "折叠按钮名称，随状态切换", default: '"展开侧边栏"' },
+    breadcrumb: { type: "string", description: "面包屑的 `aria-label`", default: '"面包屑"' },
+    brandHome: { type: "string", description: "品牌链接的 `aria-label`", default: '"{name}，回到首页"' },
+    workspaceNavigation: { type: "string", description: "二级导航与二级侧栏的 `aria-label`", default: '"{name}导航"' },
+    workspaceSidebar: { type: "string", description: "二级导航与二级侧栏的 `aria-label`", default: '"{name}侧栏"' },
+    toggleTheme: { type: "string", description: "亮暗模式按钮", default: '"切换亮暗模式"' },
+    userMenu: { type: "string", description: "用户菜单", default: '"用户菜单：{name}"' },
+    signOut: { type: "string", description: "用户菜单", default: '"退出登录"' },
+    pageToolbar: { type: "string", description: "工具栏名称与总数单位", default: '"列表控制"' },
+    totalUnit: { type: "string", description: "工具栏名称与总数单位", default: '"条"' },
+    previousPage: { type: "string", description: "翻页按钮", default: '"上一页"' },
+    nextPage: { type: "string", description: "翻页按钮", default: '"下一页"' },
+    search: { type: "string", description: "搜索框默认名称", default: '"搜索"' },
+    serviceStatus: { type: "string", description: "顶栏服务状态", default: '"服务状态"' },
+    serviceStatusAria: { type: "string", description: "顶栏服务状态", default: '"查看服务状态：{name}"' },
+    checkedAt: { type: "string", description: "顶栏服务状态", default: '"检查于 {name}"' },
+    stateHealthy: { type: "string", description: "服务状态文字", default: '"可用"' },
+    stateWarning: { type: "string", description: "服务状态文字", default: '"需关注"' },
+    stateUnavailable: { type: "string", description: "服务状态文字", default: '"不可用"' },
+    stateUnknown: { type: "string", description: "服务状态文字", default: '"未知"' },
+  }}
+/>
 
 **页面内容（演示页）**
 
-| 键 | 默认值 | 说明 |
-| --- | --- | --- |
-| `overviewSection` / `overviewTitle` | `工作台` / `概览` | 概览页标题栏 |
-| `overviewDescription` | `近 24 小时的拨测质量与告警情况` | 概览页说明 |
-| `exportAction` / `refreshAction` | `导出` / `刷新` | 概览页操作按钮 |
-| `keyMetrics` | `关键指标` | 统计卡片区的 `aria-label` |
-| `latencyTrend` / `latencyTrendUnit` | `响应耗时趋势` / `每小时 P50，单位 ms` | 柱状图卡片 |
-| `latencyChartLabel` | `过去 24 小时响应耗时，最高 {max} 毫秒，最低 {min} 毫秒` | 柱状图的 `aria-label` |
-| `recentEvents` / `recentEventsCount` / `eventsCaption` | `最近事件` / `按时间倒序，共 {count} 条` / `最近拨测事件` | 事件表卡片与表格题注 |
-| `createAction` | `新建` | 列表页新建按钮 |
-| `searchEvents` | `搜索应用或目标` | 列表页搜索框 |
-| `listCaption` | `{title}列表` | 列表页表格题注 |
-| `emptyRows` | `没有匹配的记录` | 空结果提示 |
-| `columnApp` / `columnTarget` / `columnStatus` / `columnLatency` / `columnTime` | `应用` / `目标` / `状态` / `耗时` / `时间` | 表头 |
-| `eventOk` / `eventWarning` / `eventError` | `正常` / `需关注` / `异常` | 事件状态徽标文字 |
+<TypeTable
+  type={{
+    overviewSection: { type: "string", description: "概览页标题栏", default: '"工作台"' },
+    overviewTitle: { type: "string", description: "概览页标题栏", default: '"概览"' },
+    overviewDescription: { type: "string", description: "概览页说明", default: '"近 24 小时的拨测质量与告警情况"' },
+    exportAction: { type: "string", description: "概览页操作按钮", default: '"导出"' },
+    refreshAction: { type: "string", description: "概览页操作按钮", default: '"刷新"' },
+    keyMetrics: { type: "string", description: "统计卡片区的 `aria-label`", default: '"关键指标"' },
+    latencyTrend: { type: "string", description: "柱状图卡片", default: '"响应耗时趋势"' },
+    latencyTrendUnit: { type: "string", description: "柱状图卡片", default: '"每小时 P50，单位 ms"' },
+    latencyChartLabel: { type: "string", description: "柱状图的 `aria-label`", default: '"过去 24 小时响应耗时，最高 {max} 毫秒，最低 {min} 毫秒"' },
+    recentEvents: { type: "string", description: "事件表卡片与表格题注", default: '"最近事件"' },
+    recentEventsCount: { type: "string", description: "事件表卡片与表格题注", default: '"按时间倒序，共 {count} 条"' },
+    eventsCaption: { type: "string", description: "事件表卡片与表格题注", default: '"最近拨测事件"' },
+    createAction: { type: "string", description: "列表页新建按钮", default: '"新建"' },
+    searchEvents: { type: "string", description: "列表页搜索框", default: '"搜索应用或目标"' },
+    listCaption: { type: "string", description: "列表页表格题注", default: '"{title}列表"' },
+    emptyRows: { type: "string", description: "空结果提示", default: '"没有匹配的记录"' },
+    columnApp: { type: "string", description: "表头", default: '"应用"' },
+    columnTarget: { type: "string", description: "表头", default: '"目标"' },
+    columnStatus: { type: "string", description: "表头", default: '"状态"' },
+    columnLatency: { type: "string", description: "表头", default: '"耗时"' },
+    columnTime: { type: "string", description: "表头", default: '"时间"' },
+    eventOk: { type: "string", description: "事件状态徽标文字", default: '"正常"' },
+    eventWarning: { type: "string", description: "事件状态徽标文字", default: '"需关注"' },
+    eventError: { type: "string", description: "事件状态徽标文字", default: '"异常"' },
+  }}
+/>
 
 ### data-slot 与状态
 

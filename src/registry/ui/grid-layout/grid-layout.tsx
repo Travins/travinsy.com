@@ -10,13 +10,20 @@ const gridCrosshairVariants = cva(
   "pointer-events-none absolute z-10 size-[11px] before:absolute before:inset-y-0 before:left-[5px] before:w-px before:bg-foreground/45 after:absolute after:inset-x-0 after:top-[5px] after:h-px after:bg-foreground/45",
   {
     variants: {
+      /**
+       * 十字所在的角：top-left、top-right、bottom-left、bottom-right
+       * @default "top-left"
+       */
       position: {
         "top-left": "-top-[6px] -left-[6px]",
         "top-right": "-top-[6px] -right-[6px]",
         "bottom-left": "-bottom-[5px] -left-[6px]",
         "bottom-right": "-right-[6px] -bottom-[5px]",
       },
-      /** line：底线由 screen-line-bottom 画在元素内侧（GridSection / GridSeparator）；border：元素自身有四边 border */
+      /**
+       * 十字的定位基准。line：底线由 screen-line-bottom 画在元素内侧（GridSection / GridSeparator）；border：元素自身有四边 border
+       * @default "line"
+       */
       anchor: { line: "", border: "" },
     },
     compoundVariants: [
@@ -104,9 +111,15 @@ function GridSection({
   children,
   ...props
 }: React.ComponentProps<"section"> & {
-  /** 在行的顶部补一条全屏横线（默认只画底线） */
+  /**
+   * 在行的顶部补一条全屏横线（默认只画底线）
+   * @default false
+   */
   topLine?: boolean
-  /** 在底线与左右竖线的两个交点处绘制「+」，默认关闭 */
+  /**
+   * 在底线与左右竖线的两个交点处绘制「+」
+   * @default false
+   */
   crosshair?: boolean
 }) {
   return (
@@ -143,11 +156,17 @@ function GridSeparator({
   ...props
 }: React.ComponentProps<"div"> &
   VariantProps<typeof gridSeparatorVariants> & {
-    /** 纹路：dots（默认）、ruler、hatch、grid、plus、wave，none 为只留线条 */
+    /**
+     * 纹路：dots、ruler、hatch、grid、plus、wave，none 为只留线条
+     * @default "dots"
+     */
     pattern?: GridSeparatorPattern | null
     /** 左侧的等宽小字编号（如 `02 / PROJECTS`），像标签一样贴在纹路上；可与任意纹路组合 */
     label?: React.ReactNode
-    /** 是否在四个交点绘制十字，默认关闭 */
+    /**
+     * 是否在四个交点绘制十字
+     * @default false
+     */
     crosshair?: boolean
   }) {
   const resolved = pattern ?? "dots"

@@ -3,7 +3,8 @@ import type { ComponentProps } from "react"
 import { ComponentPreview } from "./component-preview"
 import { ComponentSource } from "./component-source"
 import { InstallCommand } from "./install-command"
-import { PropsTable } from "./props-table"
+import { PropsTable, TypeTable } from "./props-table"
+import { Callout } from "./callout"
 import { MdxPre } from "./code-block"
 
 export const mdxComponents: MDXComponents = {
@@ -11,6 +12,14 @@ export const mdxComponents: MDXComponents = {
   ComponentSource,
   InstallCommand,
   PropsTable,
+  TypeTable,
+  Callout,
+  // 表格外包一层：圆角外框 + 窄屏横向滚动，样式见 docs.css
+  table: (props) => (
+    <div className="docs-table-wrap">
+      <table {...props} />
+    </div>
+  ),
   pre: MdxPre,
   // fumadocs-mdx 会把 Markdown 图片转成静态导入（带宽高的对象），这里取出真实地址与尺寸
   img: ({ src, width, height, alt, ...props }) => {

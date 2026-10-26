@@ -97,6 +97,10 @@ function AgentChatPanel({
   id,
   draggable = true,
 }: Pick<ComponentProps<"aside">, "className" | "id"> & {
+  /**
+   * 桌面浮动模式下是否允许拖动面板；小于 768px 的 Sheet 始终不可拖动
+   * @default true
+   */
   draggable?: boolean
 }) {
   const { mode, open, setOpen, title, labels } = useAgentContext()

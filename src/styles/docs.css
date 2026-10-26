@@ -158,27 +158,80 @@
   max-height: 22.5rem;
   overflow-y: hidden;
 }
+/* 属性表里的完整类型：shiki 高亮，长联合类型在空格处自动换行 */
+.docs-type pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78125rem;
+  line-height: 1.25rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: transparent !important;
+}
+.docs-type pre code {
+  font-family: inherit;
+}
+.docs-type pre,
+.docs-type pre span {
+  color: var(--shiki-light, var(--foreground));
+}
+.dark .docs-type pre,
+.dark .docs-type pre span {
+  color: var(--shiki-dark, var(--foreground));
+}
+/* Markdown 表格：与 TypeTable 同一视觉语言，圆角外框 + 表头底色 + 行分隔线；
+ * 窄屏由外框横向滚动，不挤压列宽（首列不折断，其余列保留最小宽度）。 */
 .docs-table-wrap {
   max-width: 100%;
-  overflow-x: auto;
   margin: 1.5rem 0;
+  overflow-x: auto;
+  border: 1px solid var(--edge);
+  border-radius: 0.75rem;
+  background: var(--background);
 }
 .docs-table-wrap table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.8125rem;
+  line-height: 1.5rem;
   text-align: left;
-}
-.docs-table-wrap caption {
-  text-align: left;
-  margin-bottom: 0.75rem;
-  color: var(--muted-foreground);
-  font-size: 0.75rem;
+  overflow-wrap: normal;
 }
 .docs-table-wrap :is(th, td) {
-  border-bottom: 1px solid var(--edge);
-  padding: 0.625rem 0.5rem;
+  padding: 0.5rem 0.75rem;
   vertical-align: top;
+}
+.docs-table-wrap thead {
+  background: color-mix(in oklab, var(--muted) 40%, transparent);
+}
+.docs-table-wrap th {
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--edge);
+}
+.docs-table-wrap tbody tr + tr > td {
+  border-top: 1px solid var(--edge);
+}
+.docs-table-wrap td:first-child {
+  white-space: nowrap;
+}
+.docs-table-wrap td:not(:first-child) {
+  min-width: 9rem;
+}
+@media (max-width: 639px) {
+  .docs-table-wrap td:not(:first-child) {
+    min-width: 12rem;
+  }
+}
+.docs-prose .docs-table-wrap code {
+  padding: 0.0625rem 0.3125rem;
+  border: 0;
+  border-radius: 0.25rem;
+  background: var(--muted);
+  font-size: 0.75rem;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 @media (min-width: 768px) {
   .docs-layout {

@@ -42,19 +42,23 @@ export default function Page() {
 
 ### SocialFollow
 
-| 属性 | 类型 | 说明 |
-| --- | --- | --- |
-| `socials` | `{ name: string; href: string; icon: ReactNode }[]` | 链接列表；`name` 同时作为读屏名称和悬停提示 |
-| `note` | `string` | 右侧小字，默认「在别处，也在这里」，传空字符串隐藏 |
-| `followMe` | `boolean` | 是否显示容器外侧的手写体 follow me 装饰，默认 `true` |
-| `labels` | `Partial<SocialFollowLabels>` | 覆盖默认文案，见下方 labels |
-| `className` | `string` | 追加到外层 `GridSection` |
+<TypeTable
+  type={{
+    socials: { type: "{ name: string; href: string; icon: ReactNode }[]", description: "链接列表；`name` 同时作为读屏名称和悬停提示", required: true },
+    note: { type: "string", description: "右侧小字，传空字符串隐藏", default: '"在别处，也在这里"' },
+    followMe: { type: "boolean", description: "是否显示容器外侧的手写体 follow me 装饰", default: "true" },
+    labels: { type: "Partial<SocialFollowLabels>", description: "覆盖默认文案，见下方 labels" },
+    className: { type: "string", description: "追加到外层 `GridSection`" },
+  }}
+/>
 
 ### labels
 
-| 键 | 默认值 | 说明 |
-| --- | --- | --- |
-| `socialLinks` | `社交链接` | 区块的 `aria-label` |
+<TypeTable
+  type={{
+    socialLinks: { type: "string", description: "区块的 `aria-label`", default: '"社交链接"' },
+  }}
+/>
 
 ### data-slot
 

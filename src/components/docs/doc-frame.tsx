@@ -44,18 +44,14 @@ export function DocFramePanel({ className, ...props }: ComponentProps<"div">) {
   )
 }
 
-/** 工具栏里的下划线式标签：下划线贴在工具栏底边，与内层上边框相接。 */
+/** 工具栏里的分段控件式标签：muted 底的容器 + 选中项 background 底色块（无下划线）。 */
 export function DocTabsList({
   className,
   ...props
 }: ComponentProps<typeof TabsList>) {
   return (
     <TabsList
-      variant="line"
-      className={cn(
-        "h-9 gap-0.5 p-0 group-data-horizontal/tabs:h-9",
-        className,
-      )}
+      className={cn("h-7 gap-0.5 p-0.5 group-data-horizontal/tabs:h-7", className)}
       {...props}
     />
   )
@@ -68,7 +64,7 @@ export function DocTabsTrigger({
   return (
     <TabsTrigger
       className={cn(
-        "h-full flex-none px-2.5 text-[13px] group-data-horizontal/tabs:after:bottom-0",
+        "h-full flex-none px-2.5 text-[13px] data-active:border-edge",
         className,
       )}
       {...props}

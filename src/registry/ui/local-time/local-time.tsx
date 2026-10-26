@@ -18,20 +18,42 @@ function LocalTime({
 }: {
   /** IANA 时区名，例如 `Asia/Shanghai`，不支持 `+08:00` 这类固定偏移 */
   timeZone: string
+  /** 附加到根元素的样式类名 */
   className?: string
-  /** BCP 47 区域标识，决定时间与数字的格式，默认 `zh-CN` */
+  /**
+   * BCP 47 区域标识，决定时间与数字的格式
+   * @default "zh-CN"
+   */
   locale?: string
-  /** 挂载前的占位时间，默认 `--:--:--` */
+  /**
+   * 挂载前的占位时间
+   * @default "--:--:--"
+   */
   placeholder?: string
-  /** 占位时间后的说明，默认 `当地时间` */
+  /**
+   * 占位时间后的说明
+   * @default "当地时间"
+   */
   placeholderLabel?: string
-  /** 与访客时区相同时的说明，默认 `与你同一时间` */
+  /**
+   * 与访客时区相同时的说明
+   * @default "与你同一时间"
+   */
   sameTimeLabel?: string
-  /** 目标时区更早时的前缀，默认 `早` */
+  /**
+   * 目标时区更早时的前缀
+   * @default "早"
+   */
   aheadLabel?: string
-  /** 目标时区更晚时的前缀，默认 `晚` */
+  /**
+   * 目标时区更晚时的前缀
+   * @default "晚"
+   */
   behindLabel?: string
-  /** 时差的单位，默认 `小时` */
+  /**
+   * 时差的单位
+   * @default "小时"
+   */
   hourUnit?: string
 }) {
   const [now, setNow] = useState<Date | null>(null)

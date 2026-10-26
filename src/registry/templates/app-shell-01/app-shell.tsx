@@ -34,14 +34,17 @@ import { WorkspaceMobileNav, WorkspaceSidebar } from "./workspace-sidebar"
 type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   /** 导航数据：一级导航 + 二级（工作区）侧栏，见 nav-config.ts */
   nav: NavConfig
+  /** 品牌区：名称、Logo、说明与跳转地址 */
   brand?: AppShellBrand
   /** 顶栏右侧的额外操作区，例如「AI 助手」按钮、服务状态 */
   headerActions?: React.ReactNode
   /** 主区域右侧的侧栏插槽（如 AI 助手面板）：与 main 并排，高度占满顶栏以下区域 */
   aside?: React.ReactNode
+  /** 当前登录用户，用于顶栏右侧的用户菜单；不传则不显示 */
   user?: AppShellUser
   /** 额外的用户菜单项（DropdownMenuItem），放在「退出登录」之前 */
   userMenu?: React.ReactNode
+  /** 点击「退出登录」时的回调 */
   onSignOut?: () => void
   /** 当前地址，用于高亮导航；不传则取 usePathname() */
   activeHref?: string
@@ -55,13 +58,18 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   collapsed?: boolean
   /** 非受控时的初始折叠状态（无本地记录时生效） */
   defaultCollapsed?: boolean
+  /** 折叠状态变化时的回调，受控与非受控都会触发 */
   onCollapsedChange?: (collapsed: boolean) => void
   /** 非受控时记住折叠状态的 localStorage 键 */
   storageKey?: string
-  /** 是否显示亮暗模式切换（依赖 next-themes），默认 true */
+  /**
+   * 是否显示亮暗模式切换（依赖 next-themes）
+   * @default true
+   */
   themeToggle?: boolean
   /** 覆盖默认文案，见 config.ts 的 DEFAULT_LABELS */
   labels?: Partial<AppShellLabels>
+  /** 主区域内容 */
   children: React.ReactNode
 }
 

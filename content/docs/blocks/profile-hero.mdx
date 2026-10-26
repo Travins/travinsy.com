@@ -39,25 +39,29 @@ export default function Page() {
 
 ### ProfileHero
 
-| 属性 | 类型 | 说明 |
-| --- | --- | --- |
-| `name` | `string` | 名字，渲染为页面的 `h1` |
-| `bio` | `string` | 自我介绍 |
-| `roles` | `readonly string[]` | 职业标签，依次轮播；不传则不显示这一行 |
-| `initials` | `string` | 头像位置的缩写，默认取名字的第一个字符 |
-| `avatar` | `ReactNode` | 自定义头像节点，传入后替换缩写方块 |
-| `tagline` | `string` | 横幅中间的装饰文字，默认 `DESIGN · CODE · REPEAT`，传空字符串隐藏 |
-| `labels` | `Partial<ProfileHeroLabels>` | 覆盖默认文案，见下方 labels |
-| `className` | `string` | 追加到外层 `GridSection` |
+<TypeTable
+  type={{
+    name: { type: "string", description: "名字，渲染为页面的 `h1`", required: true },
+    bio: { type: "string", description: "自我介绍", required: true },
+    roles: { type: "readonly string[]", description: "职业标签，依次轮播；不传则不显示这一行" },
+    initials: { type: "string", description: "头像位置的缩写，默认取名字的第一个字符" },
+    avatar: { type: "ReactNode", description: "自定义头像节点，传入后替换缩写方块" },
+    tagline: { type: "string", description: "横幅中间的装饰文字，传空字符串隐藏", default: '"DESIGN · CODE · REPEAT"' },
+    labels: { type: "Partial<ProfileHeroLabels>", description: "覆盖默认文案，见下方 labels" },
+    className: { type: "string", description: "追加到外层 `GridSection`" },
+  }}
+/>
 
 ### labels
 
 键在 `config.ts` 的 `DEFAULT_LABELS` 里，`labels` 会原样传给内部的 `RoleRotator`。
 
-| 键 | 默认值 | 说明 |
-| --- | --- | --- |
-| `pauseRoles` | `暂停职业标签` | 轮播暂停按钮的 `aria-label` |
-| `playRoles` | `播放职业标签` | 暂停后按钮的 `aria-label` |
+<TypeTable
+  type={{
+    pauseRoles: { type: "string", description: "轮播暂停按钮的 `aria-label`", default: '"暂停职业标签"' },
+    playRoles: { type: "string", description: "暂停后按钮的 `aria-label`", default: '"播放职业标签"' },
+  }}
+/>
 
 ### data-slot
 

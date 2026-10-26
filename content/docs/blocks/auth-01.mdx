@@ -139,71 +139,99 @@ export default function LoginPage() {
 
 ### Auth01
 
-| 属性 | 类型 | 说明 |
-| --- | --- | --- |
-| `brand` | `Partial<BrandConfig>` | 品牌信息，逐项覆盖默认示例品牌，见下表 |
-| `defaultView` | `"sign-in" \| "sign-up" \| "forgot-password"` | 初始视图，默认 `sign-in` |
-| `socialProviders` | `("github" \| "google")[]` | 启用的第三方登录，传 `[]` 隐藏该区域；默认两个都开 |
-| `allowSignUp` | `boolean` | 设为 `false` 隐藏「注册」入口，默认 `true` |
-| `termsHref` / `privacyHref` | `string` | 注册页中「服务条款」「隐私政策」的链接 |
-| `labels` | `Partial<Auth01Labels>` | 覆盖默认文案，键与默认值见下方 [labels](#labels) |
-| `onSignIn` | `(values: SignInValues) => Promise<void>` | `values` 是联合类型：`{ method: "password", account, password, remember }` 或 `{ method: "code", phone, code }` |
-| `onSignUp` | `(values: { name; email; password }) => Promise<void>` | 校验通过后才会调用；确认密码与条款勾选已在组件内校验 |
-| `onForgotPassword` | `(email: string) => Promise<void>` | 成功返回后显示「邮件已发送」 |
-| `onSendCode` | `(phone: string) => Promise<void>` | 成功返回后「获取验证码」按钮进入 60 秒倒计时 |
-| `onSocialSignIn` | `(provider) => Promise<void>` | 点击第三方登录按钮时调用 |
-| `className` | `string` | 追加到最外层容器 |
+<TypeTable
+  type={{
+    brand: { type: "Partial<BrandConfig>", description: "品牌信息，逐项覆盖默认示例品牌，见下方 BrandConfig" },
+    defaultView: { type: '"sign-in" | "sign-up" | "forgot-password"', description: "初始视图", default: '"sign-in"' },
+    socialProviders: { type: '("github" | "google")[]', description: "启用的第三方登录，传 `[]` 隐藏该区域；默认两个都开", default: '["github", "google"]' },
+    allowSignUp: { type: "boolean", description: "设为 `false` 隐藏「注册」入口", default: "true" },
+    termsHref: { type: "string", description: "注册页中「服务条款」的链接" },
+    privacyHref: { type: "string", description: "注册页中「隐私政策」的链接" },
+    labels: { type: "Partial<Auth01Labels>", description: "覆盖默认文案，键与默认值见下方 [labels](#labels)" },
+    onSignIn: { type: "(values: SignInValues) => Promise<void>", description: '`values` 是联合类型：`{ method: "password", account, password, remember }` 或 `{ method: "code", phone, code }`' },
+    onSignUp: { type: "(values: { name; email; password }) => Promise<void>", description: "校验通过后才会调用；确认密码与条款勾选已在组件内校验" },
+    onForgotPassword: { type: "(email: string) => Promise<void>", description: "成功返回后显示「邮件已发送」" },
+    onSendCode: { type: "(phone: string) => Promise<void>", description: "成功返回后「获取验证码」按钮进入 60 秒倒计时" },
+    onSocialSignIn: { type: "(provider) => Promise<void>", description: "点击第三方登录按钮时调用" },
+    className: { type: "string", description: "追加到最外层容器" },
+  }}
+/>
 
 ### BrandConfig
 
-| 字段 | 类型 | 说明 |
-| --- | --- | --- |
-| `name` | `string` | 产品名 |
-| `logo` | `ReactNode` | Logo。建议用 `currentColor` 的 SVG，在品牌面板（反色）和表单上方（正常色）都能看清；也可以传 `<img>` |
-| `title` / `description` | `string` | 品牌面板的大标题与说明 |
-| `features` | `{ icon: ReactNode; title; description }[]` | 特性列表，建议 2–3 条，图标用 `lucide-react` |
-| `copyright` | `string` | 右下角版权文字 |
+<TypeTable
+  type={{
+    name: { type: "string", description: "产品名", required: true },
+    logo: { type: "ReactNode", description: "Logo。建议用 `currentColor` 的 SVG，在品牌面板（反色）和表单上方（正常色）都能看清；也可以传 `<img>`", required: true },
+    title: { type: "string", description: "品牌面板的大标题", required: true },
+    description: { type: "string", description: "品牌面板的说明", required: true },
+    features: { type: "{ icon: ReactNode; title; description }[]", description: "特性列表，建议 2–3 条，图标用 `lucide-react`", required: true },
+    copyright: { type: "string", description: "右下角版权文字", required: true },
+  }}
+/>
 
 ### labels
 
 所有键都在 `config.ts` 的 `DEFAULT_LABELS` 里，传 `labels={{ signInTitle: "Sign in" }}` 这样覆盖其中任意几项。含 `{name}`、`{email}`、`{seconds}`、`{level}` 的文案会在渲染时填入实际值；表格末尾的 `validation*` 键是表单校验提示，其中的 `{min}`、`{length}` 由 `schemas.ts` 的规则常量填入（例如改小密码最小长度后，提示里的数字会自动变）。
 
 | 键 | 默认值 | 说明 |
-| --- | --- | --- |
+|---|---|---|
 | `brandPanelLabel` | `{name} 品牌介绍` | 品牌面板的 `aria-label` |
 | `signInTitle` | `欢迎回来` | 登录视图标题（`h1`） |
 | `signInDescription` | `输入账号信息即可登录` | 登录视图说明 |
 | `signInMethodLabel` | `登录方式` | 登录方式标签条的 `aria-label` |
 | `signInPasswordTab` | `密码登录` | 密码登录标签 |
 | `signInCodeTab` | `验证码登录` | 验证码登录标签 |
-| `accountLabel` / `accountPlaceholder` | `用户名或邮箱` / `请输入用户名或邮箱` | 账号输入框 |
-| `passwordLabel` / `passwordPlaceholder` | `密码` / `请输入密码` | 密码输入框 |
+| `accountLabel` | `用户名或邮箱` | 账号输入框的标签 |
+| `accountPlaceholder` | `请输入用户名或邮箱` | 账号输入框的占位文字 |
+| `passwordLabel` | `密码` | 密码输入框的标签 |
+| `passwordPlaceholder` | `请输入密码` | 密码输入框的占位文字 |
 | `forgotPassword` | `忘记密码？` | 密码框右侧的链接按钮 |
 | `remember` | `记住登录状态` | 记住我复选框 |
-| `signInSubmit` / `signInPending` | `登录` / `登录中…` | 登录按钮与其加载文案 |
-| `phoneLabel` / `phonePlaceholder` | `手机号` / `请输入 11 位手机号` | 验证码登录的手机号输入框 |
-| `codeLabel` / `codePlaceholder` | `验证码` / `6 位数字验证码` | 验证码输入框 |
-| `sendCode` / `sendCodePending` / `resendCode` | `获取验证码` / `发送中…` / `{seconds}s 后重发` | 「获取验证码」按钮的三种状态 |
+| `signInSubmit` | `登录` | 登录按钮与其加载文案 |
+| `signInPending` | `登录中…` | 登录按钮与其加载文案 |
+| `phoneLabel` | `手机号` | 验证码登录的手机号输入框的标签 |
+| `phonePlaceholder` | `请输入 11 位手机号` | 验证码登录的手机号输入框的占位文字 |
+| `codeLabel` | `验证码` | 验证码输入框的标签 |
+| `codePlaceholder` | `6 位数字验证码` | 验证码输入框的占位文字 |
+| `sendCode` | `获取验证码` | 「获取验证码」按钮的三种状态 |
+| `sendCodePending` | `发送中…` | 「获取验证码」按钮的三种状态 |
+| `resendCode` | `{seconds}s 后重发` | 「获取验证码」按钮的三种状态 |
 | `socialDivider` | `或` | 第三方登录上方的分隔文字 |
-| `noAccount` / `signUpLink` | `还没有账号？` / `注册` | 跳转注册 |
+| `noAccount` | `还没有账号？` | 跳转注册 |
+| `signUpLink` | `注册` | 跳转注册 |
 | `signUpTitle` | `创建账号` | 注册视图标题（`h1`） |
 | `signUpDescription` | `填写以下信息即可完成注册` | 注册视图说明 |
-| `nameLabel` / `namePlaceholder` | `姓名` / `请输入姓名` | 姓名输入框 |
-| `emailLabel` / `emailPlaceholder` | `邮箱` / `name@example.com` | 邮箱输入框（注册与找回密码共用） |
+| `nameLabel` | `姓名` | 姓名输入框的标签 |
+| `namePlaceholder` | `请输入姓名` | 姓名输入框的占位文字 |
+| `emailLabel` | `邮箱` | 邮箱输入框（注册与找回密码共用） |
+| `emailPlaceholder` | `name@example.com` | 邮箱输入框（注册与找回密码共用） |
 | `newPasswordPlaceholder` | `至少 8 位，包含字母和数字` | 注册密码框占位文字 |
-| `confirmPasswordLabel` / `confirmPasswordPlaceholder` | `确认密码` / `再次输入密码` | 确认密码输入框 |
-| `termsPrefix` / `termsOfService` / `termsConjunction` / `privacyPolicy` | `我已阅读并同意` / `服务条款` / `和` / `隐私政策` | 条款勾选行的四段文字 |
-| `signUpSubmit` / `signUpPending` | `注册` / `注册中…` | 注册按钮与其加载文案 |
-| `haveAccount` / `signInLink` | `已有账号？` / `登录` | 跳转登录 |
+| `confirmPasswordLabel` | `确认密码` | 确认密码输入框的标签 |
+| `confirmPasswordPlaceholder` | `再次输入密码` | 确认密码输入框的占位文字 |
+| `termsPrefix` | `我已阅读并同意` | 条款勾选行的四段文字 |
+| `termsOfService` | `服务条款` | 条款勾选行的四段文字 |
+| `termsConjunction` | `和` | 条款勾选行的四段文字 |
+| `privacyPolicy` | `隐私政策` | 条款勾选行的四段文字 |
+| `signUpSubmit` | `注册` | 注册按钮与其加载文案 |
+| `signUpPending` | `注册中…` | 注册按钮与其加载文案 |
+| `haveAccount` | `已有账号？` | 跳转登录 |
+| `signInLink` | `登录` | 跳转登录 |
 | `forgotPasswordTitle` | `找回密码` | 找回密码视图标题（`h1`） |
 | `forgotPasswordDescription` | `输入注册时使用的邮箱，我们会发送重置链接` | 找回密码视图说明 |
-| `sendResetLink` / `sendResetLinkPending` | `发送重置链接` / `发送中…` | 提交按钮与其加载文案 |
+| `sendResetLink` | `发送重置链接` | 提交按钮与其加载文案 |
+| `sendResetLinkPending` | `发送中…` | 提交按钮与其加载文案 |
 | `backToSignIn` | `返回登录` | 返回登录按钮 |
 | `emailSentTitle` | `邮件已发送` | 发送成功视图标题（`h1`） |
 | `emailSentDescription` | `我们已向 {email} 发送了重置密码的链接，请查收邮件。没收到？请检查垃圾邮件箱。` | 发送成功视图说明，`{email}` 会加粗显示 |
-| `showPassword` / `hidePassword` | `显示密码` / `隐藏密码` | 密码显示切换按钮的 `aria-label` |
-| `passwordStrength` / `passwordStrengthEmpty` | `强度：{level}` / `强度：—` | 强度条右侧文字 |
-| `strengthWeak` / `strengthFair` / `strengthGood` / `strengthStrong` | `弱` / `一般` / `较强` / `强` | 四个强度等级 |
+| `showPassword` | `显示密码` | 密码显示切换按钮的 `aria-label` |
+| `hidePassword` | `隐藏密码` | 密码显示切换按钮的 `aria-label` |
+| `passwordStrength` | `强度：{level}` | 强度条右侧文字 |
+| `passwordStrengthEmpty` | `强度：—` | 强度条右侧文字 |
+| `strengthWeak` | `弱` | 四个强度等级 |
+| `strengthFair` | `一般` | 四个强度等级 |
+| `strengthGood` | `较强` | 四个强度等级 |
+| `strengthStrong` | `强` | 四个强度等级 |
 | `validationAccountRequired` | `请输入用户名或邮箱` | 密码登录：账号为空 |
 | `validationPasswordRequired` | `请输入密码` | 密码登录：密码为空 |
 | `validationEmailRequired` | `请输入邮箱` | 邮箱为空（注册、找回密码） |

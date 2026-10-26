@@ -43,28 +43,62 @@ function ContributionGraph({
 }: {
   /** 过去一年的每日记录，顺序任意；只绘制最后一天往前 365 天 */
   data: readonly Contribution[]
+  /** 附加到根元素的样式类名 */
   className?: string
-  /** BCP 47 区域标识，决定月份、星期与数字的格式化方式，默认 `zh-CN` */
+  /**
+   * BCP 47 区域标识，决定月份、星期与数字的格式化方式
+   * @default "zh-CN"
+   */
   locale?: string
-  /** 图例起点文字，默认 `少` */
+  /**
+   * 图例起点文字
+   * @default "少"
+   */
   lessLabel?: string
-  /** 图例终点文字，默认 `多` */
+  /**
+   * 图例终点文字
+   * @default "多"
+   */
   moreLabel?: string
-  /** 图例的读屏说明，默认 `贡献数量由少到多` */
+  /**
+   * 图例的读屏说明
+   * @default "贡献数量由少到多"
+   */
   legendLabel?: string
-  /** 计数的单位，用于读屏标签与悬浮提示，默认 `次贡献` */
+  /**
+   * 计数的单位，用于读屏标签与悬浮提示
+   * @default "次贡献"
+   */
   unitLabel?: string
-  /** 没有有效数据时的提示，默认说明下次构建会重试 */
+  /**
+   * 没有有效数据时的提示，说明下次构建会重试
+   * @default "贡献日历暂未更新。下次构建时会自动重试获取数据。"
+   */
   emptyLabel?: string
-  /** 可滚动区域的说明，供读屏使用 */
+  /**
+   * 可滚动区域的说明，供读屏使用
+   * @default "过去一年的 GitHub 贡献日历，可横向滚动；方向键查看相邻日期"
+   */
   regionLabel?: string
-  /** 数据表折叠标题，默认 `查看每日贡献数据` */
+  /**
+   * 数据表折叠标题
+   * @default "查看每日贡献数据"
+   */
   detailsLabel?: string
-  /** 数据表的读屏标题，默认 `过去一年的每日贡献记录` */
+  /**
+   * 数据表的读屏标题
+   * @default "过去一年的每日贡献记录"
+   */
   captionLabel?: string
-  /** 数据表表头：日期列，默认 `日期` */
+  /**
+   * 数据表表头：日期列
+   * @default "日期"
+   */
   dateHeadingLabel?: string
-  /** 数据表表头：数量列，默认 `贡献次数` */
+  /**
+   * 数据表表头：数量列
+   * @default "贡献次数"
+   */
   countHeadingLabel?: string
 }) {
   const [activeDate, setActiveDate] = useState<string | null>(null)

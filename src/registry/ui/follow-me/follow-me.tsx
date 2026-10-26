@@ -5,8 +5,12 @@ function FollowMe({
   className,
   label = "follow me",
 }: {
+  /** 附加到根元素的样式类名 */
   className?: string
-  /** 手写文字内容，默认 `follow me` */
+  /**
+   * 手写文字内容
+   * @default "follow me"
+   */
   label?: string
 }) {
   return (
