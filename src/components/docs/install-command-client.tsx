@@ -10,7 +10,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { CopyButton } from "./copy-button"
@@ -171,14 +171,14 @@ export function InstallCommandClient({
   return (
     <div className="not-prose my-6 min-w-0">
       <Tabs defaultValue="command" className="gap-3">
-        <TabsList aria-label="安装方式">
-          <TabsTrigger value="command" className="px-3">
+        <DocTabsList aria-label="安装方式">
+          <DocTabsTrigger value="command">
             命令
-          </TabsTrigger>
-          <TabsTrigger value="manual" className="px-3">
+          </DocTabsTrigger>
+          <DocTabsTrigger value="manual">
             手动
-          </TabsTrigger>
-        </TabsList>
+          </DocTabsTrigger>
+        </DocTabsList>
         <TabsContent value="command" className="flex flex-col gap-3">
           {frame}
           {source === "namespace" && (
