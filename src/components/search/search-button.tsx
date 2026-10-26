@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic"
 import { SearchIcon } from "lucide-react"
 import { useEffect, useRef, useState, useSyncExternalStore } from "react"
-import { Kbd } from "@/components/ui/kbd"
 
 const loadDialog = () => import("./search-dialog")
 const SearchDialog = dynamic(loadDialog)
@@ -69,16 +68,21 @@ export function SearchButton() {
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-keyshortcuts="Meta+k Control+k /"
-        className="flex size-8 shrink-0 items-center justify-center gap-2 rounded-md text-sm text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 xl:w-56 xl:justify-start xl:border xl:border-border xl:bg-muted/40 xl:px-2.5 xl:hover:border-foreground/30 xl:hover:bg-muted/40"
+        // 无边框的轻量入口：图标 + 快捷键，宽屏再露出文字；悬停才出底色
+        className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md px-1.5 text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 aria-expanded:bg-muted aria-expanded:text-foreground"
       >
         <SearchIcon className="size-4 shrink-0" aria-hidden />
-        <span className="hidden xl:inline">搜索文档…</span>
-        <Kbd
-          aria-hidden
-          className="ml-auto hidden bg-background xl:inline-flex"
-        >
-          {isMac ? "⌘K" : "Ctrl K"}
-        </Kbd>
+        <span className="hidden text-sm font-medium xl:inline">搜索…</span>
+        <span aria-hidden className="hidden items-center gap-0.5 md:flex">
+          {(isMac ? ["⌘", "K"] : ["Ctrl", "K"]).map((key) => (
+            <kbd
+              key={key}
+              className="inline-flex h-5 min-w-5 items-center justify-center rounded-sm bg-foreground/5 px-1 font-sans text-xs text-muted-foreground shadow-[inset_0_0_1px] shadow-foreground/20"
+            >
+              {key}
+            </kbd>
+          ))}
+        </span>
       </button>
       {mounted ? (
         <SearchDialog open={open} onOpenChange={setOpen} trigger={trigger} />
