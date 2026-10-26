@@ -35,7 +35,7 @@ function SectionFrame({
       <div className="px-4 pt-5 sm:px-6 md:border-r md:border-edge md:px-5 md:py-5">
         <div
           aria-hidden="true"
-          className="flex items-baseline gap-2 font-mono md:sticky md:top-20 md:flex-col md:gap-1"
+          className="flex items-baseline gap-2 font-mono md:sticky md:top-[calc(var(--header-height)+1rem)] md:flex-col md:gap-1"
         >
           <span className="text-xs text-primary tabular-nums md:text-3xl md:font-light">
             {index}

@@ -27,7 +27,7 @@ const groupIcons: Record<SearchGroup, LucideIcon> = {
   区块: BlocksIcon,
   模板: LayoutTemplateIcon,
   主题: PaletteIcon,
-  Agent: BotIcon,
+  智能体: BotIcon,
   博客: FileTextIcon,
   页面: FileIcon,
 }

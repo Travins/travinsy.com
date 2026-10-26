@@ -73,6 +73,8 @@
 }
 
 :root {
+  /* 站点页头高度：sticky 偏移、锚点滚动边距都从这里取，改一处全站同步 */
+  --header-height: 4rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);

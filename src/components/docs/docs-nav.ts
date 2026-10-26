@@ -32,7 +32,7 @@ export const sectionHome: Record<
   components: { title: "组件", titleEn: "Components", url: "/components/" },
   blocks: { title: "区块", titleEn: "Blocks", url: "/blocks/" },
   templates: { title: "模板", titleEn: "Templates", url: "/templates/" },
-  agents: { title: "Agent 开发", titleEn: "Agents", url: "/agents/" },
+  agents: { title: "智能体", titleEn: "Agents", url: "/agents/" },
 }
 
 /** fumadocs 生成的 page.url 没有末尾斜杠，而站点路由（trailingSlash）统一带斜杠。 */

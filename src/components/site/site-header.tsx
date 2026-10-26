@@ -15,18 +15,19 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       {/* screen-line-bottom 自带 position: relative，所以放在内层，避免和 sticky 冲突 */}
       <div className="screen-line-bottom">
-        <GridContainer className="flex h-14 items-center justify-between gap-2 px-4">
+        {/* 高度取 --header-height（globals.css）；导航项占满整高，工具区垂直居中 */}
+        <GridContainer className="flex h-(--header-height) items-stretch gap-2 px-4">
           <Link
             href="/"
             aria-label={`${SITE_NAME} 首页`}
-            className="-m-1 rounded-md p-1 text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="group/logo flex shrink-0 items-center pr-3 text-foreground outline-none md:border-r md:border-edge md:pr-5"
           >
-            <SiteLogo className="size-7" />
+            <SiteLogo className="size-8 rounded-sm transition-transform duration-200 group-focus-visible/logo:ring-3 group-focus-visible/logo:ring-ring/50 motion-safe:group-hover/logo:-rotate-3" />
           </Link>
 
-          <div className="flex items-center gap-1">
-            <SiteNav />
-            <span aria-hidden className="mx-1 hidden h-4 w-px bg-edge md:block" />
+          <SiteNav />
+
+          <div className="ml-auto flex items-center gap-1">
             <SearchButton />
             <ThemeSwitcher />
             <ModeToggle />

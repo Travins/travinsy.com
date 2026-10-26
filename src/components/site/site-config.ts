@@ -1,14 +1,15 @@
 export const SITE_NAME = "travinsy"
 export const GITHUB_URL = "https://github.com/Travins"
 
+/** 主导航：中文为主，labelEn 是小号等宽的英文副标。 */
 export const SITE_NAV = [
-  { label: "文档", href: "/docs/" },
-  { label: "组件", href: "/components/" },
-  { label: "区块", href: "/blocks/" },
-  { label: "模板", href: "/templates/" },
-  { label: "主题", href: "/themes/" },
-  { label: "Agent", href: "/agents/" },
-  { label: "博客", href: "/blog/" },
+  { label: "文档", labelEn: "Docs", href: "/docs/" },
+  { label: "组件", labelEn: "Components", href: "/components/" },
+  { label: "区块", labelEn: "Blocks", href: "/blocks/" },
+  { label: "模板", labelEn: "Templates", href: "/templates/" },
+  { label: "主题", labelEn: "Themes", href: "/themes/" },
+  { label: "智能体", labelEn: "Agents", href: "/agents/" },
+  { label: "博客", labelEn: "Blog", href: "/blog/" },
 ] as const
 
 export const FOOTER_LINKS = [

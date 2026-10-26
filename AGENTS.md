@@ -50,7 +50,7 @@ content/                     MDX 内容（Fumadocs 读取）
   docs/components/*.mdx      组件文档
   docs/blocks/*.mdx          区块文档
   docs/templates/*.mdx       页面风格模板文档
-  docs/agents/*.mdx          Agent 开发引导
+  docs/agents/*.mdx          智能体开发引导
   blog/*.mdx                 博客
 src/
   app/                       路由（全部可静态生成）

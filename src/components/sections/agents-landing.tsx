@@ -13,7 +13,7 @@ const withSlash = (url: string) => (url.endsWith("/") ? url : `${url}/`)
 const ordinal = (index: number) => String(index + 1).padStart(2, "0")
 
 /**
- * Agent 分区首页：上方是分区标题，下方是指南列表。
+ * 智能体分区首页：上方是分区标题，下方是指南列表。
  * 标题与简介取自 content/docs/agents/index.mdx 的 frontmatter，
  * 列表取自同目录其余文档，新增一篇 MDX 就会自动出现在这里。
  */
@@ -28,7 +28,7 @@ export function AgentsLanding() {
           AGENTS / {guides.length}
         </p>
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          {home?.data.title ?? "Agent"}
+          {home?.data.title ?? "智能体"}
         </h1>
         {home?.data.description ? (
           <p className="mt-4 max-w-xl leading-7 text-pretty text-muted-foreground">

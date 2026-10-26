@@ -4,7 +4,7 @@ import { docsPages } from "@/lib/site-content"
 export const dynamic = "force-static"
 export const dynamicParams = false
 
-// 原有卡片目录不生成 Markdown；保留 /md/agents.md 作为 Agent 入口说明。
+// 原有卡片目录不生成 Markdown；保留 /md/agents.md 作为智能体入口说明。
 const overviewSections = new Set(["components", "blocks", "templates"])
 
 const markdownPages = () =>

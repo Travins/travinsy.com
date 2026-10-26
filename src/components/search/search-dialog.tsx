@@ -26,7 +26,7 @@ export default function SearchDialog({
         >
           <Dialog.Title className="sr-only">搜索全站</Dialog.Title>
           <Dialog.Description className="sr-only">
-            搜索组件、区块、模板、主题、Agent
+            搜索组件、区块、模板、主题、智能体
             指南与博客。使用上下方向键选择结果，回车打开，Escape 关闭。
           </Dialog.Description>
           <SearchPanel inputRef={input} onClose={() => onOpenChange(false)} />
