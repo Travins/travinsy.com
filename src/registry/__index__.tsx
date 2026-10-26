@@ -4,6 +4,7 @@ import { lazy, type ComponentType, type LazyExoticComponent } from "react"
 
 export const registryExamples: Record<string, LazyExoticComponent<ComponentType>> = {
   "contribution-graph-demo": lazy(() => import("./examples/contribution-graph-demo")),
+  "contribution-graph-showcase-demo": lazy(() => import("./examples/contribution-graph-showcase-demo")),
   "flow-diagram-agent-demo": lazy(() => import("./examples/flow-diagram-agent-demo")),
   "flow-diagram-auth-demo": lazy(() => import("./examples/flow-diagram-auth-demo")),
   "flow-diagram-background-demo": lazy(() => import("./examples/flow-diagram-background-demo")),
@@ -21,15 +22,20 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "flow-diagram-showcase-demo": lazy(() => import("./examples/flow-diagram-showcase-demo")),
   "flow-diagram-tones-demo": lazy(() => import("./examples/flow-diagram-tones-demo")),
   "follow-me-demo": lazy(() => import("./examples/follow-me-demo")),
+  "follow-me-showcase-demo": lazy(() => import("./examples/follow-me-showcase-demo")),
   "greeting-demo": lazy(() => import("./examples/greeting-demo")),
+  "greeting-showcase-demo": lazy(() => import("./examples/greeting-showcase-demo")),
   "grid-layout-demo": lazy(() => import("./examples/grid-layout-demo")),
+  "grid-layout-showcase-demo": lazy(() => import("./examples/grid-layout-showcase-demo")),
   "grid-separator-label-demo": lazy(() => import("./examples/grid-separator-label-demo")),
   "grid-separator-patterns-demo": lazy(() => import("./examples/grid-separator-patterns-demo")),
   "icon-link-demo": lazy(() => import("./examples/icon-link-demo")),
+  "icon-link-showcase-demo": lazy(() => import("./examples/icon-link-showcase-demo")),
   "isometric-mark-demo": lazy(() => import("./examples/isometric-mark-demo")),
   "isometric-mark-simple-demo": lazy(() => import("./examples/isometric-mark-simple-demo")),
   "isometric-mark-t-demo": lazy(() => import("./examples/isometric-mark-t-demo")),
   "local-time-demo": lazy(() => import("./examples/local-time-demo")),
+  "local-time-showcase-demo": lazy(() => import("./examples/local-time-showcase-demo")),
 }
 
 // 区块 / 页面模板的整页预览，键为 registry 条目名

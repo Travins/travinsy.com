@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 
+import { EntryIcon } from "@/lib/entry-icons"
 import { sectionPages } from "@/lib/source"
 import {
   GridColumns,
@@ -43,12 +44,28 @@ export function ComponentGallery() {
                 >
                   <ComponentThumbnail name={name} />
                   <div className="mt-6 flex items-start justify-between gap-4">
-                    <h2
-                      id={titleId}
-                      className="text-lg font-medium tracking-tight"
-                    >
-                      {page.data.title}
-                    </h2>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-edge bg-muted/40 transition-colors group-hover:border-primary/50 group-hover:text-primary">
+                        <EntryIcon name={name} className="size-5" strokeWidth={1.5} />
+                      </span>
+                      <div className="min-w-0">
+                        <h2
+                          id={titleId}
+                          className="text-lg leading-6 font-medium tracking-tight"
+                        >
+                          {page.data.title}
+                        </h2>
+                        {page.data.titleEn ? (
+                          <p
+                            lang="en"
+                            translate="no"
+                            className="mt-0.5 truncate font-mono text-xs text-muted-foreground"
+                          >
+                            {page.data.titleEn}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
                     <ArrowUpRight
                       aria-hidden="true"
                       className="mt-1 size-4 shrink-0 text-muted-foreground group-hover:text-foreground"

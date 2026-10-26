@@ -2,6 +2,8 @@ import { Fragment } from "react"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 
+import { EntryIcon } from "@/lib/entry-icons"
+import { entryTitleEn } from "@/lib/source"
 import { BlockViewer } from "@/components/docs/block-viewer"
 import {
   entrySections,
@@ -62,10 +64,28 @@ export function EntryGallery({ section }: { section: EntrySection }) {
             )}
             <div className="mt-6 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
               <div className="max-w-2xl min-w-0">
-                <h2 className="text-xl font-medium tracking-tight">
-                  {item.title}
-                </h2>
-                <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-edge bg-muted/40">
+                    <EntryIcon
+                      name={item.name}
+                      className="size-5"
+                      strokeWidth={1.5}
+                    />
+                  </span>
+                  <div className="min-w-0">
+                    <h2 className="text-xl leading-6 font-medium tracking-tight">
+                      {item.title}
+                    </h2>
+                    <p
+                      lang="en"
+                      translate="no"
+                      className="mt-0.5 font-mono text-xs text-muted-foreground"
+                    >
+                      {entryTitleEn(section, item.name)}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm leading-7 text-muted-foreground">
                   {item.description}
                 </p>
               </div>

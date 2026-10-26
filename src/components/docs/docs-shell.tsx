@@ -1,6 +1,7 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
 import type { TOCItemType } from "fumadocs-core/toc"
+import { EntryIcon } from "@/lib/entry-icons"
 import { GridSection } from "@/registry/ui/grid-layout/grid-layout"
 import {
   docsNeighbours,
@@ -17,6 +18,10 @@ type DocsShellProps = {
   section: NavSectionId
   url: string
   title: string
+  /** 英文名，显示在主标题下方 */
+  titleEn?: string
+  /** 专属图标对应的条目名（组件 / 区块 / 模板） */
+  icon?: string
   description: string
   /** 概览页：没有「复制页面」、上下页和返回链接 */
   overview?: boolean
@@ -44,6 +49,8 @@ export function DocsShell({
   section,
   url: rawUrl,
   title,
+  titleEn,
+  icon,
   description,
   overview = false,
   markdown,
@@ -94,7 +101,23 @@ export function DocsShell({
           )}
         </nav>
         <header className="docs-header">
-          <h1>{title}</h1>
+          {titleEn ? (
+            <div className="docs-header-title">
+              {icon ? (
+                <span className="docs-header-icon">
+                  <EntryIcon name={icon} strokeWidth={1.5} />
+                </span>
+              ) : null}
+              <div className="min-w-0">
+                <h1>{title}</h1>
+                <span className="docs-header-en" lang="en" translate="no">
+                  {titleEn}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <h1>{title}</h1>
+          )}
           <p>{description}</p>
           {links && (
             <div className="mt-4 flex flex-wrap gap-4">

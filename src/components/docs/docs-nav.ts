@@ -1,7 +1,13 @@
-import { sectionPages } from "@/lib/source"
+import { entryTitleEn, sectionPages } from "@/lib/source"
 import { sectionItems, type EntrySection } from "./registry-items"
 
-export type NavItem = { title: string; url: string }
+/** titleEn / icon 只有组件、区块、模板有：英文副标与专属图标（icon 是条目名）。 */
+export type NavItem = {
+  title: string
+  url: string
+  titleEn?: string
+  icon?: string
+}
 export type NavSectionId =
   "docs" | "components" | "blocks" | "templates" | "agents"
 export type NavGroup = { id: NavSectionId; title: string; items: NavItem[] }
@@ -22,13 +28,21 @@ export const withSlash = (url: string) => (url.endsWith("/") ? url : `${url}/`)
 function mdxItems(section: NavSectionId, includeIndex: boolean): NavItem[] {
   return sectionPages(section)
     .filter((page) => includeIndex || page.slugs.length > 1)
-    .map((page) => ({ title: page.data.title, url: withSlash(page.url) }))
+    .map((page) => ({
+      title: page.data.title,
+      url: withSlash(page.url),
+      ...(page.data.titleEn
+        ? { titleEn: page.data.titleEn, icon: page.slugs.at(-1) }
+        : {}),
+    }))
 }
 
 function entryItems(section: EntrySection): NavItem[] {
   return sectionItems(section).map((item) => ({
     title: item.title,
     url: `/${section}/${item.name}/`,
+    titleEn: entryTitleEn(section, item.name),
+    icon: item.name,
   }))
 }
 

@@ -16,7 +16,11 @@ export function createSiteSearch() {
         pages.map(async (page) => ({
           id: `${page.url.replace(/\/$/, "")}/`,
           url: `${page.url.replace(/\/$/, "")}/`,
-          title: page.data.title,
+          // 中英对照条目把英文名拼进标题：既能用英文搜到，结果里也能看到
+          title:
+            "titleEn" in page.data && page.data.titleEn
+              ? `${page.data.title} · ${page.data.titleEn}`
+              : page.data.title,
           description: page.data.description,
           breadcrumbs: [searchGroup(page.url)],
           structuredData: page.data.structuredData,

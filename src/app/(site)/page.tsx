@@ -1,15 +1,5 @@
 import Link from "next/link"
-import {
-  ArrowUpRight,
-  CalendarDays,
-  Clock,
-  Component,
-  Globe,
-  Grid2X2,
-  Link2,
-  Workflow,
-} from "lucide-react"
-import type { LucideIcon } from "lucide-react"
+import { ArrowUpRight, Globe } from "lucide-react"
 import type { ComponentType, SVGProps } from "react"
 
 import { GitHubMark, XMark } from "@/components/home/brand-icons"
@@ -23,7 +13,8 @@ import { TechIcon, techBrandStyle } from "@/components/home/tech-icon"
 import { TerminalCard } from "@/components/home/terminal-card"
 import { buttonVariants } from "@/components/ui/button"
 import { profile } from "@/config/profile"
-import { blogPosts } from "@/lib/source"
+import { EntryIcon } from "@/lib/entry-icons"
+import { blogPosts, entryTitleEn } from "@/lib/source"
 import registry from "../../../registry.json"
 import {
   GridColumns,
@@ -45,20 +36,27 @@ const focusIllustrations: Record<
   agent: FlowDiagramAgentDemo,
   deploy: FlowDiagramDeployDemo,
 }
-// 精选组件的图标按 Registry 条目名映射，未登记的条目回落到通用图标。
-const componentIcons: Record<string, LucideIcon> = {
-  "flow-diagram": Workflow,
-  "grid-layout": Grid2X2,
-  "contribution-graph": CalendarDays,
-  "local-time": Clock,
-  "icon-link": Link2,
-}
 // 首位大卡上的特性标签
 const leadTags = ["多彩色调", "光点路径", "进入视口才播放"]
 const focusClass =
   "rounded-sm transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 const cardFocusClass =
   "transition-colors hover:bg-muted/30 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ring"
+
+/** 精选卡片标题后的英文名：淡色等宽小字，与中文标题同一行，放不下时折到下一行。 */
+function EnglishName({ name }: { name: string }) {
+  const titleEn = entryTitleEn("components", name)
+  if (!titleEn) return null
+  return (
+    <span
+      lang="en"
+      translate="no"
+      className="ml-2 inline-block font-mono text-xs font-normal text-muted-foreground"
+    >
+      {titleEn}
+    </span>
+  )
+}
 
 export default function HomePage() {
   // 精选组件的标题与描述都来自 Registry，保持与文档、安装产物同源。
@@ -69,7 +67,6 @@ export default function HomePage() {
   })
   // 首位的组件以大卡展示实时预览，其余是图标卡片。
   const [lead, ...others] = featured
-  const LeadIcon = componentIcons[lead.name] ?? Component
   // 最新文章按发布日期倒序，只取首页展示的两篇。
   const posts = blogPosts().slice(0, 2)
   return (
@@ -235,8 +232,8 @@ export default function HomePage() {
             <div className="flex min-w-0 flex-col gap-5 p-4 sm:p-6 lg:justify-center">
               <div className="flex items-start justify-between">
                 <span className="flex size-11 items-center justify-center rounded-lg border border-edge bg-muted/40">
-                  <LeadIcon
-                    aria-hidden="true"
+                  <EntryIcon
+                    name={lead.name}
                     className="size-5"
                     strokeWidth={1.25}
                   />
@@ -252,6 +249,7 @@ export default function HomePage() {
                 </p>
                 <h3 className="text-base font-medium tracking-tight">
                   {lead.title}
+                  <EnglishName name={lead.name} />
                 </h3>
                 <p className="mt-2 text-sm leading-7 text-muted-foreground">
                   {lead.description}
@@ -275,7 +273,6 @@ export default function HomePage() {
           {[0, 2].map((offset) => (
             <GridColumns key={offset}>
               {others.slice(offset, offset + 2).map((item, index) => {
-                const Icon = componentIcons[item.name] ?? Component
                 return (
                   <Link
                     key={item.name}
@@ -284,8 +281,8 @@ export default function HomePage() {
                   >
                     <div className="flex items-start justify-between">
                       <span className="flex size-11 items-center justify-center rounded-lg border border-edge bg-muted/40">
-                        <Icon
-                          aria-hidden="true"
+                        <EntryIcon
+                          name={item.name}
                           className="size-5"
                           strokeWidth={1.25}
                         />
@@ -301,6 +298,7 @@ export default function HomePage() {
                       </p>
                       <h3 className="text-base font-medium tracking-tight">
                         {item.title}
+                        <EnglishName name={item.name} />
                       </h3>
                       <p className="mt-2 text-sm leading-7 text-muted-foreground">
                         {item.description}

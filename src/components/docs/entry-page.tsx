@@ -54,6 +54,8 @@ export async function EntryPage({
       section={section}
       url={page.url}
       title={page.data.title}
+      titleEn={page.data.titleEn}
+      icon={slug[0]}
       description={page.data.description}
       markdown={await pageMarkdown(page)}
       sourcePath={page.path}

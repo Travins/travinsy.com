@@ -8,6 +8,8 @@ export const docs = defineDocs({
   docs: {
     schema: pageSchema.extend({
       description: z.string(),
+      /** 英文名（Title Case）：组件、区块、模板的中英文对照 */
+      titleEn: z.string().optional(),
       links: z.record(z.string(), z.url()).optional(),
     }),
   },

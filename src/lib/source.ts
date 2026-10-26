@@ -50,3 +50,9 @@ export function sectionPages(section: string) {
     .filter((page) => page.slugs[0] === section)
     .sort((a, b) => (order.get(a.url) ?? 0) - (order.get(b.url) ?? 0))
 }
+
+/** 组件、区块、模板的英文名（来自 MDX 的 titleEn），没有则为 undefined。 */
+export function entryTitleEn(section: string, name: string) {
+  return source.getPage([section, name], siteConfig.defaultLanguage)?.data
+    .titleEn
+}
