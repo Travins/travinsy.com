@@ -59,13 +59,14 @@ function isTooDark(hex: string) {
 }
 
 /**
- * 平时跟随主题单色显示，悬停时通过 --brand 显示品牌原色。
- * 品牌色是外部固定值，不随颜色主题变化；接近纯黑的（如 Next.js）不设 --brand，悬停仍用前景色，避免暗色模式下看不见。
+ * 悬停时用 --brand 显示品牌原色。品牌色是外部固定值，不随颜色主题变化；
+ * 接近纯黑的（如 Next.js）改用前景色，避免暗色模式下看不见。
  */
-function techBrandStyle(name: string): CSSProperties | undefined {
+function techBrandStyle(name: string): CSSProperties {
   const icon = techIcons[name]
-  if (!icon || isTooDark(icon.hex)) return undefined
-  return { "--brand": `#${icon.hex}` } as CSSProperties
+  const brand =
+    !icon || isTooDark(icon.hex) ? "var(--foreground)" : `#${icon.hex}`
+  return { "--brand": brand } as CSSProperties
 }
 
 function TechIcon({ name, className }: { name: string; className?: string }) {

@@ -183,17 +183,31 @@ export default function HomePage() {
         {/* 单元格自带右、下边线，再用负外边距把最外一圈挤出裁剪区，避免和容器的线叠成双线 */}
         <div className="overflow-hidden">
           <ul className="-mr-px -mb-px grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-            {profile.technologies.map((technology) => (
+            {profile.technologies.map((technology, index) => (
               <li
                 key={technology}
-                className="group flex min-w-0 flex-col items-start gap-3 border-r border-b border-edge p-4"
+                style={techBrandStyle(technology)}
+                className="group relative flex min-w-0 flex-col items-start gap-3 border-r border-b border-edge p-4 transition-colors duration-300 hover:bg-(--brand)/[0.06]"
               >
+                {/* 悬停时顶边亮起一条品牌色细线，从左向右展开 */}
                 <span
                   aria-hidden="true"
-                  style={techBrandStyle(technology)}
-                  className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80 transition-colors group-hover:text-(--brand,var(--foreground))"
+                  className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-(--brand) transition-transform duration-500 ease-out group-hover:scale-x-100 motion-reduce:transition-none"
+                />
+                <span
+                  aria-hidden="true"
+                  className="absolute top-3 right-3 font-mono text-[10px] text-muted-foreground/60 tabular-nums transition-colors duration-300 group-hover:text-(--brand)"
                 >
-                  <TechIcon name={technology} className="size-4" />
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80 transition-[color,background-color,border-color,translate,box-shadow] duration-300 ease-out group-hover:border-(--brand)/40 group-hover:bg-(--brand)/10 group-hover:text-(--brand) group-hover:shadow-[0_6px_16px_-8px_var(--brand)] motion-safe:group-hover:-translate-y-0.5"
+                >
+                  <TechIcon
+                    name={technology}
+                    className="size-4 transition-transform duration-300 ease-out motion-safe:group-hover:scale-110"
+                  />
                 </span>
                 <span className="font-mono text-xs break-words" translate="no">
                   {technology}
