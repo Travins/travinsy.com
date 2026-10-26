@@ -1,7 +1,6 @@
 import {
   FlowBeam,
   FlowDiagram,
-  FlowLabel,
   FlowNode,
   flowArrival,
   flowRoute,
@@ -40,21 +39,9 @@ export default function FlowDiagramDemo() {
       <FlowBeam route={TO_PROCESS} at={FIRST_AT} />
       <FlowBeam route={TO_OUTPUT} at={SECOND_AT} />
 
-      <FlowNode x={50} y={50} width={60} litAt={0.2}>
-        <FlowLabel x={50} y={50}>
-          输入
-        </FlowLabel>
-      </FlowNode>
-      <FlowNode x={160} y={50} width={60} litAt={PROCESS_AT}>
-        <FlowLabel x={160} y={50}>
-          处理
-        </FlowLabel>
-      </FlowNode>
-      <FlowNode x={270} y={50} width={60} litAt={OUTPUT_AT}>
-        <FlowLabel x={270} y={50}>
-          输出
-        </FlowLabel>
-      </FlowNode>
+      <FlowNode x={50} y={50} width={60} litAt={0.2} label="输入" />
+      <FlowNode x={160} y={50} width={60} litAt={PROCESS_AT} label="处理" />
+      <FlowNode x={270} y={50} width={60} litAt={OUTPUT_AT} label="输出" />
     </FlowDiagram>
   )
 }

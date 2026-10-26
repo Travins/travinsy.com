@@ -4,12 +4,8 @@ import { motion, motionValue, useTransform } from "motion/react"
 import { useMemo } from "react"
 
 import { useFlowClock } from "./flow-clock"
-import {
-  FLOW_BEAM_SPEED,
-  FLOW_LINE_SPEED,
-  type FlowRoute,
-} from "./route"
-import { toneClasses, type FlowTone } from "./tone"
+import { FLOW_BEAM_SPEED, FLOW_LINE_SPEED, type FlowRoute } from "./route"
+import { flowToneStyle, toneClasses, type FlowTone } from "./tone"
 
 /** 光点本体与拖尾的长度（像素） */
 const HEAD_LENGTH = 8
@@ -40,6 +36,7 @@ function FlowLineDraw({
   at,
   duration,
   guide = true,
+  tinted = false,
 }: {
   route: FlowRoute
   /** 开始生长的时刻（秒） */
@@ -48,6 +45,8 @@ function FlowLineDraw({
   duration: number
   /** 生长之前是否先画一条很淡的虚线引导 */
   guide?: boolean
+  /** 实线是否染上 `--flow-tone` 的颜色，否则是中性的前景色 */
+  tinted?: boolean
 }) {
   const { time, exit, duration: cycle } = useFlowClock()
   const arrival = at + duration
@@ -73,7 +72,7 @@ function FlowLineDraw({
       <motion.path
         d={d}
         strokeWidth={1}
-        className="stroke-foreground/20"
+        className={tinted ? toneClasses.line : "stroke-foreground/20"}
         style={{ pathLength: progress, opacity }}
       />
     </g>
@@ -87,12 +86,10 @@ function FlowLineDraw({
 function FlowLineFlow({
   route: { d, length },
   from,
-  tone = "primary",
 }: {
   route: FlowRoute
-  /** 纹理开始淡入的时刻（秒），通常是连线画完的那一刻 */
+  /** 纹理开始淡入的时刻（秒），通常是连线画完的那一刻；颜色取外层的 `--flow-tone` */
   from: number
-  tone?: FlowTone
 }) {
   const { time, exit, duration } = useFlowClock()
   const dash = useConstantValue(FLOW_DASH / length)
@@ -111,7 +108,7 @@ function FlowLineFlow({
       data-slot="flow-line-flow"
       d={d}
       strokeWidth={1.5}
-      className={toneClasses[tone].flow}
+      className={toneClasses.flow}
       style={{
         pathLength: dash,
         pathSpacing: gap,
@@ -133,7 +130,7 @@ function FlowBeam({
   line = "draw",
   guide = true,
   flow = false,
-  tone = "primary",
+  tone,
 }: {
   /** 由 `flowRoute` 生成的路径 */
   route: FlowRoute
@@ -161,8 +158,9 @@ function FlowBeam({
    */
   flow?: boolean
   /**
-   * 光点颜色，失败、拒绝之类的分支用 `destructive`
-   * @default "primary"
+   * 色调，作用于光点、拖尾和流动纹理；明确指定后，生长的底线也会淡淡染上这个颜色。
+   * 失败、拒绝之类的分支用 `destructive`，多条并行链路可以各用一种颜色
+   * @default 沿用 FlowDiagram 的 tone（"primary"）
    */
   tone?: FlowTone
 }) {
@@ -189,20 +187,30 @@ function FlowBeam({
   const tailLength = useConstantValue(TAIL_LENGTH / length)
   const headLength = useConstantValue(HEAD_LENGTH / length)
   const spacing = useConstantValue(2)
-  const stroke = toneClasses[tone].stroke
+  const stroke = toneClasses.stroke
 
   return (
-    <g data-slot="flow-beam">
+    <g data-slot="flow-beam" style={flowToneStyle(tone)}>
       {base ? (
         line === "draw" ? (
-          <FlowLineDraw route={route} at={at} duration={travel} guide={guide} />
+          <FlowLineDraw
+            route={route}
+            at={at}
+            duration={travel}
+            guide={guide}
+            tinted={tone !== undefined}
+          />
         ) : (
-          <path d={d} strokeWidth={1} className="stroke-foreground/20" />
+          <path
+            d={d}
+            strokeWidth={1}
+            className={
+              tone !== undefined ? toneClasses.line : "stroke-foreground/20"
+            }
+          />
         )
       ) : null}
-      {flow ? (
-        <FlowLineFlow route={route} from={at + travel} tone={tone} />
-      ) : null}
+      {flow ? <FlowLineFlow route={route} from={at + travel} /> : null}
       <motion.path
         d={d}
         strokeWidth={1.5}

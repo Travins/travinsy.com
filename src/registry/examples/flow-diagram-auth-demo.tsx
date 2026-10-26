@@ -98,7 +98,7 @@ export default function FlowDiagramAuthDemo() {
       </FlowNode>
 
       <FlowReveal at={REJECT_AT}>
-        <FlowLabel x={130} y={80} className="fill-destructive text-[9px]">
+        <FlowLabel x={130} y={80} tone="destructive" className="text-[9px]">
           401 密码错误，重试
         </FlowLabel>
       </FlowReveal>

@@ -673,7 +673,7 @@
       "name": "flow-diagram",
       "type": "registry:ui",
       "title": "流程动画图示",
-      "description": "节点、细线与流动光点组成的循环动画流程图：统一时间轴、进入视口才播放、减少动态效果时停在静帧，附带光点路径、逐字输入、加载圈与状态点等原语。",
+      "description": "节点、细线与流动光点组成的循环动画流程图：统一时间轴、进入视口才播放、减少动态效果时停在静帧；色调与底纹可配置，附带光点路径、逐字输入、加载圈与状态点等原语。",
       "dependencies": [
         "motion"
       ],
@@ -704,8 +704,30 @@
         {
           "path": "src/registry/ui/flow-diagram/tone.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/flow-diagram/background.ts",
+          "type": "registry:ui"
         }
-      ]
+      ],
+      "cssVars": {
+        "light": {
+          "flow-blue": "oklch(0.56 0.2 258)",
+          "flow-green": "oklch(0.62 0.16 150)",
+          "flow-amber": "oklch(0.7 0.16 70)",
+          "flow-rose": "oklch(0.62 0.21 5)",
+          "flow-violet": "oklch(0.56 0.22 292)",
+          "flow-cyan": "oklch(0.66 0.12 215)"
+        },
+        "dark": {
+          "flow-blue": "oklch(0.72 0.15 255)",
+          "flow-green": "oklch(0.77 0.17 152)",
+          "flow-amber": "oklch(0.82 0.15 82)",
+          "flow-rose": "oklch(0.74 0.16 8)",
+          "flow-violet": "oklch(0.74 0.15 295)",
+          "flow-cyan": "oklch(0.82 0.11 208)"
+        }
+      }
     }
   ]
 }

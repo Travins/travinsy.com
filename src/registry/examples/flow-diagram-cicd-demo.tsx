@@ -11,6 +11,7 @@ import {
   FlowStatusDot,
   flowArrival,
   flowRoute,
+  flowToneStyle,
 } from "@/registry/ui/flow-diagram/flow-diagram"
 
 const JOBS = [
@@ -65,7 +66,7 @@ const REST = LIVE_AT + 0.6
 const EXIT = REST + 0.8
 const DURATION = EXIT + 0.8
 
-/** 一个会转圈、完成后换成对勾的 job 状态。 */
+/** 一个会转圈、完成后换成对勾的 job 状态：进行中是琥珀色，通过后是绿色。 */
 function JobStatus({
   x,
   y,
@@ -79,16 +80,19 @@ function JobStatus({
 }) {
   return (
     <>
-      <FlowSpinner x={x} y={y} size={10} at={from} until={to} />
+      <FlowSpinner x={x} y={y} size={10} at={from} until={to} tone="amber" />
       <FlowReveal at={to}>
-        <Check
-          x={x - 6}
-          y={y - 6}
-          width={12}
-          height={12}
-          strokeWidth={2}
-          className="text-primary"
-        />
+        {/* flowToneStyle 给自己写的 SVG 元素设置色调，里面用 --flow-tone 取色 */}
+        <g style={flowToneStyle("green")}>
+          <Check
+            x={x - 6}
+            y={y - 6}
+            width={12}
+            height={12}
+            strokeWidth={2}
+            className="text-(--flow-tone)"
+          />
+        </g>
       </FlowReveal>
     </>
   )
@@ -109,11 +113,17 @@ export default function FlowDiagramCicdDemo() {
       {TO_JOBS.map((route, i) => (
         <FlowBeam key={`job-${i}`} route={route} at={JOBS_AT} />
       ))}
+      {/* 通过之后的光点是绿色：红 / 绿 / 琥珀分别表示失败 / 通过 / 进行中 */}
       {TO_MERGE.map((route, i) => (
-        <FlowBeam key={`merge-${i}`} route={route} at={MERGE_AT[i]} />
+        <FlowBeam
+          key={`merge-${i}`}
+          route={route}
+          at={MERGE_AT[i]}
+          tone="green"
+        />
       ))}
-      <FlowBeam route={TO_BUILD} at={BUILD_AT} />
-      <FlowBeam route={TO_DEPLOY} at={DEPLOY_AT} />
+      <FlowBeam route={TO_BUILD} at={BUILD_AT} tone="green" />
+      <FlowBeam route={TO_DEPLOY} at={DEPLOY_AT} tone="green" />
 
       <FlowNode x={38} y={100} width={52} litAt={0.2}>
         <GitCommitHorizontal
@@ -140,7 +150,7 @@ export default function FlowDiagramCicdDemo() {
         </FlowNode>
       ))}
 
-      <FlowDiamond x={200} y={100} litAt={MERGED} />
+      <FlowDiamond x={200} y={100} tone="green" litAt={MERGED} />
 
       <FlowNode x={254} y={100} width={56} litAt={BUILD_START}>
         <JobStatus x={236} y={100} from={BUILD_START} to={BUILD_DONE} />
@@ -149,7 +159,7 @@ export default function FlowDiagramCicdDemo() {
         </FlowLabel>
       </FlowNode>
 
-      <FlowNode x={254} y={170} width={72} litAt={LIVE_AT}>
+      <FlowNode x={254} y={170} width={72} tone="green" litAt={LIVE_AT}>
         <FlowStatusDot x={232} y={170} at={LIVE_AT} pulse />
         <FlowLabel x={256} y={170}>
           deploy

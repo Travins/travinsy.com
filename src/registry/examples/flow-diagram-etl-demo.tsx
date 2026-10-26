@@ -15,10 +15,11 @@ import {
   useFlowClock,
 } from "@/registry/ui/flow-diagram/flow-diagram"
 
+// 每个数据源一种颜色：从节点到汇入的光点都用它
 const SOURCES = [
-  { x: 48, label: "MySQL", Icon: Database },
-  { x: 130, label: "日志", Icon: ScrollText },
-  { x: 212, label: "API", Icon: Globe },
+  { x: 48, label: "MySQL", icon: Database, tone: "blue" },
+  { x: 130, label: "日志", icon: ScrollText, tone: "amber" },
+  { x: 212, label: "API", icon: Globe, tone: "cyan" },
 ] as const
 const BARS = [10, 16, 12, 22, 18] as const
 
@@ -62,7 +63,7 @@ const REST = GROW_END + 0.6
 const EXIT = REST + 0.8
 const DURATION = EXIT + 0.8
 
-/** 清洗节点里的进度条，宽度随时间轴从 0 涨到满。 */
+/** 清洗节点里的进度条，宽度随时间轴从 0 涨到满；颜色取所在节点的色调（`--flow-tone`）。 */
 function CleanProgress() {
   const { time, exit, duration } = useFlowClock()
   const scaleX = useTransform(time, [CLEAN_AT, CLEAN_END], [0, 1])
@@ -83,7 +84,7 @@ function CleanProgress() {
         width={100}
         height={3}
         rx={1.5}
-        className="fill-primary"
+        className="fill-(--flow-tone)"
         style={{ scaleX, transformBox: "fill-box", transformOrigin: "left" }}
       />
     </motion.g>
@@ -110,7 +111,7 @@ function GrowingBar({
       width={6}
       height={height}
       rx={1}
-      className="fill-primary"
+      className="fill-(--flow-tone)"
       style={{ scaleY, transformBox: "fill-box", transformOrigin: "bottom" }}
     />
   )
@@ -129,25 +130,29 @@ export default function FlowDiagramEtlDemo() {
     >
       {TO_CLEAN.map((route, i) => (
         // 数据源是常驻的接入：线画好后持续流动，直到清洗完成
-        <FlowBeam key={`intake-${i}`} route={route} at={INTAKE_AT} flow />
+        <FlowBeam
+          key={`intake-${i}`}
+          route={route}
+          at={INTAKE_AT}
+          tone={SOURCES[i].tone}
+          flow
+        />
       ))}
-      <FlowBeam route={TO_STORE} at={STORE_AT} />
-      <FlowBeam route={TO_BOARD} at={BOARD_AT} />
+      <FlowBeam route={TO_STORE} at={STORE_AT} tone="violet" />
+      <FlowBeam route={TO_BOARD} at={BOARD_AT} tone="green" />
 
-      {SOURCES.map(({ x, label, Icon }) => (
-        <FlowNode key={label} x={x} y={24} width={72} litAt={0.2}>
-          <Icon
-            x={x - 28}
-            y={18}
-            width={12}
-            height={12}
-            strokeWidth={1.5}
-            className="text-muted-foreground"
-          />
-          <FlowLabel x={x + 8} y={24}>
-            {label}
-          </FlowLabel>
-        </FlowNode>
+      {/* icon + label：图标与文字整体居中，不用手算坐标 */}
+      {SOURCES.map(({ x, label, icon, tone }) => (
+        <FlowNode
+          key={label}
+          x={x}
+          y={24}
+          width={72}
+          tone={tone}
+          litAt={0.2}
+          icon={icon}
+          label={label}
+        />
       ))}
 
       <FlowNode
@@ -155,7 +160,8 @@ export default function FlowDiagramEtlDemo() {
         y={85}
         width={140}
         height={34}
-        radius={5}
+        shape="box"
+        tone="violet"
         litAt={CLEAN_AT}
       >
         <FlowLabel x={130} y={77}>
@@ -169,7 +175,7 @@ export default function FlowDiagramEtlDemo() {
         y={144}
         width={140}
         height={32}
-        radius={5}
+        shape="box"
         litAt={WAREHOUSE_AT}
       >
         <FlowLabel x={130} y={139}>
@@ -186,7 +192,8 @@ export default function FlowDiagramEtlDemo() {
         y={204}
         width={188}
         height={40}
-        radius={5}
+        shape="box"
+        tone="green"
         litAt={DASHBOARD_AT}
       >
         <FlowLabel x={48} y={204} anchor="start">
@@ -205,7 +212,8 @@ export default function FlowDiagramEtlDemo() {
             x={196}
             y={204}
             anchor="end"
-            className="fill-primary text-[9px]"
+            tone="green"
+            className="text-[9px]"
           >
             +12%
           </FlowLabel>

@@ -1,6 +1,6 @@
 ---
 title: 流程动画图示
-description: 节点、细线与流动光点组成的循环动画流程图：统一时间轴、进入视口才播放、减少动态效果时停在静帧，附带光点路径、逐字输入、加载圈与状态点等原语。
+description: 节点、细线与流动光点组成的循环动画流程图：统一时间轴、进入视口才播放、减少动态效果时停在静帧；色调与底纹可配置，附带光点路径、逐字输入、加载圈与状态点等原语。
 links:
   源码: https://travinsy.com/r/flow-diagram.json
 ---
@@ -21,7 +21,6 @@ links:
 import {
   FlowBeam,
   FlowDiagram,
-  FlowLabel,
   FlowNode,
   flowArrival,
   flowRoute,
@@ -35,12 +34,8 @@ export function Pipeline() {
   return (
     <FlowDiagram width={320} height={100} duration={4.4} exit={3.6} rest={3.4} className="w-full max-w-md">
       <FlowBeam route={TO_PROCESS} at={0.5} />
-      <FlowNode x={50} y={50} width={60} litAt={0.2}>
-        <FlowLabel x={50} y={50}>输入</FlowLabel>
-      </FlowNode>
-      <FlowNode x={160} y={50} width={60} litAt={PROCESS_AT}>
-        <FlowLabel x={160} y={50}>处理</FlowLabel>
-      </FlowNode>
+      <FlowNode x={50} y={50} width={60} litAt={0.2} label="输入" />
+      <FlowNode x={160} y={50} width={60} litAt={PROCESS_AT} label="处理" />
     </FlowDiagram>
   )
 }
@@ -48,10 +43,10 @@ export function Pipeline() {
 
 约定很少：
 
-- **节点是容器，文字是子元素。** `FlowNode` 只画边框和点亮效果，里面的文字、图标按绝对坐标摆放，通常用 `FlowLabel` 或 lucide 图标（SVG 里直接给 `x`、`y`、`width`、`height` 即可）。
+- **节点是容器。** `FlowNode` 画边框和点亮效果；简单的“图标 + 文字”直接用 `icon`、`label`、`description`，它们会整体居中。复杂内容（加载圈、状态点、进度条……）作为子元素按绝对坐标摆放，通常用 `FlowLabel` 或 lucide 图标（SVG 里直接给 `x`、`y`、`width`、`height` 即可）。
 - **点亮时刻来自光点。** 光点出发的时刻 `at` 加上路径长度除以速度，就是它抵达的时刻，`flowArrival(at, route)` 帮你算好，直接传给目标节点的 `litAt`。
 - **连线默认跟着光点一路长出来。** `FlowBeam` 的底线从起点生长到终点，光点走到哪线画到哪，到达时节点点亮；常驻的数据流还可以再加 `flow`，详见「连线动态」。
-- **颜色全部来自主题。** 点亮用 `primary`，失败分支可以换成 `destructive`，亮暗模式和颜色主题切换后自动跟随。
+- **颜色来自主题变量。** 默认点亮用 `primary`，其他色调用 `tone` 指定，亮暗模式和颜色主题切换后自动跟随，详见「色调」。
 
 ## 示例
 
@@ -83,25 +78,25 @@ export function Pipeline() {
 
 ### CI/CD 流水线
 
-push 之后 lint 与 test 并行，耗时不同；先跑完的先打勾，汇合点要等最慢的那个。build 完成后部署上线，状态点带涟漪。
+push 之后 lint 与 test 并行，耗时不同；先跑完的先打勾，汇合点要等最慢的那个。build 完成后部署上线，状态点带涟漪。琥珀色表示进行中、绿色表示通过：加载圈是琥珀色，对勾和通过之后的光点、部署节点是绿色。对勾是自己写的 lucide 图标，用 `flowToneStyle("green")` 给它设置色调。
 
 <ComponentPreview name="flow-diagram-cicd-demo" />
 
 ### 登录鉴权
 
-第一次密码错误，Auth 返回 401，红色光点沿一条环路绕回用户；重试通过后签发 JWT，带着 Bearer 访问受保护资源。`FlowBeam` 的 `tone="destructive"` 用来标出失败分支。
+第一次密码错误，Auth 返回 401，红色光点沿一条环路绕回用户；重试通过后签发 JWT，带着 Bearer 访问受保护资源。`FlowBeam` 的 `tone="destructive"` 用来标出失败分支，这条环路的底线也会淡淡染成红色。
 
 <ComponentPreview name="flow-diagram-auth-demo" />
 
 ### 微服务请求链路
 
-网关扇出到三个服务并行处理，光点按路径长度反推出发时刻，所以同时到达；各服务按自己的耗时返回，耗时标签随返回的光点出现，汇合点等最慢的那个，最后得到总耗时。
+网关扇出到三个服务并行处理，光点按路径长度反推出发时刻，所以同时到达；各服务按自己的耗时返回，耗时标签随返回的光点出现，汇合点等最慢的那个，最后得到总耗时。每个服务一种颜色（`tone`），扇出的光点、节点和返回的光点都用它，节点里的加载圈和状态点自动继承节点的颜色。
 
 <ComponentPreview name="flow-diagram-microservice-demo" />
 
 ### 数据管道 ETL
 
-竖向布局：三个数据源汇入清洗，进度条走完后写入数据仓库，再在看板上依次长出柱状图。数据源汇入清洗的三条线带 `flow`，表示数据源一直在接入。进度条和柱子都是用 `useFlowClock` + `useTransform` 写的自定义元素。
+竖向布局：三个数据源汇入清洗，进度条走完后写入数据仓库，再在看板上依次长出柱状图。每个数据源一种颜色，用 `icon` + `label` 一行写完节点；汇入清洗的三条线带 `flow`，表示数据源一直在接入。进度条和柱子是用 `useFlowClock` + `useTransform` 写的自定义元素，颜色用 `fill-(--flow-tone)` 取所在节点的色调。
 
 <ComponentPreview name="flow-diagram-etl-demo" />
 
@@ -110,6 +105,18 @@ push 之后 lint 与 test 并行，耗时不同；先跑完的先打勾，汇合
 请求与结果走同一条线：先 `tools/list` 向三个服务器发现能力，再 `tools/call` 调用数据库，结果沿原路返回。返回路径只是把端点倒过来，用 `base={false}` 复用已经画好的线。
 
 <ComponentPreview name="flow-diagram-mcp-demo" />
+
+### 多模型路由
+
+请求先经过路由器，再按任务分流到不同的模型：每个模型一种颜色，请求的光点、路由器到模型的连线和模型节点都用它。入口的线用一条 `FlowEdge` 画一次，三个请求的光点都用 `base={false}` 走这条线。模型节点用 `label` + `description` 写两行文字，加载圈和状态点放在节点里，颜色自动继承。
+
+<ComponentPreview name="flow-diagram-router-demo" />
+
+### 品牌色
+
+在 `FlowDiagram` 上设一次 `tone`，里面没有单独指定色调的节点、光点、加载圈、状态点都继承它。`tone` 不限于内置名，任何 CSS 颜色都可以，这个例子用主题变量混出一个颜色；换成你自己的品牌色直接写 `tone="#ff6a00"` 或 `tone="oklch(0.7 0.2 40)"` 即可。
+
+<ComponentPreview name="flow-diagram-brand-demo" />
 
 ## 时间轴
 
@@ -137,6 +144,8 @@ push 之后 lint 与 test 并行，耗时不同；先跑完的先打勾，汇合
 - 切回标签页后时钟从原地继续，不会一下子跳过一大段。
 - 开启系统的“减少动态效果”时不播放，也不显示光点，画面固定在 `rest`，连线都是完整的（带 `flow` 的线停在一帧虚线纹理上）。
 
+循环、触发时机、暂停和速度都可以配置，见下面的「播放控制」。
+
 ### 自定义动画元素
 
 `useFlowClock()` 返回 `{ time, duration, exit }`，`time` 是 motion 的 `MotionValue<number>`。用 `useTransform(time, 输入区间, 输出区间)` 就能把任何属性绑到时间轴上：
@@ -159,6 +168,120 @@ function Progress() {
 ```
 
 别忘了在 `exit` 到 `duration` 之间把元素淡出，否则它会在下一轮开头突然消失。需要在渲染里读取时间做判断时，请像 `FlowTypedText` 那样用 `useMotionValueEvent`，不要在渲染期间调用 `Date.now()`，那会让服务端和客户端的结果对不上。
+
+## 色调
+
+`tone` 决定“亮起来是什么颜色”。`FlowNode`、`FlowDiamond` 点亮后的描边与淡底色、`FlowBeam` 的光点与流动纹理、`FlowEdge`、`FlowSpinner`、`FlowStatusDot`、`FlowTypedText` 的光标，以及可选的 `FlowLabel` 文字，都接受同一个 `tone`：
+
+```tsx
+<FlowBeam route={TO_API} at={1} tone="blue" />
+<FlowNode x={160} y={50} width={72} tone="green" litAt={1.4} label="API" />
+<FlowLabel x={160} y={80} tone="muted">200 OK</FlowLabel>
+```
+
+<ComponentPreview name="flow-diagram-tones-demo" />
+
+### 内置色调
+
+| 名称 | 取值 | 说明 |
+| --- | --- | --- |
+| `primary` | `var(--primary)` | 默认。随颜色主题变化 |
+| `foreground` | `var(--foreground)` | 最醒目的中性色 |
+| `muted` | `var(--muted-foreground)` | 弱化的中性色 |
+| `destructive` | `var(--destructive)` | 失败、拒绝 |
+| `blue` `green` `amber` `rose` `violet` `cyan` | `var(--flow-blue)` 等 | 多彩色调，不随颜色主题变化 |
+
+多彩色调来自六个 CSS 变量，由 registry 条目的 `cssVars` 提供亮 / 暗两套 oklch 值，`shadcn add` 时会写进你的全局样式（本站已经在 `globals.css` 里同名定义）：
+
+| 变量 | 亮色 | 暗色 |
+| --- | --- | --- |
+| `--flow-blue` | `oklch(0.56 0.2 258)` | `oklch(0.72 0.15 255)` |
+| `--flow-green` | `oklch(0.62 0.16 150)` | `oklch(0.77 0.17 152)` |
+| `--flow-amber` | `oklch(0.7 0.16 70)` | `oklch(0.82 0.15 82)` |
+| `--flow-rose` | `oklch(0.62 0.21 5)` | `oklch(0.74 0.16 8)` |
+| `--flow-violet` | `oklch(0.56 0.22 292)` | `oklch(0.74 0.15 295)` |
+| `--flow-cyan` | `oklch(0.66 0.12 215)` | `oklch(0.82 0.11 208)` |
+
+想换成品牌色，在全局样式里覆盖这些变量即可，所有用到它的图示一起变：
+
+```css title="app/globals.css"
+:root {
+  --flow-blue: oklch(0.6 0.2 250);
+}
+.dark {
+  --flow-blue: oklch(0.75 0.14 250);
+}
+```
+
+### 任意颜色
+
+`tone` 也接受任意 CSS 颜色，不在内置名里的字符串都按颜色处理（所以内置名拼错了也不会报错，只是颜色失效）：
+
+```tsx
+<FlowBeam route={TO_API} at={1} tone="#ff6a00" />
+<FlowNode x={160} y={50} width={72} tone="oklch(0.7 0.2 150)" litAt={1.4} label="API" />
+<FlowNode x={260} y={50} width={72} tone="var(--brand)" litAt={1.8} label="CDN" />
+```
+
+### 继承
+
+所有原语只读一个 CSS 变量 `--flow-tone`，它沿 DOM 往下继承，所以不用在每个元素上重复写：
+
+- `FlowDiagram` 的 `tone` 是整张图的默认色调（默认 `primary`）；
+- `FlowNode` 指定了 `tone` 后，节点里没有单独指定色调的加载圈、状态点、光标都跟着变，图标也会染成这个颜色；
+- 元素自己的 `tone` 优先。
+
+自己写的 SVG 元素也可以用：`flowToneStyle("green")` 返回 `{ "--flow-tone": ... }`，放到 `style` 上，里面用 `fill-(--flow-tone)`、`stroke-(--flow-tone)/40`、`text-(--flow-tone)` 取色。
+
+### 连线的颜色
+
+连线默认是中性的前景色。给 `FlowBeam` 或 `FlowEdge` **明确指定** `tone` 后，生长的底线、虚线也会淡淡染上这个颜色（30% 不透明度）；继承自 `FlowDiagram` 的默认色调不会染线。
+
+## 背景
+
+`FlowDiagram` 的 `background` 选择外框的底纹，默认是向四周淡出的点阵：
+
+<ComponentPreview name="flow-diagram-background-demo" />
+
+```tsx
+<FlowDiagram background="grid" />         {/* 方格 */}
+<FlowDiagram background="none" />         {/* 不要底纹 */}
+<FlowDiagram background="dots" fade={false} /> {/* 点阵铺满，不淡出 */}
+<FlowDiagram background={<MyPattern />} />      {/* 自己的底纹元素 */}
+<FlowDiagram background="none" backgroundClassName="bg-muted/40" />
+```
+
+- 内置底纹：`dots` 点阵、`grid` 方格、`lines` 横线、`hatch` 斜纹、`none` 无。点阵与斜纹用 `grid-layout` 提供的 `bg-dots`、`bg-hatch`，方格与横线直接用线条颜色 `--edge` 画渐变，所以都不需要额外的工具类，安装 `grid-layout` 就够了。
+- `fade` 控制底纹是否向四周淡出（默认淡出），让图示像摆在图纸上；贴着边框铺满时设为 `false`。
+- 传一个元素给 `background`，它会被放进铺满外框的绝对定位层（带 `pointer-events-none`），受 `fade` 影响；`backgroundClassName` 追加到这一层上，调透明度、换颜色，或者配合 `background="none"` 写一个纯 CSS 的底纹。
+- 底纹颜色用的是线条颜色 `--edge`，随亮暗模式和颜色主题变化。
+
+## 播放控制
+
+<ComponentPreview name="flow-diagram-playback-demo" />
+
+```tsx
+<FlowDiagram loop={false} />                  {/* 只播一遍，停在 rest */}
+<FlowDiagram trigger="always" />              {/* 不管是否在视口里都播 */}
+<FlowDiagram paused={paused} speed={1.5} />   {/* 外部控制暂停与速度 */}
+```
+
+- `loop`（默认 `true`）：设为 `false` 时从头播一遍，走到 `rest` 就停在那一帧，不再淡出重来。因为首帧是 `rest` 静帧，所以单次播放开始时会从完整画面跳回起点再播；想重播，给 `FlowDiagram` 换一个 `key`。
+- `trigger`（默认 `"in-view"`）：`in-view` 进入视口才播、离开暂停；`always` 只要没暂停就一直播。
+- `paused`（默认 `false`）：暂停，画面停在当前这一刻；还没开始播时就是 `rest` 静帧。可以由外部状态控制，例如“悬停时暂停”。
+- `speed`（默认 `1`）：整条时间轴的速度倍率，2 是两倍速，0.5 是半速。`duration`、`exit`、`rest` 等仍然按原速的秒数写。
+
+不论怎么配置，三条保证不变：离开视口暂停、“减少动态效果”下固定在 `rest`、渲染期间不依赖随机数（水合稳定）。
+
+## 布局
+
+画布尺寸由 `width`、`height` 决定，子元素的坐标都以它为准；`fit` 决定显示时怎样适应外框：
+
+- `scale-down`（默认）：只缩小不放大。外框比画布窄时等比缩小，宽时保持设计尺寸并居中，文字大小不会超过设计值；
+- `contain`：等比缩放到刚好装进外框，外框更宽时会放大，适合让图示填满一个格子；
+- `none`：始终保持设计尺寸，装不下的部分被外框裁掉。
+
+外框的宽高交给 `className`：`w-full max-w-md`、`h-48`、`aspect-video` 等都可以，外框本身没有边框和固定高度。
 
 ## 连线动态
 
@@ -202,7 +325,7 @@ function Progress() {
 
 ### FlowNode
 
-带细边框的小胶囊；`x`、`y` 是中心点。`litAt` 到达时，边框和底色换成主色。
+带细边框的节点；`x`、`y` 是中心点。`litAt` 到达时，边框和底色换成 `tone` 的颜色。`shape` 选择胶囊或方框，`icon`、`label`、`description` 是“图标 + 文字”的快捷写法，其余内容放进子元素。
 
 <PropsTable name="flow-diagram" component="FlowNode" />
 
@@ -214,7 +337,7 @@ function Progress() {
 
 ### FlowLabel
 
-等宽小标签，颜色和字号用 `className` 覆盖（例如 `fill-muted-foreground text-[9px]`，注意 SVG 文字用的是 `fill-*` 而不是 `text-*`）。
+等宽小标签。颜色用 `tone`，或者用 `className` 覆盖（例如 `fill-muted-foreground text-[9px]`，注意 SVG 文字用的是 `fill-*` 而不是 `text-*`）。
 
 <PropsTable name="flow-diagram" component="FlowLabel" />
 
@@ -261,6 +384,8 @@ function flowRoute(points: readonly FlowPoint[], radius?: number): FlowRoute
 function flowArrival(at: number, route: FlowRoute): number
 const FLOW_BEAM_SPEED: number // 110，光点飞行速度，单位：设计像素 / 秒
 const FLOW_LINE_SPEED: number // 14，连线上流动纹理的速度，单位：设计像素 / 秒
+function flowTextWidth(text: string, fontSize?: number): number // 估算文字宽度
+function flowToneStyle(tone?: FlowTone): CSSProperties | undefined // 见「色调」
 ```
 
 `flowRoute` 把折线变成圆角路径并算出长度，`radius` 是拐角半径（默认 6）。它是纯函数，请在组件外调用。`flowArrival` 返回光点抵达终点的时刻。它们和 `FLOW_BEAM_SPEED` 都定义在不依赖 React 的 `route.ts` 里。`flow-diagram.tsx` 是客户端模块，服务端组件不能直接调用它再导出的函数：要在服务端组件里算路径，请改从 `route.ts` 引入；在带 `"use client"` 的文件里（案例都是这样）从 `flow-diagram.tsx` 引入即可。`FLOW_BEAM_SPEED` 在需要“让几束光点同时到达”时有用：`出发时刻 = 到达时刻 - route.length / FLOW_BEAM_SPEED`，参见微服务和 MCP 案例。
@@ -268,14 +393,23 @@ const FLOW_LINE_SPEED: number // 14，连线上流动纹理的速度，单位：
 ```ts
 type FlowPoint = readonly [x: number, y: number]
 type FlowRoute = { d: string; length: number }
-type FlowTone = "primary" | "destructive"
+type FlowToneName =
+  | "primary" | "foreground" | "muted" | "destructive"
+  | "blue" | "green" | "amber" | "rose" | "violet" | "cyan"
+type FlowTone = FlowToneName | (string & {}) // 内置名，或任意 CSS 颜色
+type FlowBackgroundName = "dots" | "grid" | "lines" | "hatch" | "none"
+type FlowFit = "scale-down" | "contain" | "none"
+type FlowNodeShape = "pill" | "box"
 ```
+
+`flowTextWidth` 按“拉丁字符 6px、中文 10px”（10px 字号）线性估算文字宽度，`FlowNode` 用它把图标和文字整体居中，`FlowTypedText` 用它摆光标；自己写需要对齐文字的元素时也可以用。
 
 ### data-slot
 
 | 元素 | `data-slot` |
 | --- | --- |
 | 外框 | `flow-diagram` |
+| 底纹层 | `flow-diagram-background` |
 | 节点 | `flow-node` |
 | 分叉点 | `flow-diamond` |
 | 标签 | `flow-label` |
@@ -299,7 +433,9 @@ type FlowTone = "primary" | "destructive"
 
 - 画布按设计尺寸绘制，窄屏时整体缩小，文字也会跟着缩小。设计时留意最窄的容器：10px 的文字缩到 0.7 倍就接近 7px，宽度小于 300px 的场景请把画布设计得更窄一些。
 - 文字使用等宽字体，`FlowTypedText` 的光标位置按“拉丁字符 6px、中文 10px”估算，混排时请留一点余量。
-- 点阵底纹使用 `bg-dots`，这个工具类由 `grid-layout` 提供，安装时会一并装上；不需要底纹时传 `dots={false}`。
+- 底纹依赖 `grid-layout` 提供的 `bg-dots`、`bg-hatch` 和 `--edge` 变量，安装时会一并装上；不需要底纹时传 `background="none"`。
+- 多彩色调依赖 `--flow-blue` 等六个变量。如果你的项目是手动安装、没有经过 `shadcn add`，需要自己把它们加进全局样式，否则这些色调的元素不会显示颜色。
+- `tone` 里不是内置名的字符串都按 CSS 颜色处理，写错内置名（例如 `"bleu"`）不会报错，只是颜色失效。
 - 路径只支持直线和圆角，拐角由 `flowRoute` 的 `radius` 控制；复杂曲线请自己写 `path` 并放进 `FlowReveal`。
 - 生长依赖路径长度的估算，圆角处有一两像素的误差，不影响观感；同一路径的光点与线头始终同步，因为两者用的是同一个长度。
 - 外框默认没有边框和固定高度，首页的用法是 `className="h-48 border-b border-edge"`。

@@ -1,18 +1,31 @@
 "use client"
 
 import { motion, useMotionValueEvent, useTransform } from "motion/react"
-import { useMemo, useState, type ReactNode } from "react"
+import {
+  useMemo,
+  useState,
+  type ComponentType,
+  type ReactNode,
+  type SVGProps,
+} from "react"
 
 import { cn } from "@/lib/utils"
 
 import { FlowLineDraw, FlowLineFlow } from "./beam"
-import { FLOW_BEAM_SPEED, type FlowRoute } from "./route"
+import { FLOW_BEAM_SPEED, flowTextWidth, type FlowRoute } from "./route"
 import { useFlowClock } from "./flow-clock"
-import { toneClasses, type FlowTone } from "./tone"
+import { flowToneStyle, toneClasses, type FlowTone } from "./tone"
 
-/** 等宽字 10px 下的字符宽度，用来估算光标位置（中文按全角 10px 计） */
-const LATIN_ADVANCE = 6
-const CJK_ADVANCE = 10
+/** 节点里图标的边长，以及图标与文字之间的间距（设计像素） */
+const ICON_SIZE = 12
+const ICON_GAP = 4
+
+/** 节点圆角：`pill` 是两头全圆的胶囊，`box` 是小圆角矩形 */
+type FlowNodeShape = "pill" | "box"
+const BOX_RADIUS = 5
+
+/** 节点里的图标：任何接受 `x`、`y`、`width`、`height` 的 SVG 组件，例如 lucide 图标 */
+type FlowIcon = ComponentType<SVGProps<SVGSVGElement>>
 
 type Box = { x: number; y: number; width: number; height: number; rx: number }
 
@@ -51,8 +64,8 @@ function FlowReveal({
   )
 }
 
-/** 节点被光点点亮后的状态层：主色（或警示色）描边加淡底色。 */
-function Lit({ box, at, tone }: { box: Box; at: number; tone: FlowTone }) {
+/** 节点被光点点亮后的状态层：色调描边加淡底色，颜色取外层的 `--flow-tone`。 */
+function Lit({ box, at }: { box: Box; at: number }) {
   const { time, exit, duration } = useFlowClock()
   const opacity = useTransform(
     time,
@@ -61,23 +74,28 @@ function Lit({ box, at, tone }: { box: Box; at: number; tone: FlowTone }) {
   )
   return (
     <motion.g style={{ opacity }}>
-      <rect {...box} strokeWidth={1} className={toneClasses[tone].lit} />
+      <rect {...box} strokeWidth={1} className={toneClasses.lit} />
     </motion.g>
   )
 }
 
 /**
- * 细边框小胶囊。`x`、`y` 是中心点；`litAt` 到达时，边框和底色换成主色。
- * 内部文字、图标请作为 `children` 传入，用 `FlowLabel` 等原语按绝对坐标摆放。
+ * 细边框节点。`x`、`y` 是中心点；`litAt` 到达时，边框和底色换成 `tone` 的颜色。
+ * 常见的“图标 + 文字”可以直接用 `icon`、`label`、`description`；
+ * 更复杂的内容请作为 `children` 传入，用 `FlowLabel` 等原语按绝对坐标摆放。
  */
 function FlowNode({
   x,
   y,
   width,
   height = 20,
-  radius = height / 2,
+  shape = "pill",
+  radius = shape === "box" ? BOX_RADIUS : height / 2,
+  tone,
   litAt,
-  litTone = "primary",
+  icon: Icon,
+  label,
+  description,
   children,
 }: {
   /** 中心点的横坐标 */
@@ -86,21 +104,34 @@ function FlowNode({
   y: number
   width: number
   /**
-   * 节点高度
+   * 节点高度，带 `description` 的两行节点建议 30 以上
    * @default 20
    */
   height?: number
   /**
-   * 圆角半径，缺省为高度的一半（胶囊），传小值得到方角的框
+   * 外形：`pill` 两头全圆的胶囊，`box` 小圆角矩形
+   * @default "pill"
+   */
+  shape?: FlowNodeShape
+  /**
+   * 圆角半径，覆盖 `shape` 的默认值
+   * @default shape 为 "pill" 时是 height / 2，为 "box" 时是 5
    */
   radius?: number
+  /**
+   * 点亮后的色调，同时也是节点内部没有指定色调的状态点、加载圈、光标的颜色；
+   * 指定后图标也会染成这个颜色
+   * @default 沿用 FlowDiagram 的 tone（"primary"）
+   */
+  tone?: FlowTone
   /** 被点亮的时刻（秒），不传则不点亮 */
   litAt?: number
-  /**
-   * 点亮后的颜色
-   * @default "primary"
-   */
-  litTone?: FlowTone
+  /** 放在文字左侧的图标，例如 lucide 的 `Database` */
+  icon?: FlowIcon
+  /** 节点里的文字。有图标时图标 + 文字整体居中 */
+  label?: string
+  /** 文字下方的第二行小字，muted 色 */
+  description?: string
   children?: ReactNode
 }) {
   const box: Box = {
@@ -110,14 +141,48 @@ function FlowNode({
     height,
     rx: radius,
   }
+  const labelY = description ? y - 6 : y
+  // 图标 + 文字整体居中：先估算文字宽度，再从总宽度的左端开始排
+  const labelWidth = label ? flowTextWidth(label) : 0
+  const rowWidth = Icon
+    ? ICON_SIZE + (label ? ICON_GAP + labelWidth : 0)
+    : labelWidth
+  const rowLeft = x - rowWidth / 2
   return (
-    <g data-slot="flow-node">
+    <g data-slot="flow-node" style={flowToneStyle(tone)}>
       <rect
         {...box}
         strokeWidth={1}
         className="fill-background stroke-foreground/30"
       />
-      {litAt === undefined ? null : <Lit box={box} at={litAt} tone={litTone} />}
+      {litAt === undefined ? null : <Lit box={box} at={litAt} />}
+      {Icon ? (
+        <Icon
+          x={rowLeft}
+          y={labelY - ICON_SIZE / 2}
+          width={ICON_SIZE}
+          height={ICON_SIZE}
+          strokeWidth={1.5}
+          aria-hidden="true"
+          className={
+            tone !== undefined ? "text-(--flow-tone)" : "text-muted-foreground"
+          }
+        />
+      ) : null}
+      {label ? (
+        <FlowLabel
+          x={Icon ? rowLeft + ICON_SIZE + ICON_GAP : x}
+          y={labelY}
+          anchor={Icon ? "start" : "middle"}
+        >
+          {label}
+        </FlowLabel>
+      ) : null}
+      {description ? (
+        <FlowLabel x={x} y={y + 7} className="fill-muted-foreground text-[9px]">
+          {description}
+        </FlowLabel>
+      ) : null}
       {children}
     </g>
   )
@@ -127,39 +192,44 @@ function FlowNode({
 function FlowDiamond({
   x,
   y,
+  tone,
   litAt,
-  litTone = "primary",
 }: {
   /** 中心点的横坐标 */
   x: number
   /** 中心点的纵坐标 */
   y: number
+  /**
+   * 点亮后的色调
+   * @default 沿用 FlowDiagram 的 tone（"primary"）
+   */
+  tone?: FlowTone
   /** 被点亮的时刻（秒），不传则不点亮 */
   litAt?: number
-  /**
-   * 点亮后的颜色
-   * @default "primary"
-   */
-  litTone?: FlowTone
 }) {
   const box: Box = { x: -4, y: -4, width: 8, height: 8, rx: 1.5 }
   return (
-    <g data-slot="flow-diamond" transform={`translate(${x} ${y}) rotate(45)`}>
+    <g
+      data-slot="flow-diamond"
+      transform={`translate(${x} ${y}) rotate(45)`}
+      style={flowToneStyle(tone)}
+    >
       <rect
         {...box}
         strokeWidth={1}
         className="fill-background stroke-foreground/30"
       />
-      {litAt === undefined ? null : <Lit box={box} at={litAt} tone={litTone} />}
+      {litAt === undefined ? null : <Lit box={box} at={litAt} />}
     </g>
   )
 }
 
-/** 等宽小标签，默认居中；颜色、字号用 `className` 覆盖。 */
+/** 等宽小标签，默认居中；字号用 `className` 覆盖，颜色用 `tone` 或 `className`。 */
 function FlowLabel({
   x,
   y,
   anchor = "middle",
+  tone,
   className,
   children,
 }: {
@@ -172,6 +242,10 @@ function FlowLabel({
    * @default "middle"
    */
   anchor?: "start" | "middle" | "end"
+  /**
+   * 文字色调。不传则是前景色；注意 SVG 文字用 `fill-*` 而不是 `text-*` 着色
+   */
+  tone?: FlowTone
   className?: string
   children: ReactNode
 }) {
@@ -182,7 +256,12 @@ function FlowLabel({
       y={y}
       textAnchor={anchor}
       dominantBaseline="central"
-      className={cn("fill-foreground font-mono text-[10px]", className)}
+      style={flowToneStyle(tone)}
+      className={cn(
+        "font-mono text-[10px]",
+        tone !== undefined ? toneClasses.fill : "fill-foreground",
+        className,
+      )}
     >
       {children}
     </text>
@@ -190,7 +269,7 @@ function FlowLabel({
 }
 
 /**
- * 逐字打出的文字，后面跟一个主色光标。
+ * 逐字打出的文字，后面跟一个光标。
  * 已打出的字数由时间推导，不依赖定时器；`x` 是文字起点（左对齐）。
  */
 function FlowTypedText({
@@ -199,6 +278,7 @@ function FlowTypedText({
   interval,
   x,
   y,
+  tone,
 }: {
   text: string
   /** 开始打第一个字的时刻（秒） */
@@ -209,6 +289,11 @@ function FlowTypedText({
   x: number
   /** 文字垂直中线的纵坐标 */
   y: number
+  /**
+   * 光标的色调
+   * @default 沿用 FlowDiagram 的 tone（"primary"）
+   */
+  tone?: FlowTone
 }) {
   const { time, exit, duration } = useFlowClock()
   const chars = useMemo(() => Array.from(text), [text])
@@ -217,14 +302,8 @@ function FlowTypedText({
   const [count, setCount] = useState(() => typedCount(time.get()))
   useMotionValueEvent(time, "change", (value) => setCount(typedCount(value)))
 
-  const typed = chars.slice(0, count)
-  const caretX =
-    x +
-    typed.reduce(
-      (width, char) =>
-        width + (char.charCodeAt(0) > 0xff ? CJK_ADVANCE : LATIN_ADVANCE),
-      0,
-    )
+  const typed = chars.slice(0, count).join("")
+  const caretX = x + flowTextWidth(typed)
   const typingEnd = at + chars.length * interval
   // 打字时常亮，打完后闪几下就收起
   const caretOpacity = useTransform(time, (value) => {
@@ -235,20 +314,22 @@ function FlowTypedText({
   const opacity = useTransform(time, [exit, duration], [1, 0])
 
   return (
-    <motion.g data-slot="flow-typed-text" style={{ opacity }}>
-      <FlowLabel x={x} y={y} anchor="start">
-        {typed.join("")}
-      </FlowLabel>
-      <motion.g style={{ opacity: caretOpacity }}>
-        <rect
-          x={caretX + 1}
-          y={y - 6}
-          width={1}
-          height={12}
-          className="fill-primary"
-        />
+    <g data-slot="flow-typed-text" style={flowToneStyle(tone)}>
+      <motion.g style={{ opacity }}>
+        <FlowLabel x={x} y={y} anchor="start">
+          {typed}
+        </FlowLabel>
+        <motion.g style={{ opacity: caretOpacity }}>
+          <rect
+            x={caretX + 1}
+            y={y - 6}
+            width={1}
+            height={12}
+            className={toneClasses.fill}
+          />
+        </motion.g>
       </motion.g>
-    </motion.g>
+    </g>
   )
 }
 
@@ -264,6 +345,7 @@ function FlowEdge({
   guide = true,
   dashed = false,
   flow = false,
+  tone,
 }: {
   /** 由 `flowRoute` 生成的路径 */
   route: FlowRoute
@@ -294,25 +376,32 @@ function FlowEdge({
    * @default false
    */
   flow?: boolean
+  /**
+   * 连线和流动纹理的色调。不传则是中性的前景色，纹理跟随外层色调
+   * @default undefined
+   */
+  tone?: FlowTone
 }) {
   const growing = reveal === "draw" && !dashed
+  const tinted = tone !== undefined
   const line = (
     <path
       d={route.d}
       strokeWidth={1}
       strokeDasharray={dashed ? "3 3" : undefined}
-      className="stroke-foreground/20"
+      className={tinted ? toneClasses.line : "stroke-foreground/20"}
     />
   )
   const flowFrom = at === undefined ? 0 : at + (growing ? drawDuration : 0.3)
   return (
-    <g data-slot="flow-edge">
+    <g data-slot="flow-edge" style={flowToneStyle(tone)}>
       {at !== undefined && growing ? (
         <FlowLineDraw
           route={route}
           at={at}
           duration={drawDuration}
           guide={guide}
+          tinted={tinted}
         />
       ) : at === undefined ? (
         line
@@ -331,7 +420,7 @@ function FlowSpinner({
   at,
   until,
   size = 12,
-  tone = "primary",
+  tone,
 }: {
   /** 中心点的横坐标 */
   x: number
@@ -347,8 +436,8 @@ function FlowSpinner({
    */
   size?: number
   /**
-   * 圆环颜色
-   * @default "primary"
+   * 圆环色调
+   * @default 沿用外层（所在节点或 FlowDiagram）的 tone
    */
   tone?: FlowTone
 }) {
@@ -363,21 +452,27 @@ function FlowSpinner({
   const radius = size / 2 - 1
   const circumference = 2 * Math.PI * radius
   return (
-    <motion.g data-slot="flow-spinner" style={{ opacity }}>
-      <motion.g
-        style={{ rotate, transformBox: "fill-box", transformOrigin: "center" }}
-      >
-        <circle
-          cx={x}
-          cy={y}
-          r={radius}
-          strokeWidth={1.5}
-          strokeLinecap="round"
-          strokeDasharray={`${circumference * 0.7} ${circumference}`}
-          className={toneClasses[tone].stroke}
-        />
+    <g data-slot="flow-spinner" style={flowToneStyle(tone)}>
+      <motion.g style={{ opacity }}>
+        <motion.g
+          style={{
+            rotate,
+            transformBox: "fill-box",
+            transformOrigin: "center",
+          }}
+        >
+          <circle
+            cx={x}
+            cy={y}
+            r={radius}
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeDasharray={`${circumference * 0.7} ${circumference}`}
+            className={toneClasses.stroke}
+          />
+        </motion.g>
       </motion.g>
-    </motion.g>
+    </g>
   )
 }
 
@@ -387,7 +482,7 @@ function FlowStatusDot({
   y,
   at,
   radius = 2,
-  tone = "primary",
+  tone,
   pulse = false,
 }: {
   /** 圆心的横坐标 */
@@ -402,8 +497,8 @@ function FlowStatusDot({
    */
   radius?: number
   /**
-   * 点的颜色
-   * @default "primary"
+   * 点的色调，例如成功用 `green`、失败用 `destructive`
+   * @default 沿用外层（所在节点或 FlowDiagram）的 tone
    */
   tone?: FlowTone
   /**
@@ -413,11 +508,9 @@ function FlowStatusDot({
   pulse?: boolean
 }) {
   const dot = (
-    <g data-slot="flow-status-dot">
-      <circle cx={x} cy={y} r={radius} className={toneClasses[tone].fill} />
-      {pulse ? (
-        <Ripple x={x} y={y} radius={radius} at={at ?? 0} tone={tone} />
-      ) : null}
+    <g data-slot="flow-status-dot" style={flowToneStyle(tone)}>
+      <circle cx={x} cy={y} r={radius} className={toneClasses.fill} />
+      {pulse ? <Ripple x={x} y={y} radius={radius} at={at ?? 0} /> : null}
     </g>
   )
   return at === undefined ? dot : <FlowReveal at={at}>{dot}</FlowReveal>
@@ -429,13 +522,11 @@ function Ripple({
   y,
   radius,
   at,
-  tone,
 }: {
   x: number
   y: number
   radius: number
   at: number
-  tone: FlowTone
 }) {
   const { time } = useFlowClock()
   const phase = useTransform(time, (value) =>
@@ -449,7 +540,7 @@ function Ripple({
       cy={y}
       r={r}
       strokeWidth={1}
-      className={cn("fill-none", toneClasses[tone].stroke)}
+      className={cn("fill-none", toneClasses.stroke)}
       style={{ opacity }}
     />
   )
@@ -465,3 +556,4 @@ export {
   FlowStatusDot,
   FlowTypedText,
 }
+export type { FlowIcon, FlowNodeShape }

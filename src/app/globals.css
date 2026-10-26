@@ -99,6 +99,13 @@
   --radius: 0.625rem;
   /* 线条网格的线色：随前景色变化，所以自动适配所有颜色主题 */
   --edge: color-mix(in oklab, var(--foreground) 10%, transparent);
+  /* 流程动画图示（flow-diagram）的多彩色调：与 registry 条目的 cssVars 同名同值，主题切换不改变它们 */
+  --flow-blue: oklch(0.56 0.2 258);
+  --flow-green: oklch(0.62 0.16 150);
+  --flow-amber: oklch(0.7 0.16 70);
+  --flow-rose: oklch(0.62 0.21 5);
+  --flow-violet: oklch(0.56 0.22 292);
+  --flow-cyan: oklch(0.66 0.12 215);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -142,6 +149,12 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --edge: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --flow-blue: oklch(0.72 0.15 255);
+  --flow-green: oklch(0.77 0.17 152);
+  --flow-amber: oklch(0.82 0.15 82);
+  --flow-rose: oklch(0.74 0.16 8);
+  --flow-violet: oklch(0.74 0.15 295);
+  --flow-cyan: oklch(0.82 0.11 208);
 }
 
 @layer base {

@@ -12,11 +12,12 @@ import {
   flowRoute,
 } from "@/registry/ui/flow-diagram/flow-diagram"
 
-// 每项服务的耗时：动画里 40ms 对应 1 秒，慢的服务让汇合点多等一会儿
+// 每项服务的耗时：动画里 40ms 对应 1 秒，慢的服务让汇合点多等一会儿；
+// 每项服务一种颜色，从扇出的光点、节点到返回的光点都用它，一眼就能追到哪条线是谁的
 const SERVICES = [
-  { y: 40, label: "用户服务", ms: 12 },
-  { y: 110, label: "订单服务", ms: 64 },
-  { y: 180, label: "库存服务", ms: 28 },
+  { y: 40, label: "用户服务", ms: 12, tone: "blue" },
+  { y: 110, label: "订单服务", ms: 64, tone: "violet" },
+  { y: 180, label: "库存服务", ms: 28, tone: "amber" },
 ] as const
 const MS_PER_SECOND = 40
 
@@ -88,12 +89,22 @@ export default function FlowDiagramMicroserviceDemo() {
     >
       <FlowBeam route={TO_SPLIT} at={SPLIT_AT} />
       {FAN_OUT.map((route, i) => (
-        <FlowBeam key={`out-${i}`} route={route} at={FAN_OUT_AT[i]} />
+        <FlowBeam
+          key={`out-${i}`}
+          route={route}
+          at={FAN_OUT_AT[i]}
+          tone={SERVICES[i].tone}
+        />
       ))}
       {FAN_IN.map((route, i) => (
-        <FlowBeam key={`in-${i}`} route={route} at={DONE_AT[i]} />
+        <FlowBeam
+          key={`in-${i}`}
+          route={route}
+          at={DONE_AT[i]}
+          tone={SERVICES[i].tone}
+        />
       ))}
-      <FlowBeam route={TO_REPLY} at={REPLY_AT} />
+      <FlowBeam route={TO_REPLY} at={REPLY_AT} tone="green" />
 
       <FlowNode x={40} y={110} width={56} litAt={0.2}>
         <FlowLabel x={40} y={110}>
@@ -102,9 +113,10 @@ export default function FlowDiagramMicroserviceDemo() {
       </FlowNode>
       <FlowDiamond x={98} y={110} litAt={flowArrival(SPLIT_AT, TO_SPLIT)} />
 
-      {SERVICES.map(({ y, label, ms }, i) => (
+      {SERVICES.map(({ y, label, ms, tone }, i) => (
         <g key={label}>
-          <FlowNode x={160} y={y} width={68} litAt={ARRIVE}>
+          {/* 节点的色调会传给里面的加载圈和状态点，不用再各写一遍 */}
+          <FlowNode x={160} y={y} width={68} tone={tone} litAt={ARRIVE}>
             <FlowSpinner
               x={138}
               y={y}
@@ -129,14 +141,14 @@ export default function FlowDiagramMicroserviceDemo() {
         </g>
       ))}
 
-      <FlowDiamond x={238} y={110} litAt={MERGED} />
-      <FlowNode x={284} y={110} width={56} litAt={REPLIED}>
+      <FlowDiamond x={238} y={110} tone="green" litAt={MERGED} />
+      <FlowNode x={284} y={110} width={56} tone="green" litAt={REPLIED}>
         <FlowLabel x={284} y={110}>
           响应
         </FlowLabel>
       </FlowNode>
       <FlowReveal at={REPLIED}>
-        <FlowLabel x={284} y={130} className="fill-primary text-[9px]">
+        <FlowLabel x={284} y={130} tone="green" className="text-[9px]">
           {TOTAL}ms
         </FlowLabel>
       </FlowReveal>

@@ -4,6 +4,9 @@
 const FLOW_BEAM_SPEED = 110
 /** 连线上“流动”虚线纹理的前进速度（像素/秒）：比光点慢得多，只是常驻连接的呼吸感 */
 const FLOW_LINE_SPEED = 14
+/** 等宽字 10px 下的字符宽度，用来估算文字宽度（中文按全角 10px 计） */
+const LATIN_ADVANCE = 6
+const CJK_ADVANCE = 10
 type FlowPoint = readonly [number, number]
 type FlowRoute = { d: string; length: number }
 
@@ -49,5 +52,22 @@ function flowArrival(at: number, { length }: FlowRoute) {
   return at + length / FLOW_BEAM_SPEED
 }
 
-export { FLOW_BEAM_SPEED, FLOW_LINE_SPEED, flowArrival, flowRoute }
+/**
+ * 估算一段文字的宽度（设计像素），用来给图标 + 文字居中、摆放光标。
+ * 不量真实字形，按“拉丁字符 6px、中文 10px”（10px 字号）线性换算，混排时请留一点余量。
+ */
+function flowTextWidth(text: string, fontSize = 10) {
+  let width = 0
+  for (const char of text)
+    width += char.charCodeAt(0) > 0xff ? CJK_ADVANCE : LATIN_ADVANCE
+  return (width * fontSize) / 10
+}
+
+export {
+  FLOW_BEAM_SPEED,
+  FLOW_LINE_SPEED,
+  flowArrival,
+  flowRoute,
+  flowTextWidth,
+}
 export type { FlowPoint, FlowRoute }
