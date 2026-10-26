@@ -2,6 +2,8 @@
 
 /** 光点飞行速度（像素/秒）：各段耗时由路径长度换算，同一张图里节奏才一致 */
 const FLOW_BEAM_SPEED = 110
+/** 连线上“流动”虚线纹理的前进速度（像素/秒）：比光点慢得多，只是常驻连接的呼吸感 */
+const FLOW_LINE_SPEED = 14
 type FlowPoint = readonly [number, number]
 type FlowRoute = { d: string; length: number }
 
@@ -47,5 +49,5 @@ function flowArrival(at: number, { length }: FlowRoute) {
   return at + length / FLOW_BEAM_SPEED
 }
 
-export { FLOW_BEAM_SPEED, flowArrival, flowRoute }
+export { FLOW_BEAM_SPEED, FLOW_LINE_SPEED, flowArrival, flowRoute }
 export type { FlowPoint, FlowRoute }

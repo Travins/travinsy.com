@@ -50,6 +50,7 @@ export function Pipeline() {
 
 - **节点是容器，文字是子元素。** `FlowNode` 只画边框和点亮效果，里面的文字、图标按绝对坐标摆放，通常用 `FlowLabel` 或 lucide 图标（SVG 里直接给 `x`、`y`、`width`、`height` 即可）。
 - **点亮时刻来自光点。** 光点出发的时刻 `at` 加上路径长度除以速度，就是它抵达的时刻，`flowArrival(at, route)` 帮你算好，直接传给目标节点的 `litAt`。
+- **连线默认跟着光点一路长出来。** `FlowBeam` 的底线从起点生长到终点，光点走到哪线画到哪，到达时节点点亮；常驻的数据流还可以再加 `flow`，详见「连线动态」。
 - **颜色全部来自主题。** 点亮用 `primary`，失败分支可以换成 `destructive`，亮暗模式和颜色主题切换后自动跟随。
 
 ## 示例
@@ -70,7 +71,7 @@ export function Pipeline() {
 
 ### 大模型部署
 
-模型汇入推理引擎，再分发到 API、Chat、Agent 三个出口。同一条线上有两轮请求先后流过，第二轮用 `base={false}` 只画光点，避免底线叠粗。
+模型汇入推理引擎，再分发到 API、Chat、Agent 三个出口。同一条线上有两轮请求先后流过，第二轮用 `base={false}` 只画光点，避免底线叠粗。推理引擎到三个出口的线是常驻连接，画好后用 `flow` 让虚线持续向前流动。
 
 <ComponentPreview name="flow-diagram-deploy-demo" />
 
@@ -100,7 +101,7 @@ push 之后 lint 与 test 并行，耗时不同；先跑完的先打勾，汇合
 
 ### 数据管道 ETL
 
-竖向布局：三个数据源汇入清洗，进度条走完后写入数据仓库，再在看板上依次长出柱状图。进度条和柱子都是用 `useFlowClock` + `useTransform` 写的自定义元素。
+竖向布局：三个数据源汇入清洗，进度条走完后写入数据仓库，再在看板上依次长出柱状图。数据源汇入清洗的三条线带 `flow`，表示数据源一直在接入。进度条和柱子都是用 `useFlowClock` + `useTransform` 写的自定义元素。
 
 <ComponentPreview name="flow-diagram-etl-demo" />
 
@@ -134,7 +135,7 @@ push 之后 lint 与 test 并行，耗时不同；先跑完的先打勾，汇合
 - 进入视口（可见面积达到 40%）才开始走，离开视口立即暂停，不占 CPU。
 - 初始时钟停在 `rest`，所以服务端渲染的静态 HTML、首帧水合结果、减少动态效果下的画面是同一帧，不会闪一下，也没有水合不一致。
 - 切回标签页后时钟从原地继续，不会一下子跳过一大段。
-- 开启系统的“减少动态效果”时不播放，也不显示光点，画面固定在 `rest`。
+- 开启系统的“减少动态效果”时不播放，也不显示光点，画面固定在 `rest`，连线都是完整的（带 `flow` 的线停在一帧虚线纹理上）。
 
 ### 自定义动画元素
 
@@ -158,6 +159,38 @@ function Progress() {
 ```
 
 别忘了在 `exit` 到 `duration` 之间把元素淡出，否则它会在下一轮开头突然消失。需要在渲染里读取时间做判断时，请像 `FlowTypedText` 那样用 `useMotionValueEvent`，不要在渲染期间调用 `Date.now()`，那会让服务端和客户端的结果对不上。
+
+## 连线动态
+
+连线的两种动态都由同一个时间轴推导，没有独立的 CSS 动画或定时器，所以同样会在离开视口时暂停、在“减少动态效果”下停在 `rest` 这一帧（此时连线完整）。
+
+### 生长
+
+`FlowBeam` 默认 `line="draw"`：底线从起点沿路径画出来，长度正好跟随光点头部，光点走到哪线画到哪，所以目标节点的 `litAt` 一到，线也刚好抵达。线画完后保持完整，到 `exit` 才随循环淡出，下一轮从空白重新生长。
+
+- 生长之前会留一条很淡的虚线（`foreground/10`）当引导，画面不会空着；不需要时传 `guide={false}`。
+- 并行分支用同一个 `at` 出发，会同时开始生长，短的先到。
+- 同一条线上的重复脉冲照旧用 `base={false}`，只有第一次负责生长，线不会重复画。
+- 想保留旧的写法（整条线一开始就在、不随循环淡出），用 `line="static"`。
+
+不带光点的 `FlowEdge` 传了 `at` 也是默认生长，用时 `drawDuration` 缺省按光点的飞行速度由路径长度换算，和光点线的节奏一致；`reveal="fade"` 可以改回整条淡入。虚线（`dashed`）没法分段生长，会自动改成淡入。
+
+```tsx
+<FlowEdge route={BACKUP} at={2.4} />                {/* 生长，2.4 秒开始 */}
+<FlowEdge route={BACKUP} at={2.4} drawDuration={1} /> {/* 指定用时 */}
+<FlowEdge route={BACKUP} at={2.4} reveal="fade" />   {/* 整条淡入 */}
+```
+
+### 流动
+
+给连线加 `flow`，画好之后线上会出现持续向前的虚线纹理，像数据在管道里流动，用来表示“常驻连接 / 持续的数据流”，例如推理引擎到各个服务的出口、数据源到清洗。纹理的颜色跟随 `tone`，速度是 `FLOW_LINE_SPEED`（14 像素/秒），比光点慢得多，只是一点克制的呼吸感；方向沿路径从起点指向终点。它在连线画完后淡入，到 `exit` 随循环淡出。
+
+```tsx
+<FlowBeam route={TO_API} at={1.7} flow />
+<FlowEdge route={TO_API} at={1.7} flow />
+```
+
+`flow` 按条开启：同一条线上重复脉冲的几个 `FlowBeam`，只在负责画线的那一个上设置，避免两层纹理叠在一起。
 
 ## API
 
@@ -187,13 +220,13 @@ function Progress() {
 
 ### FlowBeam
 
-连线加一枚沿线流动的光点，带一小段拖尾。
+连线加一枚沿线流动的光点，带一小段拖尾。底线默认跟随光点生长，`flow` 让画好的线持续流动。
 
 <PropsTable name="flow-diagram" component="FlowBeam" />
 
 ### FlowEdge
 
-不带光点的静态连线，用来画背景关系、备用路径。
+不带光点的连线，用来画背景关系、备用路径，同样支持生长和流动。
 
 <PropsTable name="flow-diagram" component="FlowEdge" />
 
@@ -226,7 +259,8 @@ function Progress() {
 ```ts
 function flowRoute(points: readonly FlowPoint[], radius?: number): FlowRoute
 function flowArrival(at: number, route: FlowRoute): number
-const FLOW_BEAM_SPEED: number // 110，单位：设计像素 / 秒
+const FLOW_BEAM_SPEED: number // 110，光点飞行速度，单位：设计像素 / 秒
+const FLOW_LINE_SPEED: number // 14，连线上流动纹理的速度，单位：设计像素 / 秒
 ```
 
 `flowRoute` 把折线变成圆角路径并算出长度，`radius` 是拐角半径（默认 6）。它是纯函数，请在组件外调用。`flowArrival` 返回光点抵达终点的时刻。它们和 `FLOW_BEAM_SPEED` 都定义在不依赖 React 的 `route.ts` 里。`flow-diagram.tsx` 是客户端模块，服务端组件不能直接调用它再导出的函数：要在服务端组件里算路径，请改从 `route.ts` 引入；在带 `"use client"` 的文件里（案例都是这样）从 `flow-diagram.tsx` 引入即可。`FLOW_BEAM_SPEED` 在需要“让几束光点同时到达”时有用：`出发时刻 = 到达时刻 - route.length / FLOW_BEAM_SPEED`，参见微服务和 MCP 案例。
@@ -246,7 +280,9 @@ type FlowTone = "primary" | "destructive"
 | 分叉点 | `flow-diamond` |
 | 标签 | `flow-label` |
 | 光点连线 | `flow-beam` |
-| 静态连线 | `flow-edge` |
+| 生长的底线 | `flow-line` |
+| 流动纹理 | `flow-line-flow` |
+| 独立连线 | `flow-edge` |
 | 淡入容器 | `flow-reveal` |
 | 逐字文字 | `flow-typed-text` |
 | 加载圈 | `flow-spinner` |
@@ -265,6 +301,7 @@ type FlowTone = "primary" | "destructive"
 - 文字使用等宽字体，`FlowTypedText` 的光标位置按“拉丁字符 6px、中文 10px”估算，混排时请留一点余量。
 - 点阵底纹使用 `bg-dots`，这个工具类由 `grid-layout` 提供，安装时会一并装上；不需要底纹时传 `dots={false}`。
 - 路径只支持直线和圆角，拐角由 `flowRoute` 的 `radius` 控制；复杂曲线请自己写 `path` 并放进 `FlowReveal`。
+- 生长依赖路径长度的估算，圆角处有一两像素的误差，不影响观感；同一路径的光点与线头始终同步，因为两者用的是同一个长度。
 - 外框默认没有边框和固定高度，首页的用法是 `className="h-48 border-b border-edge"`。
 
 ## 源码

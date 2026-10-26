@@ -5,7 +5,8 @@ import { useMemo, useState, type ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
 
-import type { FlowRoute } from "./route"
+import { FlowLineDraw, FlowLineFlow } from "./beam"
+import { FLOW_BEAM_SPEED, type FlowRoute } from "./route"
 import { useFlowClock } from "./flow-clock"
 import { toneClasses, type FlowTone } from "./tone"
 
@@ -251,32 +252,76 @@ function FlowTypedText({
   )
 }
 
-/** 不带光点的静态连线，用来画背景关系、备用路径；可选在 `at` 淡入。 */
+/**
+ * 不带光点的连线，用来画背景关系、备用路径。
+ * 传入 `at` 后默认从起点沿路径生长出来，到 `exit` 后随循环淡出；不传则一直显示。
+ */
 function FlowEdge({
-  route: { d },
+  route,
   at,
+  reveal = "draw",
+  drawDuration = route.length / FLOW_BEAM_SPEED,
+  guide = true,
   dashed = false,
+  flow = false,
 }: {
   /** 由 `flowRoute` 生成的路径 */
   route: FlowRoute
-  /** 淡入的时刻（秒），不传则一直显示 */
+  /** 出现的时刻（秒），不传则一直显示 */
   at?: number
+  /**
+   * 出现方式：`draw` 沿路径生长，`fade` 整条淡入。虚线（`dashed`）无法生长，会自动改为淡入
+   * @default "draw"
+   */
+  reveal?: "draw" | "fade"
+  /**
+   * 生长用时（秒），缺省按光点的飞行速度由路径长度换算，和光点线的节奏一致
+   * @default route.length / FLOW_BEAM_SPEED
+   */
+  drawDuration?: number
+  /**
+   * 生长之前是否先留一条很淡的虚线引导，只对生长有效
+   * @default true
+   */
+  guide?: boolean
   /**
    * 是否画成虚线，表示可选或备用的路径
    * @default false
    */
   dashed?: boolean
+  /**
+   * 线画好之后，线上是否有持续向前移动的虚线纹理，用于常驻的数据流
+   * @default false
+   */
+  flow?: boolean
 }) {
+  const growing = reveal === "draw" && !dashed
   const line = (
     <path
-      data-slot="flow-edge"
-      d={d}
+      d={route.d}
       strokeWidth={1}
       strokeDasharray={dashed ? "3 3" : undefined}
       className="stroke-foreground/20"
     />
   )
-  return at === undefined ? line : <FlowReveal at={at}>{line}</FlowReveal>
+  const flowFrom = at === undefined ? 0 : at + (growing ? drawDuration : 0.3)
+  return (
+    <g data-slot="flow-edge">
+      {at !== undefined && growing ? (
+        <FlowLineDraw
+          route={route}
+          at={at}
+          duration={drawDuration}
+          guide={guide}
+        />
+      ) : at === undefined ? (
+        line
+      ) : (
+        <FlowReveal at={at}>{line}</FlowReveal>
+      )}
+      {flow ? <FlowLineFlow route={route} from={flowFrom} /> : null}
+    </g>
+  )
 }
 
 /** 旋转的加载圈，只在 `at` 到 `until` 之间显示。`x`、`y` 是中心点。 */

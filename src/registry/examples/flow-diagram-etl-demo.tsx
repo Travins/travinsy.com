@@ -128,7 +128,8 @@ export default function FlowDiagramEtlDemo() {
       className="w-full max-w-sm"
     >
       {TO_CLEAN.map((route, i) => (
-        <FlowBeam key={`intake-${i}`} route={route} at={INTAKE_AT} />
+        // 数据源是常驻的接入：线画好后持续流动，直到清洗完成
+        <FlowBeam key={`intake-${i}`} route={route} at={INTAKE_AT} flow />
       ))}
       <FlowBeam route={TO_STORE} at={STORE_AT} />
       <FlowBeam route={TO_BOARD} at={BOARD_AT} />

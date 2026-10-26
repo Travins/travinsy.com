@@ -6,12 +6,14 @@ const toneClasses = {
   primary: {
     lit: "fill-primary/10 stroke-primary",
     stroke: "stroke-primary",
+    flow: "stroke-primary/40",
     fill: "fill-primary",
     text: "text-primary",
   },
   destructive: {
     lit: "fill-destructive/10 stroke-destructive",
     stroke: "stroke-destructive",
+    flow: "stroke-destructive/40",
     fill: "fill-destructive",
     text: "text-destructive",
   },

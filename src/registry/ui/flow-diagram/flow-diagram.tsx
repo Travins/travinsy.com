@@ -25,6 +25,7 @@ import {
 import { FlowClockContext, useFlowClock } from "./flow-clock"
 import {
   FLOW_BEAM_SPEED,
+  FLOW_LINE_SPEED,
   flowArrival,
   flowRoute,
   type FlowPoint,
@@ -154,6 +155,7 @@ function FlowDiagram({
 
 export {
   FLOW_BEAM_SPEED,
+  FLOW_LINE_SPEED,
   FlowBeam,
   FlowDiagram,
   FlowDiamond,

@@ -85,6 +85,8 @@ function FlowDiagramDeployDemo({ className }: { className?: string }) {
               route={path}
               at={round.dispatch}
               base={index === 0}
+              // 出口是常驻的服务连接：线画好后持续流动，只在第一轮设置，避免两层纹理叠加
+              flow={index === 0}
             />
           ))}
         </Fragment>
