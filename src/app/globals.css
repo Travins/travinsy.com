@@ -203,15 +203,52 @@
   /* Tailwind v4 把按钮的光标重置成了 default，这里统一让所有可点击元素显示手型 */
   a[href],
   button:not(:disabled),
-  [role="button"]:not([aria-disabled="true"]),
-  [role="tab"]:not([aria-disabled="true"]),
-  [role="menuitem"]:not([aria-disabled="true"]),
-  [role="option"]:not([aria-disabled="true"]),
+  input:is([type="button"], [type="submit"], [type="reset"], [type="file"]):not(
+      :disabled
+    ),
+  :is(
+      [role="button"],
+      [role="link"],
+      [role="tab"],
+      [role="menuitem"],
+      [role="menuitemcheckbox"],
+      [role="menuitemradio"],
+      [role="option"],
+      [role="switch"],
+      [role="checkbox"],
+      [role="radio"]
+    ):not([aria-disabled="true"], [data-disabled]),
   summary,
   select:not(:disabled),
   label[for],
   input[type="checkbox"]:not(:disabled),
   input[type="radio"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/*
+ * shadcn 的菜单项等组件在 utilities 层写死了 cursor-default，会压过上面 base 层的规则
+ * （例如移动端导航菜单里的链接不是手型）。这里在 utilities 层用更高的优先级只改写 cursor-default，
+ * 保留 cursor-grab、cursor-ew-resize 等有意设置的光标；禁用状态仍然保持默认。
+ */
+@layer utilities {
+  :is(
+      a[href],
+      button,
+      summary,
+      label[for],
+      [role="button"],
+      [role="link"],
+      [role="tab"],
+      [role="menuitem"],
+      [role="menuitemcheckbox"],
+      [role="menuitemradio"],
+      [role="option"],
+      [role="switch"],
+      [role="checkbox"],
+      [role="radio"]
+    ).cursor-default:not(:disabled, [aria-disabled="true"], [data-disabled]) {
     cursor: pointer;
   }
 }

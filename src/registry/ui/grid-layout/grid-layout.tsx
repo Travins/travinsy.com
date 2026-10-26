@@ -86,13 +86,15 @@ function GridCrosshair({
  * 页面主容器：固定宽度 + 左右竖线。
  * 宽度可通过 CSS 变量 --grid-width 覆盖（默认 48rem）。
  * 外宽多 1px，使左右两条竖线的间距正好等于 --grid-width（纹路周期都能整除它）。
+ * 视口窄于容器时，两侧各留出 gutter：竖线向内缩，全宽横线仍延伸到屏幕边缘，形成「线框中的内容」。
+ * gutter 是两侧之和，用 CSS 变量 --grid-gutter 覆盖（默认窄屏 2rem、sm 起 3rem；设为 0px 则竖线贴边）。
  */
 function GridContainer({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="grid-container"
       className={cn(
-        "mx-auto w-full max-w-[calc(var(--grid-width,48rem)+1px)] border-x border-edge",
+        "mx-auto w-[calc(100%-var(--grid-gutter,2rem))] max-w-[calc(var(--grid-width,48rem)+1px)] border-x border-edge sm:w-[calc(100%-var(--grid-gutter,3rem))]",
         className,
       )}
       {...props}

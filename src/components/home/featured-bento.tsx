@@ -6,27 +6,21 @@ import { entryTitleEn } from "@/lib/source"
 import IsometricMarkDemo from "@/registry/examples/isometric-mark-demo"
 import { GreetingCard } from "@/registry/ui/greeting/greeting"
 import { AnalogClock, LocalTime } from "@/registry/ui/local-time/local-time"
-import {
-  GridColumns,
-  GridContainer,
-  GridSection,
-  GridSeparator,
-} from "@/registry/ui/grid-layout/grid-layout"
 import registry from "../../../registry.json"
 
 type FeaturedSize = (typeof profile.featuredComponents)[number]["size"]
 
-/** 各尺寸在网格里占的格子：宽屏三列，平板两列，手机单列。 */
+/** 各尺寸在网格里占的格子：宽屏六列（lead 4×2、tall 2×2、cell 各占半行），平板两列（lead、tall 通栏），手机单列。 */
 const cellClass: Record<FeaturedSize, string> = {
-  lead: "md:col-span-2 lg:row-span-2",
-  tall: "lg:row-span-2",
-  cell: "",
+  lead: "md:col-span-2 lg:col-span-4 lg:row-span-2",
+  tall: "md:col-span-2 lg:col-span-2 lg:row-span-2",
+  cell: "lg:col-span-3",
 }
 /** 窄屏下预览区的高度；宽屏由网格的行高撑满。 */
 const previewClass: Record<FeaturedSize, string> = {
   lead: "h-64 sm:h-72 lg:h-auto",
-  tall: "h-60 lg:h-auto",
-  cell: "h-52 lg:h-auto",
+  tall: "h-60 md:h-64 lg:h-auto",
+  cell: "h-72 md:h-80 lg:h-auto",
 }
 
 const CLOCK_ZONES = [
@@ -47,51 +41,27 @@ function DotsBackdrop() {
 /** 两只不同时区的表盘，下方是当地时间。 */
 function LocalTimePreview() {
   return (
-    <div className="relative flex size-full items-center justify-center gap-6 px-4">
+    <div className="relative flex size-full items-center justify-center gap-6 px-4 sm:gap-14 md:gap-6 lg:gap-14">
       <DotsBackdrop />
       {CLOCK_ZONES.map(({ label, timeZone }) => (
-        <figure key={timeZone} className="relative flex flex-col items-center gap-2">
+        <figure key={timeZone} className="relative flex flex-col items-center gap-3">
           <AnalogClock
             timeZone={timeZone}
             label={label}
-            className="size-24 sm:size-28"
+            className="size-24 sm:size-32 md:size-24 lg:size-36"
           />
-          <figcaption className="flex flex-col items-center gap-0.5 font-mono text-[10px] text-muted-foreground">
+          <figcaption className="flex flex-col items-center gap-0.5 font-mono text-[11px] text-muted-foreground">
             <span>{label}</span>
             <LocalTime
               timeZone={timeZone}
               showSeconds={false}
               showDifference={false}
-              className="text-xs text-foreground"
+              className="text-sm text-foreground"
             />
           </figcaption>
         </figure>
       ))}
     </div>
-  )
-}
-
-/** 线条网格的一个片段：竖线容器、刻度尺与斜纹分隔带、虚线分栏和交点十字。 */
-function GridLayoutPreview() {
-  return (
-    <GridContainer className="h-full bg-background/70 [--grid-width:15rem]">
-      <GridSection className="px-4 py-4" crosshair>
-        <p className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
-          GRID LAYOUT
-        </p>
-        <p className="mt-1.5 text-base font-semibold tracking-tight">
-          让内容，落在线条之间。
-        </p>
-      </GridSection>
-      <GridSeparator pattern="ruler" />
-      <GridSection>
-        <GridColumns className="grid-cols-2 divide-x divide-y-0">
-          <p className="p-3 text-xs font-medium">清晰的结构</p>
-          <p className="p-3 text-xs font-medium">恰好的留白</p>
-        </GridColumns>
-      </GridSection>
-      <GridSeparator pattern="hatch" />
-    </GridContainer>
   )
 }
 
@@ -107,7 +77,7 @@ function IsometricMarkPreview() {
   )
 }
 
-/** 问候卡：色调与时段图标随访客时间变化；窄格里省掉四时段指示条。 */
+/** 问候卡：色调与时段图标随访客时间变化，底部是四时段指示条。 */
 function GreetingPreview() {
   return (
     <div className="relative flex size-full items-center justify-center">
@@ -117,8 +87,7 @@ function GreetingPreview() {
       />
       <GreetingCard
         name="Travins"
-        showPeriods={false}
-        className="relative w-[min(100%-2rem,22rem)] shadow-xs"
+        className="relative w-[min(100%-2rem,24rem)] shadow-xs lg:w-[min(100%-3rem,28rem)]"
       />
     </div>
   )
@@ -128,7 +97,6 @@ const previews: Record<string, ReactNode> = {
   "flow-diagram": <BentoFlowPreview />,
   "isometric-mark": <IsometricMarkPreview />,
   "local-time": <LocalTimePreview />,
-  "grid-layout": <GridLayoutPreview />,
   greeting: <GreetingPreview />,
 }
 
@@ -149,7 +117,7 @@ function EntryTitle({ name, title }: { name: string; title: string }) {
 }
 
 /**
- * 首页「精选组件」：Bento 网格，每张卡都是组件的实时预览，整张卡链接到文档。
+ * 首页「精选组件」：Bento 网格，每张卡都是组件的实时预览，可以直接操作；卡片底部的标题行链接到文档。
  * 单元格自带右、下边线，再用负外边距把最外一圈挤出裁剪区，避免和容器的线叠成双线。
  */
 function FeaturedBento() {
@@ -164,7 +132,7 @@ function FeaturedBento() {
 
   return (
     <div className="overflow-hidden">
-      <ul className="-mr-px -mb-px grid grid-cols-1 md:grid-cols-2 lg:auto-rows-[18rem] lg:grid-cols-3">
+      <ul className="-mr-px -mb-px grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 lg:grid-rows-[17rem_17rem_19rem]">
         {items.map(({ item, size, preview }) => (
           <li
             key={item.name}
@@ -172,6 +140,7 @@ function FeaturedBento() {
           >
             <BentoCard
               href={`/components/${item.name}/`}
+              label={`${item.title}演示`}
               preview={preview}
               previewClassName={previewClass[size]}
             >

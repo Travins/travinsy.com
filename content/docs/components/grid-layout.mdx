@@ -130,6 +130,8 @@ export default function Page() {
 
 通过父元素上的 `--grid-width` 变量调整宽度，默认 `48rem`。文档页面使用 `80rem`。`GridColumns` 在窄屏下堆叠，`sm` 起显示两列。
 
+视口比容器窄时，`GridContainer` 两侧各留出一段空白（gutter）：竖线向内缩，而全宽横线、分隔带仍延伸到屏幕边缘，内容像被框在线里。gutter 是两侧之和，窄屏默认 `2rem`、`sm` 起 `3rem`，容器达到最大宽度后自然居中，不再有空白。通过 `--grid-gutter` 变量覆盖，例如 `className="[--grid-gutter:0px]"` 让竖线贴到屏幕边缘；该变量同时作用于窄屏与 `sm` 以上。
+
 ### 主题与工具类
 
 安装命令会注册 `--edge` 变量与 `border-edge` 主题映射，以及以下 Tailwind CSS v4 工具类：两个横线工具类 `screen-line-top`、`screen-line-bottom`；六个分隔带纹理工具类 `pattern-ruler`、`pattern-hatch`、`pattern-dots`、`pattern-grid`、`pattern-plus`、`pattern-wave`（供 GridSeparator 使用）；两个面积底纹 `bg-hatch`、`bg-dots`，可直接铺在任意元素上。线条与纹路的颜色都来自 `--edge` / `--foreground`，随颜色主题和亮暗模式变化。

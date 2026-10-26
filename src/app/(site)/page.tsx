@@ -144,18 +144,19 @@ export default function HomePage() {
       <SectionFrame index="02" name="STACK" title="技术栈">
         {/* 单元格自带右、下边线，再用负外边距把最外一圈挤出裁剪区，避免和容器的线叠成双线 */}
         <div className="overflow-hidden">
-          <ul className="-mr-px -mb-px grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+          <ul className="-mr-px -mb-px grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {profile.technologies.map((technology) => (
               <li
                 key={technology.name}
                 style={techBrandStyle(technology.name)}
                 className="border-r border-b border-edge"
               >
+                {/* 图标与名称横排，行高固定在 56 / 64px；名称过长时在空格处折成两行 */}
                 <a
                   href={technology.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative flex h-full min-w-0 flex-col items-start gap-3 p-4 transition-colors duration-300 hover:bg-(--brand)/[0.06] focus-visible:bg-(--brand)/[0.06] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                  className="group relative flex h-full min-h-14 min-w-0 items-center gap-2.5 px-3.5 py-3 transition-colors duration-300 hover:bg-(--brand)/[0.06] focus-visible:bg-(--brand)/[0.06] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:min-h-16"
                 >
                   {/* 悬停时顶边亮起一条品牌色细线，从左向右展开 */}
                   <span
@@ -164,11 +165,11 @@ export default function HomePage() {
                   />
                   <ArrowUpRight
                     aria-hidden="true"
-                    className="absolute top-3 right-3 size-3.5 text-(--brand) opacity-0 transition-[opacity,translate] duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 motion-safe:-translate-x-0.5 motion-safe:translate-y-0.5 motion-safe:group-hover:translate-0"
+                    className="absolute top-1.5 right-1.5 size-3 text-(--brand) opacity-0 transition-[opacity,translate] duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 motion-safe:-translate-x-0.5 motion-safe:translate-y-0.5 motion-safe:group-hover:translate-0"
                   />
                   <span
                     aria-hidden="true"
-                    className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80 transition-[color,background-color,border-color] duration-300 ease-out group-hover:border-transparent group-hover:bg-transparent group-hover:text-(--brand)"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80 transition-[color,background-color,border-color] duration-300 ease-out group-hover:border-transparent group-hover:bg-transparent group-hover:text-(--brand)"
                   >
                     {/* 边框和底色淡出的同时图标放大填满原来的框，形成“图标挣脱外框”的错觉 */}
                     <TechIcon
@@ -177,7 +178,7 @@ export default function HomePage() {
                     />
                   </span>
                   <span
-                    className="font-mono text-xs break-words"
+                    className="min-w-0 font-mono text-xs leading-4 break-words"
                     translate="no"
                   >
                     {technology.name}

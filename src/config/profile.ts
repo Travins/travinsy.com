@@ -78,14 +78,13 @@ export const profile = {
   ],
   /**
    * 首页「精选组件」Bento：名称对应 registry.json 的条目，标题与链接都直接取自 Registry。
-   * size 决定占的格子（宽屏三列）：lead 2×2、tall 1×2、cell 1×1；平板里 lead 通栏，其余各占一格。
+   * size 决定占的格子（宽屏六列）：lead 4×2、tall 2×2、cell 3×1（底部一行两张平分）；平板两列，lead、tall 通栏，cell 各占一格。
    * 顺序即网格的填充顺序；每个条目在 featured-bento.tsx 里要有对应的预览。
    */
   featuredComponents: [
     { name: "flow-diagram", size: "lead" },
     { name: "isometric-mark", size: "tall" },
     { name: "local-time", size: "cell" },
-    { name: "grid-layout", size: "cell" },
     { name: "greeting", size: "cell" },
   ],
   about: [

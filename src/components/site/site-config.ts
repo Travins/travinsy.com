@@ -17,5 +17,11 @@ export const FOOTER_LINKS = [
   { label: "GitHub", href: GITHUB_URL },
 ] as const
 
+/** 网站备案：页脚展示备案号，链接到工信部备案管理系统 */
+export const ICP = {
+  label: "沪ICP备19028503号",
+  href: "https://beian.miit.gov.cn/",
+} as const
+
 /** 仓库地址：文档页「在 GitHub 中打开」拼接源文件链接时使用 */
 export const REPO_URL = "https://github.com/Travins/travinsy.com"

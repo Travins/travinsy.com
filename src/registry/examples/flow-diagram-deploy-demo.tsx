@@ -10,7 +10,6 @@ import {
   FlowDiagram,
   FlowLabel,
   FlowNode,
-  FlowStatusDot,
   flowArrival,
   flowRoute,
   type FlowIcon,
@@ -36,7 +35,7 @@ function brandIcon(path: string): FlowIcon {
   }
 }
 
-// 色调表达流向：两个模型用冷色（Qwen 紫、DeepSeek 蓝），推理引擎琥珀，就绪的出口绿
+// 色调表达流向：两个模型用冷色（Qwen 紫、DeepSeek 蓝），推理引擎琥珀，出口在请求到达时点亮成绿色（即「就绪」）
 const MODELS = [
   { x: 56, label: "Qwen3", icon: brandIcon(siQwen.path), tone: "violet" },
   { x: 160, label: "DeepSeek", icon: brandIcon(siDeepseek.path), tone: "blue" },
@@ -160,10 +159,7 @@ function FlowDiagramDeployDemo({ className }: { className?: string }) {
             label={label}
             tone="green"
             litAt={arrival}
-          >
-            {/* 服务就绪后，胶囊右上角亮起一个状态点 */}
-            <FlowStatusDot x={x + 25} y={160} at={arrival} />
-          </FlowNode>
+          />
         )
       })}
     </FlowDiagram>
