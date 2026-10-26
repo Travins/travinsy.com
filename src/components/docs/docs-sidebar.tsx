@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { EntryIcon } from "@/lib/entry-icons"
 import { sectionNav, type NavSectionId } from "./docs-nav"
 
 const pad = (n: number) => String(n).padStart(2, "0")
@@ -7,7 +6,7 @@ const pad = (n: number) => String(n).padStart(2, "0")
 /**
  * 当前分区的侧栏，做成「索引表」：顶部是英文分区标签 + 条目计数，
  * 分区标题本身就是回到分区主页的链接（主页若已在列表里则不重复做链接）；
- * 条目通栏一行，左侧编号栏（整个分区内连续编号），行间虚线分隔。
+ * 条目通栏一行，左侧编号栏（整个分区内连续编号）；组件类条目英文名为主、中文作副标，不放图标。
  * 有分组时每组一条小标题。选中项的编号栏填斜纹并带主色竖线，悬停填点阵。
  * 样式见 src/styles/docs.css（.docs-nav-*）。
  */
@@ -81,7 +80,6 @@ export function DocsSidebarNav({
                     <li key={item.url} className="docs-nav-item">
                       <Link
                         className="docs-nav-link"
-                        data-bilingual={item.titleEn ? "" : undefined}
                         href={item.url}
                         aria-current={current === item.url ? "page" : undefined}
                       >
@@ -89,23 +87,27 @@ export function DocsSidebarNav({
                           <span>{pad(offsets[groupIndex] + index + 1)}</span>
                         </span>
                         <span className="docs-nav-body">
-                          {item.icon ? (
-                            <span aria-hidden="true" className="docs-nav-icon">
-                              <EntryIcon name={item.icon} strokeWidth={1.5} />
-                            </span>
-                          ) : null}
-                          <span className="docs-nav-label">
-                            <span className="docs-nav-zh">{item.title}</span>
-                            {item.titleEn ? (
+                          {/* 组件类条目以英文名为主（更直观），中文作副标；没有英文名的只显示中文 */}
+                          {item.titleEn ? (
+                            <span className="docs-nav-label">
                               <span
-                                className="docs-nav-en"
+                                className="docs-nav-primary"
                                 lang="en"
                                 translate="no"
                               >
                                 {item.titleEn}
                               </span>
-                            ) : null}
-                          </span>
+                              <span className="docs-nav-secondary">
+                                {item.title}
+                              </span>
+                            </span>
+                          ) : (
+                            <span className="docs-nav-label">
+                              <span className="docs-nav-primary">
+                                {item.title}
+                              </span>
+                            </span>
+                          )}
                         </span>
                       </Link>
                     </li>
