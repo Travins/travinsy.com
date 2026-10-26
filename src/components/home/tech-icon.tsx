@@ -1,15 +1,21 @@
 import type { CSSProperties, ReactNode } from "react"
 import {
+  siDeepseek,
   siDocker,
   siFastapi,
+  siGrafana,
   siKubernetes,
   siNextdotjs,
   siNodedotjs,
   siPostgresql,
   siPython,
   siPytorch,
+  siQwen,
   siReact,
+  siShadcnui,
+  siTailwindcss,
   siTypescript,
+  siVercel,
   siVllm,
 } from "simple-icons"
 
@@ -42,6 +48,10 @@ const techIcons: Record<string, TechIconData> = {
   TypeScript: fromSimpleIcon(siTypescript),
   React: fromSimpleIcon(siReact),
   "Next.js": fromSimpleIcon(siNextdotjs),
+  "Tailwind CSS": fromSimpleIcon(siTailwindcss),
+  "shadcn/ui": fromSimpleIcon(siShadcnui),
+  // AI SDK 没有独立标识，沿用其出品方 Vercel 的三角标
+  "AI SDK": fromSimpleIcon(siVercel),
   "Node.js": fromSimpleIcon(siNodedotjs),
   Python: fromSimpleIcon(siPython),
   FastAPI: fromSimpleIcon(siFastapi),
@@ -51,6 +61,9 @@ const techIcons: Record<string, TechIconData> = {
   Docker: fromSimpleIcon(siDocker),
   Kubernetes: fromSimpleIcon(siKubernetes),
   PostgreSQL: fromSimpleIcon(siPostgresql),
+  DeepSeek: fromSimpleIcon(siDeepseek),
+  Qwen: fromSimpleIcon(siQwen),
+  Grafana: fromSimpleIcon(siGrafana),
 }
 
 function isTooDark(hex: string) {
