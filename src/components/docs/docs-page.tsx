@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site"
 import { DocsCard, DocsShell } from "./docs-shell"
 import { createMdxComponents } from "./mdx-components"
 import { pageMarkdown } from "./page-markdown"
+import { hasRegistryItem } from "./registry-items"
 
 export type DocsRouteProps = { params: Promise<{ slug?: string[] }> }
 function getPage(section: DocsSection, slug: string[] = []) {
@@ -26,6 +27,11 @@ export async function docsMetadata(
 export function docsParams(section: DocsSection) {
   return sectionPages(section).map((page) => ({ slug: page.slugs.slice(1) }))
 }
+/** 组件页的 slug 末段即 registry 条目名 */
+function registryNameFor(slug: string[]) {
+  const name = slug.at(-1)
+  return name && hasRegistryItem(name) ? name : undefined
+}
 export async function DocsPage({
   section,
   params,
@@ -43,6 +49,8 @@ export async function DocsPage({
       description={page.data.description}
       overview={overview}
       markdown={overview ? undefined : await pageMarkdown(page)}
+      sourcePath={page.path}
+      registryName={registryNameFor(slug)}
       links={page.data.links}
       toc={page.data.toc}
     >

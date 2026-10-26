@@ -67,6 +67,8 @@ export async function EntryPage({
       description={isIndex ? sectionIntro[section] : page.data.description}
       overview={isIndex}
       markdown={isIndex ? undefined : await pageMarkdown(page)}
+      sourcePath={page.path}
+      registryName={isIndex ? undefined : slug[0]}
       toc={isIndex ? [] : page.data.toc}
     >
       {isIndex ? (

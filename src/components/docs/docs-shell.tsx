@@ -22,6 +22,10 @@ type DocsShellProps = {
   overview?: boolean
   /** 本页 Markdown 原文，供「复制页面」使用 */
   markdown?: string
+  /** 相对 content/docs 的 MDX 路径，供「在 GitHub 中打开」使用 */
+  sourcePath?: string
+  /** 本页对应的 registry 条目名，有则显示「在 v0 中打开」 */
+  registryName?: string
   links?: Record<string, string>
   toc?: TOCItemType[]
   children: ReactNode
@@ -43,6 +47,8 @@ export function DocsShell({
   description,
   overview = false,
   markdown,
+  sourcePath,
+  registryName,
   links,
   toc = [],
   children,
@@ -63,6 +69,9 @@ export function DocsShell({
           back={url === home.url ? undefined : home}
           markdown={overview ? undefined : markdown}
           url={url}
+          title={title}
+          sourcePath={sourcePath}
+          registryName={registryName}
           noun={sectionNoun[section]}
           previous={previous}
           next={next}

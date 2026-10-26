@@ -1,0 +1,33 @@
+import { pageMarkdown } from "@/components/docs/page-markdown"
+import { docsPages } from "@/lib/site-content"
+
+export const dynamic = "force-static"
+export const dynamicParams = false
+
+// 分区概览页（卡片目录）没有正文，不生成 Markdown
+const overviewSections = new Set(["components", "blocks", "templates"])
+
+const markdownPages = () =>
+  docsPages().filter(
+    (page) => !(page.slugs.length === 1 && overviewSections.has(page.slugs[0])),
+  )
+
+/** /md/components/grid-layout.md：与页面一致的 Markdown 原文，构建时静态生成。 */
+export function generateStaticParams() {
+  return markdownPages().map((page) => ({
+    slug: [...page.slugs.slice(0, -1), `${page.slugs.at(-1)}.md`],
+  }))
+}
+
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ slug: string[] }> },
+) {
+  const { slug } = await params
+  const key = [...slug.slice(0, -1), slug.at(-1)!.replace(/\.md$/, "")].join("/")
+  const page = markdownPages().find((item) => item.slugs.join("/") === key)
+  if (!page) return new Response("Not Found", { status: 404 })
+  return new Response(`${await pageMarkdown(page)}\n`, {
+    headers: { "Content-Type": "text/markdown; charset=utf-8" },
+  })
+}
