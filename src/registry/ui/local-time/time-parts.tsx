@@ -5,18 +5,25 @@ import { Moon, Sun } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-/** 一位数字；变化时轻微下落淡入。首次出现不播放，避免水合后整排数字同时闪一下。 */
+/**
+ * 一位数字；变化时旧数字向下淡出、新数字从上方落入。
+ * 新旧两位叠在同一个 1ch 宽的格子里（grid 同格堆叠），过渡期间宽度不变，整行不会左右晃动。
+ * 首次出现不播放，避免水合后整排数字同时闪一下。
+ */
 function TimeDigit({ value, animated }: { value: string; animated: boolean }) {
   if (!animated) return <>{value}</>
   return (
-    <span data-slot="time-digit" className="inline-block">
+    <span
+      data-slot="time-digit"
+      className="inline-grid w-[1ch] justify-items-center *:col-start-1 *:row-start-1"
+    >
       <AnimatePresence initial={false}>
         <motion.span
           key={value}
-          initial={{ opacity: 0, y: "-0.3em" }}
+          initial={{ opacity: 0, y: "-0.35em" }}
           animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: "0.35em" }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="inline-block"
         >
           {value}
         </motion.span>

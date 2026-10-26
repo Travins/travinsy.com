@@ -1,7 +1,7 @@
 import { LocalTime } from "@/registry/ui/local-time/local-time"
 
 const zones = [
-  { label: "杭州", timeZone: "Asia/Shanghai" },
+  { label: "上海", timeZone: "Asia/Shanghai" },
   { label: "伦敦", timeZone: "Europe/London" },
   { label: "旧金山", timeZone: "America/Los_Angeles" },
 ]

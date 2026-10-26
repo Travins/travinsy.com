@@ -174,11 +174,8 @@ export function PageActions({
   return (
     <div className="mb-6 flex items-center justify-between gap-3">
       {back ? (
-        <Link
-          href={back.url}
-          className="inline-flex h-7 items-center gap-1.5 rounded-md text-[13px] text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft aria-hidden="true" className="size-3.5" />
+        <Link href={back.url} className={cn(actionBase, "bg-muted pr-3 pl-2.5")}>
+          <ArrowLeft aria-hidden="true" />
           {back.title}
         </Link>
       ) : (
