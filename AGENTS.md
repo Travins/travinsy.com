@@ -89,6 +89,7 @@ scripts/                     构建辅助脚本
 - 颜色只能用主题变量（`bg-background`、`text-muted-foreground`、`border-border`……），**禁止硬编码颜色**，否则颜色主题切换会失效
 - 亮暗模式和颜色主题是两个独立维度：`.dark` class + `data-theme` 属性
 - 字体：拉丁/代码用 Geist / Geist Mono；中文用系统字体栈（PingFang SC、HarmonyOS Sans SC、Noto Sans SC），**不打包中文 webfont**
+- 按钮高度只有三档：`sm` 28px / `default` 32px / `lg` 36px（图标按钮对应 `icon-sm` / `icon` / `icon-lg`），只能通过 `Button` 或 `buttonVariants` 的 `size` 取得；同一行并排的按钮必须同一档，例外须注释说明（详见 `component-conventions` 技能第 6 节）
 - 可访问性：遵循 `web-design-guidelines` 技能
 
 ### 语言

@@ -113,6 +113,15 @@ export { StatusCard, StatusCardTitle, statusCardVariants }
 - 颜色**只用主题 token**（`bg-background`、`text-muted-foreground`、`border-border`、`bg-primary/10`、`chart-1..5`）；禁止十六进制、`rgb()`、Tailwind 调色板颜色（`bg-blue-500`）、`text-white` / `bg-black`
 - 线条用 `border-edge`（见 `grid-design` 技能）；圆角用 `rounded-md/lg/xl`（随 `--radius`）
 - 尺寸优先 `size-*`；图标尺寸由父级 `[&_svg:not([class*='size-'])]:size-4` 统一
+- **按钮高度只有三档**，一律通过 `Button` 或 `buttonVariants` 的 `size` 取得，不用 `h-*`/`py-*` 自定义：
+
+  | 档位 | 文字按钮 | 图标按钮 | 高度 | 用途 |
+  |---|---|---|---|---|
+  | 小 | `sm` | `icon-sm` | 28px | 工具栏、表格行内、文档框内操作 |
+  | 默认 | `default` | `icon` | 32px | 表单、对话框、卡片内操作 |
+  | 大 | `lg` | `icon-lg` | 36px | 首屏 / 页面级主操作 |
+
+  同一行并排的按钮（包括图标按钮）必须同一档；只有设计明确指定时才例外，并在代码旁注释原因。`xs`/`icon-xs` 只用于徽标、标签内的微型操作。链接按钮写 `className={buttonVariants({ variant, size, className })}`，额外类通过 `className` 参数传入，由 `buttonVariants` 内部合并
 - `dark:` 变体只在 token 无法表达时使用
 - 动效：`motion/react`，时长 150–300ms，必须处理 `useReducedMotion()`
 - 不写内联 `style`，除非是运行时计算值（宽度、坐标、CSS 变量）

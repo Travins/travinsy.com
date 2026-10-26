@@ -81,16 +81,6 @@ export default function HomePage() {
               {profile.bio}
             </p>
             <RoleRotator roles={profile.roles} />
-            <ul aria-label="技能标签" className="flex flex-wrap gap-2">
-              {profile.roles.map((role) => (
-                <li
-                  key={role}
-                  className="border border-edge px-2 py-1 font-mono text-xs text-muted-foreground"
-                >
-                  {role}
-                </li>
-              ))}
-            </ul>
             <div className="flex flex-wrap gap-2">
               <Link
                 href="/components/"
