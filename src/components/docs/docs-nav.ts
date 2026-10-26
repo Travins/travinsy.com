@@ -23,12 +23,12 @@ export type NavSection = {
   groups: NavGroup[]
 }
 
-/** 各分区主页：返回链接和面包屑第一级指向它，文档介绍也列在入门侧栏。 */
+/** 各分区主页：返回链接和面包屑第一级指向它，文档介绍也列在文档侧栏。 */
 export const sectionHome: Record<
   NavSectionId,
   { title: string; titleEn: string; url: string }
 > = {
-  docs: { title: "入门", titleEn: "Getting Started", url: "/docs/" },
+  docs: { title: "文档", titleEn: "Docs", url: "/docs/" },
   components: { title: "组件", titleEn: "Components", url: "/components/" },
   blocks: { title: "区块", titleEn: "Blocks", url: "/blocks/" },
   templates: { title: "模板", titleEn: "Templates", url: "/templates/" },

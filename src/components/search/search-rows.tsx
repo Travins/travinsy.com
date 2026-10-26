@@ -22,7 +22,7 @@ import type { Row } from "./search-model"
 import type { Segment } from "./search-text"
 
 const groupIcons: Record<SearchGroup, LucideIcon> = {
-  入门: BookOpenIcon,
+  文档: BookOpenIcon,
   组件: ComponentIcon,
   区块: BlocksIcon,
   模板: LayoutTemplateIcon,
