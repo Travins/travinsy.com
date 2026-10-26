@@ -9,7 +9,7 @@ import { ThemeCodePanel } from "@/components/themes/theme-code-panel"
 import { ThemePicker } from "@/components/themes/theme-picker"
 import { ThemePalette, ThemePreviewCards } from "@/components/themes/theme-preview"
 import { Button } from "@/components/ui/button"
-import { COLOR_THEMES, type ColorThemeId } from "@/lib/themes"
+import { COLOR_THEMES, type ColorThemeId, formatThemeLabel } from "@/lib/themes"
 import { cn } from "@/lib/utils"
 import {
   GridSection,
@@ -59,7 +59,7 @@ export function ThemeStudio() {
       <GridSection className="flex flex-col gap-6 px-4 py-6 sm:px-6">
         <div className="flex flex-col gap-3">
           <h2 className="font-mono text-xs text-muted-foreground">
-            选择主题 · 仅预览
+            选择主题 · Theme（仅预览）
           </h2>
           <ThemePicker value={activeId} onChange={setSelectedId} />
         </div>
@@ -128,7 +128,7 @@ export function ThemeStudio() {
         <GridSection className="flex items-center gap-2 px-4 py-3 sm:px-6">
           <span aria-hidden className="size-2 rounded-full bg-primary" />
           <p className="font-mono text-xs text-muted-foreground">
-            预览 · {active.name} {active.title} · {mode === "dark" ? "暗色" : "亮色"}
+            预览 · {formatThemeLabel(active)} · {mode === "dark" ? "暗色" : "亮色"}
           </p>
         </GridSection>
         <GridSection>

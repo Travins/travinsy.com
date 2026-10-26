@@ -4,9 +4,10 @@
   "themes": [
     {
       "id": "neutral",
+      "group": "base",
       "name": "中性",
       "title": "Neutral",
-      "description": "没有色相的中性灰，shadcn 的默认主题。",
+      "description": "没有色相的纯灰，shadcn 的默认外观。",
       "url": "https://travinsy.com/r/theme-neutral.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-neutral.json",
@@ -14,21 +15,11 @@
       }
     },
     {
-      "id": "zinc",
-      "name": "锌灰",
-      "title": "Zinc",
-      "description": "带一点冷蓝的灰色，克制而干净。",
-      "url": "https://travinsy.com/r/theme-zinc.json",
-      "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-zinc.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-zinc"
-      }
-    },
-    {
       "id": "stone",
-      "name": "石灰",
+      "group": "base",
+      "name": "石色",
       "title": "Stone",
-      "description": "带一点暖黄的灰色，更柔和。",
+      "description": "偏暖的灰，带一点米褐调，比纯灰更柔和。",
       "url": "https://travinsy.com/r/theme-stone.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-stone.json",
@@ -37,9 +28,10 @@
     },
     {
       "id": "slate",
-      "name": "岩青",
+      "group": "base",
+      "name": "板岩",
       "title": "Slate",
-      "description": "偏青蓝的灰色，适合技术站和文档站。",
+      "description": "偏冷的蓝灰，背景、边框和文字都带蓝调，适合技术站和文档站。",
       "url": "https://travinsy.com/r/theme-slate.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-slate.json",
@@ -47,21 +39,23 @@
       }
     },
     {
-      "id": "rose",
-      "name": "玫瑰",
-      "title": "Rose",
-      "description": "饱和的玫红主色，叠加在锌灰基底上。",
-      "url": "https://travinsy.com/r/theme-rose.json",
+      "id": "red",
+      "group": "color",
+      "name": "红色",
+      "title": "Red",
+      "description": "标准红色主色（亮色 600，暗色 500）。危险色同时拉开：亮色改用 800 的深红，暗色改用 300 的浅红，避免与主色混淆。",
+      "url": "https://travinsy.com/r/theme-red.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-rose.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-rose"
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-red.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-red"
       }
     },
     {
       "id": "orange",
+      "group": "color",
       "name": "橙色",
       "title": "Orange",
-      "description": "温暖的橙色主色，叠加在锌灰基底上。",
+      "description": "明亮的橙色主色，配深色文字以保证对比度。",
       "url": "https://travinsy.com/r/theme-orange.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-orange.json",
@@ -70,9 +64,10 @@
     },
     {
       "id": "amber",
+      "group": "color",
       "name": "琥珀",
       "title": "Amber",
-      "description": "深琥珀主色，叠加在锌灰基底上。",
+      "description": "金黄偏橙的琥珀色主色，配深色文字。",
       "url": "https://travinsy.com/r/theme-amber.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-amber.json",
@@ -80,10 +75,23 @@
       }
     },
     {
+      "id": "lime",
+      "group": "color",
+      "name": "青柠",
+      "title": "Lime",
+      "description": "偏黄的亮绿色主色，配深色文字。",
+      "url": "https://travinsy.com/r/theme-lime.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-lime.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-lime"
+      }
+    },
+    {
       "id": "green",
-      "name": "翠绿",
+      "group": "color",
+      "name": "绿色",
       "title": "Green",
-      "description": "沉稳的绿色主色，叠加在锌灰基底上。",
+      "description": "沉稳的森林绿主色，亮色取 700 配白字。",
       "url": "https://travinsy.com/r/theme-green.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-green.json",
@@ -91,10 +99,35 @@
       }
     },
     {
+      "id": "teal",
+      "group": "color",
+      "name": "青绿",
+      "title": "Teal",
+      "description": "介于绿与蓝之间的青绿色主色，配深色文字。",
+      "url": "https://travinsy.com/r/theme-teal.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-teal.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-teal"
+      }
+    },
+    {
+      "id": "sky",
+      "group": "color",
+      "name": "天蓝",
+      "title": "Sky",
+      "description": "明亮清爽的天蓝色主色，配深色文字。",
+      "url": "https://travinsy.com/r/theme-sky.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-sky.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-sky"
+      }
+    },
+    {
       "id": "blue",
-      "name": "海蓝",
+      "group": "color",
+      "name": "蓝色",
       "title": "Blue",
-      "description": "经典的蓝色主色，叠加在锌灰基底上。",
+      "description": "经典的饱和蓝色主色，亮色配白字，暗色提亮并配深色文字。",
       "url": "https://travinsy.com/r/theme-blue.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-blue.json",
@@ -103,13 +136,38 @@
     },
     {
       "id": "violet",
+      "group": "color",
       "name": "紫罗兰",
       "title": "Violet",
-      "description": "浓郁的紫色主色，叠加在锌灰基底上。",
+      "description": "浓郁的蓝紫色主色，亮色配白字，暗色提亮并配深色文字。",
       "url": "https://travinsy.com/r/theme-violet.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-violet.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-violet"
+      }
+    },
+    {
+      "id": "fuchsia",
+      "group": "color",
+      "name": "紫红",
+      "title": "Fuchsia",
+      "description": "高饱和的紫红色主色，亮色配白字，暗色提亮并配深色文字。",
+      "url": "https://travinsy.com/r/theme-fuchsia.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-fuchsia.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-fuchsia"
+      }
+    },
+    {
+      "id": "pink",
+      "group": "color",
+      "name": "粉红",
+      "title": "Pink",
+      "description": "偏洋红的粉红色主色，亮色配白字，暗色提亮并配深色文字。",
+      "url": "https://travinsy.com/r/theme-pink.json",
+      "install": {
+        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-pink.json",
+        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-pink"
       }
     }
   ]

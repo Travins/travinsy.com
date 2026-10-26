@@ -27,9 +27,45 @@ description: 主题变量如何控制颜色与线条，亮暗模式与颜色主�
 
 ## 颜色主题
 
-本站提供 10 套颜色主题：neutral、zinc、stone、slate、rose、orange、amber、green、blue、violet。色值取自 shadcn 官方主题，可以在[颜色主题](/themes/)页面实时预览，切换主题与亮暗模式，并复制 CSS。
+本站提供 14 套颜色主题，色值取自 Tailwind CSS v4 默认调色板（oklch），可以在[颜色主题](/themes/)页面实时预览，切换主题与亮暗模式，并复制 CSS。主题名统一按「中文 · English」显示，英文名就是 Tailwind 的色名，也是安装时用的 id。
 
 颜色主题通过 `html` 上的 `data-theme` 属性启用。
+
+### 中性基底 · Neutrals
+
+三个灰族决定整套界面灰阶的色偏：背景、卡片、`muted`、边框、次要文字和 `primary` 都取自同一个灰族，选择器里用「浅 / 中 / 深」三段色带展示色偏。
+
+| 主题 | id | 亮色 primary | 暗色 primary | 说明 |
+|---|---|---|---|---|
+| 中性 · Neutral | `neutral` | neutral-900 | neutral-200 | 没有色相的纯灰，默认外观 |
+| 石色 · Stone | `stone` | stone-900 | stone-200 | 偏暖的灰，米褐调。Tailwind 原版色度太低（几乎与中性无差别），这里放大约 2 倍 |
+| 板岩 · Slate | `slate` | slate-900 | slate-200 | 偏冷的蓝灰，背景、边框、文字都带蓝调 |
+
+原先的 `zinc`、`gray` 与 `neutral`、`slate` 只差一点点色偏，放在一起分不开，所以不再单列。
+
+### 彩色 · Colors
+
+按色相环从红到粉红排列，相邻色相太近的（如 red / rose、blue / indigo / violet、green / emerald）只取其一。灰阶表面（`secondary`、`muted`、`accent`、`border`、暗色背景）带一点同色相的色偏，`chart-1` 到 `chart-5` 是同色相的明度阶梯。
+
+| 主题 | id | 亮色 primary | 暗色 primary | 按钮文字 |
+|---|---|---|---|---|
+| 红色 · Red | `red` | red-600 | red-500 | 亮色白字 / 暗色深字 |
+| 橙色 · Orange | `orange` | orange-600 | orange-500 | 深字 |
+| 琥珀 · Amber | `amber` | amber-600 | amber-500 | 深字 |
+| 青柠 · Lime | `lime` | lime-600 | lime-500 | 深字 |
+| 绿色 · Green | `green` | green-700 | green-500 | 亮色白字 / 暗色深字 |
+| 青绿 · Teal | `teal` | teal-600 | teal-500 | 深字 |
+| 天蓝 · Sky | `sky` | sky-600 | sky-500 | 深字 |
+| 蓝色 · Blue | `blue` | blue-600 | blue-500 | 亮色白字 / 暗色深字 |
+| 紫罗兰 · Violet | `violet` | violet-600 | violet-400 | 亮色白字 / 暗色深字 |
+| 紫红 · Fuchsia | `fuchsia` | fuchsia-600 | fuchsia-500 | 亮色白字 / 暗色深字 |
+| 粉红 · Pink | `pink` | pink-600（明度下调 0.012） | pink-500 | 亮色白字 / 暗色深字 |
+
+- 暗色下的 `primary` 取 400–500 档，保证足够明亮；按钮文字按 WCAG AA（4.5:1）在白字和深字之间选。主色本身作为文字或图形（链接按钮、进度条）时，对背景至少 3:1。
+- 红色主题的主色和危险色（`destructive`）本来是同一种红，所以把危险色拉开：亮色改用 red-800，暗色改用 red-300。
+- 校验脚本：`pnpm tsx scripts/theme-contrast.ts` 会列出全部主题在亮、暗下的对比度，任何一项不达标就以非零状态退出。
+
+> 之前的 `zinc`、`rose` 已移除。浏览器里保存了这两个 id 的访客会自动回落到默认的 `neutral`，不会报错。
 
 ## 安装主题
 

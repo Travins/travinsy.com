@@ -164,7 +164,7 @@ description: 一句话说明（同 registry.json 的 description）
 
 交付前自查：
 - [ ] `pnpm registry:lint && pnpm lint && pnpm build` 全部通过
-- [ ] 10 个颜色主题 × 亮/暗 下外观正常；375px 无横向溢出
+- [ ] 全部颜色主题（14 个，含中性基底）× 亮/暗 下外观正常；375px 无横向溢出
 - [ ] 文案可通过 `labels` 覆盖；无硬编码颜色
 - [ ] 文档结构符合第 9 节；演示数据确定性
 - [ ] 关键条目在临时项目中 `shadcn add` 实测通过

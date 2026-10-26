@@ -12,7 +12,7 @@ import path from "node:path"
 
 import { registryItemSchema } from "shadcn/schema"
 
-import { COLOR_THEMES, formatCssBlock } from "../src/lib/themes"
+import { COLOR_THEMES, formatCssBlock, formatThemeLabel } from "../src/lib/themes"
 
 const CSS_PATH = "src/styles/themes.css"
 const OUT_DIR = "public/r"
@@ -37,14 +37,14 @@ function buildCss() {
 `
 
   const blocks = COLOR_THEMES.map((theme) => {
-    const { id, name, cssVars } = theme
+    const { id, cssVars } = theme
     const lightVars = { ...cssVars.light }
     const darkVars = { ...cssVars.dark }
     const scopeLight = { ...lightVars, edge: SCOPE_EDGE.light }
     const scopeDark = { ...darkVars, edge: SCOPE_EDGE.dark }
 
     return [
-      `/* ${id} · ${name} */\n` + formatCssBlock(`:root[data-theme="${id}"]`, lightVars),
+      `/* ${id} · ${formatThemeLabel(theme)} */\n` + formatCssBlock(`:root[data-theme="${id}"]`, lightVars),
       formatCssBlock(`:root[data-theme="${id}"].dark`, darkVars),
       formatCssBlock(`[data-theme-scope="${id}"]`, scopeLight),
       formatCssBlock(
@@ -82,7 +82,7 @@ async function main() {
       $schema: SCHEMA_URL,
       name: itemName,
       type: "registry:theme",
-      title: `${theme.name} ${theme.title}`,
+      title: formatThemeLabel(theme),
       description: theme.description,
       cssVars: theme.cssVars,
     })
@@ -94,6 +94,7 @@ async function main() {
 
     catalog.push({
       id: theme.id,
+      group: theme.group,
       name: theme.name,
       title: theme.title,
       description: theme.description,

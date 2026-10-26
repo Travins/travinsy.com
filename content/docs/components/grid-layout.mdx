@@ -106,7 +106,7 @@ export default function Page() {
 - 这些组件只提供容器，不添加 `role`，也不改变文档结构：`GridSection` 渲染真正的 `<section>`，`GridContainer`、`GridSeparator`、`GridColumns` 渲染 `<div>`。
 - 行是页面骨架，语义需要自己补：给 `GridSection` 加 `aria-label` 或配合 `aria-labelledby` 指向行内标题，读屏才会把这一行念成区域。原生属性会原样透传。
 - `GridSeparator` 与 `GridCrosshair` 是纯装饰，自带 `aria-hidden`，不会被读屏朗读，也不进入 Tab 顺序；纹路没有动画。`label` 同样会被一并隐藏，需要读屏识别的章节名请写在行内的标题里。
-- 线条与文字的颜色都来自主题变量（`--edge`、`border-edge`），在亮暗模式和 10 个颜色主题下对比度一致，不依赖颜色传达信息。
+- 线条与文字的颜色都来自主题变量（`--edge`、`border-edge`），在亮暗模式和 14 个颜色主题下对比度一致，不依赖颜色传达信息。
 
 ## 注意事项
 

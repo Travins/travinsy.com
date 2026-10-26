@@ -41,7 +41,7 @@ function TypeTableRow({
       >
         <span
           className={cn(
-            // 主题强调色混入前景色：保证 10 套主题在亮 / 暗下都有足够对比度
+            // 主题强调色混入前景色：保证 14 套主题在亮 / 暗下都有足够对比度
             "min-w-0 font-medium break-all text-[color-mix(in_oklab,var(--primary),var(--foreground)_55%)]",
             deprecated && "line-through decoration-1",
           )}
