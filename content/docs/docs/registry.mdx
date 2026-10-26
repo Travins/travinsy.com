@@ -49,7 +49,7 @@ pnpm dlx shadcn@latest view @travinsy/grid-layout
 | --- | --- | --- |
 | `registry:ui` | 单个组件，安装到 `components/ui` | `grid-layout` |
 | `registry:block` | 区块，由多个文件和组件组成 | `auth-01` |
-| `registry:page` | 整页模板，会写入 `app/` 下的页面 | `portfolio-grid` |
+| `registry:page` | 整页模板，会写入 `app/` 下的页面 | `app-shell-01` |
 | `registry:theme` | 颜色主题，只写入 CSS 变量 | `theme-blue` |
 
 条目之间通过 `registryDependencies` 相互依赖。安装区块时，它用到的组件会一并安装，已存在的文件会提示是否覆盖。

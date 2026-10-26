@@ -52,7 +52,4 @@ export const registryViews: Record<string, LazyExoticComponent<ComponentType>> =
   "agent-chat-01": lazy(() => import("./blocks/agent-chat-01/demo")),
   "app-shell-01": lazy(() => import("./templates/app-shell-01/demo")),
   "auth-01": lazy(() => import("./blocks/auth-01/demo")),
-  "feature-columns": lazy(() => import("./blocks/feature-columns/demo")),
-  "portfolio-grid": lazy(() => import("./templates/portfolio-grid/demo")),
-  "profile-hero": lazy(() => import("./blocks/profile-hero/demo")),
 }
