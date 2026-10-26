@@ -18,6 +18,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "flow-diagram-playback-demo": lazy(() => import("./examples/flow-diagram-playback-demo")),
   "flow-diagram-rag-demo": lazy(() => import("./examples/flow-diagram-rag-demo")),
   "flow-diagram-router-demo": lazy(() => import("./examples/flow-diagram-router-demo")),
+  "flow-diagram-showcase-demo": lazy(() => import("./examples/flow-diagram-showcase-demo")),
   "flow-diagram-tones-demo": lazy(() => import("./examples/flow-diagram-tones-demo")),
   "follow-me-demo": lazy(() => import("./examples/follow-me-demo")),
   "greeting-demo": lazy(() => import("./examples/greeting-demo")),

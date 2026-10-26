@@ -79,8 +79,10 @@ export const profile = {
   /**
    * 首页「精选组件」：名称对应 registry.json 的条目，
    * 标题、描述与链接都直接取自 Registry，避免再维护一份文案。
+   * 第一项以带实时预览的大卡展示，其余是图标卡片，每两个一行。
    */
   featuredComponents: [
+    "flow-diagram",
     "grid-layout",
     "contribution-graph",
     "local-time",

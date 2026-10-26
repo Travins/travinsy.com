@@ -5,7 +5,9 @@ links:
   源码: https://travinsy.com/r/flow-diagram.json
 ---
 
-<ComponentPreview name="flow-diagram-demo" />
+<ComponentPreview name="flow-diagram-showcase-demo" />
+
+上图是一条 AI 应用的全链路：Web、App、CLI 三个入口错开发出请求，经网关进入 Agent；Agent 并行调度知识库、工具与大模型，三路耗时各异；结果汇总后沿原路送回每个入口。入口蓝、Agent 紫、三类能力各一种颜色、返回的结果绿，用到了图标节点、点亮、加载圈与状态点、常驻连线的流动纹理和方格底纹。
 
 提炼自本站首页「我在做什么」里的三幅小插画。它不是一个“传数据就出图”的图表组件，而是一组 SVG 原语：你按设计坐标摆节点、连线、写标签，再给每一步指定出现的时刻，整张图就会按这条时间轴循环播放。
 
@@ -40,6 +42,10 @@ export function Pipeline() {
   )
 }
 ```
+
+最小的例子渲染出来是下面这样，三个节点依次点亮：
+
+<ComponentPreview name="flow-diagram-demo" />
 
 约定很少：
 
