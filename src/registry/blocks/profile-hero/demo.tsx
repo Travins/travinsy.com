@@ -9,7 +9,7 @@ export default function ProfileHeroDemo() {
         name="Your Name"
         initials="Y"
         bio="全栈开发者，专注 AI 应用与产品体验。从界面到服务，把想法做成可用的东西。"
-        roles={["全栈开发", "AI Agent 开发", "组件设计"]}
+        roles={["全栈开发", "AI Agent", "组件设计"]}
       />
     </GridContainer>
   )
