@@ -20,7 +20,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 | 框架 | Next.js 16（App Router，`src/` 目录，Turbopack） |
 | 运行时 | Node 24（见 `.nvmrc`），pnpm 10 |
 | 样式 | Tailwind CSS v4 + shadcn/ui（`base-nova` 风格，**Base UI** 底座 `@base-ui/react`，不是 Radix） |
-| 内容 | Fumadocs **内容层**：`fumadocs-core` + `fumadocs-mdx`。**不使用 `fumadocs-ui`**，所有页面 UI 自己写（与 shadcn 官网、参考站点 相同的做法） |
+| 内容 | Fumadocs **内容层**：`fumadocs-core` + `fumadocs-mdx`。**不使用 `fumadocs-ui`**，所有页面 UI 自己写（与 shadcn 官网相同的做法） |
 | 动画 | `motion` |
 | 高亮 | `shiki` |
 | 主题 | `next-themes`（亮/暗）+ 自定义颜色主题（`data-theme`） |
@@ -72,6 +72,10 @@ scripts/                     构建辅助脚本
 
 ## 4. 硬性规则
 
+### 禁止提及参考站点（任何文件都必须满足）
+- 网站的任何地方（页面文案、博客、文档、代码注释、registry、技能文件、提交信息）都**不得出现 参考站点**，也不写“参考/借鉴某个人网站”之类的说法。本条规则是仓库里唯一允许出现这个名字的地方
+- 设计来源只描述做法本身（如“线条网格”“等轴测挤出”），不写出处；提交前用 `grep -rIil 参考站点 --exclude-dir={node_modules,.next,.source,.git} --exclude=AGENTS.md .` 自查，结果必须为空（包括构建产物 `out/`）
+
 ### 静态导出（任何代码都必须满足）
 - 禁止：Server Actions、`cookies()`/`headers()`、依赖 Request 的 Route Handler、`proxy`/middleware、rewrites/redirects/headers 配置、ISR、默认 loader 的图片优化
 - 动态路由必须有 `generateStaticParams()` 且 `dynamicParams = false`
@@ -80,13 +84,14 @@ scripts/                     构建辅助脚本
 - 外部动态数据（如 GitHub 贡献图）只在**构建时**获取，失败时要有兜底数据，不能让构建挂掉
 
 ### 设计系统
-- 视觉语言：**线条网格**（参考 参考站点）。内容区左右竖线、全宽横线分隔、斜纹分隔带。只用 `@/registry/ui/grid-layout` 里的原语和 `src/styles/grid.css` 里的工具类实现，不要每个页面手写边框
+- 视觉语言：**线条网格**。内容区左右竖线、全宽横线分隔、斜纹分隔带。只用 `@/registry/ui/grid-layout` 里的原语和 `src/styles/grid.css` 里的工具类实现，不要每个页面手写边框
 - 颜色只能用主题变量（`bg-background`、`text-muted-foreground`、`border-border`……），**禁止硬编码颜色**，否则颜色主题切换会失效
 - 亮暗模式和颜色主题是两个独立维度：`.dark` class + `data-theme` 属性
 - 字体：拉丁/代码用 Geist / Geist Mono；中文用系统字体栈（PingFang SC、HarmonyOS Sans SC、Noto Sans SC），**不打包中文 webfont**
 - 可访问性：遵循 `web-design-guidelines` 技能
 
 ### 语言
+- 博客（`content/blog/`）用 `humanizer-zh` 技能润色
 - 界面文案、文档、注释的默认语言为简体中文；代码标识符用英文
 - `<html lang="zh-CN">`；英文版以后放在 `/en`，现在不做，但不要写死无法扩展的结构
 
@@ -108,6 +113,7 @@ scripts/                     构建辅助脚本
 | `component-conventions` | **组件书写规范（强制）** | 写/改 src/registry 下任何代码 |
 | `registry-item` | 本项目新增 registry 组件的完整流程 | 新增/修改组件、区块、模板、主题 |
 | `grid-design` | 本项目线条网格设计规范 | 做任何页面布局 |
+| `humanizer-zh` | 中文文本润色：去空话、套话和模板化表达 | 撰写或修改 `content/blog/` 下的博客，成稿前必须用它过一遍 |
 
 查第三方库文档优先用 context7 MCP；Next.js 以 `node_modules/next/dist/docs/` 为准。
 

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "humanizer-zh": {
+      "source": "op7418/humanizer-zh",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "9813f49a01497e18c091593b44f98a26a5a6e278c1c3c73eaee76b5b701bc4d7"
+    }
+  }
+}

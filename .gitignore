@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Fumadocs 内容索引
 /.source/
+
+# logo 等设计迭代草稿，体积大，不进仓库
+/design/
