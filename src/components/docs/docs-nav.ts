@@ -10,17 +10,25 @@ export type NavItem = {
 }
 export type NavSectionId =
   "docs" | "components" | "blocks" | "templates" | "agents"
-export type NavGroup = { id: NavSectionId; title: string; items: NavItem[] }
+export type NavGroup = {
+  id: NavSectionId
+  title: string
+  /** 英文标签（侧栏分组标题用，如 COMPONENTS） */
+  titleEn: string
+  items: NavItem[]
+}
 
 /** 各分区主页：返回链接和面包屑第一级指向它，文档介绍也列在入门侧栏。 */
-export const sectionHome: Record<NavSectionId, { title: string; url: string }> =
-  {
-    docs: { title: "入门", url: "/docs/" },
-    components: { title: "组件", url: "/components/" },
-    blocks: { title: "区块", url: "/blocks/" },
-    templates: { title: "模板", url: "/templates/" },
-    agents: { title: "Agent 开发", url: "/agents/" },
-  }
+export const sectionHome: Record<
+  NavSectionId,
+  { title: string; titleEn: string; url: string }
+> = {
+  docs: { title: "入门", titleEn: "Getting Started", url: "/docs/" },
+  components: { title: "组件", titleEn: "Components", url: "/components/" },
+  blocks: { title: "区块", titleEn: "Blocks", url: "/blocks/" },
+  templates: { title: "模板", titleEn: "Templates", url: "/templates/" },
+  agents: { title: "Agent 开发", titleEn: "Agents", url: "/agents/" },
+}
 
 /** fumadocs 生成的 page.url 没有末尾斜杠，而站点路由（trailingSlash）统一带斜杠。 */
 export const withSlash = (url: string) => (url.endsWith("/") ? url : `${url}/`)
@@ -52,7 +60,8 @@ export function sectionNav(section: NavSectionId): NavGroup[] {
     section === "blocks" || section === "templates"
       ? entryItems(section)
       : mdxItems(section, section === "docs")
-  return [{ id: section, title: sectionHome[section].title, items }]
+  const { title, titleEn } = sectionHome[section]
+  return [{ id: section, title, titleEn, items }]
 }
 
 /** 上一页 / 下一页仅在当前分区内连续。 */

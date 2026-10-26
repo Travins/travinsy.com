@@ -37,15 +37,17 @@ export function DocsMobileNav({
           菜单
         </SheetTrigger>
         <SheetContent side="left" className="w-72 gap-0">
-          <SheetHeader>
-            <SheetTitle>{title}</SheetTitle>
+          <SheetHeader className="h-[52px] flex-row items-center justify-start border-b border-edge px-4 py-0">
+            <SheetTitle className="text-[13px] font-medium">
+              {title}
+            </SheetTitle>
             <SheetDescription className="sr-only">
               选择要阅读的文档页面
             </SheetDescription>
           </SheetHeader>
           {/* 点击任意链接后收起抽屉 */}
           <div
-            className="min-h-0 flex-1 overflow-y-auto px-4 pb-6"
+            className="docs-nav-sheet min-h-0 flex-1 overflow-y-auto pb-6"
             onClick={(event) => {
               if ((event.target as HTMLElement).closest("a")) setOpen(false)
             }}
