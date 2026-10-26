@@ -9,10 +9,10 @@ import {
 import { IconLink } from "@/registry/ui/icon-link/icon-link"
 
 const LINKS = [
-  { label: "个人网站", icon: Globe },
-  { label: "邮件", icon: Mail },
-  { label: "博客订阅", icon: Rss },
-  { label: "组件库", icon: Code2 },
+  { label: "个人网站", href: "/", icon: Globe },
+  { label: "邮件", href: "mailto:hi@travinsy.com", icon: Mail },
+  { label: "博客订阅", href: "/rss.xml", icon: Rss },
+  { label: "组件库", href: "/components/", icon: Code2 },
 ] as const
 
 /**
@@ -28,11 +28,10 @@ export default function FollowMeShowcaseDemo() {
           <FollowMe className="static block w-32 origin-bottom-left scale-125 -rotate-6 rotate-0" />
         </GridSection>
         <GridSection className="flex items-center gap-2 px-4 py-4">
-          {LINKS.map(({ label, icon: Icon }, index) => (
+          {LINKS.map(({ label, href, icon: Icon }, index) => (
             <IconLink
               key={label}
-              href="#"
-              tabIndex={-1}
+              href={href}
               label={label}
               // 最后一个图标是箭头指向的目标，用主色强调
               className={

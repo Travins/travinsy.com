@@ -38,51 +38,58 @@ export function ComponentGallery() {
               const descriptionId = `component-${name}-description`
 
               return (
-                <article
-                  key={page.url}
-                  className="group relative min-w-0 p-4 sm:p-6"
-                >
-                  <ComponentThumbnail name={name} />
-                  <div className="mt-6 flex items-start justify-between gap-4">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-edge bg-muted/40 transition-colors group-hover:border-primary/50 group-hover:text-primary">
-                        <EntryIcon name={name} className="size-5" strokeWidth={1.5} />
-                      </span>
-                      <div className="min-w-0">
-                        <h2
-                          id={titleId}
-                          className="text-lg leading-6 font-medium tracking-tight"
-                        >
-                          {page.data.title}
-                        </h2>
-                        {page.data.titleEn ? (
-                          <p
-                            lang="en"
-                            translate="no"
-                            className="mt-0.5 truncate font-mono text-xs text-muted-foreground"
+                <article key={page.url} className="min-w-0 p-4 sm:p-6">
+                  <ComponentThumbnail
+                    name={name}
+                    label={`${page.data.title}演示`}
+                  />
+                  {/* 只有标题区是链接：上方的演示可以直接操作，不会误触跳转 */}
+                  <div className="group relative">
+                    <div className="mt-6 flex items-start justify-between gap-4">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-edge bg-muted/40 transition-colors group-hover:border-primary/50 group-hover:text-primary">
+                          <EntryIcon
+                            name={name}
+                            className="size-5"
+                            strokeWidth={1.5}
+                          />
+                        </span>
+                        <div className="min-w-0">
+                          <h2
+                            id={titleId}
+                            className="text-lg leading-6 font-medium tracking-tight"
                           >
-                            {page.data.titleEn}
-                          </p>
-                        ) : null}
+                            {page.data.title}
+                          </h2>
+                          {page.data.titleEn ? (
+                            <p
+                              lang="en"
+                              translate="no"
+                              className="mt-0.5 truncate font-mono text-xs text-muted-foreground"
+                            >
+                              {page.data.titleEn}
+                            </p>
+                          ) : null}
+                        </div>
                       </div>
+                      <ArrowUpRight
+                        aria-hidden="true"
+                        className="mt-1 size-4 shrink-0 text-muted-foreground group-hover:text-foreground"
+                      />
                     </div>
-                    <ArrowUpRight
-                      aria-hidden="true"
-                      className="mt-1 size-4 shrink-0 text-muted-foreground group-hover:text-foreground"
+                    <p
+                      id={descriptionId}
+                      className="mt-2 text-sm leading-7 text-muted-foreground"
+                    >
+                      {page.data.description}
+                    </p>
+                    <Link
+                      href={page.url}
+                      aria-labelledby={titleId}
+                      aria-describedby={descriptionId}
+                      className="absolute -inset-x-2 -top-4 -bottom-2 z-10 rounded-lg transition-colors hover:bg-muted/30 focus-visible:outline-2 focus-visible:outline-ring motion-reduce:transition-none"
                     />
                   </div>
-                  <p
-                    id={descriptionId}
-                    className="mt-2 text-sm leading-7 text-muted-foreground"
-                  >
-                    {page.data.description}
-                  </p>
-                  <Link
-                    href={page.url}
-                    aria-labelledby={titleId}
-                    aria-describedby={descriptionId}
-                    className="absolute inset-0 z-10 transition-colors hover:bg-muted/10 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ring motion-reduce:transition-none"
-                  />
                 </article>
               )
             })}

@@ -28,14 +28,21 @@ const previewClasses: Record<string, string> = {
   "isometric-mark": "w-96 scale-90",
 }
 
-export function ComponentThumbnail({ name }: { name: string }) {
+export function ComponentThumbnail({
+  name,
+  label,
+}: {
+  name: string
+  label: string
+}) {
   const Preview = registryExamples[thumbnailExamples[name] ?? `${name}-demo`]
 
   return (
+    // 缩略图是可交互的实时演示（悬停、点击都生效），跳转只交给下方的标题区
     <div
-      aria-hidden="true"
-      inert
-      className="pointer-events-none flex h-64 min-w-0 items-center justify-center overflow-hidden bg-muted/20 sm:h-72"
+      role="group"
+      aria-label={label}
+      className="flex h-64 min-w-0 items-center justify-center overflow-hidden bg-muted/20 sm:h-72"
     >
       <div
         className={cn(
