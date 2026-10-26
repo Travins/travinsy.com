@@ -16,7 +16,7 @@ import type { ComponentType, SVGProps } from "react"
 
 import { GitHubMark, XMark } from "@/components/home/brand-icons"
 import { SectionFrame } from "@/components/home/section-frame"
-import { TechIcon } from "@/components/home/tech-icon"
+import { TechIcon, techBrandStyle } from "@/components/home/tech-icon"
 import { TerminalCard } from "@/components/home/terminal-card"
 import { buttonVariants } from "@/components/ui/button"
 import { profile } from "@/config/profile"
@@ -186,11 +186,12 @@ export default function HomePage() {
             {profile.technologies.map((technology) => (
               <li
                 key={technology}
-                className="flex min-w-0 flex-col items-start gap-3 border-r border-b border-edge p-4"
+                className="group flex min-w-0 flex-col items-start gap-3 border-r border-b border-edge p-4"
               >
                 <span
                   aria-hidden="true"
-                  className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80"
+                  style={techBrandStyle(technology)}
+                  className="flex size-8 items-center justify-center rounded-md border border-edge bg-muted/40 text-foreground/80 transition-colors group-hover:text-(--brand,var(--foreground))"
                 >
                   <TechIcon name={technology} className="size-4" />
                 </span>

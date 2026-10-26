@@ -58,7 +58,7 @@ export const profile = {
     "FastAPI",
     "PyTorch",
     "vLLM",
-    "Ollama",
+    "SGLang",
     "Docker",
     "Kubernetes",
     "PostgreSQL",
