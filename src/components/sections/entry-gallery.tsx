@@ -2,7 +2,6 @@ import { Fragment } from "react"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 
-import { EntryIcon } from "@/lib/entry-icons"
 import { entryTitleEn } from "@/lib/source"
 import { BlockViewer } from "@/components/docs/block-viewer"
 import {
@@ -65,13 +64,6 @@ export function EntryGallery({ section }: { section: EntrySection }) {
             <div className="mt-6 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
               <div className="max-w-2xl min-w-0">
                 <div className="flex items-center gap-3">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-edge bg-muted/40">
-                    <EntryIcon
-                      name={item.name}
-                      className="size-5"
-                      strokeWidth={1.5}
-                    />
-                  </span>
                   <div className="min-w-0">
                     {/* 英文名为主标题（更直观），中文名小一号放在下一行 */}
                     <h2 className="text-xl leading-6 font-medium tracking-tight">

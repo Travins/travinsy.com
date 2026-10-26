@@ -3,12 +3,11 @@ import { siteConfig } from "@/config/site"
 import { groupEntries, type EntryGroup } from "./docs-groups"
 import { sectionItems, type EntrySection } from "./registry-items"
 
-/** titleEn / icon 只有组件、区块、模板有：英文副标与专属图标（icon 是条目名）。 */
+/** titleEn 只有组件、区块、模板有：英文名。 */
 export type NavItem = {
   title: string
   url: string
   titleEn?: string
-  icon?: string
 }
 export type NavSectionId =
   "docs" | "components" | "blocks" | "templates" | "agents"
@@ -49,9 +48,7 @@ function mdxItems(section: NavSectionId, includeIndex: boolean): GroupedItem[] {
       item: {
         title: page.data.title,
         url: withSlash(page.url),
-        ...(page.data.titleEn
-          ? { titleEn: page.data.titleEn, icon: page.slugs.at(-1) }
-          : {}),
+        ...(page.data.titleEn ? { titleEn: page.data.titleEn } : {}),
       },
     }))
 }
@@ -65,7 +62,6 @@ function entryItems(section: EntrySection): GroupedItem[] {
       title: entry.title,
       url: `/${section}/${entry.name}/`,
       titleEn: entryTitleEn(section, entry.name),
-      icon: entry.name,
     },
   }))
 }

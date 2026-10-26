@@ -38,9 +38,7 @@ export function DocsMobileNav({
         </SheetTrigger>
         <SheetContent side="left" className="w-72 gap-0">
           <SheetHeader className="h-[52px] flex-row items-center justify-start border-b border-edge px-4 py-0">
-            <SheetTitle className="text-[13px] font-medium">
-              {title}
-            </SheetTitle>
+            <SheetTitle className="text-[13px] font-medium">{title}</SheetTitle>
             <SheetDescription className="sr-only">
               选择要阅读的文档页面
             </SheetDescription>

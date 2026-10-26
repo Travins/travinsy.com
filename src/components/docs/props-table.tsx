@@ -113,11 +113,7 @@ function renderInline(text: string): ReactNode {
     const link = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(part)
     if (link)
       return (
-        <a
-          key={index}
-          href={link[2]}
-          className="underline underline-offset-4"
-        >
+        <a key={index} href={link[2]} className="underline underline-offset-4">
           {link[1]}
         </a>
       )

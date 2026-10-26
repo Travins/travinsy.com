@@ -2,7 +2,6 @@ import { Fragment } from "react"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 
-import { EntryIcon } from "@/lib/entry-icons"
 import { sectionPages } from "@/lib/source"
 import {
   GridColumns,
@@ -76,13 +75,6 @@ export function ComponentGallery() {
                       <div className="group relative">
                         <div className="mt-6 flex items-start justify-between gap-4">
                           <div className="flex min-w-0 items-center gap-3">
-                            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-edge bg-muted/40 transition-colors group-hover:border-primary/50 group-hover:text-primary">
-                              <EntryIcon
-                                name={name}
-                                className="size-5"
-                                strokeWidth={1.5}
-                              />
-                            </span>
                             <div className="min-w-0">
                               {/* 英文名为主标题（更直观），中文名小一号放在下一行 */}
                               <CardTitle

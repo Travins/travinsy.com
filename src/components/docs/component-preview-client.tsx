@@ -72,11 +72,7 @@ export function ComponentPreviewClient({
           {Preview ? <Preview /> : <p>找不到示例：{name}</p>}
         </Suspense>
       </TabsContent>
-      <TabsContent
-        value="code"
-        keepMounted
-        className={docFramePanelClass}
-      >
+      <TabsContent value="code" keepMounted className={docFramePanelClass}>
         {code}
       </TabsContent>
     </Tabs>

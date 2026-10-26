@@ -291,22 +291,6 @@ a.docs-nav-head[aria-current="page"]::after {
   align-items: center;
   gap: 0.875rem;
 }
-.docs-header-icon {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 1px solid var(--edge);
-  border-radius: 0.5rem;
-  background: color-mix(in oklab, var(--muted) 50%, transparent);
-  color: var(--foreground);
-}
-.docs-header-icon svg {
-  width: 1.375rem;
-  height: 1.375rem;
-}
 .docs-header-bilingual {
   display: flex;
   min-width: 0;

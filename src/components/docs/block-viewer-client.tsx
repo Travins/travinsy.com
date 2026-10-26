@@ -260,11 +260,7 @@ export function BlockViewerClient({
         </div>
       </DocFrameBar>
       {installOpen && <div className="mb-1">{install}</div>}
-      <TabsContent
-        value="preview"
-        keepMounted
-        className={docFramePanelClass}
-      >
+      <TabsContent value="preview" keepMounted className={docFramePanelClass}>
         <div ref={stageRef} className="flex justify-center bg-muted/30 sm:px-4">
           <div
             className={cn(
@@ -310,11 +306,7 @@ export function BlockViewerClient({
           </div>
         </div>
       </TabsContent>
-      <TabsContent
-        value="code"
-        keepMounted
-        className={docFramePanelClass}
-      >
+      <TabsContent value="code" keepMounted className={docFramePanelClass}>
         <div className="grid md:grid-cols-[15rem_minmax(0,1fr)]">
           <nav
             aria-label="文件"
@@ -324,10 +316,7 @@ export function BlockViewerClient({
           </nav>
           <div className="min-w-0 md:max-h-[44rem] md:overflow-auto">
             {files.map((file) => (
-              <div
-                key={file.path}
-                hidden={file.path !== active}
-              >
+              <div key={file.path} hidden={file.path !== active}>
                 {file.code}
               </div>
             ))}

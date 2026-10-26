@@ -50,7 +50,6 @@ export async function DocsPage({
       url={page.url}
       title={page.data.title}
       titleEn={page.data.titleEn}
-      icon={page.data.titleEn ? slug.at(-1) : undefined}
       description={page.data.description}
       markdown={await pageMarkdown(page)}
       sourcePath={page.path}

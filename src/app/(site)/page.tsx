@@ -13,7 +13,6 @@ import { TechIcon, techBrandStyle } from "@/components/home/tech-icon"
 import { TerminalCard } from "@/components/home/terminal-card"
 import { buttonVariants } from "@/components/ui/button"
 import { profile } from "@/config/profile"
-import { EntryIcon } from "@/lib/entry-icons"
 import { blogPosts, entryTitleEn } from "@/lib/source"
 import registry from "../../../registry.json"
 import {
@@ -235,23 +234,16 @@ export default function HomePage() {
         <div className="divide-y divide-edge">
           <FeaturedFlowCard href={`/components/${lead.name}/`}>
             <div className="flex min-w-0 flex-col gap-5 p-4 sm:p-6 lg:justify-center">
-              <div className="flex items-start justify-between">
-                <span className="flex size-11 items-center justify-center rounded-lg border border-edge bg-muted/40">
-                  <EntryIcon
-                    name={lead.name}
-                    className="size-5"
-                    strokeWidth={1.25}
-                  />
-                </span>
-                <ArrowUpRight
-                  aria-hidden="true"
-                  className="size-4 text-muted-foreground transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
-                />
-              </div>
               <div>
-                <h3 className="text-base font-medium tracking-tight">
-                  <EntryTitle name={lead.name} title={lead.title} />
-                </h3>
+                <div className="flex items-start justify-between gap-4">
+                  <h3 className="text-base font-medium tracking-tight">
+                    <EntryTitle name={lead.name} title={lead.title} />
+                  </h3>
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    className="mt-1 size-4 shrink-0 text-muted-foreground transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                  />
+                </div>
                 <p className="mt-2 text-[13px] leading-6 text-muted-foreground">
                   {lead.description}
                 </p>
@@ -280,23 +272,16 @@ export default function HomePage() {
                     href={`/components/${item.name}/`}
                     className={`group flex min-w-0 flex-col gap-5 p-4 sm:p-6 ${cardFocusClass}`}
                   >
-                    <div className="flex items-start justify-between">
-                      <span className="flex size-11 items-center justify-center rounded-lg border border-edge bg-muted/40">
-                        <EntryIcon
-                          name={item.name}
-                          className="size-5"
-                          strokeWidth={1.25}
-                        />
-                      </span>
-                      <ArrowUpRight
-                        aria-hidden="true"
-                        className="size-4 text-muted-foreground transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
-                      />
-                    </div>
                     <div>
-                      <h3 className="text-base font-medium tracking-tight">
-                        <EntryTitle name={item.name} title={item.title} />
-                      </h3>
+                      <div className="flex items-start justify-between gap-4">
+                        <h3 className="text-base font-medium tracking-tight">
+                          <EntryTitle name={item.name} title={item.title} />
+                        </h3>
+                        <ArrowUpRight
+                          aria-hidden="true"
+                          className="mt-1 size-4 shrink-0 text-muted-foreground transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                        />
+                      </div>
                       <p className="mt-2 text-[13px] leading-6 text-muted-foreground">
                         {item.description}
                       </p>

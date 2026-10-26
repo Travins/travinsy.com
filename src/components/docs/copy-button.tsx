@@ -2,7 +2,11 @@
 import { Check, Copy } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 type CopyState = "idle" | "copied" | "failed"
@@ -52,7 +56,10 @@ export function CopyButton({
               size="icon-sm"
               aria-label={label}
               onClick={copy}
-              className={cn("text-muted-foreground hover:text-foreground", className)}
+              className={cn(
+                "text-muted-foreground hover:text-foreground",
+                className,
+              )}
             />
           }
         >

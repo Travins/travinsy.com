@@ -36,7 +36,7 @@ function TypeTableRow({
         data-slot="type-table-trigger"
         className={cn(
           typeTableGrid,
-          "group/trigger w-full cursor-pointer items-center rounded-[inherit] px-3 py-2 text-left font-mono text-[12.5px] leading-5 transition-colors outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 group-data-[open]/row:rounded-b-none",
+          "group/trigger w-full cursor-pointer items-center rounded-[inherit] px-3 py-2 text-left font-mono text-[12.5px] leading-5 transition-colors outline-none group-data-[open]/row:rounded-b-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
         )}
       >
         <span

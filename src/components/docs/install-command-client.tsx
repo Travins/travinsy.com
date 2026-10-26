@@ -105,7 +105,11 @@ function CommandFrame({
     <Tabs
       value={manager}
       onValueChange={(value) => setManager(value as Manager)}
-      className={cn(flat ? "flex flex-col gap-0" : docFrameClass, "my-0", className)}
+      className={cn(
+        flat ? "flex flex-col gap-0" : docFrameClass,
+        "my-0",
+        className,
+      )}
     >
       <DocFrameBar>
         <div className="flex min-w-0 items-stretch gap-1.5 self-stretch">
@@ -115,7 +119,11 @@ function CommandFrame({
           />
           <DocTabsList aria-label="选择包管理器">
             {managerNames.map((name) => (
-              <DocTabsTrigger key={name} value={name} className="font-mono text-xs">
+              <DocTabsTrigger
+                key={name}
+                value={name}
+                className="font-mono text-xs"
+              >
                 {name}
               </DocTabsTrigger>
             ))}
@@ -172,19 +180,18 @@ export function InstallCommandClient({
     <div className="not-prose my-6 min-w-0">
       <Tabs defaultValue="command" className="gap-3">
         <DocTabsList aria-label="安装方式">
-          <DocTabsTrigger value="command">
-            命令
-          </DocTabsTrigger>
-          <DocTabsTrigger value="manual">
-            手动
-          </DocTabsTrigger>
+          <DocTabsTrigger value="command">命令</DocTabsTrigger>
+          <DocTabsTrigger value="manual">手动</DocTabsTrigger>
         </DocTabsList>
         <TabsContent value="command" className="flex flex-col gap-3">
           {frame}
           {source === "namespace" && (
             <div className="text-[13px] leading-6 text-muted-foreground">
               请先按{" "}
-              <Link href="/docs/registry/" className="underline underline-offset-4">
+              <Link
+                href="/docs/registry/"
+                className="underline underline-offset-4"
+              >
                 Registry 与命名空间
               </Link>{" "}
               配置 @travinsy 命名空间。

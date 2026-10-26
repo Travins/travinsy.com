@@ -70,7 +70,11 @@ function CopyPageButton({ markdown }: { markdown: string }) {
       >
         <Icon aria-hidden="true" />
         <span className="max-sm:sr-only">
-          {state === "copied" ? "已复制" : state === "failed" ? "复制失败" : "复制页面"}
+          {state === "copied"
+            ? "已复制"
+            : state === "failed"
+              ? "复制失败"
+              : "复制页面"}
         </span>
       </button>
       <span role="status" aria-live="polite" className="sr-only">
@@ -101,7 +105,11 @@ function ShareButton({ title }: { title: string }) {
     }
   }
   const label =
-    state === "copied" ? "链接已复制" : state === "failed" ? "复制链接失败" : "分享"
+    state === "copied"
+      ? "链接已复制"
+      : state === "failed"
+        ? "复制链接失败"
+        : "分享"
   const Icon = state === "copied" ? Check : Share
   return (
     <>
@@ -116,7 +124,11 @@ function ShareButton({ title }: { title: string }) {
         </button>
       </IconTip>
       <span role="status" aria-live="polite" className="sr-only">
-        {state === "copied" ? "链接已复制" : state === "failed" ? "复制链接失败" : ""}
+        {state === "copied"
+          ? "链接已复制"
+          : state === "failed"
+            ? "复制链接失败"
+            : ""}
       </span>
     </>
   )
@@ -174,7 +186,10 @@ export function PageActions({
   return (
     <div className="mb-6 flex items-center justify-between gap-3">
       {back ? (
-        <Link href={back.url} className={cn(actionBase, "bg-muted pr-3 pl-2.5")}>
+        <Link
+          href={back.url}
+          className={cn(actionBase, "bg-muted pr-3 pl-2.5")}
+        >
           <ArrowLeft aria-hidden="true" />
           {back.title}
         </Link>
@@ -208,8 +223,7 @@ export function PageActions({
                     className={menuItem}
                     render={<a href={markdownUrl} {...external} />}
                   >
-                    <MarkdownIcon />
-                    以 Markdown 查看
+                    <MarkdownIcon />以 Markdown 查看
                   </DropdownMenuItem>
                   {sourcePath && (
                     <DropdownMenuItem
@@ -221,8 +235,7 @@ export function PageActions({
                         />
                       }
                     >
-                      <GithubIcon />
-                      在 GitHub 中打开
+                      <GithubIcon />在 GitHub 中打开
                     </DropdownMenuItem>
                   )}
                   {registryName && (
@@ -230,8 +243,7 @@ export function PageActions({
                       className={menuItem}
                       render={<a href={v0Url(registryName)} {...external} />}
                     >
-                      <V0Icon />
-                      在 v0 中打开
+                      <V0Icon />在 v0 中打开
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem
@@ -243,17 +255,18 @@ export function PageActions({
                       />
                     }
                   >
-                    <OpenAIIcon />
-                    在 ChatGPT 中打开
+                    <OpenAIIcon />在 ChatGPT 中打开
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className={menuItem}
                     render={
-                      <a href={`https://claude.ai/new?q=${prompt}`} {...external} />
+                      <a
+                        href={`https://claude.ai/new?q=${prompt}`}
+                        {...external}
+                      />
                     }
                   >
-                    <ClaudeIcon />
-                    在 Claude 中打开
+                    <ClaudeIcon />在 Claude 中打开
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className={menuItem}
@@ -264,8 +277,7 @@ export function PageActions({
                       />
                     }
                   >
-                    <CursorIcon />
-                    在 Cursor 中打开
+                    <CursorIcon />在 Cursor 中打开
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
