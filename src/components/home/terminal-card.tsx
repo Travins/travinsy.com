@@ -134,7 +134,7 @@ function TerminalCard({
   return (
     <div
       data-slot="terminal-card"
-      className="relative w-full max-w-md border border-edge bg-background"
+      className="relative w-full max-w-xl border border-edge bg-background"
     >
       <GridCrosshair position="top-left" anchor="border" />
       <GridCrosshair position="top-right" anchor="border" />
@@ -150,7 +150,7 @@ function TerminalCard({
       <p className="sr-only">{transcript}</p>
       <div
         aria-hidden="true"
-        className="grid px-4 py-4 font-mono text-xs leading-6 sm:text-[13px]"
+        className="grid px-4 py-4 font-mono text-xs leading-6 sm:text-[13px] lg:px-6 lg:py-6 lg:text-sm lg:leading-7"
       >
         <div className="invisible col-start-1 row-start-1">
           <Lines frames={framesAt(steps, total)} />

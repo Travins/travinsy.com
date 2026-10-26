@@ -2,7 +2,10 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { siteConfig } from "@/config/site"
+import { PostAside, PostTocMobile } from "@/components/blog/post-aside"
 import { PostMeta } from "@/components/blog/post-meta"
+import { ReadingProgress } from "@/components/blog/reading-progress"
+import { DocsToc } from "@/components/docs/docs-toc"
 import { mdxComponents } from "@/components/docs/mdx-components"
 import { readingMinutes } from "@/lib/blog"
 import { blogPosts, blogSource } from "@/lib/source"
@@ -49,42 +52,57 @@ export default async function BlogPost({ params }: Props) {
   const previous = posts[index + 1]
   const next = posts[index - 1]
   const Body = post.data.body
+  const minutes = await readingMinutes(post.data)
+  const toc = post.data.toc
   return (
     <GridContainer
       id="main-content"
-      className="[&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-4 [&_a:focus-visible]:outline-ring"
+      className="post-scope [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-4 [&_a:focus-visible]:outline-ring"
     >
-      <article>
-        <GridSection className="px-4 py-10 sm:px-6 sm:py-14">
-          {/* 容器加宽到 64rem 后，标题与正文仍限制在约 42rem 内，保证可读 */}
-          <div className="mx-auto w-full max-w-2xl">
+      <ReadingProgress targetId="post-body" />
+      <GridSection className="post-layout">
+        <PostAside
+          date={post.data.date}
+          minutes={minutes}
+          tags={post.data.tags}
+        />
+        <article className="post-main">
+          <div className="post-column">
             <Link
               href="/blog/"
-              className="text-xs text-muted-foreground hover:text-foreground"
+              className="text-xs text-muted-foreground hover:text-foreground xl:hidden"
             >
               ← 全部文章
             </Link>
-            <h1 className="mt-8 text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl">
+            <h1 className="mt-8 text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl xl:mt-0">
               {post.data.title}
             </h1>
             <p className="mt-5 leading-7 text-muted-foreground">
               {post.data.description}
             </p>
-            <div className="mt-6">
+            {/* 左栏在 ≥1280px 才出现，更窄时元信息与目录放回正文头部 */}
+            <div className="mt-6 xl:hidden">
               <PostMeta
                 date={post.data.date}
                 tags={post.data.tags}
-                minutes={await readingMinutes(post.data)}
+                minutes={minutes}
               />
             </div>
+            <div className="mt-10 xl:hidden">
+              <PostTocMobile items={toc} />
+            </div>
+            <div
+              id="post-body"
+              className="post-body docs-prose mt-10 min-w-0 border-t border-dashed border-edge pt-8 xl:mt-12"
+            >
+              <Body components={mdxComponents} />
+            </div>
           </div>
-        </GridSection>
-        <GridSection className="min-w-0 px-4 pt-4 pb-12 sm:px-6">
-          <div className="docs-prose mx-auto max-w-2xl min-w-0">
-            <Body components={mdxComponents} />
-          </div>
-        </GridSection>
-      </article>
+        </article>
+        <aside className="docs-toc">
+          <DocsToc items={toc} title="本文目录" />
+        </aside>
+      </GridSection>
       <GridSeparator />
       <GridSection>
         <nav aria-label="相邻文章">

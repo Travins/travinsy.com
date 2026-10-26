@@ -1,13 +1,10 @@
-import { SiteFooter } from "@/components/site/site-footer"
-import { SiteHeader } from "@/components/site/site-header"
+import { SiteShell } from "@/components/site/site-shell"
 
-// 作品集类页面（首页、博客）：64rem（正文类页面自行限制阅读宽度）
+// 首页、博客：与文档类页面共用同一宽度（由 SiteShell 统一设置），正文类页面自行限制阅读宽度
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
-    <div className="[--grid-width:64rem]">
-      <SiteHeader />
+    <SiteShell>
       <main>{children}</main>
-      <SiteFooter />
-    </div>
+    </SiteShell>
   )
 }

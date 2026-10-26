@@ -1,0 +1,165 @@
+/* 博客文章页：三栏（元信息 / 正文 / 目录）与阅读进度条。
+ * 版式节奏与文档页一致：≥1280px 左 14rem、右 13rem（右栏直接复用 .docs-toc），以下单栏。 */
+.post-layout {
+  display: block;
+}
+.post-main {
+  min-width: 0;
+  padding: 2rem 0 3rem;
+}
+/* 标题与正文一律收在约 42rem 的阅读宽度内并居中 */
+.post-column {
+  max-width: 42rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+.post-meta {
+  display: none;
+}
+.post-meta-inner {
+  position: sticky;
+  top: var(--header-height);
+  max-height: calc(100dvh - var(--header-height));
+  overflow-y: auto;
+}
+.post-meta-list {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+.post-meta-list > div {
+  padding: 0.75rem 0.875rem;
+  border-bottom: 1px dashed var(--edge);
+}
+.post-meta-list dt {
+  margin-bottom: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 0.875rem;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground);
+}
+.post-meta-list dd {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+.post-meta-back {
+  display: block;
+  padding: 0.75rem 0.875rem;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  transition: color 150ms;
+}
+.post-meta-back:hover {
+  color: var(--foreground);
+}
+/* 窄屏目录：折叠在正文上方 */
+.post-toc-mobile {
+  margin-bottom: 2rem;
+  border: 1px dashed var(--edge);
+  font-size: 0.8125rem;
+}
+.post-toc-mobile summary {
+  cursor: pointer;
+  padding: 0.5rem 0.875rem;
+  font-weight: 500;
+  list-style: none;
+}
+.post-toc-mobile summary::-webkit-details-marker {
+  display: none;
+}
+.post-toc-mobile summary::after {
+  content: "+";
+  float: right;
+  font-family: var(--font-mono);
+  color: var(--muted-foreground);
+}
+.post-toc-mobile[open] summary::after {
+  content: "−";
+}
+.post-toc-mobile ul {
+  padding: 0 0.875rem 0.75rem;
+}
+.post-toc-mobile a {
+  display: block;
+  padding: 0.25rem 0;
+  line-height: 1.25rem;
+  color: var(--muted-foreground);
+}
+.post-toc-mobile a:hover {
+  color: var(--foreground);
+}
+/* 正文标题的锚点偏移：这里没有 .docs-mobile-bar，只需让开页头 */
+.post-body.docs-prose :is(h2, h3) {
+  scroll-margin-top: calc(var(--header-height) + 1.5rem);
+}
+.post-layout :is(a, summary):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+@media (min-width: 640px) {
+  .post-column {
+    padding-inline: 1.5rem;
+  }
+}
+@media (min-width: 1280px) {
+  .post-layout {
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr) 13rem;
+  }
+  .post-meta {
+    display: block;
+    border-right: 1px dashed var(--edge);
+  }
+  .post-main {
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+  }
+  .post-column {
+    padding-inline: 2rem;
+  }
+}
+
+/*
+ * 阅读进度条：贴在页头底线上（盖住那 1px 线再多 1px，共 2px），固定在视口里。
+ * 主路径是滚动驱动动画：.post-body 声明命名视图时间线（上沿让出页头），
+ * .post-scope 用 timeline-scope 把它提升给进度条使用；
+ * 范围取 contain：正文顶边到页头下沿 = 0%，正文底边到视口底部 = 100%。
+ * 不支持的浏览器由 reading-progress.tsx 里的 JS 兜底。
+ */
+.post-scope {
+  timeline-scope: --post-body;
+}
+.post-body {
+  view-timeline: --post-body block;
+  view-timeline-inset: var(--header-height) 0px;
+}
+.reading-progress {
+  position: fixed;
+  top: calc(var(--header-height) - 2px);
+  left: 0;
+  right: 0;
+  z-index: 41;
+  height: 2px;
+  pointer-events: none;
+}
+.reading-progress-bar {
+  height: 100%;
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+@supports (animation-timeline: view()) {
+  .reading-progress-bar {
+    animation: reading-progress linear both;
+    animation-timeline: --post-body;
+    animation-range: contain 0% contain 100%;
+  }
+}
+@keyframes reading-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

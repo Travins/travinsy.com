@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowUpRight, Globe } from "lucide-react"
 import type { ComponentType, SVGProps } from "react"
 
+import { PostEntry } from "@/components/blog/post-entry"
 import { GitHubMark, XMark } from "@/components/home/brand-icons"
 import { FeaturedBento } from "@/components/home/featured-bento"
 import { RoleRotator } from "@/components/home/role-rotator"
@@ -13,6 +14,7 @@ import { TechIcon, techBrandStyle } from "@/components/home/tech-icon"
 import { TerminalCard } from "@/components/home/terminal-card"
 import { buttonVariants } from "@/components/ui/button"
 import { profile } from "@/config/profile"
+import { formatBlogDate } from "@/lib/blog"
 import { blogPosts } from "@/lib/source"
 import {
   GridColumns,
@@ -43,23 +45,23 @@ export default function HomePage() {
   // 最新文章按发布日期倒序，只取首页展示的两篇。
   const posts = blogPosts().slice(0, 2)
   return (
-    <GridContainer>
+    <GridContainer id="main-content">
       <GridSection aria-labelledby="profile-name">
-        <div className="grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-          <div className="flex flex-col items-start gap-6 px-4 py-10 sm:px-6 sm:py-14 lg:px-10 lg:py-16">
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="flex flex-col items-start gap-6 px-4 py-10 sm:px-6 sm:py-14 lg:justify-center lg:px-14 lg:py-20">
             <p className="flex items-center gap-2 font-mono text-xs tracking-[0.12em] text-muted-foreground">
               <span aria-hidden="true" className="size-1.5 bg-primary" />
               {profile.eyebrow}
             </p>
             <h1
               id="profile-name"
-              className="text-5xl font-semibold tracking-tight sm:text-6xl"
+              className="text-5xl font-semibold tracking-tight sm:text-6xl xl:text-7xl"
               translate="no"
             >
               {profile.name}
               <span className="text-primary">.</span>
             </h1>
-            <p className="max-w-md text-base leading-7 text-pretty text-muted-foreground">
+            <p className="max-w-[36rem] text-base leading-7 text-pretty text-muted-foreground lg:text-[17px] lg:leading-8">
               {profile.bio}
             </p>
             <RoleRotator roles={profile.roles} />
@@ -107,7 +109,7 @@ export default function HomePage() {
               </ul>
             </div>
           </div>
-          <div className="relative flex items-center justify-center border-t border-dashed border-edge px-4 py-10 sm:px-6 lg:border-t-0 lg:border-l lg:border-solid lg:px-10">
+          <div className="relative flex items-center justify-center border-t border-dashed border-edge px-4 py-10 sm:px-6 lg:border-t-0 lg:border-l lg:border-solid lg:px-14">
             {/* 点阵底纹向四周淡出，让终端卡片像摆在图纸上 */}
             <div
               aria-hidden="true"
@@ -127,8 +129,8 @@ export default function HomePage() {
             const Illustration = focusIllustrations[area.illustration]
             return (
               <div key={area.title} className="flex min-w-0 flex-col">
-                <Illustration className="h-48 border-b border-edge" />
-                <div className="flex flex-col items-start gap-3 p-4 sm:p-6">
+                <Illustration className="h-52 border-b border-edge lg:h-56" />
+                <div className="flex flex-col items-start gap-3 p-4 sm:p-6 lg:p-8">
                   <h3 className="text-sm font-medium tracking-tight">
                     {area.title}
                   </h3>
@@ -144,7 +146,7 @@ export default function HomePage() {
       <SectionFrame index="02" name="STACK" title="技术栈">
         {/* 单元格自带右、下边线，再用负外边距把最外一圈挤出裁剪区，避免和容器的线叠成双线 */}
         <div className="overflow-hidden">
-          <ul className="-mr-px -mb-px grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <ul className="-mr-px -mb-px grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
             {profile.technologies.map((technology) => (
               <li
                 key={technology.name}
@@ -156,7 +158,7 @@ export default function HomePage() {
                   href={technology.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative flex h-full min-h-14 min-w-0 items-center gap-2.5 px-3.5 py-3 transition-colors duration-300 hover:bg-(--brand)/[0.06] focus-visible:bg-(--brand)/[0.06] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:min-h-16"
+                  className="group relative flex h-full min-h-14 min-w-0 items-center gap-2.5 px-3 py-3 transition-colors duration-300 hover:bg-(--brand)/[0.06] focus-visible:bg-(--brand)/[0.06] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:min-h-16"
                 >
                   {/* 悬停时顶边亮起一条品牌色细线，从左向右展开 */}
                   <span
@@ -227,22 +229,19 @@ export default function HomePage() {
               <Link
                 key={post.url}
                 href={post.url}
-                className={`group grid min-w-0 gap-2 px-4 py-5 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-6 sm:px-6 ${cardFocusClass}`}
+                className={`group grid min-w-0 gap-2 px-4 py-5 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-6 sm:px-6 lg:px-8 ${cardFocusClass}`}
               >
                 <time
                   dateTime={post.data.date}
                   className="font-mono text-xs leading-6 text-muted-foreground"
                 >
-                  {post.data.date}
+                  {formatBlogDate(post.data.date)}
                 </time>
-                <div className="min-w-0">
-                  <h3 className="text-base font-medium tracking-tight text-balance group-hover:text-primary">
-                    {post.data.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-7 text-pretty text-muted-foreground">
-                    {post.data.description}
-                  </p>
-                </div>
+                <PostEntry
+                  title={post.data.title}
+                  description={post.data.description}
+                  tags={post.data.tags}
+                />
               </Link>
             ))}
           </div>

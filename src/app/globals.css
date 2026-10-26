@@ -4,6 +4,7 @@
 @import "../styles/grid.css";
 @import "../styles/themes.css";
 @import "../styles/docs.css";
+@import "../styles/blog.css";
 
 /* 支持局部强制亮色：.dark 祖先下的 .light 容器内不触发 dark: 变体（主题预览用） */
 @custom-variant dark (&:where(.dark, .dark *):not(:where(.light, .light *)));

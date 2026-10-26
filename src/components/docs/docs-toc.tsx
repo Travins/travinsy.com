@@ -7,7 +7,13 @@ import { cn } from "@/lib/utils"
 const idOf = (url: string) => decodeURIComponent(url.replace(/^#/, ""))
 
 /** 右侧目录：滚动时高亮当前所在小节。 */
-export function DocsToc({ items }: { items: TOCItemType[] }) {
+export function DocsToc({
+  items,
+  title = "本页目录",
+}: {
+  items: TOCItemType[]
+  title?: string
+}) {
   const [active, setActive] = useState<string | null>(null)
 
   useEffect(() => {
@@ -15,26 +21,37 @@ export function DocsToc({ items }: { items: TOCItemType[] }) {
       .map((item) => document.getElementById(idOf(item.url)))
       .filter((node): node is HTMLElement => node !== null)
     if (headings.length === 0) return
-    const visible = new Set<string>()
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) visible.add(entry.target.id)
-          else visible.delete(entry.target.id)
-        }
-        const first = headings.find((node) => visible.has(node.id))
-        if (first) setActive(first.id)
-      },
-      { rootMargin: "-80px 0px -65% 0px" },
-    )
-    headings.forEach((node) => observer.observe(node))
-    return () => observer.disconnect()
+    // 当前小节 = 顶边已经越过页头下方参考线的最后一个标题；小节很长时高亮不会丢失，滚到底时落在最后一节
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const line = 120
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2
+      let current: HTMLElement | null = null
+      for (const node of headings) {
+        if (node.getBoundingClientRect().top <= line) current = node
+      }
+      setActive((atBottom ? headings[headings.length - 1] : current)?.id ?? null)
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener("scroll", schedule, { passive: true })
+    window.addEventListener("resize", schedule, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", schedule)
+      window.removeEventListener("resize", schedule)
+      if (frame) cancelAnimationFrame(frame)
+    }
   }, [items])
 
   if (items.length === 0) return null
   return (
-    <nav aria-label="本页目录">
-      <p className="mb-3 text-xs font-medium">本页目录</p>
+    <nav aria-label={title}>
+      <p className="mb-3 text-xs font-medium">{title}</p>
       <ul className="flex flex-col">
         {items.map((item) => {
           const current = active === idOf(item.url)

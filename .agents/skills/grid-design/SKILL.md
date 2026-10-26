@@ -46,7 +46,7 @@ import {
    - `crosshair` 默认关闭；`GridSection` 也可传 `crosshair` 在底线两端绘制。十字也可用 `GridCrosshair` 单独放在带 `relative` 的卡片四角。
 3. 行内边距统一 `px-4`（≥sm 时 `sm:px-6` 可选），不要让内容贴到竖线上。
 4. 容器外的左右空白（gutter）尽量保持干净；确需放装饰元素时，必须 `hidden lg:block`、`aria-hidden`、`pointer-events-none`，用绝对定位相对于 `GridSection` 向外偏移。不要把手写体 follow me 之类的装饰当作默认。
-5. 页面宽度：作品集类页面容器用 64rem（`--grid-width`），正文类内容（文章）自己限制到约 42rem 并居中；章节可以用「左侧窄编号栏 + 右侧内容」的两栏结构（宽屏 `md:grid-cols-[9rem_1fr]`，窄屏编号移到标题上方），编号栏用竖线与内容隔开。
+5. 页面宽度：全站统一 80rem，由 `SiteShell`（`src/components/site/site-shell.tsx`）设置一次 `--grid-width`，页面不要自己覆盖；正文类内容（文章）自己限制到约 42rem 并居中（文章页是「元信息 / 正文 / 目录」三栏）；章节可以用「左侧窄编号栏 + 右侧内容」的两栏结构（宽屏 `md:grid-cols-[9rem_1fr]`，窄屏编号移到标题上方），编号栏用竖线与内容隔开。
 6. 线条一律用 `edge` 颜色，不要用 `border-border`（太重）或任何硬编码颜色。
 7. 等宽字体（`font-mono`）用于元信息：时间、邮箱、电话、坐标、标签；正文和标题用 `font-sans`。
 8. 图标容器：`size-8 rounded-md border border-edge bg-muted/50` 之类的小方块。
