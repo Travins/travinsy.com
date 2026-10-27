@@ -13,10 +13,18 @@ type IsometricPoint = readonly [number, number]
 type IsometricShape = {
   outer: readonly IsometricPoint[]
   holes?: readonly (readonly IsometricPoint[])[]
+  /** 这块形状的色调（任意 CSS 颜色）：顶面淡淡着色、线条取同色；不传为单色线稿 */
+  tone?: string
 }
 
 /** 墙面底边在屏幕上的两个端点（z = 0），顶边由当前高度决定。 */
-type IsometricWall = { x0: number; y0: number; x1: number; y1: number }
+type IsometricWall = {
+  x0: number
+  y0: number
+  x1: number
+  y1: number
+  tone?: string
+}
 
 type IsometricModel = {
   viewBox: { x: number; y: number; width: number; height: number }
@@ -26,6 +34,8 @@ type IsometricModel = {
   depth: number
   /** 顶面路径（z = depth），外轮廓与孔都在其中，需配合 evenodd */
   top: string
+  /** 按形状拆开的顶面，带各自的色调 */
+  tops: { d: string; tone?: string }[]
   /** 可见侧墙，按从远到近排好序 */
   walls: IsometricWall[]
   /** 背景辅助线路径（z = 0） */
@@ -107,6 +117,7 @@ type Segment = {
   py: number
   qx: number
   qy: number
+  tone?: string
 }
 
 /** 排序键：沿观察方向的“深度”，越大越靠近观察者。 */
@@ -187,13 +198,29 @@ function buildIsometricModel(
   elevation: number = ISOMETRIC_ELEVATION,
 ): IsometricModel {
   setElevation(elevation)
-  const rings: { ring: IsometricPoint[]; hole: boolean }[] = []
-  for (const shape of shapes) {
-    rings.push({ ring: orient(cleanRing(shape.outer), true), hole: false })
+  const rings: {
+    ring: IsometricPoint[]
+    hole: boolean
+    shape: number
+    tone?: string
+  }[] = []
+  shapes.forEach((shape, index) => {
+    const tone = shape.tone
+    rings.push({
+      ring: orient(cleanRing(shape.outer), true),
+      hole: false,
+      shape: index,
+      tone,
+    })
     for (const hole of shape.holes ?? []) {
-      rings.push({ ring: orient(cleanRing(hole), false), hole: true })
+      rings.push({
+        ring: orient(cleanRing(hole), false),
+        hole: true,
+        shape: index,
+        tone,
+      })
     }
-  }
+  })
 
   // 平面包围盒，用于自动高度与辅助线
   let minX = Infinity
@@ -217,17 +244,17 @@ function buildIsometricModel(
   // 背面剔除：法线 (ey, -ex) 与观察方向 (1, 1) 同侧才可见；
   // 法线与观察方向垂直的墙在屏幕上是一条竖线，面积为零，也不画。
   const segments: Segment[] = []
-  for (const { ring } of rings) {
+  for (const { ring, tone } of rings) {
     for (let i = 0; i < ring.length; i++) {
       const [px, py] = ring[i]
       const [qx, qy] = ring[(i + 1) % ring.length]
-      if (qy - py - (qx - px) > EPSILON) segments.push({ px, py, qx, qy })
+      if (qy - py - (qx - px) > EPSILON) segments.push({ px, py, qx, qy, tone })
     }
   }
   const walls = sortBackToFront(segments).map((s) => {
     const [x0, y0] = project(s.px, s.py)
     const [x1, y1] = project(s.qx, s.qy)
-    return { x0, y0, x1, y1 }
+    return { x0, y0, x1, y1, tone: s.tone }
   })
 
   // 投影后的包围盒：顶面在 z = depth（最高），底边在 z = 0（最低）
@@ -327,6 +354,13 @@ function buildIsometricModel(
     unit: size / 500,
     depth,
     top: rings.map(({ ring }) => ringPath(ring, depth)).join(""),
+    tops: shapes.map((shape, index) => ({
+      d: rings
+        .filter((r) => r.shape === index)
+        .map(({ ring }) => ringPath(ring, depth))
+        .join(""),
+      tone: shape.tone,
+    })),
     walls,
     guides,
     heightScale: KZ,
@@ -369,6 +403,7 @@ function rotateShapes(
   return shapes.map((s) => ({
     outer: turn(s.outer),
     holes: s.holes?.map(turn),
+    tone: s.tone,
   }))
 }
 

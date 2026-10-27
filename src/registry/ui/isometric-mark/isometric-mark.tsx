@@ -91,10 +91,24 @@ function IsometricMarkWall({
 }) {
   const d = useTransform(height, (h) => wallPath(wall, h, heightScale))
 
-  // 同一面先画底色线再画高光线，后画的近处面会盖住远处面的线
+  // 同一面先画底色线再画高光线，后画的近处面会盖住远处面的线；有色调时墙面极淡着色、线条取同色
   return (
-    <g data-slot="isometric-mark-wall">
-      <motion.path d={d} className="fill-background" stroke="var(--stroke)" />
+    <g
+      data-slot="isometric-mark-wall"
+      style={
+        wall.tone
+          ? ({
+              "--wall-fill": `color-mix(in oklab, ${wall.tone} 9%, var(--background))`,
+              "--wall-stroke": `color-mix(in oklab, ${wall.tone} 45%, var(--background))`,
+            } as React.CSSProperties)
+          : undefined
+      }
+    >
+      <motion.path
+        d={d}
+        fill="var(--wall-fill, var(--background))"
+        stroke="var(--wall-stroke, var(--stroke))"
+      />
       <motion.path d={d} fill="none" stroke={`url(#${gradientId})`} />
     </g>
   )
@@ -396,9 +410,36 @@ function IsometricMarkView({
         ))}
 
         <motion.g data-slot="isometric-mark-top" style={{ y: topOffset }}>
-          <path d={model.top} className="fill-background" />
-          <path d={model.top} fill={`url(#${patternId})`} />
-          <path d={model.top} stroke="var(--stroke)" />
+          {model.tops.some((top) => top.tone) ? (
+            // 有色调的形状逐块画：淡色底 + 同一张材质纹理 + 同色描边
+            model.tops.map((top, index) => (
+              <g key={index}>
+                <path
+                  d={top.d}
+                  fill={
+                    top.tone
+                      ? `color-mix(in oklab, ${top.tone} 16%, var(--background))`
+                      : "var(--background)"
+                  }
+                />
+                <path d={top.d} fill={`url(#${patternId})`} />
+                <path
+                  d={top.d}
+                  stroke={
+                    top.tone
+                      ? `color-mix(in oklab, ${top.tone} 60%, var(--background))`
+                      : "var(--stroke)"
+                  }
+                />
+              </g>
+            ))
+          ) : (
+            <>
+              <path d={model.top} className="fill-background" />
+              <path d={model.top} fill={`url(#${patternId})`} />
+              <path d={model.top} stroke="var(--stroke)" />
+            </>
+          )}
           <path d={model.top} stroke={`url(#${gradientId})`} />
         </motion.g>
       </g>

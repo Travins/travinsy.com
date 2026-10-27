@@ -47,8 +47,11 @@ const LOGO: readonly (readonly [number, number])[][] = [
 
 // 朝向 -65°、标准等轴测俯仰 35°、挤出 52：斜杠立起往右上斜，细的一组在后、粗的一组在前；
 // 辅助线用 "edges"，贴着斜杠的长边与齐平的切口；斜杠本身向右上斜，顶面用横纹，与斜杠长边错开不产生视差
-const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar) => ({
+// 上三道细斜杠分别着蓝、紫、琥珀三色，下三道粗斜杠保持单色线稿，主次分明
+const TONES = ["var(--flow-blue)", "var(--flow-violet)", "var(--flow-amber)"]
+const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar, index) => ({
   outer: [...bar],
+  tone: TONES[index],
 }))
 
 /** 列表封面：只留标志与底下的彩色光晕，铺满缩略图，不带标注标签。 */
