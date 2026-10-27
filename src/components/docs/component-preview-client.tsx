@@ -23,6 +23,33 @@ import {
 import { PreviewBackdrop } from "./preview-backdrop"
 import { V0Icon } from "./v0-icon"
 
+/**
+ * 自带满幅背景（点阵、光晕、字符矩阵、地球卡片等）的示例：预览区不留内边距，
+ * 示例根元素撑满、去掉自身的圆角与边框，背景直接铺到预览框边缘。
+ */
+const FULL_BLEED = new Set([
+  "isometric-mark-demo",
+  "isometric-mark-legacy-demo",
+  "glyph-field-demo",
+  "glyph-field-icon-demo",
+  "glyph-field-binary-demo",
+  "glyph-field-cjk-demo",
+  "glyph-field-custom-demo",
+  "globe-demo",
+  "marquee-demo",
+  "text-animate-demo",
+  "orbit-demo",
+  "orbit-half-demo",
+  "orbit-icons-demo",
+  "orbit-stack-demo",
+  "ripple-demo",
+  "ripple-online-demo",
+  "ripple-pulse-demo",
+  "ripple-signal-demo",
+  "greeting-card-demo",
+  "shuffle-grid-demo",
+])
+
 export function ComponentPreviewClient({
   name,
   item,
@@ -81,7 +108,10 @@ export function ComponentPreviewClient({
         keepMounted
         className={cn(
           docFramePanelClass,
-          "relative isolate flex min-h-80 items-center justify-center p-4 sm:p-8",
+          "relative isolate flex min-h-80 items-center justify-center",
+          FULL_BLEED.has(name)
+            ? "p-0 *:min-h-80 *:w-full *:max-w-none *:rounded-none *:border-0"
+            : "p-4 sm:p-8",
         )}
       >
         <PreviewBackdrop name={item} />

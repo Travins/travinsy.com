@@ -59,7 +59,7 @@ const SKILLS: ShuffleGridItem[] = POOL.map(({ Icon, tone }, index) => ({
 // 技术栈墙：十六枚图标轮流上墙，每一步只动一两个格子，同时有几枚按类别色亮起
 export default function ShuffleGridDemo() {
   return (
-    <div className="relative flex w-full justify-center">
+    <div className="relative flex w-full items-center justify-center">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -inset-4 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_72%)] opacity-70"
