@@ -38,6 +38,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "globe-dark-demo": lazy(() => import("./examples/globe-dark-demo")),
   "globe-demo": lazy(() => import("./examples/globe-demo")),
   "globe-draggable-demo": lazy(() => import("./examples/globe-draggable-demo")),
+  "globe-legend-demo": lazy(() => import("./examples/globe-legend-demo")),
   "glyph-field-binary-demo": lazy(() => import("./examples/glyph-field-binary-demo")),
   "glyph-field-cjk-demo": lazy(() => import("./examples/glyph-field-cjk-demo")),
   "glyph-field-custom-demo": lazy(() => import("./examples/glyph-field-custom-demo")),

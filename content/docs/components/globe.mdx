@@ -13,7 +13,7 @@ group: graphics
 
 ## 用法
 
-`Globe` 自身是一个正方形外框，球体占其中约 80%，外框的大小、位置完全由 `className` 决定：放大并推到卡片角落，就得到「半露出」的构图。`markers` 传入城市，`label` 是读屏时朗读的城市名，`labels` 在标记旁显示城市名胶囊。页首的预览把地球与 `GlobeLegend` 并排放置：图例是文字版本，不依赖颜色与动画。
+`Globe` 自身是一个正方形外框，球体占其中约 80%，外框的大小、位置完全由 `className` 决定：放大并推到卡片角落，就得到「半露出」的构图。`markers` 传入城市，`label` 是读屏时朗读的城市名，`labels` 在标记旁显示城市名胶囊。页首的预览把放大的地球推到卡片右下角，只露出亚洲一侧，左上放节点指标。
 
 ```tsx title="components/globe-example.tsx"
 import { Globe, type GlobeMarker } from "@/components/ui/globe/globe"
@@ -39,6 +39,12 @@ export function GlobeExample() {
 点阵、标记、弧线的颜色都从外框元素的 CSS 变量里取：点阵默认取 `--foreground`，标记默认取 `--primary`，也可以换成 `blue / green / amber / rose / violet / cyan` 或任意 CSS 颜色。切换亮暗模式或颜色主题时（`<html>` 的 `class`、`data-theme` 变化）会自动重新取色，不需要刷新。外框内部再套一层 `.dark`，该局部就按暗色渲染。
 
 ## 示例
+
+### 图例
+
+地球与 `GlobeLegend` 并排放置：图例是标记的文字版本，列出城市与经纬度，不依赖颜色与动画。
+
+<ComponentPreview name="globe-legend-demo" />
 
 ### 深色发光
 

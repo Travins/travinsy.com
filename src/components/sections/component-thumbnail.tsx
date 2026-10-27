@@ -31,7 +31,7 @@ const fitClasses: Record<string, string> = {
   "text-animate": "max-lg:scale-75",
   "isometric-mark": "scale-90 max-lg:scale-[0.8]",
   orbit: "max-lg:scale-[0.85]",
-  globe: "max-lg:scale-75",
+  globe: "scale-[0.92] max-lg:scale-75",
 }
 
 export function ComponentThumbnail({
