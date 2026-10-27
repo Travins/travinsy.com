@@ -17,6 +17,8 @@
     "orbit",
     "ripple",
     "globe",
-    "shuffle-grid"
+    "shuffle-grid",
+    "glyph-field",
+    "code-stack"
   ]
 }

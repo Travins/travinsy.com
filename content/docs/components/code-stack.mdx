@@ -1,0 +1,97 @@
+---
+title: 代码文件堆叠
+titleEn: Code Stack
+description: 带行号与语法骨架的代码文件卡，支持扇形、级联、网格排列与悬停散开。
+group: graphics
+---
+
+<ComponentPreview name="code-stack-demo" />
+
+## 安装
+
+<InstallCommand name="code-stack" />
+
+## 用法
+
+`CodeStack` 负责排列，`CodeFile` 提供文件窗口、行号、语法骨架与语言角标。卡片可单独使用，不需要客户端 JavaScript。
+
+```tsx title="components/source-files.tsx"
+import { CodeStack, CodeFile } from "@/components/ui/code-stack/code-stack"
+
+export function SourceFiles() {
+  return (
+    <CodeStack spread="fan">
+      <CodeFile lang="ts" name="index.ts" seed={1} />
+      <CodeFile lang="json" name="registry.json" seed={2} active />
+      <CodeFile lang="css" name="theme.css" seed={3} />
+    </CodeStack>
+  )
+}
+```
+
+文件按传入顺序排列，`active` 卡片显示强调色边框并置于上层。建议将激活卡放在序列中间，保留文件名的可见空间。每个直接子节点算作一张卡片，避免用 Fragment 包裹多个文件。
+
+## 示例
+
+### 级联
+
+以水平与垂直错位代替旋转，适合配置文件与构建流程的展示。
+
+<ComponentPreview name="code-stack-cascade-demo" />
+
+### 网格
+
+所有文件平铺，窄屏两列、宽屏四列。文件名和语言角标均可直接读取。
+
+<ComponentPreview name="code-stack-grid-demo" />
+
+## API
+
+### CodeStack
+
+<PropsTable name="code-stack" component="CodeStack" />
+
+`spread` 支持 `fan / cascade / grid`；`hoverSpread` 默认开启，对扇形与级联生效，网格维持平铺。`max` 默认 8，超出部分不会渲染；0 输出空容器。扇形和级联默认高度 20rem，可通过 `className` 调整。
+
+### CodeFile
+
+<PropsTable name="code-stack" component="CodeFile" />
+
+`lang` 支持 `ts / tsx / js / json / css / md / py / go / rs / yaml`；其他值仍显示大写角标，颜色回落到主题强调色。`name` 默认 `file.<lang>`。`seed` 决定自动生成的八行骨架，同一个种子在服务端与客户端生成相同结果。
+
+自定义 `lines` 时，每行含 `indent`（百分比，0–60）和 `tokens` 数组；每个片段含 `width`（百分比，0–100）和可选的 `tone`。空数组显示没有代码行的文件窗口。
+
+```tsx
+<CodeFile
+  lang="json"
+  name="registry.json"
+  lines={[
+    { tokens: [{ width: 18, tone: "muted" }] },
+    {
+      indent: 10,
+      tokens: [
+        { width: 24, tone: "primary" },
+        { width: 32, tone: "green" },
+      ],
+    },
+    { tokens: [{ width: 12, tone: "muted" }] },
+  ]}
+/>
+```
+
+## 可访问性
+
+- 文件名和语言角标是可读取的文本；三点、行号与骨架仅作装饰，读屏不会逐行朗读。
+- 悬停散开只改变装饰布局，不隐藏必要信息，也不添加无意义的 Tab 焦点；内部自带控件获得焦点时同样散开。
+- 系统开启减少动态效果时保留初始排列并关闭过渡；触摸设备保留初始排列。
+- 卡片用于文件示意，不展示实际源码。如需逐一读取完整文件名，使用网格模式。
+
+## 注意事项
+
+- 扇形与级联的卡片宽度随容器变化，默认最多显示八张，适用于组件封面与空状态插图。
+- 全部颜色来自主题 token 和 `--flow-*`，后者由安装时带入的 `flow-diagram` 条目提供。
+- CSS 随组件输出，静态导出与无 JavaScript 环境均可显示并响应悬停。
+
+## 源码
+
+<ComponentSource name="code-stack" />

@@ -1010,6 +1010,43 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "glyph-field",
+      "type": "registry:ui",
+      "title": "字符矩阵",
+      "description": "由主题色字符组成的自适应画布背景，支持混合色调、渐隐遮罩、中心内容与离屏暂停。",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json",
+        "https://travinsy.com/r/stat-card.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/glyph-field/glyph-field.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "code-stack",
+      "type": "registry:ui",
+      "title": "代码文件堆叠",
+      "description": "带行号与语法骨架的代码文件卡，支持扇形、级联、网格排列与悬停散开。",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/code-stack/code-stack.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

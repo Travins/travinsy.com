@@ -21,6 +21,8 @@ const thumbnailExamples: Record<string, string> = {
   globe: "globe-demo",
   checklist: "checklist-demo",
   "shuffle-grid": "shuffle-grid-demo",
+  "glyph-field": "glyph-field-demo",
+  "code-stack": "code-stack-demo",
   marquee: "marquee-demo",
   "text-animate": "text-animate-showcase-demo",
 }
@@ -43,6 +45,8 @@ const previewClasses: Record<string, string> = {
   globe: fillExample,
   checklist: "w-96 scale-90",
   "shuffle-grid": "w-[28rem] scale-75",
+  "glyph-field": fillExample,
+  "code-stack": fillExample,
   marquee: fillExample,
   "text-animate": fillExample,
   "isometric-mark": "w-96 scale-90",
