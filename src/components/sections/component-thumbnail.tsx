@@ -31,7 +31,18 @@ const fitClasses: Record<string, string> = {
   "text-animate": "max-lg:scale-75",
   "isometric-mark": "scale-90 max-lg:scale-[0.8]",
   orbit: "max-lg:scale-[0.85]",
-  globe: "scale-[0.92] max-lg:scale-75",
+}
+
+/**
+ * 本身就是满幅背景的示例：铺满画框、去掉自身的圆角与边框，不留内边距。
+ * `*:` 作用在示例根元素上，`**:data-[slot=…]` 让示例里固定高度的画布跟着撑满。
+ */
+const fillClasses: Record<string, string> = {
+  "glyph-field":
+    "*:h-full *:rounded-none **:data-[slot=glyph-field]:h-full",
+  // 窄屏画框只有 20rem 高，地球再往下沉一些，免得压到左上的指标
+  globe:
+    "*:h-full! *:max-w-none *:rounded-none *:border-0 max-lg:**:data-[slot=globe]:translate-y-[62%]",
 }
 
 export function ComponentThumbnail({
@@ -42,17 +53,23 @@ export function ComponentThumbnail({
   label: string
 }) {
   const Preview = registryExamples[firstExamples[name] ?? `${name}-demo`]
+  const fill = fillClasses[name]
 
   return (
     // 缩略图是可交互的实时演示（悬停、点击都生效），跳转只交给下方的标题区
     <div
       role="group"
       aria-label={label}
-      className="relative flex h-80 min-w-0 lg:h-auto lg:aspect-[16/10] items-center justify-center overflow-hidden bg-muted/20 px-6"
+      className={cn(
+        "relative flex h-80 min-w-0 items-center justify-center overflow-hidden bg-muted/20 lg:aspect-[16/10] lg:h-auto",
+        !fill && "px-6",
+      )}
     >
       <div
         className={cn(
-          "flex w-full shrink-0 items-center justify-center",
+          fill
+            ? cn("absolute inset-0 flex", fill)
+            : "flex w-full shrink-0 items-center justify-center",
           fitClasses[name],
         )}
       >
