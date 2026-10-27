@@ -63,10 +63,20 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
   guides?: boolean | "box" | "edges"
   /**
    * 视角。`isometric`：图形平放在地面上、沿等轴测方向挤出；
-   * `front`：正面看，图形保持原样（角度、比例不变），厚度沿左下方斜着伸出——适合要保留原样的标志
+   * `front`：把图形当作一块板，向后倒下 `tilt` 度、水平转 `turn` 度后正交投影，斜线与竖线的关系保持——适合要保留原样的标志
    * @default "isometric"
    */
   view?: IsometricView
+  /**
+   * `front` 视角下板向后倒下的角度（度）：0 是正面立着，越大越往后躺
+   * @default 45
+   */
+  tilt?: number
+  /**
+   * `front` 视角下板水平转动的角度（度），负数向左转、露出右侧的厚度
+   * @default -20
+   */
+  turn?: number
   /** 可访问名称；不传时整个图形对读屏隐藏 */
   label?: string
 }
@@ -104,6 +114,8 @@ function IsometricMark({
   highlight = true,
   guides = false,
   view = "isometric",
+  tilt = 45,
+  turn = -20,
   label,
   className,
   ref,
@@ -124,8 +136,9 @@ function IsometricMark({
         depthProp,
         guides === "edges" ? "edges" : "box",
         view,
+        { tilt, turn },
       ),
-    [shapes, rotation, depthProp, guides, view],
+    [shapes, rotation, depthProp, guides, view, tilt, turn],
   )
   const { viewBox, unit, depth } = model
   const pressedHeight = pressedDepth ?? depth / 2

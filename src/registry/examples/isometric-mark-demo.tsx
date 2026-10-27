@@ -58,7 +58,7 @@ const MARK_SHAPES: readonly IsometricShape[] = [
   },
 ]
 
-// 正面视角：标志保持原样（1:2 的斜杠、竖直的切口），厚度朝右上方露出；
+// front 视角：标志像一块板向后倒下（默认 tilt 45°、turn -20°），斜杠与竖直切口的关系保持；
 // 辅助线用 "edges"，贴着斜杠的长边与左右两端的切口
 const DEPTH = 32
 
