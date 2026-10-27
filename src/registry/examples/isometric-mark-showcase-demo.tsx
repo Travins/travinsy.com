@@ -58,17 +58,24 @@ const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar, index) => ({
   tone: TONES[index],
 }))
 
-/** 列表封面：只留标志与底下的彩色光晕，铺满缩略图，不带标注标签。 */
+/** 首页封面：等轴测地面网格 + 主题色光晕 + 接触阴影，铺满格子，不带标注标签。 */
 export default function IsometricMarkShowcaseDemo() {
   return (
-    <div className="relative flex size-full items-center justify-center overflow-hidden">
+    <div className="relative isolate flex size-full items-center justify-center overflow-hidden">
+      {/* 地面：沿两条等轴测轴（±30°）的细线网格，和标志同一套透视，向四周渐隐 */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_64%,color-mix(in_oklab,var(--flow-blue)_18%,transparent),transparent_58%),radial-gradient(ellipse_at_88%_8%,color-mix(in_oklab,var(--flow-violet)_14%,transparent),transparent_46%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[repeating-linear-gradient(30deg,var(--edge)_0_1px,transparent_1px_28px),repeating-linear-gradient(150deg,var(--edge)_0_1px,transparent_1px_28px)] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_58%,black_20%,transparent_80%)]"
       />
+      {/* 主题色光晕：从标志下方向外晕开，颜色随主题变化 */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_75%)] opacity-70"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_55%_42%_at_50%_62%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_75%)]"
+      />
+      {/* 接触阴影：标志落在地面上的一团柔影 */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-[66%] left-1/2 -z-10 h-10 w-[46%] -translate-x-1/2 -rotate-[22deg] rounded-[50%] bg-foreground/10 blur-2xl"
       />
       <div className="relative w-[min(66%,16rem)]">
         <IsometricMark

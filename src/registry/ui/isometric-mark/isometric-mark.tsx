@@ -327,12 +327,15 @@ function IsometricMarkView({
       aria-label={label}
       aria-hidden={label ? undefined : true}
       className={cn(
-        "block h-auto w-full touch-manipulation overflow-visible [--guide:color-mix(in_oklab,var(--foreground)_14%,transparent)] [--pattern:color-mix(in_oklab,var(--foreground)_12%,var(--background))] [--stroke:color-mix(in_oklab,var(--foreground)_16%,var(--background))]",
+        "block h-auto w-full touch-manipulation overflow-visible select-none [--guide:color-mix(in_oklab,var(--foreground)_14%,transparent)] [--pattern:color-mix(in_oklab,var(--foreground)_12%,var(--background))] [--stroke:color-mix(in_oklab,var(--foreground)_16%,var(--background))]",
         className,
       )}
       onPointerDown={(event) => {
         onPointerDown?.(event)
-        if (interactive) setPressed(true)
+        if (!interactive) return
+        // 按住压下时别把旁边的文字一起选中（拖动或双击会从这里开始选区）
+        if (event.pointerType === "mouse") event.preventDefault()
+        setPressed(true)
       }}
       onPointerUp={(event) => {
         onPointerUp?.(event)
