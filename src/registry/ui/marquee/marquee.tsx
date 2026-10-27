@@ -20,6 +20,22 @@ const MARQUEE_CSS = `
  [data-slot="marquee-group"][aria-hidden="true"] { display:none }
 }`
 
+/** 文档调整覆盖项；不提供 Provider 时沿用组件属性。 */
+type MarqueeReport = {
+  speed: number
+  reverse: boolean
+  gap: number
+  rotate: number
+  fade: boolean
+  pauseOnHover: boolean
+  paused: boolean
+}
+type MarqueeTuning = Partial<MarqueeReport> & {
+  /** 回报覆盖前的示例取值。 */
+  onReport?: (report: MarqueeReport) => void
+}
+const MarqueeTuningContext = React.createContext<MarqueeTuning>({})
+
 type MarqueeDirection = "left" | "right" | "up" | "down"
 type MarqueeProps = React.ComponentProps<"div"> & {
   direction?: MarqueeDirection
@@ -40,20 +56,50 @@ type MarqueeProps = React.ComponentProps<"div"> & {
 
 function Marquee({
   direction = "left",
-  speed = 48,
-  pauseOnHover = true,
-  paused = false,
-  reverse = false,
+  speed: speedProp = 48,
+  pauseOnHover: pauseOnHoverProp = true,
+  paused: pausedProp = false,
+  reverse: reverseProp = false,
   repeat = 3,
-  fade = true,
-  gap = 32,
-  rotate = 0,
+  fade: fadeProp = true,
+  gap: gapProp = 32,
+  rotate: rotateProp = 0,
   label = "跑马灯",
   children,
   className,
   style,
   ...props
 }: MarqueeProps) {
+  const tuning = React.useContext(MarqueeTuningContext)
+  const { onReport } = tuning
+  const speed = tuning.speed ?? speedProp
+  const reverse = tuning.reverse ?? reverseProp
+  const gap = tuning.gap ?? gapProp
+  const rotate = tuning.rotate ?? rotateProp
+  const fade = tuning.fade ?? fadeProp
+  const pauseOnHover = tuning.pauseOnHover ?? pauseOnHoverProp
+  const paused = tuning.paused ?? pausedProp
+  React.useEffect(() => {
+    onReport?.({
+      speed: speedProp,
+      reverse: reverseProp,
+      gap: gapProp,
+      rotate: rotateProp,
+      fade: fadeProp,
+      pauseOnHover: pauseOnHoverProp,
+      paused: pausedProp,
+    })
+  }, [
+    onReport,
+    speedProp,
+    reverseProp,
+    gapProp,
+    rotateProp,
+    fadeProp,
+    pauseOnHoverProp,
+    pausedProp,
+  ])
+
   const root = React.useRef<HTMLDivElement>(null)
   const group = React.useRef<HTMLDivElement>(null)
   const vertical = direction === "up" || direction === "down"
@@ -135,5 +181,5 @@ function MarqueeItem({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { Marquee, MarqueeItem }
-export type { MarqueeProps, MarqueeDirection }
+export { MarqueeTuningContext, Marquee, MarqueeItem }
+export type { MarqueeTuning, MarqueeReport, MarqueeProps, MarqueeDirection }

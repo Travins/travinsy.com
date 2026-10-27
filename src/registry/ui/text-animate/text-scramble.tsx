@@ -4,7 +4,7 @@ import * as React from "react"
 import { useInView } from "motion/react"
 
 import { cn } from "@/lib/utils"
-import { segmentText, textStyles, useTextMotion } from "./shared"
+import { segmentText, textStyles, useTextMotion, useTextTuning } from "./shared"
 
 const TEXT_CHARSETS = {
   latin: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -33,6 +33,11 @@ function TextScramble({
   characters?: string
   duration?: number
 }) {
+  const tuning = useTextTuning({ charset, duration })
+  charset = tuning.charset ?? charset
+  duration = tuning.duration ?? duration
+  // 面板明确选择预设时覆盖示例的自定义字符池。
+  if (tuning.charset !== undefined) characters = undefined
   const ref = React.useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true, amount: 0.2 })
   const reduced = useTextMotion()
@@ -57,13 +62,15 @@ function TextScramble({
       if (progress >= 1) window.clearInterval(timer)
     }, 40)
     return () => window.clearInterval(timer)
-  }, [active, run, children, duration])
+  }, [active, run, children, duration, charset, characters])
 
   return (
     <span
       {...props}
       ref={ref}
       data-slot="text-scramble"
+      data-duration={duration}
+      data-charset={charset}
       tabIndex={trigger === "hover" ? 0 : props.tabIndex}
       className={cn(
         "font-mono whitespace-pre-wrap outline-none focus-visible:ring-3 focus-visible:ring-ring/50",

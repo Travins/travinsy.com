@@ -20,6 +20,8 @@ type UseGlobeOptions = {
   draggable: boolean
   paused: boolean
   mapSamples: number
+  /** 标签层开关变化时重画一次，让新出现的标签立即就位 */
+  labels?: boolean
   focus?: [number, number] | null
 }
 
@@ -251,7 +253,18 @@ function useGlobe(options: UseGlobeOptions) {
     options.markerTone,
     options.arcTone,
     options.mapSamples,
+    options.labels,
   ])
+
+  // 运行中改初始水平角：直接转到新的角度，之后继续自转
+  const lastPhi = React.useRef(options.phi)
+  React.useEffect(() => {
+    if (lastPhi.current === options.phi) return
+    lastPhi.current = options.phi
+    engine.current.phi = options.phi
+    engine.current.draw()
+    engine.current.requestFrame()
+  }, [options.phi])
 
   // 暂停、进入视口、聚焦目标变化：重新启动渲染循环
   React.useEffect(() => {

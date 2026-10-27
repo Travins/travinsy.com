@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { cva } from "class-variance-authority"
 
@@ -16,6 +18,21 @@ const LANG_TONES: Record<string, FlowTone> = {
   rs: "rose",
   yaml: "amber",
 }
+
+/** 文档调整覆盖项；不提供 Provider 时沿用组件属性。 */
+type CodeStackReport = {
+  spread: CodeStackSpread
+  hoverSpread: boolean
+  max: number
+  active: boolean
+}
+type CodeStackTuning = Partial<CodeStackReport> & {
+  /** 固定调整期间的画框。@default false */
+  stableFrame?: boolean
+  /** 回报覆盖前的示例取值。 */
+  onReport?: (report: CodeStackReport) => void
+}
+const CodeStackTuningContext = React.createContext<CodeStackTuning>({})
 
 type CodeStackSpread = "fan" | "cascade" | "grid"
 type CodeStackProps = React.ComponentProps<"div"> & {
@@ -59,21 +76,54 @@ const codeStackVariants = cva(
 function CodeStack({
   className,
   children,
-  spread = "fan",
-  hoverSpread = true,
-  max = 8,
+  spread: spreadProp = "fan",
+  hoverSpread: hoverSpreadProp = true,
+  max: maxProp = 8,
   ...props
 }: CodeStackProps) {
+  const tuning = React.useContext(CodeStackTuningContext)
+  const { onReport } = tuning
+  const spread = tuning.spread ?? spreadProp
+  const hoverSpread = tuning.hoverSpread ?? hoverSpreadProp
+  const max = tuning.max ?? maxProp
+  React.useEffect(() => {
+    onReport?.({
+      spread: spreadProp,
+      hoverSpread: hoverSpreadProp,
+      max: maxProp,
+      active: React.Children.toArray(children).some(
+        (child) =>
+          React.isValidElement<CodeFileProps>(child) &&
+          Boolean(child.props.active),
+      ),
+    })
+  }, [onReport, spreadProp, hoverSpreadProp, maxProp, children])
+
+  const frame = React.useRef<HTMLDivElement>(null)
+  React.useLayoutEffect(() => {
+    const element = frame.current
+    if (!element || !tuning.stableFrame) return
+    // 保留示例原始高度；网格溢出时在画框内滚动，不挤压卡片。
+    element.style.height = element.getBoundingClientRect().height + "px"
+    return () => {
+      element.style.height = ""
+    }
+  }, [tuning.stableFrame])
   const files = React.Children.toArray(children).slice(
     0,
     Math.max(0, Math.floor(max)),
   )
   return (
     <div
+      ref={frame}
       data-slot="code-stack"
       data-spread={spread}
       data-hover-spread={hoverSpread || undefined}
-      className={cn(codeStackVariants({ spread }), className)}
+      className={cn(
+        codeStackVariants({ spread }),
+        tuning.stableFrame && "content-start overflow-auto",
+        className,
+      )}
       {...props}
     >
       <style href="code-stack-layout" precedence="default">{`
@@ -151,6 +201,8 @@ function CodeFile({
   style,
   ...props
 }: CodeFileProps) {
+  const tuning = React.useContext(CodeStackTuningContext)
+  active = tuning.active ?? active
   const language = lang.toLowerCase()
   const rows = lines ?? skeleton(seed)
   return (
@@ -235,5 +287,12 @@ function CodeFile({
   )
 }
 
-export { CodeStack, CodeFile, codeStackVariants }
-export type { CodeStackProps, CodeStackSpread, CodeFileProps, CodeFileLine }
+export { CodeStackTuningContext, CodeStack, CodeFile, codeStackVariants }
+export type {
+  CodeStackTuning,
+  CodeStackReport,
+  CodeStackProps,
+  CodeStackSpread,
+  CodeFileProps,
+  CodeFileLine,
+}

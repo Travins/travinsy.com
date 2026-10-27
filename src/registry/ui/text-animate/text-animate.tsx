@@ -10,12 +10,15 @@ import {
   type FlowToneName,
 } from "@/registry/ui/flow-diagram/tone"
 import {
+  useTextTuning,
   useTextMotion,
   useTextEntrance,
   segmentText,
   textStyles,
 } from "./shared"
 import { TextScramble } from "./text-scramble"
+import { TextAnimateTuningContext } from "./shared"
+export type { TextAnimateTuning, TextAnimateReport } from "./shared"
 
 const textFlipVariants = cva("relative inline-grid max-w-full align-baseline", {
   variants: {
@@ -47,6 +50,10 @@ function TextFlip({
     /** 屏幕阅读器的完整替代文案。 */
     children?: string
   }) {
+  const tuning = useTextTuning({ interval, paused, tone })
+  interval = tuning.interval ?? interval
+  paused = tuning.paused ?? paused
+  tone = tuning.tone ?? tone
   const ref = React.useRef<HTMLSpanElement>(null)
   const measure = React.useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { amount: 0.2 })
@@ -82,6 +89,9 @@ function TextFlip({
       {...props}
       ref={ref}
       data-slot="text-flip"
+      data-interval={interval}
+      data-paused={paused}
+      data-tone={tone}
       className={cn(textFlipVariants({ variant }), className)}
       style={{ ...flowToneStyle(tone), ...style }}
     >
@@ -128,6 +138,9 @@ function TextReveal({
   stagger?: number
   locale?: string
 }) {
+  const tuning = useTextTuning({ by, stagger })
+  by = tuning.by ?? by
+  stagger = tuning.stagger ?? stagger
   const { ref, active } = useTextEntrance(trigger)
   const parts = segmentText(children, by, locale, true)
   return (
@@ -135,12 +148,14 @@ function TextReveal({
       {...props}
       ref={ref}
       data-slot="text-reveal"
+      data-by={by}
+      data-stagger={stagger}
       data-active={active}
       className={cn("whitespace-pre-wrap", className)}
     >
       {textStyles()}
       <span className="sr-only">{children}</span>
-      <span aria-hidden>
+      <span aria-hidden key={by + "-" + stagger}>
         {parts.map((part, index) => (
           <span
             key={index}
@@ -178,12 +193,15 @@ function TextHighlight({
     tone?: FlowToneName
     trigger?: "mount" | "in-view"
   }) {
+  const tuning = useTextTuning({ tone })
+  tone = tuning.tone ?? tone
   const { ref, active } = useTextEntrance(trigger)
   return (
     <span
       {...props}
       ref={ref}
       data-slot="text-highlight"
+      data-tone={tone}
       data-variant={variant}
       data-active={active}
       className={cn(textHighlightVariants({ variant }), className)}
@@ -202,6 +220,7 @@ function TextHighlight({
 }
 
 export {
+  TextAnimateTuningContext,
   TextFlip,
   TextReveal,
   TextScramble,

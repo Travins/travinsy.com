@@ -73,6 +73,38 @@ type GlobeProps = Omit<React.ComponentProps<"div">, "children"> & {
 }
 
 /**
+ * 调整用的覆盖项：子树里所有 `Globe` 的对应属性被这里的值替换。
+ * 用于调试面板一类的场景；不包 `GlobeTuningContext.Provider` 时组件行为不变。
+ */
+type GlobeTuning = {
+  speed?: number
+  phi?: number
+  theta?: number
+  dotTone?: GlobeTone
+  markerTone?: GlobeTone
+  mapSamples?: number
+  labels?: boolean
+  draggable?: boolean
+  paused?: boolean
+  /** 回报示例自己的实际取值（未被覆盖前），面板据此显示当前值。 */
+  onReport?: (values: GlobeReport) => void
+}
+
+type GlobeReport = {
+  speed: number
+  phi: number
+  theta: number
+  dotTone: GlobeTone
+  markerTone: GlobeTone
+  mapSamples: number
+  labels: boolean
+  draggable: boolean
+  paused: boolean
+}
+
+const GlobeTuningContext = React.createContext<GlobeTuning>({})
+
+/**
  * 点阵地球：WebGL 绘制陆地点阵、标记与弧线，颜色取自主题变量，
  * 亮暗模式和颜色主题切换时自动更新。尺寸由外框决定，外框是正方形，球体占其中约 80%。
  */
@@ -80,20 +112,56 @@ function Globe({
   className,
   markers = [],
   arcs = [],
-  dotTone = "foreground",
-  markerTone = "primary",
+  dotTone: dotToneProp = "foreground",
+  markerTone: markerToneProp = "primary",
   arcTone = "primary",
-  speed = 0.12,
-  phi = DEFAULT_VIEW.phi,
-  theta = DEFAULT_VIEW.theta,
-  draggable = false,
-  paused = false,
-  mapSamples = 16000,
-  labels = false,
+  speed: speedProp = 0.12,
+  phi: phiProp = DEFAULT_VIEW.phi,
+  theta: thetaProp = DEFAULT_VIEW.theta,
+  draggable: draggableProp = false,
+  paused: pausedProp = false,
+  mapSamples: mapSamplesProp = 16000,
+  labels: labelsProp = false,
   focus,
-  label = draggable ? "可旋转的地球" : undefined,
+  label: labelProp,
   ...props
 }: GlobeProps) {
+  const tuning = React.useContext(GlobeTuningContext)
+  const { onReport } = tuning
+  React.useEffect(() => {
+    onReport?.({
+      speed: speedProp,
+      phi: phiProp,
+      theta: thetaProp,
+      dotTone: dotToneProp,
+      markerTone: markerToneProp,
+      mapSamples: mapSamplesProp,
+      labels: labelsProp,
+      draggable: draggableProp,
+      paused: pausedProp,
+    })
+  }, [
+    onReport,
+    speedProp,
+    phiProp,
+    thetaProp,
+    dotToneProp,
+    markerToneProp,
+    mapSamplesProp,
+    labelsProp,
+    draggableProp,
+    pausedProp,
+  ])
+  const speed = tuning.speed ?? speedProp
+  const phi = tuning.phi ?? phiProp
+  const theta = tuning.theta ?? thetaProp
+  const dotTone = tuning.dotTone ?? dotToneProp
+  const markerTone = tuning.markerTone ?? markerToneProp
+  const mapSamples = tuning.mapSamples ?? mapSamplesProp
+  const labels = tuning.labels ?? labelsProp
+  const draggable = tuning.draggable ?? draggableProp
+  const paused = tuning.paused ?? pausedProp
+  const label = labelProp ?? (draggable ? "可旋转的地球" : undefined)
   const { rootRef, hostRef, labelRefs, ready, dragging, handlers } = useGlobe({
     markers,
     arcs,
@@ -106,6 +174,7 @@ function Globe({
     draggable,
     paused,
     mapSamples,
+    labels,
     focus,
   })
   const cities = markers.flatMap((marker) =>
@@ -229,5 +298,13 @@ function GlobeLegend({
   )
 }
 
-export { Globe, GlobeLegend, anglesFor as globeAngles }
-export type { GlobeArc, GlobeLegendProps, GlobeMarker, GlobeProps, GlobeTone }
+export { Globe, GlobeLegend, GlobeTuningContext, anglesFor as globeAngles }
+export type {
+  GlobeArc,
+  GlobeLegendProps,
+  GlobeMarker,
+  GlobeProps,
+  GlobeReport,
+  GlobeTone,
+  GlobeTuning,
+}

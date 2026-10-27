@@ -15,6 +15,23 @@ import {
   type CardStackLabels,
 } from "./context"
 
+/** 文档调整覆盖项；不提供 Provider 时沿用组件属性。 */
+type CardStackReport = {
+  mode: CardStackMode
+  interval: number
+  depth: number
+  offset: number
+  scale: number
+  paused: boolean
+}
+type CardStackTuning = Partial<CardStackReport> & {
+  /** 固定调整期间的画框。@default false */
+  stableFrame?: boolean
+  /** 回报覆盖前的示例取值。 */
+  onReport?: (report: CardStackReport) => void
+}
+const CardStackTuningContext = React.createContext<CardStackTuning>({})
+
 type CardStackProps = React.ComponentProps<"div"> & {
   /** 也可用直接子级 CardStackItem；两者择一。 */
   items?: React.ReactNode[]
@@ -35,11 +52,11 @@ type CardStackProps = React.ComponentProps<"div"> & {
 function CardStack({
   items,
   children,
-  mode = "auto",
-  interval = 4000,
-  depth = 3,
-  offset = 12,
-  scale = 0.04,
+  mode: modeProp = "auto",
+  interval: intervalProp = 4000,
+  depth: depthProp = 3,
+  offset: offsetProp = 12,
+  scale: scaleProp = 0.04,
   index: indexProp,
   defaultIndex = 0,
   onIndexChange,
@@ -54,12 +71,40 @@ function CardStack({
   onBlurCapture,
   ...props
 }: CardStackProps) {
+  const tuning = React.useContext(CardStackTuningContext)
+  const { onReport } = tuning
+  const mode = tuning.mode ?? modeProp
+  const interval = tuning.interval ?? intervalProp
+  const depth = tuning.depth ?? depthProp
+  const offset = tuning.offset ?? offsetProp
+  const scale = tuning.scale ?? scaleProp
+
   const ref = React.useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { amount: 0.2 })
   const reduced = useCardStackReducedMotion()
   const [hovered, setHovered] = React.useState(false)
   const [focused, setFocused] = React.useState(false)
-  const [paused, setPaused] = React.useState(false)
+  const [pausedState, setPaused] = React.useState(false)
+  const paused = tuning.paused ?? pausedState
+  React.useEffect(() => {
+    onReport?.({
+      mode: modeProp,
+      interval: intervalProp,
+      depth: depthProp,
+      offset: offsetProp,
+      scale: scaleProp,
+      paused: pausedState,
+    })
+  }, [
+    onReport,
+    modeProp,
+    intervalProp,
+    depthProp,
+    offsetProp,
+    scaleProp,
+    pausedState,
+  ])
+
   const [hidden, setHidden] = React.useState(false)
   const [rawIndex, setIndex] = useControllableState({
     prop: indexProp,
@@ -77,6 +122,10 @@ function CardStack({
     )
   const count = cards.length
   const index = count ? ((Math.trunc(rawIndex) % count) + count) % count : 0
+  // 调整层数与偏移只移动图形，底部预留空间仍取示例自己的值。
+  const framePadding =
+    (Math.max(1, Math.min(count || 1, Math.floor(depthProp))) - 1) *
+    Math.max(0, offsetProp)
   const safeDepth = Math.max(1, Math.min(count || 1, Math.floor(depth)))
   const safeOffset = Math.max(0, offset)
   const safeScale = Math.max(0, Math.min(scale, 0.2 / safeDepth))
@@ -135,6 +184,11 @@ function CardStack({
         ref={ref}
         data-slot="card-stack"
         data-mode={mode}
+        data-paused={paused}
+        data-interval={interval}
+        data-depth={safeDepth}
+        data-offset={safeOffset}
+        data-scale={safeScale}
         role="region"
         aria-roledescription={text.carousel}
         aria-label={label}
@@ -180,7 +234,11 @@ function CardStack({
         <div
           data-slot="card-stack-viewport"
           className="grid min-w-0"
-          style={{ paddingBottom: (safeDepth - 1) * safeOffset }}
+          style={{
+            paddingBottom: tuning.stableFrame
+              ? framePadding
+              : (safeDepth - 1) * safeOffset,
+          }}
         >
           {cards.map((card, cardIndex) => {
             const level = (cardIndex - index + count) % count
@@ -234,5 +292,11 @@ function CardStackItem({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { CardStack, CardStackItem, CardStackControls }
-export type { CardStackProps, CardStackMode, CardStackLabels }
+export { CardStackTuningContext, CardStack, CardStackItem, CardStackControls }
+export type {
+  CardStackTuning,
+  CardStackReport,
+  CardStackProps,
+  CardStackMode,
+  CardStackLabels,
+}

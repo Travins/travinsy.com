@@ -33,6 +33,34 @@ type GlyphFieldProps = React.ComponentProps<"div"> & {
   label?: string
 }
 
+/**
+ * 调整用的覆盖项：子树里所有 `GlyphField` 的对应属性被这里的值替换。
+ * 用于调试面板一类的场景；不包 `GlyphFieldTuningContext.Provider` 时组件行为不变。
+ */
+type GlyphFieldTuning = {
+  glyphs?: GlyphFieldSet
+  tone?: FlowTone | FlowTone[]
+  density?: number
+  fontSize?: number
+  speed?: number
+  fade?: "edges" | "center" | "none"
+  paused?: boolean
+  /** 回报示例自己的实际取值（未被覆盖前），面板据此显示当前值。 */
+  onReport?: (values: GlyphFieldReport) => void
+}
+
+type GlyphFieldReport = {
+  glyphs: GlyphFieldSet
+  tone: FlowTone | FlowTone[]
+  density: number
+  fontSize: number
+  speed: number
+  fade: "edges" | "center" | "none"
+  paused: boolean
+}
+
+const GlyphFieldTuningContext = React.createContext<GlyphFieldTuning>({})
+
 const glyphFieldVariants = cva("pointer-events-none absolute inset-0", {
   variants: {
     fade: {
@@ -49,16 +77,47 @@ const glyphFieldVariants = cva("pointer-events-none absolute inset-0", {
 function GlyphField({
   className,
   children,
-  glyphs = "latin",
-  tone = "muted",
-  density = 0.8,
-  fontSize = 14,
-  speed = 0.04,
-  fade = "edges",
-  paused = false,
+  glyphs: glyphsProp = "latin",
+  tone: toneProp = "muted",
+  density: densityProp = 0.8,
+  fontSize: fontSizeProp = 14,
+  speed: speedProp = 0.04,
+  fade: fadeProp = "edges",
+  paused: pausedProp = false,
   label,
   ...props
 }: GlyphFieldProps) {
+  const tuning = React.useContext(GlyphFieldTuningContext)
+  const { onReport } = tuning
+  // 色调数组用值作为依赖，调用者每次传新数组也不会反复回报
+  const reportToneKey = JSON.stringify(toneProp)
+  React.useEffect(() => {
+    onReport?.({
+      glyphs: glyphsProp,
+      tone: JSON.parse(reportToneKey) as FlowTone | FlowTone[],
+      density: densityProp,
+      fontSize: fontSizeProp,
+      speed: speedProp,
+      fade: fadeProp,
+      paused: pausedProp,
+    })
+  }, [
+    onReport,
+    glyphsProp,
+    reportToneKey,
+    densityProp,
+    fontSizeProp,
+    speedProp,
+    fadeProp,
+    pausedProp,
+  ])
+  const glyphs = tuning.glyphs ?? glyphsProp
+  const tone = tuning.tone ?? toneProp
+  const density = tuning.density ?? densityProp
+  const fontSize = tuning.fontSize ?? fontSizeProp
+  const speed = tuning.speed ?? speedProp
+  const fade = tuning.fade ?? fadeProp
+  const paused = tuning.paused ?? pausedProp
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   // 用值作为依赖，避免调用者每次创建新的色调数组而重启画布。
   const toneKey = JSON.stringify(tone)
@@ -228,5 +287,10 @@ function GlyphField({
   )
 }
 
-export { GlyphField, glyphFieldVariants }
-export type { GlyphFieldProps, GlyphFieldSet }
+export { GlyphField, GlyphFieldTuningContext, glyphFieldVariants }
+export type {
+  GlyphFieldProps,
+  GlyphFieldReport,
+  GlyphFieldSet,
+  GlyphFieldTuning,
+}

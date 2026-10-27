@@ -3,6 +3,58 @@
 import * as React from "react"
 import { useInView } from "motion/react"
 
+/** 各文字原语回报自己负责的属性，同一子树按属性保留第一个示例值。 */
+type TextAnimateReport = Partial<{
+  interval: number
+  paused: boolean
+  by: "char" | "word"
+  stagger: number
+  duration: number
+  charset: import("./text-scramble").TextScrambleCharset
+  tone: import("@/registry/ui/flow-diagram/tone").FlowToneName
+}>
+type TextAnimateTuning = TextAnimateReport & {
+  /** 回报覆盖前的示例取值。 */
+  onReport?: (report: TextAnimateReport) => void
+}
+const TextAnimateTuningContext = React.createContext<TextAnimateTuning>({})
+const reports = new WeakMap<
+  NonNullable<TextAnimateTuning["onReport"]>,
+  TextAnimateReport
+>()
+
+function useTextTuning(report: TextAnimateReport) {
+  const tuning = React.useContext(TextAnimateTuningContext)
+  const { onReport } = tuning
+  // 效果按原语的属性订阅；不因 Provider 的新对象重复回报。
+  const { interval, paused, by, stagger, duration, charset, tone } = report
+  React.useEffect(() => {
+    if (!onReport) return
+    const previous = reports.get(onReport)
+    const next = Object.fromEntries(
+      Object.entries({
+        interval,
+        paused,
+        by,
+        stagger,
+        duration,
+        charset,
+        tone,
+      }).filter(([, value]) => value !== undefined),
+    )
+    reports.set(onReport, { ...next, ...previous })
+    if (!previous) {
+      // 等四种原语的 effect 都执行后再汇总，兼容面板只接收首次回报。
+      queueMicrotask(() => {
+        const collected = reports.get(onReport) ?? {}
+        reports.delete(onReport)
+        onReport(collected)
+      })
+    }
+  }, [onReport, interval, paused, by, stagger, duration, charset, tone])
+  return tuning
+}
+
 function subscribe(callback: () => void) {
   const media = window.matchMedia("(prefers-reduced-motion: reduce)")
   media.addEventListener("change", callback)
@@ -73,4 +125,13 @@ function textStyles() {
   )
 }
 
-export { useTextMotion, useTextEntrance, segmentText, textStyles }
+export {
+  TextAnimateTuningContext,
+  useTextTuning,
+  useTextMotion,
+  useTextEntrance,
+  segmentText,
+  textStyles,
+}
+
+export type { TextAnimateTuning, TextAnimateReport }

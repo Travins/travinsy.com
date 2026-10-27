@@ -42,6 +42,8 @@ export function ShuffleGridExample() {
 
 ## 示例
 
+每个示例的标题栏右侧都有「调整」开关：打开后可以实时调整换位间隔、在场数、点亮数与盘面外观，并开关暂停；未改动的项显示示例自己的取值。调整时盘面的宽高比固定为打开时的样子，切换盘面外观（间距不同）后容器大小不变。有分类的示例由分类决定谁在场，「在场数」不起作用。
+
 ### 团队分配
 
 给 `groups` 传分类，格子下方出现可横向滚动的胶囊，点击或自动轮播都会切换分类，格子里的条目随之换位。同一个人属于多个分类时是滑动换位，不是消失再出现。头像用 `ShuffleGridAvatar`，只显示首字，不使用真人照片。
@@ -81,6 +83,7 @@ export function ShuffleGridExample() {
 
 ## 注意事项
 
+- 调整面板通过 `ShuffleGridTuningContext` 覆盖子树里 `ShuffleGrid` 的 `interval`、`activeCount`、`litCount`、`variant` 与 `paused`，并用 `onReport` 回报示例自己的取值；`stableFrame` 让盘面按打开时的宽高比铺满，切换 `variant` 不改变容器大小。不包这一层时组件行为不变；它面向调试与文档，正常使用不需要。
 - 同一条目在分类间换位用的是 `motion` 的共享布局动画，条目 `id` 在同一个盘面里必须唯一。
 - 格子是正方形（`aspect-square`），盘面宽度由外层决定；`cols` 很大时单格会变小，图标大小可以通过 `content` 自行指定。
 - 点亮的色调来自 `--flow-*` 变量，依赖 `flow-diagram` 条目，安装时会一并提供。

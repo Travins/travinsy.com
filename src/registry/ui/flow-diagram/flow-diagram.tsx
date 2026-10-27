@@ -2,6 +2,8 @@
 
 import { useInView, useMotionValue, useReducedMotion } from "motion/react"
 import {
+  createContext,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -54,6 +56,32 @@ const fitClasses: Record<FlowFit, string> = {
 }
 
 /**
+ * 调整用的覆盖项：子树里所有 `FlowDiagram` 的对应属性被这里的值替换。
+ * 用于调试面板一类的场景；不包 `FlowDiagramTuningContext.Provider` 时组件行为不变。
+ */
+type FlowDiagramTuning = {
+  speed?: number
+  tone?: FlowTone
+  background?: FlowBackgroundName
+  fade?: boolean
+  loop?: boolean
+  paused?: boolean
+  /** 回报示例自己的实际取值（未被覆盖前），面板据此显示当前值。 */
+  onReport?: (values: FlowDiagramReport) => void
+}
+
+type FlowDiagramReport = {
+  speed: number
+  tone: FlowTone
+  background: FlowBackgroundName | undefined
+  fade: boolean
+  loop: boolean
+  paused: boolean
+}
+
+const FlowDiagramTuningContext = createContext<FlowDiagramTuning>({})
+
+/**
  * 流程动画外框：底纹 + 固定设计尺寸的 SVG，并提供统一的时间轴。
  *
  * 所有动画都由同一个 `time` 推导，渲染期间不依赖 Date / 随机数，水合结果稳定：
@@ -67,15 +95,15 @@ function FlowDiagram({
   duration = 8,
   exit = duration - 0.8,
   rest = exit - 0.2,
-  tone = "primary",
-  background = "dots",
-  fade = true,
+  tone: toneProp = "primary",
+  background: backgroundProp = "dots",
+  fade: fadeProp = true,
   backgroundClassName,
   fit = "scale-down",
-  loop = true,
+  loop: loopProp = true,
   trigger = "in-view",
-  paused = false,
-  speed = 1,
+  paused: pausedProp = false,
+  speed: speedProp = 1,
   label,
   className,
   style,
@@ -156,6 +184,33 @@ function FlowDiagram({
   label?: string
   children?: ReactNode
 }) {
+  const tuning = useContext(FlowDiagramTuningContext)
+  const { onReport } = tuning
+  useEffect(() => {
+    onReport?.({
+      speed: speedProp,
+      tone: toneProp,
+      background:
+        typeof backgroundProp === "string" ? backgroundProp : undefined,
+      fade: fadeProp,
+      loop: loopProp,
+      paused: pausedProp,
+    })
+  }, [
+    onReport,
+    speedProp,
+    toneProp,
+    backgroundProp,
+    fadeProp,
+    loopProp,
+    pausedProp,
+  ])
+  const speed = tuning.speed ?? speedProp
+  const tone = tuning.tone ?? toneProp
+  const background = tuning.background ?? backgroundProp
+  const fade = tuning.fade ?? fadeProp
+  const loop = tuning.loop ?? loopProp
+  const paused = tuning.paused ?? pausedProp
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { amount: 0.4 })
   const reducedMotion = useReducedMotion()
@@ -261,6 +316,7 @@ export {
   FLOW_LINE_SPEED,
   FlowBeam,
   FlowDiagram,
+  FlowDiagramTuningContext,
   FlowDiamond,
   FlowEdge,
   FlowLabel,
@@ -277,6 +333,8 @@ export {
 }
 export type {
   FlowBackgroundName,
+  FlowDiagramReport,
+  FlowDiagramTuning,
   FlowFit,
   FlowIcon,
   FlowNodeShape,

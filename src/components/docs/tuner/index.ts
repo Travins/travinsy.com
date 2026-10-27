@@ -1,6 +1,14 @@
+import { cardStackTuner } from "./card-stack"
+import { codeStackTuner } from "./code-stack"
+import { flowDiagramTuner } from "./flow-diagram"
+import { globeTuner } from "./globe"
+import { glyphFieldTuner } from "./glyph-field"
 import { isometricMarkTuner } from "./isometric-mark"
+import { marqueeTuner } from "./marquee"
 import { orbitTuner } from "./orbit"
 import { rippleTuner } from "./ripple"
+import { shuffleGridTuner } from "./shuffle-grid"
+import { textAnimateTuner } from "./text-animate"
 import type { AnyTunerConfig } from "./types"
 
 /**
@@ -11,6 +19,14 @@ export const tuners: Record<string, AnyTunerConfig | undefined> = {
   "isometric-mark": isometricMarkTuner,
   orbit: orbitTuner,
   ripple: rippleTuner,
+  globe: globeTuner,
+  "glyph-field": glyphFieldTuner,
+  "shuffle-grid": shuffleGridTuner,
+  "flow-diagram": flowDiagramTuner,
+  marquee: marqueeTuner,
+  "text-animate": textAnimateTuner,
+  "card-stack": cardStackTuner,
+  "code-stack": codeStackTuner,
 }
 
 export { TunerPanel, TunerProvider, TunerToggle } from "./panel"

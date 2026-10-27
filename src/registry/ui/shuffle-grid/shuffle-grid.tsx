@@ -59,9 +59,39 @@ const TILE: Record<ShuffleGridVariant, string> = {
   pixels: "rounded-[3px] bg-(--flow-tone)/25 data-lit:bg-(--flow-tone)",
 }
 
+/**
+ * 调整用的覆盖项：子树里所有 `ShuffleGrid` 的对应属性被这里的值替换。
+ * 用于调试面板一类的场景；不包 `ShuffleGridTuningContext.Provider` 时组件行为不变。
+ */
+type ShuffleGridTuning = {
+  interval?: number
+  activeCount?: number
+  litCount?: number | "all"
+  variant?: ShuffleGridVariant
+  paused?: boolean
+  /** 固定盘面外框的宽高比为打开时的样子，切换 `variant` 时容器大小不变。 */
+  stableFrame?: boolean
+  /** 回报示例自己的实际取值（未被覆盖前），面板据此显示当前值。 */
+  onReport?: (values: ShuffleGridReport) => void
+}
+
+type ShuffleGridReport = {
+  interval: number
+  /** 同时在场的条目数（已按格子数与条目数截断）。 */
+  activeCount: number
+  /** 同时点亮的条目数；`"all"` 换算成当前格子数。 */
+  litCount: number
+  variant: ShuffleGridVariant
+  paused: boolean
+}
+
+const ShuffleGridTuningContext = React.createContext<ShuffleGridTuning>({})
+
 type State = { slots: Slots; lit: number[]; tick: number }
 type Action =
-  { type: "tick"; shuffle: boolean } | { type: "arrange"; target: number[] }
+  | { type: "tick"; shuffle: boolean }
+  | { type: "arrange"; target: number[] }
+  | { type: "retarget" }
 
 type ShuffleGridProps = Omit<
   React.ComponentProps<"div">,
@@ -146,13 +176,13 @@ function ShuffleGrid({
   rows = 3,
   cols = 3,
   items,
-  activeCount,
-  litCount,
-  interval = 1600,
+  activeCount: activeCountProp,
+  litCount: litCountProp,
+  interval: intervalProp = 1600,
   seed = 1,
-  variant = "lines",
+  variant: variantProp = "lines",
   tone = "primary",
-  paused = false,
+  paused: pausedProp = false,
   groups,
   value,
   defaultValue,
@@ -164,8 +194,14 @@ function ShuffleGrid({
 }: ShuffleGridProps) {
   const uid = React.useId()
   const ref = React.useRef<HTMLDivElement>(null)
+  const boardRef = React.useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { amount: 0.3 })
   const reduced = !!useReducedMotion()
+  const tuning = React.useContext(ShuffleGridTuningContext)
+  const { onReport, stableFrame } = tuning
+  const interval = tuning.interval ?? intervalProp
+  const variant = tuning.variant ?? variantProp
+  const paused = tuning.paused ?? pausedProp
 
   const cells = Math.max(1, Math.floor(rows)) * Math.max(1, Math.floor(cols))
   const idIndex = React.useMemo(
@@ -180,12 +216,26 @@ function ShuffleGrid({
         .slice(0, cells),
     [groups, idIndex, cells],
   )
-  const active = Math.min(
+  const propActive = Math.min(
     cells,
     items.length,
-    activeCount ?? Math.round(cells * 0.6),
+    activeCountProp ?? Math.round(cells * 0.6),
   )
-  const lit: number | "all" = litCount ?? Math.max(1, Math.round(active * 0.35))
+  const active = Math.min(cells, items.length, tuning.activeCount ?? propActive)
+  const propLit: number | "all" =
+    litCountProp ?? Math.max(1, Math.round(propActive * 0.35))
+  const lit: number | "all" =
+    tuning.litCount ?? litCountProp ?? Math.max(1, Math.round(active * 0.35))
+  const reportedLit = propLit === "all" ? cells : propLit
+  React.useEffect(() => {
+    onReport?.({
+      interval: intervalProp,
+      activeCount: propActive,
+      litCount: reportedLit,
+      variant: variantProp,
+      paused: pausedProp,
+    })
+  }, [onReport, intervalProp, propActive, reportedLit, variantProp, pausedProp])
 
   const [group, setGroup] = useControllableState({
     prop: value,
@@ -196,12 +246,18 @@ function ShuffleGrid({
   const [state, dispatch] = React.useReducer(
     (prev: State, action: Action): State => {
       const random = createRandom(seed * 7919 + (prev.tick + 1) * 104729)
-      const slots =
-        action.type === "arrange"
-          ? arrangeSlots(prev.slots, action.target, random)
-          : action.shuffle
-            ? stepSlots(prev.slots, items.length, active, random)
-            : prev.slots
+      let slots = prev.slots
+      if (action.type === "arrange") {
+        slots = arrangeSlots(slots, action.target, random)
+      } else if (action.type === "retarget") {
+        // 在场数量变了：一次补齐 / 拿掉，不必等一格一格地换
+        for (let n = 0; n < cells; n++) {
+          if (slots.filter((v) => v !== null).length === active) break
+          slots = stepSlots(slots, items.length, active, random)
+        }
+      } else if (action.shuffle) {
+        slots = stepSlots(slots, items.length, active, random)
+      }
       const count = lit === "all" ? slots.length : lit
       return { slots, lit: pickLit(slots, count, random), tick: prev.tick + 1 }
     },
@@ -216,6 +272,19 @@ function ShuffleGrid({
         target: groups ? targetOf(group) : undefined,
       }),
   )
+
+  // 在场数、点亮数变了就立刻重排，不等下一个定时步；分类决定谁在场时只重新挑点亮的
+  const settled = React.useRef({ active, lit })
+  React.useEffect(() => {
+    const prev = settled.current
+    if (prev.active === active && prev.lit === lit) return
+    settled.current = { active, lit }
+    dispatch(
+      !groups && prev.active !== active
+        ? { type: "retarget" }
+        : { type: "tick", shuffle: false },
+    )
+  }, [active, lit, groups])
 
   // 切换分类：把格子排成新分类的样子（首次渲染已经按初始分类排好，不重复）
   const arranged = React.useRef(group)
@@ -249,6 +318,15 @@ function ShuffleGrid({
     return () => window.clearTimeout(id)
   }, [groups, group, groupInterval, running, setGroup])
 
+  // 固定外框：记下打开时盘面的宽高比，之后换 `variant`（间距不同）盘面大小也不变
+  const [frameRatio, setFrameRatio] = React.useState<number>()
+  React.useEffect(() => {
+    const rect = boardRef.current?.getBoundingClientRect()
+    setFrameRatio(
+      stableFrame && rect?.height ? rect.width / rect.height : undefined,
+    )
+  }, [stableFrame])
+
   const litSet = new Set(state.lit)
   const transition = reduced
     ? { duration: 0 }
@@ -263,12 +341,21 @@ function ShuffleGrid({
       className={cn("flex w-full flex-col gap-4", className)}
     >
       <div
+        ref={boardRef}
         data-slot="shuffle-grid-board"
         role={label ? "img" : undefined}
         aria-label={label}
         aria-hidden={label ? undefined : true}
         className={cn("grid", BOARD[variant])}
-        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+        style={{
+          gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+          ...(frameRatio
+            ? {
+                gridTemplateRows: `repeat(${Math.max(1, Math.floor(rows))}, minmax(0, 1fr))`,
+                aspectRatio: frameRatio,
+              }
+            : null),
+        }}
       >
         {state.slots.map((slot, cell) => {
           const item = slot === null ? undefined : items[slot]
@@ -276,7 +363,11 @@ function ShuffleGrid({
             <div
               key={cell}
               data-slot="shuffle-grid-cell"
-              className={cn("relative aspect-square", CELL[variant])}
+              className={cn(
+                "relative",
+                !frameRatio && "aspect-square",
+                CELL[variant],
+              )}
             >
               <AnimatePresence initial={false}>
                 {item ? (
@@ -349,11 +440,13 @@ function ShuffleGridAvatar({
   )
 }
 
-export { ShuffleGrid, ShuffleGridAvatar }
+export { ShuffleGrid, ShuffleGridAvatar, ShuffleGridTuningContext }
 export type {
   ShuffleGridAvatarProps,
   ShuffleGridGroup,
   ShuffleGridItem,
   ShuffleGridProps,
+  ShuffleGridReport,
+  ShuffleGridTuning,
   ShuffleGridVariant,
 }
