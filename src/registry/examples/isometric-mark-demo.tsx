@@ -58,8 +58,9 @@ const MARK_SHAPES: readonly IsometricShape[] = [
   },
 ]
 
-// 斜杠的坡度是 1:2，转过 atan(1/2) - 90° 后正好落在等轴测轴上，侧墙与辅助线平行
-const ROTATION = (Math.atan(1 / 2) * 180) / Math.PI - 90
+// 转 -90°：斜杠的两端（平面里是竖直的切口）落在等轴测轴上，斜切的形状得以保留；
+// 辅助线用 "edges"，一组贴着斜杠的长边，一组沿着端部的切口
+const ROTATION = -90
 // 斜杠很细，自动高度（平面尺寸的 12%）会把它们挤成高高的方块；压低一些，读起来仍是平面标志
 const DEPTH = 24
 
