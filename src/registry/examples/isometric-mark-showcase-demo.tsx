@@ -57,11 +57,9 @@ const MARK_SHAPES: readonly IsometricShape[] = [
   },
 ]
 
-// 转 -90°：斜杠的两端（平面里是竖直的切口）落在等轴测轴上，斜切的形状得以保留；
-// 辅助线用 "edges"，一组贴着斜杠的长边，一组沿着端部的切口
-const ROTATION = -90
-// 斜杠很细，自动高度（平面尺寸的 12%）会把它们挤成高高的方块；压低一些，读起来仍是平面标志
-const DEPTH = 24
+// 正面视角：标志保持原样（1:2 的斜杠、竖直的切口），厚度朝右上方露出；
+// 辅助线用 "edges"，贴着斜杠的长边与左右两端的切口
+const DEPTH = 32
 
 /** 列表封面：只留标志与底下的彩色光晕，铺满缩略图，不带标注标签。 */
 export default function IsometricMarkShowcaseDemo() {
@@ -78,7 +76,7 @@ export default function IsometricMarkShowcaseDemo() {
       <div className="relative w-[min(88%,21rem)]">
         <IsometricMark
           shapes={MARK_SHAPES}
-          rotation={ROTATION}
+          view="front"
           depth={DEPTH}
           label="易"
           guides="edges"

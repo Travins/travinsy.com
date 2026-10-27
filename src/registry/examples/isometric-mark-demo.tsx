@@ -58,11 +58,9 @@ const MARK_SHAPES: readonly IsometricShape[] = [
   },
 ]
 
-// 转 -90°：斜杠的两端（平面里是竖直的切口）落在等轴测轴上，斜切的形状得以保留；
-// 辅助线用 "edges"，一组贴着斜杠的长边，一组沿着端部的切口
-const ROTATION = -90
-// 斜杠很细，自动高度（平面尺寸的 12%）会把它们挤成高高的方块；压低一些，读起来仍是平面标志
-const DEPTH = 24
+// 正面视角：标志保持原样（1:2 的斜杠、竖直的切口），厚度朝右上方露出；
+// 辅助线用 "edges"，贴着斜杠的长边与左右两端的切口
+const DEPTH = 32
 
 // 标注标签：圆点取自 --flow-* 色调，说明这块几何由哪个部分生成
 function Callout({
@@ -106,20 +104,20 @@ export default function IsometricMarkDemo() {
       <div className="relative w-full max-w-[17rem] sm:max-w-80">
         <IsometricMark
           shapes={MARK_SHAPES}
-          rotation={ROTATION}
+          view="front"
           depth={DEPTH}
           label="易"
           guides="edges"
         />
       </div>
       <Callout tone="blue" className="top-[18%] left-5">
-        TOP · 斜纹顶面
+        FRONT · 斜纹正面
       </Callout>
       <Callout tone="violet" className="bottom-[26%] left-5">
         WALL · 侧墙自动消隐
       </Callout>
       <Callout tone="amber" className="top-[24%] right-5">
-        depth = 24
+        depth = 32
       </Callout>
       <Callout tone="green" className="right-5 bottom-[26%]">
         SVG · 可用 className 缩放
