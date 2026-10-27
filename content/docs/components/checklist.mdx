@@ -1,0 +1,95 @@
+---
+title: 手写清单
+titleEn: Checklist
+description: 勾选时文字被手写感划线划掉的清单，支持受控与非受控、进度汇总、自动播放与紧凑尺寸。
+group: content
+---
+
+<ComponentPreview name="checklist-demo" />
+
+## 安装
+
+<InstallCommand name="checklist" />
+
+## 用法
+
+`Checklist` 提供尺寸、色调与自动播放，`ChecklistList` 放条目，`ChecklistItem` 是一条带复选框的任务。勾选时文字变淡，并被一道略有起伏的手写划线划掉。划线宽度量自文字本身，中文、英文、数字都能完整覆盖。
+
+```tsx title="components/checklist-example.tsx"
+import {
+  Checklist,
+  ChecklistItem,
+  ChecklistList,
+  ChecklistProgress,
+} from "@/components/ui/checklist/checklist"
+
+export function ChecklistExample() {
+  return (
+    <Checklist tone="rose">
+      <ChecklistProgress total={3} />
+      <ChecklistList>
+        <ChecklistItem defaultChecked>写完设计稿</ChecklistItem>
+        <ChecklistItem>补上暗色截图</ChecklistItem>
+        <ChecklistItem>发布</ChecklistItem>
+      </ChecklistList>
+    </Checklist>
+  )
+}
+```
+
+`ChecklistItem` 同时支持受控与非受控：传 `checked` 与 `onCheckedChange` 由你管理状态，只传 `defaultChecked` 则组件自己管。`ChecklistItem` 要作为 `ChecklistList` 的直接子级（用 `map` 生成也可以），自动播放按子级顺序编号。
+
+## 示例
+
+### 交互式
+
+非受控条目配合进度条，点击任意一条划掉或恢复，计数实时更新。划线颜色用 `tone` 换成蓝色。
+
+<ComponentPreview name="checklist-interactive-demo" />
+
+### 紧凑款
+
+`size="sm"` 缩小复选框与字号，适合侧栏和小卡片。划线换成玫红，像红笔批改。
+
+<ComponentPreview name="checklist-compact-demo" />
+
+## API
+
+### Checklist
+
+`autoplay` 让清单按顺序自动划掉，全部完成后停 `resetDelay` 毫秒再清空重来。播放期间条目只读；进入视口才开始，离屏、`paused`、减少动态效果时停在静态快照（划掉约六成）。
+
+<PropsTable name="checklist" component="Checklist" />
+
+### ChecklistList
+
+渲染 `<ul>` 并给每个子级编号，同时把条目数告诉 `Checklist`。接受 `ul` 的全部属性。
+
+<PropsTable name="checklist" component="ChecklistList" />
+
+### ChecklistItem
+
+<PropsTable name="checklist" component="ChecklistItem" />
+
+### ChecklistProgress
+
+「已完成 / 总数」加进度条，手动勾选和自动播放都会实时更新。总数默认等条目挂载后统计，传 `total` 则服务端输出时也能直接显示准确计数。
+
+<PropsTable name="checklist" component="ChecklistProgress" />
+
+## 可访问性
+
+- 复选框使用 Base UI 的 Checkbox，整行是 `<label>`，点击文字也能切换；焦点环可见，空格键切换。
+- 划线只是视觉装饰，对读屏隐藏；是否完成由复选框的选中状态传达，文字同时变淡，不只靠划线。
+- 进度条带 `role="progressbar"` 与 `aria-valuenow`，`label` 可以改读屏名称。
+- 自动播放的条目为只读状态；系统开启「减少动态效果」时不播放，划线直接显示结果。
+
+## 注意事项
+
+- 划线用 SVG 路径加 `pathLength` 做描绘动画，纯 CSS 过渡，不依赖脚本驱动每一帧。路径的起伏来自条目序号，服务端与浏览器生成同一条线，水合不会出现差异。
+- 条目文字不换行（`whitespace-nowrap`），过长的文字请自行截断或缩短。
+- 色调变量依赖 `flow-diagram` 条目，受控 / 非受控逻辑依赖 `use-controllable-state`，安装时都会一并提供。
+
+## 源码
+
+<ComponentSource name="checklist" />

@@ -1,0 +1,192 @@
+---
+title: 文字动效
+titleEn: Text Animate
+description: 关键词轮换、分字显现、乱码解码与高亮扫过，支持中文与渐进增强。
+group: text
+---
+
+import Example0 from "@/registry/examples/text-animate-demo"
+import Example1 from "@/registry/examples/text-animate-flip-demo"
+import Example2 from "@/registry/examples/text-animate-reveal-demo"
+import Example3 from "@/registry/examples/text-animate-scramble-demo"
+import Example4 from "@/registry/examples/text-animate-highlight-demo"
+import Example5 from "@/registry/examples/text-animate-mixed-demo"
+
+<noscript>
+  <style>{`[data-text-animate-script-preview] { display: none } [data-no-script-demo] button { display: none }`}</style>
+</noscript>
+
+<div data-text-animate-script-preview>
+  <ComponentPreview name="text-animate-demo" />
+</div>
+<noscript>
+  <div
+    data-no-script-demo
+    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
+  >
+    <Example0 />
+  </div>
+</noscript>
+
+## 安装
+
+<InstallCommand name="text-animate" />
+
+## 用法
+
+四个原语可以单独使用，也可组合成一个标题。服务端直接输出可读文字，动画在客户端增强。
+
+```tsx title="components/text-animate-example.tsx"
+import {
+  TextFlip,
+  TextReveal,
+  TextScramble,
+  TextHighlight,
+} from "@/components/ui/text-animate/text-animate"
+
+export function TextAnimateExample() {
+  return (
+    <div>
+      <h2>
+        把界面写成 <TextFlip words={["组件", "积木", "系统"]} />
+      </h2>
+      <p>
+        <TextReveal>让每个想法都有形状。</TextReveal>
+      </p>
+      <p>
+        <TextScramble trigger="hover">构建完成</TextScramble>
+      </p>
+      <p>
+        从 <TextHighlight>细节</TextHighlight> 开始。
+      </p>
+    </div>
+  )
+}
+```
+
+## 示例
+
+### 关键词轮换
+
+胶囊与下划线两种外观。隐藏测量层跟随字体和当前词条尺寸，用 250ms 过渡容器宽度。
+
+<div data-text-animate-script-preview>
+  <ComponentPreview name="text-animate-flip-demo" />
+</div>
+<noscript>
+  <div
+    data-no-script-demo
+    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
+  >
+    <Example1 />
+  </div>
+</noscript>
+
+### 分字与分词显现
+
+`Intl.Segmenter` 按字素或词切分，保留空格、标点与组合字符。点击按钮重新挂载即可重播。
+
+<div data-text-animate-script-preview>
+  <ComponentPreview name="text-animate-reveal-demo" />
+</div>
+<noscript>
+  <div
+    data-no-script-demo
+    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
+  >
+    <Example2 />
+  </div>
+</noscript>
+
+### 乱码解码
+
+字符从乱码逐步落定为目标文字，不模拟打字光标。支持中文目标文本；悬停与键盘聚焦都能重播。
+
+<div data-text-animate-script-preview>
+  <ComponentPreview name="text-animate-scramble-demo" />
+</div>
+<noscript>
+  <div
+    data-no-script-demo
+    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
+  >
+    <Example3 />
+  </div>
+</noscript>
+
+### 高亮扫过
+
+文字保持可读，只让底部色块从左向右展开。色调使用主题变量，与页面亮暗模式一起变化。
+
+<div data-text-animate-script-preview>
+  <ComponentPreview name="text-animate-highlight-demo" />
+</div>
+<noscript>
+  <div
+    data-no-script-demo
+    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
+  >
+    <Example4 />
+  </div>
+</noscript>
+
+### 中英混排
+
+中文、英文和日文词条可共用一组轮换。分词显现保留原始文本的空格。
+
+<div data-text-animate-script-preview>
+  <ComponentPreview name="text-animate-mixed-demo" />
+</div>
+<noscript>
+  <div
+    data-no-script-demo
+    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
+  >
+    <Example5 />
+  </div>
+</noscript>
+
+## API
+
+### TextFlip
+
+<PropsTable name="text-animate" component="TextFlip" />
+
+`words` 为词条数组，空数组渲染为空。`interval` 默认 `2600ms`，最小 `800ms`；`variant` 为 `pill`（默认）或 `underline`。`children` 可传入屏幕阅读器完整替代文案，否则朗读全部候选词。`paused` 可暂停轮换。离屏、页面隐藏或系统减少动态效果时停止轮换。
+
+### TextReveal
+
+<PropsTable name="text-animate" component="TextReveal" />
+
+`children` 为纯文本。`by` 默认 `char`，支持 `word`；`locale` 默认 `zh-CN`，影响分词规则。中文逐字用 `char`，中英混排按词可用 `word`。`trigger` 默认 `in-view`，也可用 `mount`；每次挂载只播放一次。`stagger` 默认 `35ms`，每片段显现持续 `500ms`。
+
+### TextScramble
+
+<PropsTable name="text-animate" component="TextScramble" />
+
+`children` 为最终纯文本。`trigger` 支持 `mount / hover / in-view`（默认）；`duration` 默认 `1000ms`，最小 `100ms`。`charset` 支持 `latin / digits / symbols / katakana / chinese`；`characters` 传入自定义字符集，空值回退为预设。字符按字素切分，空白不扰动，乱码不参与布局计算。
+
+### TextHighlight
+
+<PropsTable name="text-animate" component="TextHighlight" />
+
+`variant` 为 `block`（默认）或 `underline`，`trigger` 为 `mount / in-view`（默认）。`tone` 默认 `primary`，也支持 `foreground / muted / destructive / blue / green / amber / rose / violet / cyan`；多彩色调来自 `--flow-*` 变量。可在句子里仅包裹关键词。
+
+## 可访问性
+
+- 轮换、分字和乱码组件将动画层设为 `aria-hidden`，单独提供完整文本，读屏不会逐帧朗读。
+- 高亮不拆分原文，按正常文本顺序朗读。颜色不是传达内容的唯一方式。
+- `hover` 解码也支持键盘聚焦，并提供可见的焦点环。
+- 开启“减少动态效果”后显示完整文字，不轮换、不扰动、不模糊。无 JS 时同样保留原文和首个轮换词。
+- 自动轮换适合短标题；关键信息应在固定正文中另有说明。
+
+## 注意事项
+
+- 显现与高亮由带 `href` / `precedence` 的去重样式驱动；默认入场前文本也是可见的，避免脚本失败造成空白。
+- `TextFlip` 在当前词上测量，不会为最长词预留固定宽度。请让所在句子可自然换行，避免容器过窄时放入超长且不换行的词条。
+- `Intl.Segmenter` 需要现代浏览器。组件不创建实时播报区域，以免装饰性动画打断阅读。
+- 色调复用 `flow-diagram`，安装时会一并提供相关变量。
+
+## 源码
+
+<ComponentSource name="text-animate" />

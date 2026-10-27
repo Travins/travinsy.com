@@ -1,0 +1,90 @@
+---
+title: 动态格
+titleEn: Shuffle Grid
+description: 方格里的内容随机出现、换位、点亮，支持分类胶囊切换、首字母头像、纯色像素块与离屏暂停。
+group: graphics
+---
+
+<ComponentPreview name="shuffle-grid-demo" />
+
+## 安装
+
+<InstallCommand name="shuffle-grid" />
+
+## 用法
+
+`items` 是条目池，每个条目有唯一的 `id`、可选的 `content`（图标、头像、任意节点）和 `tone`。`rows`、`cols` 决定盘面大小，`activeCount` 决定同时在场几个。组件每隔 `interval` 毫秒走一步：补一个、拿掉一个、换个格子或两个互换，每步只动一两个格子，画面始终是渐变的。
+
+```tsx title="components/shuffle-grid-example.tsx"
+import { Braces, Database, Globe } from "lucide-react"
+import { ShuffleGrid } from "@/components/ui/shuffle-grid/shuffle-grid"
+
+const ITEMS = [
+  { id: "ts", tone: "blue", content: <Braces /> },
+  { id: "db", tone: "green", content: <Database /> },
+  { id: "web", tone: "violet", content: <Globe /> },
+]
+
+export function ShuffleGridExample() {
+  return (
+    <ShuffleGrid
+      label="技术图标在方格里随机出现并点亮"
+      rows={2}
+      cols={3}
+      items={ITEMS}
+      activeCount={2}
+    />
+  )
+}
+```
+
+随机数来自 `seed`，同一个种子在服务端与浏览器的初始画面一致，演示数据也就确定；换一个种子得到另一张初始画面。
+
+## 示例
+
+### 团队分配
+
+给 `groups` 传分类，格子下方出现可横向滚动的胶囊，点击或自动轮播都会切换分类，格子里的条目随之换位。同一个人属于多个分类时是滑动换位，不是消失再出现。头像用 `ShuffleGridAvatar`，只显示首字，不使用真人照片。
+
+<ComponentPreview name="shuffle-grid-team-demo" />
+
+### 像素块
+
+不传 `content`，条目就是一块纯色方块；`variant="pixels"` 把格子收紧成像素风，`interval` 调小让它快速出没。
+
+<ComponentPreview name="shuffle-grid-pixel-demo" />
+
+## API
+
+### ShuffleGrid
+
+`variant` 有三种外观：`lines` 共享 1px 分隔线的整块网格（默认），`tiles` 独立的圆角格，`pixels` 紧凑的纯色像素块。`litCount` 控制同时点亮几个，点亮的条目用自己的 `tone`，其余是中性色；传 `"all"` 全部点亮。
+
+分类相关：`value` / `defaultValue` / `onValueChange` 以分类 `id` 同时支持受控与非受控；`groupInterval` 设为 `0` 关闭自动轮播，用户手动选过后会多等一轮再继续。
+
+<PropsTable name="shuffle-grid" component="ShuffleGrid" />
+
+`ShuffleGridItem` 的字段：`id`、`content`、`tone`；`ShuffleGridGroup` 的字段：`id`、`label`、`items`（条目 `id` 的数组，数量不能超过格子数）。
+
+### ShuffleGridAvatar
+
+首字母头像：圆底加一个字，亮起时换成条目的色调。放进 `content`，大小随格子自适应，也可以用 `className` 指定。
+
+<PropsTable name="shuffle-grid" component="ShuffleGridAvatar" />
+
+## 可访问性
+
+- 盘面默认作为装饰隐藏；传 `label` 后以图片语义朗读概括说明。内容是随机变化的，不会逐个朗读。
+- 分类胶囊是真正的按钮，用 `aria-pressed` 表达选中状态，Tab 可达，焦点环可见；读屏名称用 `groupsLabel` 改。
+- 系统开启「减少动态效果」时不洗牌、不自动轮播，格子停在初始画面；手动点胶囊时直接切换，没有滑动。
+- 离开视口或 `paused` 时停止所有定时器。
+
+## 注意事项
+
+- 同一条目在分类间换位用的是 `motion` 的共享布局动画，条目 `id` 在同一个盘面里必须唯一。
+- 格子是正方形（`aspect-square`），盘面宽度由外层决定；`cols` 很大时单格会变小，图标大小可以通过 `content` 自行指定。
+- 点亮的色调来自 `--flow-*` 变量，依赖 `flow-diagram` 条目，安装时会一并提供。
+
+## 源码
+
+<ComponentSource name="shuffle-grid" />

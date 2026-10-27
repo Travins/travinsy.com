@@ -9,9 +9,14 @@
     "chart-card",
     "timeline",
     "card-stack",
+    "checklist",
+    "marquee",
+    "text-animate",
     "isometric-mark",
     "flow-diagram",
     "orbit",
-    "ripple"
+    "ripple",
+    "globe",
+    "shuffle-grid"
   ]
 }

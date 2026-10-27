@@ -872,6 +872,144 @@
           "target": "hooks/use-controllable-state.ts"
         }
       ]
+    },
+    {
+      "name": "globe",
+      "type": "registry:ui",
+      "title": "点阵地球",
+      "description": "用点阵绘制的 WebGL 地球，颜色跟随主题，支持城市标记、标签、弧线、拖拽旋转与离屏暂停。",
+      "dependencies": [
+        "cobe",
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/globe/globe.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/globe/use-globe.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/globe/color.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/globe/projection.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/globe/types.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "checklist",
+      "type": "registry:ui",
+      "title": "手写清单",
+      "description": "勾选时文字被手写感划线划掉的清单，支持受控与非受控、进度汇总、自动播放与紧凑尺寸。",
+      "dependencies": [
+        "@base-ui/react",
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/checklist/checklist.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/checklist/scribble.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/checklist/context.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "shuffle-grid",
+      "type": "registry:ui",
+      "title": "动态格",
+      "description": "方格里的内容随机出现、换位、点亮，支持分类胶囊切换、首字母头像、纯色像素块与离屏暂停。",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "button",
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/shuffle-grid/shuffle-grid.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/shuffle-grid/engine.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/shuffle-grid/pills.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "marquee",
+      "type": "registry:ui",
+      "title": "跑马灯",
+      "description": "纯 CSS 无缝跑马灯，支持四向滚动、恒定速度、渐隐与斜向丝带。",
+      "files": [
+        {
+          "path": "src/registry/ui/marquee/marquee.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "text-animate",
+      "type": "registry:ui",
+      "title": "文字动效",
+      "description": "关键词轮换、分字显现、乱码解码与高亮扫过，支持中文与渐进增强。",
+      "dependencies": [
+        "motion",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/text-animate/text-animate.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/text-animate/text-scramble.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/text-animate/shared.ts",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

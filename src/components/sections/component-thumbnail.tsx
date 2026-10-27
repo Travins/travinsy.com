@@ -18,6 +18,11 @@ const thumbnailExamples: Record<string, string> = {
   "chart-card": "chart-card-showcase-demo",
   timeline: "timeline-showcase-demo",
   "card-stack": "card-stack-showcase-demo",
+  globe: "globe-demo",
+  checklist: "checklist-demo",
+  "shuffle-grid": "shuffle-grid-demo",
+  marquee: "marquee-demo",
+  "text-animate": "text-animate-showcase-demo",
 }
 
 // 封面示例自己适应缩略图的大小：`*:` 开头的类作用在示例的根元素上，让它直接铺满整张缩略图，不再缩放。
@@ -35,6 +40,11 @@ const previewClasses: Record<string, string> = {
   "chart-card": fillExample,
   timeline: fillExample,
   "card-stack": fillExample,
+  globe: fillExample,
+  checklist: "w-96 scale-90",
+  "shuffle-grid": "w-[28rem] scale-75",
+  marquee: fillExample,
+  "text-animate": fillExample,
   "isometric-mark": "w-96 scale-90",
 }
 

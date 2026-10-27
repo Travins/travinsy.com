@@ -1,0 +1,113 @@
+---
+title: 点阵地球
+titleEn: Dotted Globe
+description: 用点阵绘制的 WebGL 地球，颜色跟随主题，支持城市标记、标签、弧线、拖拽旋转与离屏暂停。
+group: graphics
+---
+
+<ComponentPreview name="globe-demo" />
+
+## 安装
+
+<InstallCommand name="globe" />
+
+## 用法
+
+`Globe` 自身是一个正方形外框，球体占其中约 80%，外框的大小、位置完全由 `className` 决定：放大并推到卡片角落，就得到「半露出」的构图。`markers` 传入城市，`label` 是读屏时朗读的城市名。
+
+```tsx title="components/globe-example.tsx"
+import { Globe, type GlobeMarker } from "@/components/ui/globe/globe"
+
+const CITIES = [
+  { label: "上海", location: [31.23, 121.47] },
+  { label: "法兰克福", location: [50.11, 8.68] },
+] satisfies GlobeMarker[]
+
+export function GlobeExample() {
+  return (
+    <Globe
+      label="分布在上海和法兰克福的节点"
+      markers={CITIES}
+      markerTone="amber"
+      labels
+      className="max-w-sm"
+    />
+  )
+}
+```
+
+点阵、标记、弧线的颜色都从外框元素的 CSS 变量里取：点阵默认取 `--foreground`，标记默认取 `--primary`，也可以换成 `blue / green / amber / rose / violet / cyan` 或任意 CSS 颜色。切换亮暗模式或颜色主题时（`<html>` 的 `class`、`data-theme` 变化）会自动重新取色，不需要刷新。外框内部再套一层 `.dark`，该局部就按暗色渲染。
+
+## 示例
+
+### 深色发光
+
+外层加 `dark` 强制暗色，点阵取 `--flow-cyan`，球体边缘自动带一圈同色光晕。`arcs` 的两端与标记重合，链路方向一目了然。
+
+<ComponentPreview name="globe-dark-demo" />
+
+### 拖拽旋转
+
+`draggable` 打开后可以用鼠标或手指转动地球，松手带惯性，俯仰角缓缓回到初始值，然后恢复自转。`focus` 让地球缓动转向并停在某个地点；再次传 `null` 就恢复自转。键盘聚焦后用左右方向键也能转。
+
+<ComponentPreview name="globe-draggable-demo" />
+
+### 全球节点
+
+与 `stat-card`、`ripple` 组合：数字放在 stat-card，波纹做实时心跳，地球看分布，格子之间共用细线。
+
+<ComponentPreview name="globe-nodes-demo" />
+
+## API
+
+### Globe
+
+<PropsTable name="globe" component="Globe" />
+
+`GlobeMarker` 的字段：
+
+| 字段 | 说明 |
+| --- | --- |
+| `location` | `[纬度, 经度]`，单位为度 |
+| `label` | 城市名；读屏朗读，开启标签层时显示为胶囊 |
+| `size` | 标记大小，默认 `0.045`，常用 0.03–0.08 |
+| `tone` | 这个标记的色调，不传用 `markerTone` |
+| `showLabel` | 单独控制标签显示，不传跟随 `labels` |
+
+`GlobeArc` 有 `from`、`to`（都是 `[纬度, 经度]`）和可选的 `tone`。
+
+`phi`、`theta` 是弧度。默认视角正对东亚；想对准某个地点，用导出的 `globeAngles([纬度, 经度])` 换算：
+
+```tsx
+import { Globe, globeAngles } from "@/components/ui/globe/globe"
+
+const { phi, theta } = globeAngles([48.85, 2.35])
+
+<Globe phi={phi} theta={theta} speed={0} />
+```
+
+### GlobeLegend
+
+标记图例：名称配彩色圆点，可选经纬度。放在地球旁边，给出不依赖颜色与动画的文字版本。
+
+<PropsTable name="globe" component="GlobeLegend" />
+
+## 可访问性
+
+- 默认作为装饰隐藏；传入 `label` 后以图片语义朗读，说明末尾自动附上所有带 `label` 的城市名。
+- `draggable` 时外框可聚焦，语义为「可旋转的地球」，左右方向键转动；没有传 `label` 会回落到默认说明。
+- 标签层只是视觉辅助，对读屏隐藏；需要文字版本时配合 `GlobeLegend`。
+- 系统开启「减少动态效果」时不自转，不播放惯性与俯仰回落；拖拽和键盘仍然可用，直接跟手。
+- 地球离开视口或 `paused` 时停止渲染循环，回到视口后继续。
+
+## 注意事项
+
+- 地球由 [cobe](https://github.com/shuding/cobe) 在 WebGL 里绘制，约 5KB，没有其他运行时依赖。服务端输出一个同尺寸的圆形占位，画布就绪后淡出占位，不会造成布局跳动；浏览器不支持 WebGL 时占位一直保留，标记仍可通过读屏获取。
+- `mapSamples` 越大点阵越密，也越吃显卡，默认 `16000`；小尺寸的缩略图可以降到 `8000`。设备像素比最高取 2。
+- 每个 `Globe` 占用一个 WebGL 上下文，同一页建议不超过 8 个。
+- 标签层的位置直接写进 DOM，每帧不触发 React 渲染；标签背面时随球体转过去自动淡出。
+- 色调变量依赖 `flow-diagram` 条目，安装时会一并提供。
+
+## 源码
+
+<ComponentSource name="globe" />
