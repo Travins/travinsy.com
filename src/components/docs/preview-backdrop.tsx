@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 
 /**
- * 卡片类组件的示例背后垫一层底纹，铺满整个画框（不做渐隐，否则底纹几乎看不见），让卡片像摆在图纸上。
+ * 卡片类组件的示例背后垫一层底纹，只在最外一圈渐隐（渐隐范围小，否则底纹几乎看不见），让卡片像摆在图纸上。
  * 只登记「示例本身是卡片、又不铺满画框」的组件；自带背景的（轨道、波纹、流程图、问候、动态格）
  * 和铺满画框的（跑马灯、文字动效、等轴测标志、字符矩阵、地球）不在这里。
  * 列表缩略图与组件详情页的预览共用这张表，按组件名取。
@@ -24,7 +24,7 @@ export function PreviewBackdrop({ name }: { name?: string }) {
     <div
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 -z-10",
+        "pointer-events-none absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)]",
         kind === "dots" ? "bg-dots" : "bg-grid opacity-70",
       )}
     />
