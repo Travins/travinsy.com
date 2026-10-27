@@ -54,7 +54,7 @@ export default function GlyphFieldDemo() {
         </p>
       </GlyphField>
       <div className="absolute inset-x-4 top-4 flex items-center justify-between font-mono text-[10px] tracking-wider text-muted-foreground">
-        <span className="bg-background/80 px-1">01 / SECURITY</span>
+        <span className="bg-background/80 px-1">SECURITY</span>
         <Button
           className="bg-background/80"
           variant="ghost"

@@ -10,7 +10,7 @@ export default function MarqueeDemo() {
       <div className="relative flex h-80 w-full min-w-0 flex-col justify-between overflow-hidden bg-dots py-6 sm:h-96">
         <div className="flex justify-between px-6 font-mono text-[10px] tracking-widest text-muted-foreground">
           <span>DESIGN IN MOTION</span>
-          <span>01 / MARQUEE</span>
+          <span>MARQUEE</span>
         </div>
         <div
           className="pointer-events-none absolute inset-0 flex items-center justify-center"

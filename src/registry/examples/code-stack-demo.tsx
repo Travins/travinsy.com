@@ -15,15 +15,12 @@ export default function CodeStackDemo() {
   return (
     <div
       data-slot="code-stack-demo"
-      className="relative flex h-[26rem] w-full flex-col items-center justify-center overflow-hidden rounded-lg border border-edge bg-card"
+      className="relative flex h-[26rem] w-full flex-col items-center justify-center overflow-hidden"
     >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse,black_15%,transparent_75%)]"
       />
-      <span className="absolute top-5 left-5 font-mono text-[10px] tracking-wider text-muted-foreground">
-        02 / SOURCE FILES
-      </span>
       <CodeStack className="h-72">
         {FILES.map(([lang, name], index) => (
           <CodeFile
