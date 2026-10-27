@@ -28,7 +28,7 @@ export default function OrbitDemo() {
     >
       {/* 最外层只露出上半弧，边缘渐隐，制造纵深 */}
       <OrbitRing
-        radius={166}
+        radius={148}
         arc="half"
         duration={70}
         startAngle={-140}
@@ -42,7 +42,7 @@ export default function OrbitDemo() {
           <Braces />
         </OrbitItem>
       </OrbitRing>
-      <OrbitRing radius={130} duration={56} startAngle={30} tone="cyan">
+      <OrbitRing radius={116} duration={56} startAngle={30} tone="cyan">
         <OrbitItem tone="foreground" className={PILL}>
           Next.js
         </OrbitItem>
@@ -54,7 +54,7 @@ export default function OrbitDemo() {
         </OrbitItem>
       </OrbitRing>
       <OrbitRing
-        radius={94}
+        radius={84}
         duration={40}
         reverse
         dashed
@@ -71,7 +71,7 @@ export default function OrbitDemo() {
           <Globe />
         </OrbitItem>
       </OrbitRing>
-      <OrbitRing radius={56} duration={28} startAngle={20} tone="blue">
+      <OrbitRing radius={50} duration={28} startAngle={20} tone="blue">
         <OrbitItem tone="blue" className={NODE}>
           <Command />
         </OrbitItem>
