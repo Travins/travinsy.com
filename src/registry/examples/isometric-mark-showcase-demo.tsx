@@ -63,7 +63,7 @@ export default function IsometricMarkShowcaseDemo() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_75%)] opacity-70"
       />
-      <div className="relative w-[min(88%,21rem)]">
+      <div className="relative w-[min(66%,16rem)]">
         <IsometricMark
           shapes={MARK_SHAPES}
           rotation={-65}

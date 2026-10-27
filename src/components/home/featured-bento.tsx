@@ -68,7 +68,7 @@ function LocalTimePreview() {
 /** 本站标志挤出成等轴测线条 3D，悬停出高光。 */
 function IsometricMarkPreview() {
   return (
-    <div className="relative size-full p-4">
+    <div className="relative size-full">
       <IsometricMarkShowcaseDemo />
     </div>
   )
