@@ -551,6 +551,10 @@
         {
           "path": "src/registry/ui/isometric-mark/geometry.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/isometric-mark/sound.ts",
+          "type": "registry:ui"
         }
       ]
     },

@@ -1,5 +1,9 @@
+"use client"
+
+import { Volume2, VolumeX } from "lucide-react"
 import {
   IsometricMark,
+  useIsometricMarkMuted,
   type IsometricShape,
 } from "@/registry/ui/isometric-mark/isometric-mark"
 
@@ -58,10 +62,28 @@ const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar, index) => ({
   tone: TONES[index],
 }))
 
+/** 音效开关：静音偏好存在本地，全站的等轴测标志共用 */
+function SoundToggle() {
+  const [muted, setMuted] = useIsometricMarkMuted()
+  return (
+    <button
+      type="button"
+      aria-pressed={!muted}
+      aria-label={muted ? "打开点击音效" : "关闭点击音效"}
+      title={muted ? "打开点击音效" : "关闭点击音效"}
+      onClick={() => setMuted(!muted)}
+      className="absolute top-3 right-3 z-10 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&_svg]:size-3.5"
+    >
+      {muted ? <VolumeX /> : <Volume2 />}
+    </button>
+  )
+}
+
 /** 首页封面：与辅助线同平面的地面网格（floor）+ 主题色光晕 + 接触阴影，铺满格子，不带标注标签。 */
 export default function IsometricMarkShowcaseDemo() {
   return (
     <div className="relative isolate flex size-full items-center justify-center overflow-hidden">
+      <SoundToggle />
       {/* 主题色光晕：从标志下方向外晕开，颜色随主题变化 */}
       <div
         aria-hidden="true"
@@ -82,6 +104,7 @@ export default function IsometricMarkShowcaseDemo() {
           label="易"
           guides="edges"
           floor
+          sound
         />
       </div>
     </div>

@@ -107,6 +107,17 @@ export function BrandMark() {
 - **消隐**：画家算法。墙在屏幕上只占据 `x - y` 方向上的一段范围，范围重叠的两面墙比较重叠区间中点的 `x + y`，得到“谁挡住谁”，再做拓扑排序，凹多边形也能排对。顺序只取决于平面形状，按下动画时不用重排。顶面最后绘制。
 - **按下动画**：一个弹簧驱动的高度值同时重算所有侧墙路径（只是 O(边数) 的字符串重建），顶面路径不变，整体用 `y` 偏移下移，斜纹因此始终贴着轮廓。
 
+### 点击音效
+
+`sound` 打开按下与松开时的合成音效（Web Audio 现场生成，不需要音频文件），默认关闭。静音偏好存在浏览器本地，页面上所有标志共用：`useIsometricMarkMuted()` 返回 `[muted, setMuted]`，可以用它做一个静音按钮，页首的示例右上角就是这样。
+
+```tsx
+const [muted, setMuted] = useIsometricMarkMuted()
+
+<IsometricMark shapes={SHAPES} sound />
+<button onClick={() => setMuted(!muted)}>{muted ? "打开音效" : "静音"}</button>
+```
+
 ## API
 
 ### IsometricMark

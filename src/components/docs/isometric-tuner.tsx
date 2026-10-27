@@ -30,6 +30,7 @@ type Values = {
   material?: IsometricMaterial
   interactive?: boolean
   highlight?: boolean
+  sound?: boolean
 }
 
 const MATERIALS: { value: IsometricMaterial; label: string }[] = [
@@ -71,6 +72,7 @@ export function useIsometricTuner() {
         material: values.material,
         interactive: values.interactive,
         highlight: values.highlight,
+        sound: values.sound,
         guides:
           values.guides === undefined
             ? undefined
@@ -274,6 +276,7 @@ export function IsometricTunerPanel({
     material: values.material ?? base?.material,
     interactive: values.interactive ?? base?.interactive ?? true,
     highlight: values.highlight ?? base?.highlight ?? true,
+    sound: values.sound ?? base?.sound ?? false,
   }
   return (
     <div className="grid gap-x-6 gap-y-4 px-4 pt-3 pb-4 sm:grid-cols-3">
@@ -329,6 +332,11 @@ export function IsometricTunerPanel({
           label="指针高光 highlight"
           checked={current.highlight}
           onChange={(highlight) => set({ highlight })}
+        />
+        <Toggle
+          label="点击音效 sound"
+          checked={current.sound}
+          onChange={(sound) => set({ sound })}
         />
         <span className="flex-1" />
         <IconTip label="恢复示例原值">

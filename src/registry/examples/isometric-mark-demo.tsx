@@ -1,6 +1,10 @@
+"use client"
+
 import { cn } from "@/lib/utils"
+import { Volume2, VolumeX } from "lucide-react"
 import {
   IsometricMark,
+  useIsometricMarkMuted,
   type IsometricShape,
 } from "@/registry/ui/isometric-mark/isometric-mark"
 
@@ -86,10 +90,28 @@ function Callout({
   )
 }
 
+/** 音效开关：静音偏好存在本地，全站的等轴测标志共用 */
+function SoundToggle() {
+  const [muted, setMuted] = useIsometricMarkMuted()
+  return (
+    <button
+      type="button"
+      aria-pressed={!muted}
+      aria-label={muted ? "打开点击音效" : "关闭点击音效"}
+      title={muted ? "打开点击音效" : "关闭点击音效"}
+      onClick={() => setMuted(!muted)}
+      className="absolute top-3 right-3 z-10 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&_svg]:size-3.5"
+    >
+      {muted ? <VolumeX /> : <Volume2 />}
+    </button>
+  )
+}
+
 // 地面网格（floor）与辅助线同一平面、对齐标志的每条边；主题色光晕与接触阴影让标志落在地面上，标注标签讲清几何怎么来
 export default function IsometricMarkDemo() {
   return (
     <div className="relative isolate flex min-h-72 w-full max-w-2xl items-center justify-center overflow-hidden rounded-lg border border-edge bg-card px-4 pt-6 pb-12 sm:min-h-96">
+      <SoundToggle />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_55%_42%_at_50%_58%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_75%)]"
@@ -108,6 +130,7 @@ export default function IsometricMarkDemo() {
           label="易"
           guides="edges"
           floor
+          sound
         />
       </div>
       <Callout tone="blue" className="top-[18%] left-5">

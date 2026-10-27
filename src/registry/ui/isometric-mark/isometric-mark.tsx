@@ -23,6 +23,7 @@ import {
   type IsometricShape,
   type IsometricWall,
 } from "./geometry"
+import { playPress, playRelease, useIsometricMarkMuted } from "./sound"
 
 /** 按下 / 弹起共用的弹簧，手感接近真实按键。 */
 const PRESS_SPRING = { stiffness: 200, damping: 18, mass: 0.5 }
@@ -73,6 +74,11 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    * @default false
    */
   floor?: boolean
+  /**
+   * 按下与松开时播放合成音效（Web Audio，无需音频文件）；尊重全站静音偏好，见 useIsometricMarkMuted
+   * @default false
+   */
+  sound?: boolean
   /**
    * 视线的俯仰角（度，5–85）。默认约 35.26° 即标准等轴测；
    * 调大更接近俯视（地面更方、厚度更薄），调小更接近平视（地面更扁、厚度更高）
@@ -129,6 +135,7 @@ type IsometricMarkTuning = Partial<
     | "material"
     | "interactive"
     | "highlight"
+    | "sound"
   >
 > & {
   /** 固定画框：沿用原属性下的 viewBox，调整时容器大小与图形比例都不变 */
@@ -145,6 +152,7 @@ type IsometricMarkReport = {
   material: IsometricMaterial
   interactive: boolean
   highlight: boolean
+  sound: boolean
 }
 
 /**
@@ -189,6 +197,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
     material = "hatch",
     interactive = true,
     highlight = true,
+    sound = false,
   } = allProps
   const baseModel = React.useMemo(
     () =>
@@ -213,6 +222,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
       material,
       interactive,
       highlight,
+      sound,
     })
   }, [
     onReport,
@@ -223,6 +233,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
     material,
     interactive,
     highlight,
+    sound,
   ])
   return (
     <IsometricMarkView
@@ -244,6 +255,7 @@ function IsometricMarkView({
   material = "hatch",
   elevation,
   floor = false,
+  sound = false,
   label,
   className,
   ref,
@@ -319,7 +331,14 @@ function IsometricMarkView({
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [highlight, reduceMotion, inView, mouseX, mouseY])
 
-  const release = () => setPressed(false)
+  const [muted] = useIsometricMarkMuted()
+  const audible = sound && !muted
+  const pressedRef = React.useRef(false)
+  const release = () => {
+    if (pressedRef.current && audible) playRelease()
+    pressedRef.current = false
+    setPressed(false)
+  }
   const hatch = unit * 10
 
   return (
@@ -345,6 +364,8 @@ function IsometricMarkView({
         if (!interactive) return
         // 按住压下时别把旁边的文字一起选中（拖动或双击会从这里开始选区）
         if (event.pointerType === "mouse") event.preventDefault()
+        if (audible) playPress()
+        pressedRef.current = true
         setPressed(true)
       }}
       onPointerUp={(event) => {
@@ -492,7 +513,7 @@ function IsometricMarkView({
   )
 }
 
-export { IsometricMark, IsometricMarkTuningContext }
+export { IsometricMark, IsometricMarkTuningContext, useIsometricMarkMuted }
 export type {
   IsometricMarkProps,
   IsometricMarkReport,
