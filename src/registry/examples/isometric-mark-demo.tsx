@@ -47,7 +47,7 @@ const LOGO: readonly (readonly [number, number])[][] = [
 ]
 
 // 朝向 -65°、标准等轴测俯仰 35°、挤出 52：斜杠立起往右上斜，细的一组在后、粗的一组在前；
-// 辅助线用 "edges"，贴着斜杠的长边与齐平的切口；斜杠本身向右上斜，顶面用反向斜纹「\」避免与长边平行产生视差
+// 辅助线用 "edges"，贴着斜杠的长边与齐平的切口；斜杠本身向右上斜，顶面用横纹，与斜杠长边错开不产生视差
 // 上三道细斜杠用主题色由浅到深（从后往前），下三道粗斜杠保持单色线稿，主次分明
 const TONES = [
   "color-mix(in oklab, var(--primary) 55%, var(--background))",
@@ -104,14 +104,14 @@ export default function IsometricMarkDemo() {
           rotation={-65}
           elevation={35}
           depth={52}
-          material="hatch-reverse"
+          material="lines"
           label="易"
           guides="edges"
           floor
         />
       </div>
       <Callout tone="blue" className="top-[18%] left-5">
-        TOP · 斜纹顶面
+        TOP · 横纹顶面
       </Callout>
       <Callout tone="violet" className="bottom-[26%] left-5">
         WALL · 侧墙自动消隐
