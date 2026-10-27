@@ -28,8 +28,6 @@ const fitClasses: Record<string, string> = {
   "chart-card": "max-lg:scale-[0.55]",
   timeline: "max-lg:scale-[0.85]",
   "card-stack": "max-lg:scale-90",
-  "text-animate": "max-lg:scale-75",
-  "isometric-mark": "scale-90 max-lg:scale-[0.8]",
   orbit: "max-lg:scale-[0.85]",
 }
 
@@ -38,6 +36,10 @@ const fitClasses: Record<string, string> = {
  * `*:` 作用在示例根元素上，`**:data-[slot=…]` 让示例里固定高度的画布跟着撑满。
  */
 const fillClasses: Record<string, string> = {
+  marquee: "*:h-full",
+  "text-animate": "*:h-full *:min-h-0",
+  "isometric-mark":
+    "*:h-full *:min-h-0 *:max-w-none *:rounded-none *:border-0",
   "glyph-field":
     "*:h-full *:rounded-none **:data-[slot=glyph-field]:h-full",
   // 窄屏画框只有 20rem 高，地球再往下沉一些，免得压到左上的指标
