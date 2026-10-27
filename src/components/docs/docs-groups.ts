@@ -18,6 +18,7 @@ export const sectionGroups: Partial<Record<NavSectionId, GroupDef[]>> = {
     { id: "layout", title: "布局", titleEn: "Layout" },
     { id: "time", title: "时间", titleEn: "Time" },
     { id: "data", title: "数据展示", titleEn: "Data Display" },
+    { id: "content", title: "内容展示", titleEn: "Content Display" },
     { id: "graphics", title: "图形与动效", titleEn: "Graphics & Motion" },
   ],
 }

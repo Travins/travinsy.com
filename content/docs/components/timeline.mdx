@@ -1,0 +1,145 @@
+---
+title: 时间线
+titleEn: Timeline
+description: 可组合的时间线原语，支持经历、活动流、项目进度、水平路线图与交替更新日志。
+group: content
+---
+
+<ComponentPreview name="timeline-demo" />
+
+## 安装
+
+<InstallCommand name="timeline" />
+
+## 用法
+
+`Timeline` 是有序列表；每项由标记、连接线和内容组成。把 `TimelineTime` 放进 `TimelineItem.time`，就能得到左侧的窄编号栏。把它放在标题旁，则是活动流的布局。
+
+```tsx title="components/timeline-example.tsx"
+import {
+  Timeline,
+  TimelineItem,
+  TimelineMarker,
+  TimelineConnector,
+  TimelineContent,
+  TimelineTitle,
+  TimelineTime,
+  TimelineDescription,
+} from "@/components/ui/timeline/timeline"
+
+export function TimelineExample() {
+  return (
+    <Timeline aria-label="项目里程碑">
+      <TimelineItem time={<TimelineTime dateTime="2026">2026</TimelineTime>}>
+        <TimelineMarker>01</TimelineMarker>
+        <TimelineConnector />
+        <TimelineContent>
+          <TimelineTitle>发布第一个版本</TimelineTitle>
+          <TimelineDescription>
+            把反复使用的交互整理成组件。
+          </TimelineDescription>
+        </TimelineContent>
+      </TimelineItem>
+    </Timeline>
+  )
+}
+```
+
+## 示例
+
+### 活动流
+
+标题与相对时间在同一行，窄屏可自然换行。附件槽可放文件胶囊、人物卡或首字母头像组。这里的相对时间是固定演示数据；真实应用需要由调用方更新。
+
+<ComponentPreview name="timeline-activity-demo" />
+
+### 项目进度
+
+`done` 的后续线段为实线，`current / upcoming` 的后续线段为虚线。当前项具有 `aria-current="step"`；给标记也传入 `status="current"` 可开启轻微脉冲。
+
+<ComponentPreview name="timeline-progress-demo" />
+
+### 水平路线图
+
+`orientation="horizontal"` 在 640px 及以上横排，窄屏退回纵向，避免压缩标题或产生横向滚动。
+
+<ComponentPreview name="timeline-horizontal-demo" />
+
+### 交替更新日志
+
+`align="alternate"` 在宽屏把偶数项放在轴线左侧，窄屏全部回到右侧。读取顺序始终按 DOM 的时间顺序。
+
+<ComponentPreview name="timeline-alternate-demo" />
+
+## API
+
+### Timeline
+
+`orientation` 默认 `vertical`，`align` 默认 `start`。`alternate` 仅对竖向布局生效。支持原生 `ol` 属性，包括 `aria-label`。
+
+<PropsTable name="timeline" component="Timeline" />
+
+### TimelineItem
+
+`status` 默认 `done`，同时控制连接线和标记的基础状态。`time` 是左侧编号栏的插槽；水平模式下放到标记上方。
+
+<PropsTable name="timeline" component="TimelineItem" />
+
+### TimelineMarker
+
+默认显示圆点，也可放图标或数字。`tone` 支持 `primary / foreground / muted / destructive` 和六个 `--flow-*` 色调；`status` 可覆盖外层状态。装饰标记默认对读屏隐藏，有独立语义时使用 `label`。
+
+<PropsTable name="timeline" component="TimelineMarker" />
+
+### TimelineConnector
+
+放在 `TimelineItem` 的直接子级，自动延伸至下一项；最后一项的连接线自动隐藏。
+
+<PropsTable name="timeline" component="TimelineConnector" />
+
+### TimelineContent
+
+内容列，最后一项自动移除底部留白。
+
+<PropsTable name="timeline" component="TimelineContent" />
+
+### TimelineTitle
+
+默认使用 `h3`，继承原生标题属性。
+
+<PropsTable name="timeline" component="TimelineTitle" />
+
+### TimelineTime
+
+原生 `time` 元素，等宽数字。显示文本由调用方提供，`dateTime` 使用机器可读日期。
+
+<PropsTable name="timeline" component="TimelineTime" />
+
+### TimelineDescription
+
+13px 正文，宽松行高，继承原生 `p` 属性。
+
+<PropsTable name="timeline" component="TimelineDescription" />
+
+### TimelineAttachment
+
+可换行的内容槽；内部可以放链接或按钮，交互语义由调用方提供。
+
+<PropsTable name="timeline" component="TimelineAttachment" />
+
+## 可访问性
+
+- 使用有序列表表达事件顺序；标题、日期与说明保留原生语义。
+- 当前阶段通过 `aria-current` 表达；状态同时使用文字或图标说明。
+- 系统启用“减少动态效果”时，入场位移与脉冲停止。
+- 内容初始可见，CSS 入场动画只移动位置，无 JavaScript 时仍能阅读。
+
+## 注意事项
+
+- 标记、连接线、内容应是 `TimelineItem` 的直接子级，不额外包一层布局容器。
+- 交替与水平布局使用视口断点；嵌入很窄的桌面容器时建议使用默认纵向布局。
+- `timeline.css` 随源码安装，不要移除入口文件对它的导入。多彩变量由 `flow-diagram` 依赖提供。
+
+## 源码
+
+<ComponentSource name="timeline" />

@@ -812,6 +812,66 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "timeline",
+      "type": "registry:ui",
+      "title": "时间线",
+      "description": "可组合的时间线原语，支持经历、活动流、项目进度、水平路线图与交替更新日志。",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/timeline/timeline.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/timeline/timeline.css",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card-stack",
+      "type": "registry:ui",
+      "title": "卡片堆叠",
+      "description": "细边框卡片的层叠轮播，支持自动轮换、拖拽、键盘切换与减少动态效果。",
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "https://travinsy.com/r/grid-layout.json",
+        "https://travinsy.com/r/stat-card.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/card-stack/card-stack.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/card-stack/card-stack-layer.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/card-stack/context.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/card-stack/controls.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
     }
   ]
 }

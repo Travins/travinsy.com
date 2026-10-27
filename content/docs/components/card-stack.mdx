@@ -1,0 +1,114 @@
+---
+title: 卡片堆叠
+titleEn: Card Stack
+description: 细边框卡片的层叠轮播，支持自动轮换、拖拽、键盘切换与减少动态效果。
+group: content
+---
+
+<ComponentPreview name="card-stack-demo" />
+
+## 安装
+
+<InstallCommand name="card-stack" />
+
+## 用法
+
+`CardStackItem` 直接作为 `CardStack` 子级，内容自由组合。`CardStackControls` 放在同一级，提供上一张、下一张、指示点与暂停按钮。也可以通过 `items` 传入 React 节点数组，子级里只保留控制器。
+
+```tsx title="components/card-stack-example.tsx"
+"use client"
+
+import {
+  CardStack,
+  CardStackItem,
+  CardStackControls,
+} from "@/components/ui/card-stack/card-stack"
+
+export function CardStackExample() {
+  return (
+    <CardStack label="精选作品" className="max-w-sm">
+      <CardStackItem>
+        <h3>个人组件库</h3>
+        <p>从重复的界面里提炼原语。</p>
+      </CardStackItem>
+      <CardStackItem>
+        <h3>开发者笔记</h3>
+        <p>记录解决问题的过程。</p>
+      </CardStackItem>
+      <CardStackControls />
+    </CardStack>
+  )
+}
+```
+
+## 示例
+
+### 引言堆叠
+
+大引号、正文与署名组成卡片，内容高度由所有卡片的最大高度撑开，切换时页面不会跳动。示例文案为虚构内容。
+
+<ComponentPreview name="card-stack-quotes-demo" />
+
+### 拖拽预览
+
+`mode="drag"` 关闭定时轮换。拖动距离超过 80px 时顶卡飞出，并进入循环序列底部；未超过阈值则回弹。触屏保留纵向页面滚动。
+
+<ComponentPreview name="card-stack-drag-demo" />
+
+### 指标卡
+
+卡片内部可直接组合 `stat-card` 的标题、数值和趋势原语。堆叠本身不依赖统计卡；该 registry 依赖供此示例组合使用。
+
+<ComponentPreview name="card-stack-stats-demo" />
+
+## API
+
+### CardStack
+
+<PropsTable name="card-stack" component="CardStack" />
+
+| 属性                   | 默认值     | 说明                                             |
+| ---------------------- | ---------- | ------------------------------------------------ |
+| `mode`                 | `auto`     | `auto` 定时轮换；`drag` 手动拖动                 |
+| `interval`             | `4000`     | 轮换间隔，毫秒，最小 1000                        |
+| `depth`                | `3`        | 可见层数，限制在卡片数量以内                     |
+| `offset`               | `12`       | 每层向下偏移的像素，最小 0                       |
+| `scale`                | `0.04`     | 每层缩小的比例；累计缩小最多 20%                 |
+| `index / defaultIndex` | `— / 0`    | 受控索引或非受控初始索引，按卡片数量循环归一化   |
+| `onIndexChange`        | `—`        | 接收新的零起始索引；受控时由调用方更新 `index`   |
+| `items`                | `—`        | React 节点数组，与直接子级卡片择一使用           |
+| `label`                | `卡片堆叠` | 轮播区域的可访问名称                             |
+| `labels`               | 中文       | 覆盖前后切换、暂停、继续、卡片编号和轮播角色文案 |
+
+自动模式在悬停、焦点位于组件内、离开视口或页面隐藏时暂停，恢复后重新计时。暂停按钮可持续暂停轮换。若不放控制器，调用方应提供等价的暂停入口。
+
+### CardStackItem
+
+细边框、无阴影的卡片容器；支持原生 `div` 属性。仅顶卡可交互，其他卡片使用 `inert` 与 `aria-hidden`。
+
+<PropsTable name="card-stack" component="CardStackItem" />
+
+### CardStackControls
+
+按钮统一使用 `icon-sm`（28px）。指示点是带 `aria-pressed` 的按钮；自动模式附带暂停控制，零张或单张卡片时前后切换按钮禁用。
+
+<PropsTable name="card-stack" component="CardStackControls" />
+
+## 可访问性
+
+- 根容器可聚焦；左右方向键切换，控制器按钮也支持原生键盘操作。
+- 卡片内的输入框、滑块等保留自己的方向键操作，不拦截内部内容的键盘事件。
+- 自动轮换不持续播报；手动操作或暂停时，当前卡片编号通过礼貌播报区更新。
+- 减少动态效果时取消层叠位移、缩放和飞出，以淡入切换；拖拽仍可完成切换。
+- 自动轮换时建议始终保留 `CardStackControls`，便于用户主动暂停。
+
+## 注意事项
+
+- 演示使用固定数据，首屏不依赖随机数或当前时间，适用于静态导出。
+- 卡片与控制器需直接放在根容器下；`items` 支持任意节点。动态列表请使用稳定的 React key。
+- 拖拽时会暂时超出卡片边缘，请按场景在外部预留空间或设置裁切区域。
+- 指标示例的统计格式与涨跌约定沿用 `stat-card`。
+
+## 源码
+
+<ComponentSource name="card-stack" />

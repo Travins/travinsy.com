@@ -3,6 +3,11 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from "react"
 
 export const registryExamples: Record<string, LazyExoticComponent<ComponentType>> = {
+  "card-stack-demo": lazy(() => import("./examples/card-stack-demo")),
+  "card-stack-drag-demo": lazy(() => import("./examples/card-stack-drag-demo")),
+  "card-stack-quotes-demo": lazy(() => import("./examples/card-stack-quotes-demo")),
+  "card-stack-showcase-demo": lazy(() => import("./examples/card-stack-showcase-demo")),
+  "card-stack-stats-demo": lazy(() => import("./examples/card-stack-stats-demo")),
   "chart-card-demo": lazy(() => import("./examples/chart-card-demo")),
   "chart-card-gauge-demo": lazy(() => import("./examples/chart-card-gauge-demo")),
   "chart-card-ranking-demo": lazy(() => import("./examples/chart-card-ranking-demo")),
@@ -74,6 +79,12 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "stat-card-latency-demo": lazy(() => import("./examples/stat-card-latency-demo")),
   "stat-card-quota-demo": lazy(() => import("./examples/stat-card-quota-demo")),
   "stat-card-showcase-demo": lazy(() => import("./examples/stat-card-showcase-demo")),
+  "timeline-activity-demo": lazy(() => import("./examples/timeline-activity-demo")),
+  "timeline-alternate-demo": lazy(() => import("./examples/timeline-alternate-demo")),
+  "timeline-demo": lazy(() => import("./examples/timeline-demo")),
+  "timeline-horizontal-demo": lazy(() => import("./examples/timeline-horizontal-demo")),
+  "timeline-progress-demo": lazy(() => import("./examples/timeline-progress-demo")),
+  "timeline-showcase-demo": lazy(() => import("./examples/timeline-showcase-demo")),
 }
 
 // 区块 / 页面模板的整页预览，键为 registry 条目名
