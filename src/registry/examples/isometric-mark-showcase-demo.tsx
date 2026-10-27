@@ -46,7 +46,7 @@ const LOGO: readonly (readonly [number, number])[][] = [
 ]
 
 // 朝向 -65°、标准等轴测俯仰 35°、挤出 52：斜杠立起往右上斜，细的一组在后、粗的一组在前；
-// 辅助线用 "edges"，贴着斜杠的长边与齐平的切口；斜杠本身向右上斜，顶面用反向斜纹「\」避免与长边平行产生视差
+// 辅助线用 "edges"，贴着斜杠的长边与齐平的切口；斜杠本身向右上斜，顶面用横纹，与斜杠长边错开不产生视差
 const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar) => ({
   outer: [...bar],
 }))
@@ -69,7 +69,7 @@ export default function IsometricMarkShowcaseDemo() {
           rotation={-65}
           elevation={35}
           depth={52}
-          material="hatch-reverse"
+          material="lines"
           label="易"
           guides="edges"
         />

@@ -328,13 +328,15 @@ function buildIsometricModel(
     height: by1 - by0 + margin * 2,
   }
   if (frame) {
-    // 任意朝向下，图形都落在以旋转中心为圆心、半径 r 的圆里；投影后横向半宽 √2·r·cos30°，
-    // 地面纵向半高 √2·r·KY，再加上挤出高度。取两者较大者作正方形边长。
+    // 任意朝向下，图形都落在以旋转中心为圆心、半径 r 的圆里；投影后横向半宽恒为 √2·r·cos30°。
+    // 正方形边长只取横向宽度，与朝向、俯仰、高度都无关，画框大小始终不变；
+    // 极端的俯仰与高度下纵向可能超出一点，svg 本身 overflow: visible，不会被裁。
     const [ox, oy] = project(frame.cx, frame.cy)
     const halfX = Math.SQRT2 * frame.r * COS30
     const halfY = Math.SQRT2 * frame.r * KY
     const lift = depth * KZ
-    const side = Math.max(halfX * 2, halfY * 2 + lift) * 1.04
+    void halfY
+    const side = halfX * 2 * 1.04
     const centerY = oy - lift / 2
     viewBox = {
       x: ox - side / 2,
