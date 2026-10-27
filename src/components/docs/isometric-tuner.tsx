@@ -15,7 +15,7 @@ import { IconTip } from "./icon-tip"
 
 /**
  * 等轴测标志文档专用的调整面板：开关放在示例标题栏，打开后示例下方出现滑块，
- * 通过 IsometricMarkTuningContext 覆盖示例里所有 IsometricMark 的朝向、俯仰、高度、辅助线与材质。
+ * 通过 IsometricMarkTuningContext 覆盖示例里所有 IsometricMark 的朝向、俯仰、高度、辅助线、材质与交互开关。
  * 示例通过 onReport 回报自己的实际取值，没拖动的项显示这个值。
  * 打开时启用固定画框（stableFrame）：沿用示例原来的画框，调整中容器大小与图形比例都不变。
  */
@@ -28,6 +28,8 @@ type Values = {
   depth?: number
   guides?: Guides
   material?: IsometricMaterial
+  interactive?: boolean
+  highlight?: boolean
 }
 
 const MATERIALS: { value: IsometricMaterial; label: string }[] = [
@@ -67,6 +69,8 @@ export function useIsometricTuner() {
         elevation: values.elevation,
         depth: values.depth,
         material: values.material,
+        interactive: values.interactive,
+        highlight: values.highlight,
         guides:
           values.guides === undefined
             ? undefined
@@ -189,6 +193,32 @@ function MaterialSwatch({ material }: { material: IsometricMaterial }) {
   )
 }
 
+/** 开关：小号滑动开关 + 文字标签 */
+function Toggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string
+  checked: boolean
+  onChange: (checked: boolean) => void
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className="group inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground"
+    >
+      <span className="relative inline-flex h-4 w-7 shrink-0 items-center rounded-full bg-muted ring-1 ring-edge transition-colors ring-inset group-aria-checked:bg-primary">
+        <span className="size-3 translate-x-0.5 rounded-full bg-background shadow-xs transition-transform group-aria-checked:translate-x-3.5" />
+      </span>
+      {label}
+    </button>
+  )
+}
+
 /** 一组互斥的小按钮 */
 function Segmented<T extends string>({
   label,
@@ -242,20 +272,9 @@ export function IsometricTunerPanel({
       values.guides ??
       (base ? (base.guides === false ? "off" : base.guides) : undefined),
     material: values.material ?? base?.material,
+    interactive: values.interactive ?? base?.interactive ?? true,
+    highlight: values.highlight ?? base?.highlight ?? true,
   }
-  const code = [
-    `rotation={${round(current.rotation)}}`,
-    `elevation={${round(current.elevation)}}`,
-    `depth={${round(current.depth)}}`,
-    current.material && `material="${current.material}"`,
-    current.guides &&
-      (current.guides === "off"
-        ? "guides={false}"
-        : `guides="${current.guides}"`),
-  ]
-    .filter(Boolean)
-    .join(" ")
-
   return (
     <div className="grid gap-x-6 gap-y-4 px-4 pt-3 pb-4 sm:grid-cols-3">
       <Slider
@@ -300,10 +319,18 @@ export function IsometricTunerPanel({
         value={current.guides}
         onChange={(guides) => set({ guides })}
       />
-      <div className="flex items-center gap-2 sm:col-span-3">
-        <code className="min-w-0 flex-1 truncate rounded-md bg-muted px-2 py-1.5 font-mono text-[11px] text-muted-foreground">
-          {code}
-        </code>
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 sm:col-span-3">
+        <Toggle
+          label="点击按下 interactive"
+          checked={current.interactive}
+          onChange={(interactive) => set({ interactive })}
+        />
+        <Toggle
+          label="指针高光 highlight"
+          checked={current.highlight}
+          onChange={(highlight) => set({ highlight })}
+        />
+        <span className="flex-1" />
         <IconTip label="恢复示例原值">
           <button
             type="button"

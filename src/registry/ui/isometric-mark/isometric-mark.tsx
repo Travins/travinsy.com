@@ -103,7 +103,13 @@ function IsometricMarkWall({
 type IsometricMarkTuning = Partial<
   Pick<
     IsometricMarkProps,
-    "rotation" | "depth" | "elevation" | "guides" | "material"
+    | "rotation"
+    | "depth"
+    | "elevation"
+    | "guides"
+    | "material"
+    | "interactive"
+    | "highlight"
   >
 > & {
   /** 固定画框：沿用原属性下的 viewBox，调整时容器大小与图形比例都不变 */
@@ -118,6 +124,8 @@ type IsometricMarkReport = {
   depth: number
   guides: "box" | "edges" | false
   material: IsometricMaterial
+  interactive: boolean
+  highlight: boolean
 }
 
 /**
@@ -160,6 +168,8 @@ function IsometricMark(allProps: IsometricMarkProps) {
     guides = false,
     elevation,
     material = "hatch",
+    interactive = true,
+    highlight = true,
   } = allProps
   const baseModel = React.useMemo(
     () =>
@@ -182,8 +192,19 @@ function IsometricMark(allProps: IsometricMarkProps) {
       depth: baseModel.depth,
       guides: guides === true ? "box" : guides,
       material,
+      interactive,
+      highlight,
     })
-  }, [onReport, baseModel, rotation, elevation, guides, material])
+  }, [
+    onReport,
+    baseModel,
+    rotation,
+    elevation,
+    guides,
+    material,
+    interactive,
+    highlight,
+  ])
   return (
     <IsometricMarkView
       {...allProps}
