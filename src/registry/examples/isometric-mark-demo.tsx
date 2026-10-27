@@ -86,17 +86,17 @@ function Callout({
   )
 }
 
-// 线条本身只用前景色，所以靠底下的彩色光晕、点阵与标注标签把「几何是算出来的」讲清楚
+// 地面网格（floor）与辅助线同一平面、对齐标志的每条边；主题色光晕与接触阴影让标志落在地面上，标注标签讲清几何怎么来
 export default function IsometricMarkDemo() {
   return (
-    <div className="relative flex min-h-72 w-full max-w-2xl items-center justify-center overflow-hidden rounded-lg border border-edge bg-card px-4 pt-6 pb-12 sm:min-h-96">
+    <div className="relative isolate flex min-h-72 w-full max-w-2xl items-center justify-center overflow-hidden rounded-lg border border-edge bg-card px-4 pt-6 pb-12 sm:min-h-96">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_64%,color-mix(in_oklab,var(--flow-blue)_18%,transparent),transparent_58%),radial-gradient(ellipse_at_88%_8%,color-mix(in_oklab,var(--flow-violet)_14%,transparent),transparent_46%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_55%_42%_at_50%_58%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_75%)]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_75%)] opacity-70"
+        className="pointer-events-none absolute top-[62%] left-1/2 -z-10 h-10 w-[34%] -translate-x-1/2 -rotate-[22deg] rounded-[50%] bg-foreground/10 blur-2xl"
       />
       <div className="relative w-full max-w-[17rem] sm:max-w-80">
         <IsometricMark
@@ -107,6 +107,7 @@ export default function IsometricMarkDemo() {
           material="hatch-reverse"
           label="易"
           guides="edges"
+          floor
         />
       </div>
       <Callout tone="blue" className="top-[18%] left-5">
