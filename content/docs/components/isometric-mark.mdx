@@ -93,7 +93,7 @@ export function BrandMark() {
 
 ### 点击音效
 
-`sound` 打开按下与松开时的合成音效（Web Audio 现场生成，不需要音频文件），默认关闭，本页所有示例都已打开。浏览器要求先有用户操作才能出声，所以音频在第一次按下时才初始化。静音偏好存在浏览器本地，页面上所有标志共用：`useIsometricMarkMuted()` 返回 `[muted, setMuted]`，可以用它做一个静音按钮，页首的示例右上角就是这样。`soundTone` 调音色：`0` 偏闷，是低沉的「咚」；`1` 偏脆，是清脆的「咔」，默认 `0.6`。
+`sound` 打开按下与松开时的合成音效（Web Audio 现场生成，不需要音频文件），默认关闭，本页所有示例都已打开。浏览器要求先有用户操作才能出声，所以音频在第一次按下时才初始化。静音偏好存在浏览器本地，页面上所有标志共用：`useIsometricMarkMuted()` 返回 `[muted, setMuted]`，可以用它做一个静音按钮，页首的示例右上角就是这样。这份偏好与站内其他带音效的组件共用（`localStorage` 的 `travinsy:sound:muted`）：同一页面里一处静音，其他组件的静音按钮与音效立刻跟上；换到另一个标签页也会同步。`soundTone` 调音色：`0` 偏闷，是低沉的「咚」；`1` 偏脆，是清脆的「咔」，默认 `0.6`。
 
 ```tsx
 const [muted, setMuted] = useIsometricMarkMuted()
@@ -130,7 +130,7 @@ function useIsometricMarkMuted(): readonly [
 ]
 ```
 
-读写点击音效的静音偏好。偏好存在 `localStorage`，同一页面的所有标志共用，并在标签页之间同步；服务端与水合阶段按未静音渲染。
+读写点击音效的静音偏好。偏好存在 `localStorage` 的 `travinsy:sound:muted`，与站内其他带音效的组件共用，同一页面的所有标志共享（写入后广播 `travinsy:sound-muted-change` 事件）并在标签页之间同步；服务端与水合阶段按未静音渲染。
 
 ### 类型
 

@@ -16,6 +16,7 @@ export type GroupDef = {
 export const sectionGroups: Partial<Record<NavSectionId, GroupDef[]>> = {
   components: [
     { id: "layout", title: "布局", titleEn: "Layout" },
+    { id: "input", title: "表单与输入", titleEn: "Form & Input" },
     { id: "time", title: "时间", titleEn: "Time" },
     { id: "data", title: "数据展示", titleEn: "Data Display" },
     { id: "content", title: "内容展示", titleEn: "Content Display" },

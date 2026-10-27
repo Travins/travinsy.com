@@ -822,6 +822,55 @@
       ]
     },
     {
+      "name": "value-slider",
+      "type": "registry:ui",
+      "title": "数值滑块",
+      "description": "带标签与读数的数值滑块，支持区间、缓冲进度、刻度磁吸、数值格式化与拖出两端的弹性过冲。",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/value-slider/value-slider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/value-slider/value-slider-parts.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/value-slider/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/value-slider/utils.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/value-slider/sound.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/value-slider/use-elastic-pull.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/value-slider/use-handle-dodge.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
       "name": "timeline",
       "type": "registry:ui",
       "title": "时间线",

@@ -51,6 +51,7 @@ const FULL_BLEED = new Set([
   "ripple-signal-demo",
   "greeting-card-demo",
   "shuffle-grid-demo",
+  "value-slider-demo",
 ])
 
 export function ComponentPreviewClient({

@@ -90,14 +90,24 @@ function playRelease(crisp = 0.6) {
   tick(mix(3000, 6000, t), mix(0.012, 0.009, t), mix(0.05, 0.13, t))
 }
 
-/* ---------- 静音偏好：存在 localStorage，同页所有标志共用 ---------- */
+/* ---------- 静音偏好：存在 localStorage，全站带音效的组件共用 ---------- */
 
-const STORAGE_KEY = "isometric-mark:muted"
+const STORAGE_KEY = "travinsy:sound:muted"
+/** 旧版本用过的键：读到新键没写过时按它迁移，保证升级后偏好不丢。 */
+const LEGACY_KEYS = ["isometric-mark:muted"]
+const WATCHED_KEYS = [STORAGE_KEY, ...LEGACY_KEYS]
+/**
+ * 同页广播：`storage` 事件只发给「其他」标签页，本页写 localStorage 不会触发它。
+ * 带音效的组件各自有一份静音模块（互不 import），所以约定用同一个事件名互相通知。
+ */
+const MUTED_EVENT = "travinsy:sound-muted-change"
 const listeners = new Set<() => void>()
 
 function readMuted() {
   try {
-    return window.localStorage.getItem(STORAGE_KEY) === "1"
+    const current = window.localStorage.getItem(STORAGE_KEY)
+    if (current !== null) return current === "1"
+    return LEGACY_KEYS.some((key) => window.localStorage.getItem(key) === "1")
   } catch {
     return false
   }
@@ -110,17 +120,22 @@ function setMuted(muted: boolean) {
     // 隐私模式等存不了时只在本页生效
   }
   listeners.forEach((listener) => listener())
+  // 通知同页其他带音效的组件
+  window.dispatchEvent(new Event(MUTED_EVENT))
 }
 
 function subscribe(listener: () => void) {
   listeners.add(listener)
+  const notify = () => listener()
   const onStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY) listener()
+    if (event.key === null || WATCHED_KEYS.includes(event.key)) notify()
   }
   window.addEventListener("storage", onStorage)
+  window.addEventListener(MUTED_EVENT, notify)
   return () => {
     listeners.delete(listener)
     window.removeEventListener("storage", onStorage)
+    window.removeEventListener(MUTED_EVENT, notify)
   }
 }
 

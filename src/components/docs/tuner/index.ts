@@ -10,6 +10,7 @@ import { rippleTuner } from "./ripple"
 import { shuffleGridTuner } from "./shuffle-grid"
 import { textAnimateTuner } from "./text-animate"
 import type { AnyTunerConfig } from "./types"
+import { valueSliderTuner } from "./value-slider"
 
 /**
  * 支持「调整面板」的组件，键是 registry 条目名（ComponentPreview 的 `item`）。
@@ -27,6 +28,7 @@ export const tuners: Record<string, AnyTunerConfig | undefined> = {
   "text-animate": textAnimateTuner,
   "card-stack": cardStackTuner,
   "code-stack": codeStackTuner,
+  "value-slider": valueSliderTuner,
 }
 
 export { TunerPanel, TunerProvider, TunerToggle } from "./panel"

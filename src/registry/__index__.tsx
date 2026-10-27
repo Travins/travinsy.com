@@ -110,6 +110,12 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "timeline-experience-demo": lazy(() => import("./examples/timeline-experience-demo")),
   "timeline-horizontal-demo": lazy(() => import("./examples/timeline-horizontal-demo")),
   "timeline-progress-demo": lazy(() => import("./examples/timeline-progress-demo")),
+  "value-slider-demo": lazy(() => import("./examples/value-slider-demo")),
+  "value-slider-mood-demo": lazy(() => import("./examples/value-slider-mood-demo")),
+  "value-slider-photo-demo": lazy(() => import("./examples/value-slider-photo-demo")),
+  "value-slider-playback-demo": lazy(() => import("./examples/value-slider-playback-demo")),
+  "value-slider-range-demo": lazy(() => import("./examples/value-slider-range-demo")),
+  "value-slider-volume-demo": lazy(() => import("./examples/value-slider-volume-demo")),
 }
 
 // 区块 / 页面模板的整页预览，键为 registry 条目名

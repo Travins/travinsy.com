@@ -2,6 +2,7 @@
   "title": "组件",
   "pages": [
     "grid-layout",
+    "value-slider",
     "local-time",
     "greeting",
     "stat-card",

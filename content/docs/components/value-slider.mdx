@@ -1,0 +1,319 @@
+---
+title: 数值滑块
+titleEn: Value Slider
+description: 带标签与读数的数值滑块，支持区间、缓冲进度、刻度磁吸、数值格式化与拖出两端的弹性过冲。
+group: input
+---
+
+<ComponentPreview name="value-slider-demo" />
+
+## 安装
+
+<InstallCommand name="value-slider" />
+
+## 用法
+
+```tsx title="components/volume-slider.tsx"
+import { ValueSlider } from "@/components/ui/value-slider/value-slider"
+
+export function VolumeSlider() {
+  return <ValueSlider label="音量" defaultValue={40} />
+}
+```
+
+不带状态时用 `defaultValue` 给初始值（不传就落在 `min`），组件自己管；需要读值就加 `value` 与 `onValueChange` 走受控。轨道本身即控件：点轨道跳转、按住手柄拖动，键盘也能操作。
+
+### 标签与读数
+
+`labelPlacement="inside"`（默认）时 `label` 渲染在轨道左端内部，右侧读数是格式化后的当前值，两者都是 `aria-hidden`，真正的语义挂在手柄上。手柄靠近文字时自动变淡，文字不会被挡住。`showValue={false}` 只留标签，`format` 或 `formatValue` 决定读数长什么样。
+
+```tsx
+<ValueSlider
+  label="亮度"
+  defaultValue={64}
+  format={{ style: "unit", unit: "percent" }}
+/>
+```
+
+`labelPlacement="outside"` 把标签与读数移到轨道上方一行：左侧标签、右侧读数，轨道里不放文字，手柄常驻可见也不再让位。区间这类要同时看清两个手柄的场景用它更合适。
+
+```tsx
+<ValueSlider
+  label="价格"
+  labelPlacement="outside"
+  min={0}
+  max={2000}
+  step={50}
+  defaultValue={[200, 1200]}
+/>
+```
+
+### 弹性过冲
+
+往轨道外继续拖时，轨道按饱和的橡皮筋曲线被拉伸：越往外越难拉，最大位移是 `elasticity` 像素（默认 `12`），松手时用弹簧回到原位，两端的图标跟着轻轻一推。键盘在手柄已经位于端点时继续按同一个方向，也会拉一下再弹回来，让人知道已经到头。`elasticity={0}` 完全关掉。
+
+拉伸只做在轨道内部的视觉层上，`Slider.Control` 自己不缩放，所以把指针拖出右端再拉回轨道中间，值仍然连续变化，不会跳。换边（从一端外面直接拖到另一端外面）时缩放原点固定在中心，只改平移量，同样不会跳。
+
+```tsx
+<ValueSlider label="音量" defaultValue={40} elasticity={24} />
+```
+
+### 刻度与磁吸
+
+`ticks` 传数字表示把范围等分成几段，画 n - 1 条内部刻度线；传数组表示在指定值处画线。它同时是 `snapToTicks` 的目标：指针松手时（拖动或点击轨道）如果与最近刻度相差不到整个范围的 3%，值会吸过去；键盘逐步移动不吸附，所以方向键可以从刻度上走开，不会被反复拉回同一个点。刻度线用逻辑属性定位，RTL 下跟着手柄与填充一起从右边排布。
+
+刻度建议落在 `step` 上。不在 `step` 上的刻度会被对齐到最近的 `step` 再提交，避免出现 3650 这种步长之外的数值；区间模式吸附后还要保证两个值顺序不变、且至少相隔 `minStepsBetweenValues` 个 `step`，不满足就放弃那次吸附。
+
+```tsx
+<ValueSlider
+  label="色温"
+  min={2700}
+  max={6500}
+  step={100}
+  largeStep={500}
+  defaultValue={4500}
+  ticks={4}
+  snapToTicks
+  formatValue={(value) => `${value} K`}
+/>
+```
+
+### 缓冲进度
+
+`buffer` 是「已缓冲到的值」——比如视频已经加载到第 N 秒。它会在已选填充下面再画一段从 `min` 到 `buffer` 的次级填充，颜色比已选填充淡一档，用来区分「已加载」与「已播放」。只有单值模式生效，区间模式会忽略它。
+
+```tsx
+<ValueSlider
+  aria-label="播放进度"
+  min={0}
+  max={214}
+  defaultValue={62}
+  buffer={102}
+/>
+```
+
+### 格式化
+
+`format` 是 `Intl.NumberFormat` 的选项，`locale` 默认 `zh-CN`，读数的小数位默认按 `step` 推导（`0.5` 显示一位）。`formatValue` 优先于 `format`，返回的字符串同时用于右侧读数与手柄的 `aria-valuetext`，适合加单位、正负号或把数字换成词语。
+
+```tsx
+<ValueSlider
+  label="曝光"
+  min={-100}
+  max={100}
+  defaultValue={0}
+  formatValue={(value) => (value > 0 ? `+${value}` : String(value))}
+/>
+```
+
+### 区间
+
+值传数组即为区间：数组长度决定手柄数量，读数显示为「起点 – 终点」。数组在内部按升序处理，`label` 是字符串时手柄名称自动加上「起点」「终点」。两个手柄相遇时的行为由 Base UI 的 `thumbCollisionBehavior` 决定（默认 `push`），最小间隔由 `minStepsBetweenValues` 控制。
+
+```tsx
+<ValueSlider
+  label="价格"
+  min={0}
+  max={2000}
+  step={50}
+  defaultValue={[200, 1200]}
+  format={{ style: "currency", currency: "CNY", maximumFractionDigits: 0 }}
+/>
+```
+
+### 音效
+
+`sound` 打开音效：值变化时（拖动、点击轨道、键盘）播放刻度音，碰到两端播放碰边音。音效默认关闭，浏览器要求先有用户操作才能出声，所以音频在第一次交互时才初始化。
+
+```tsx
+import { useValueSliderMuted } from "@/components/ui/value-slider/value-slider"
+
+const [muted, setMuted] = useValueSliderMuted()
+
+<ValueSlider label="音量" defaultValue={40} sound />
+<button type="button" onClick={() => setMuted(!muted)}>
+  {muted ? "打开音效" : "静音"}
+</button>
+```
+
+静音偏好与站内其他带音效的组件共用（`localStorage` 的 `travinsy:sound:muted`）：同一页面里一处静音，其他组件的静音按钮与音效立刻跟上；换到另一个标签页也会同步。
+
+## 示例
+
+每个示例的标题栏右侧都有「调整」开关：打开后可以实时调整过冲强度、尺寸、色调、刻度和磁吸，并开关读数与音效；未改动的项显示示例自己的取值。每个示例的画框高度都是固定的（小卡片靠预览区的最小高度，较高的示例把滑块放进固定高度的插槽），换尺寸档时画框不会跳动。
+
+### 音量与音效
+
+`sound` 打开拖动时的刻度音效，`startIcon` 随值在三个喇叭图标之间切换，旁边的静音入口用 `useValueSliderMuted` 读写同一份偏好。
+
+<ComponentPreview name="value-slider-volume-demo" />
+
+### 价格区间
+
+数组值给两个手柄，`labelPlacement="outside"` 让两个手柄常驻可见，`format` 用 `Intl` 的货币格式；上方的柱子落在区间内时取主题色，范围外的退成灰色。
+
+<ComponentPreview name="value-slider-range-demo" />
+
+### 图片调色
+
+三条滑块实时改 CSS `filter` 的 `brightness`、`contrast`、`saturate`，曝光用 `ticks={[0]}` 加 `snapToTicks` 让 0 点磁吸，`formatValue` 补上正负号。
+
+<ComponentPreview name="value-slider-photo-demo" />
+
+### 播放进度
+
+`size="sm"` 收窄成播放器里的进度条，没有可见 `label` 时用 `aria-label` 提供名称；读数写成「已播 / 总长」，`buffer` 画出比当前进度多 40 秒的已缓冲段。
+
+<ComponentPreview name="value-slider-playback-demo" />
+
+### 心情评分
+
+`min={1}`、`max={5}`、`step={1}` 配 `ticks={4}` 得到五档，`formatValue` 把数字换成词语，读屏读到的也是词语。
+
+<ComponentPreview name="value-slider-mood-demo" />
+
+## API
+
+### ValueSlider
+
+<PropsTable name="value-slider" component="ValueSlider" />
+
+默认 `min={0}`、`max={100}`、`step={1}`、`largeStep={10}`、`minStepsBetweenValues={0}`、`showValue`、`elasticity={12}`、`size="default"`、`labelPlacement="inside"`、`locale="zh-CN"`；`snapToTicks`、`sound`、`disabled` 默认关闭，`tone` 不传时轨道用前景色，`buffer` 不传时不画缓冲段。尺寸三档对应轨道高度 `sm` 28px、`default` 32px、`lg` 36px。读数小数位由 `step` 推导，`format` / `formatValue` 可以覆盖。
+
+除上表外，其余属性直接交给 Base UI 的 `Slider.Root`：`form`（关联到页面上的某个表单）、`id`、`minStepsBetweenValues`（区间两个手柄之间至少隔几个 `step`）、`thumbCollisionBehavior`（`push` / `swap` / `none`，默认 `push`）。`orientation`、`thumbAlignment` 之类会影响横向布局的属性由组件接管，没有对外暴露。
+
+### ValueSliderTuningContext
+
+```ts
+const ValueSliderTuningContext: React.Context<ValueSliderTuning>
+```
+
+可选的覆盖层：子树里所有 `ValueSlider` 的 `elasticity`、`size`、`tone`、`ticks`、`snapToTicks`、`showValue`、`sound` 会被 Context 里的值替换，`onReport` 回报组件自己的实际取值。不发这个 Context 时组件行为不变，正常使用不需要它。
+
+### useValueSliderMuted
+
+```ts
+function useValueSliderMuted(): readonly [
+  muted: boolean,
+  setMuted: (muted: boolean) => void,
+]
+```
+
+读写音效的静音偏好，存在 `localStorage` 的 `travinsy:sound:muted` 里，与站内其他带音效的组件共用同一份偏好：同一页面的所有消费者共享（写入后广播 `travinsy:sound-muted-change` 事件，不依赖只有跨标签页才触发的 `storage`），也在标签页之间同步；服务端与水合阶段按未静音渲染。
+
+### valueSliderVariants
+
+`cva` 生成的根元素样式函数，只有 `size` 一个变体；写自己的触发器或包装层时可以复用它保持一致。
+
+```ts
+const valueSliderVariants: (props?: { size?: ValueSliderSize }) => string
+```
+
+### 类型
+
+```ts
+type ValueSliderValue = number | readonly number[]
+
+type ValueSliderSize = "sm" | "default" | "lg"
+
+type ValueSliderLabelPlacement = "inside" | "outside"
+
+type ValueSliderProps<Value extends ValueSliderValue = number> = {
+  value?: Value
+  defaultValue?: Value
+  min?: number
+  max?: number
+  step?: number
+  largeStep?: number
+  minStepsBetweenValues?: number
+  disabled?: boolean
+  name?: string
+  onValueChange?: (value: Value) => void
+  onValueCommitted?: (value: Value) => void
+  format?: Intl.NumberFormatOptions
+  locale?: Intl.LocalesArgument
+  label?: React.ReactNode
+  labelPlacement?: ValueSliderLabelPlacement
+  "aria-label"?: string
+  buffer?: number
+  formatValue?: (value: number) => string
+  showValue?: boolean
+  startIcon?: React.ReactNode
+  endIcon?: React.ReactNode
+  ticks?: number | readonly number[]
+  snapToTicks?: boolean
+  elasticity?: number
+  size?: ValueSliderSize
+  tone?: FlowTone
+  sound?: boolean
+  className?: string
+  style?: React.CSSProperties
+}
+
+type ValueSliderTuning = Partial<
+  Pick<
+    ValueSliderProps,
+    "elasticity" | "size" | "ticks" | "snapToTicks" | "showValue" | "sound"
+  >
+> & {
+  /** `false` 表示去掉色调 */
+  tone?: FlowTone | false
+  onReport?: (report: ValueSliderReport) => void
+}
+
+type ValueSliderReport = {
+  elasticity: number
+  size: ValueSliderSize
+  tone: FlowTone | undefined
+  /** 示例用显式刻度数组时是 undefined，表示「没有段数可报」 */
+  ticks: number | undefined
+  snapToTicks: boolean
+  showValue: boolean
+  sound: boolean
+}
+```
+
+示例用显式刻度数组时，调整面板的刻度滑块显示为默认的 0；一旦拖动刻度滑块，就换成等分刻度（刻度数组无法用段数表达）。
+
+### data-slot
+
+| 元素           | `data-slot`               |
+| -------------- | ------------------------- |
+| 根元素         | `value-slider`            |
+| 轨道上方的文字 | `value-slider-labels`     |
+| 交互区         | `value-slider-control`    |
+| 轨道外框       | `value-slider-rail`       |
+| 轨道           | `value-slider-track`      |
+| 缓冲填充       | `value-slider-buffer`     |
+| 已选填充       | `value-slider-indicator`  |
+| 刻度线         | `value-slider-tick`       |
+| 标签           | `value-slider-label`      |
+| 读数           | `value-slider-value`      |
+| 手柄           | `value-slider-thumb`      |
+| 左端图标       | `value-slider-start-icon` |
+| 右端图标       | `value-slider-end-icon`   |
+
+`value-slider-labels` 只在 `labelPlacement="outside"` 时出现，`label` 与读数都放在它里面；`inside` 时这两个 `data-slot` 落在轨道内。根元素在过冲时带 `data-overshoot`（`start` 往左、`end` 往右），禁用时带 `data-disabled`，拖动中带 `data-dragging`，手柄压住文字时带 `data-near="true"`。
+
+## 可访问性
+
+- 手柄是原生输入元素，键盘操作：`←` `→` `↓` `↑` 加减一个 `step`，`Shift` + 方向键与 `PageUp` / `PageDown` 按 `largeStep`，`Home` / `End` 到两端；区间时 `Home` / `End` 不会越过另一个手柄。RTL 布局下左右方向键的增减是反的（方向取自 Base UI 的 `DirectionProvider`，需要在应用里包一层 `<DirectionProvider direction="rtl">`，同时给页面设 `dir="rtl"`）。
+- 读屏名称优先取 `aria-label`；没有时用字符串 `label`（区间自动补「起点」「终点」）；两者都没有时退回「数值」，所以同一个表单里有多个滑块时务必给 `label` 或 `aria-label`，否则几个手柄会重名。
+- `aria-valuetext` 是格式化后的读数，所以 `format` / `formatValue` 的写法会直接决定读屏怎么念。
+- 焦点环只在键盘聚焦时出现（`:focus-visible`），鼠标点击轨道不会留下焦点框。Control 上有一圈整体焦点环，聚焦的那个手柄还会自己加粗到 6px 并出一圈环，区间模式下能看出当前在调哪个手柄。
+- 系统开启「减少动态效果」时不播放过冲与弹簧回弹，轨道不会被拉伸。
+- 缓冲填充是 `aria-hidden` 的装饰，读屏只报当前值。
+- 音效默认关闭。打开后请同时提供静音入口（`useValueSliderMuted`），音效只是点缀，不承载信息；静音偏好存在 `localStorage` 的 `travinsy:sound:muted`，与站内其他带音效的组件共用。
+
+## 注意事项
+
+- 组件在服务端就输出完整结构（手柄按 `left%` 定位、填充有宽度），不需要预水合脚本，禁用 JS 时也能看到当前值。
+- 拖动期间的过冲动画由 MotionValue 直接改 `transform`，不触发 React 渲染；数值变化本身仍会渲染读数，所以一次拖动里读数会跟着刷新。
+- 用作表单字段时传 `name`，值会随表单提交；受控模式下记得同时处理 `onValueChange`，否则拖动后值会弹回。需要挂到页面另一处的表单上时再传 `form`。
+- `format` 对象、`formatValue` 函数与 `ticks` 数组建议定义在组件外，避免每次渲染都重建格式化器或刻度表。
+- 组件用一次 `ResizeObserver` 观测轨道与文字宽度，服务端输出的是完整静态结构；首帧还没量到宽度时，落在两端 15% 以内的手柄先按「压在文字上」处理，量到之后按真实文字宽度判断。
+- `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取；手动安装需要自己补上 `--flow-*` 变量。
+
+## 源码
+
+<ComponentSource name="value-slider" />

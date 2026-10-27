@@ -15,6 +15,7 @@ const BACKDROPS: Record<string, "dots" | "grid"> = {
   "card-stack": "dots",
   checklist: "grid",
   "code-stack": "dots",
+  "value-slider": "dots",
 }
 
 export function PreviewBackdrop({ name }: { name?: string }) {

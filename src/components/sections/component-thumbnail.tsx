@@ -46,6 +46,7 @@ const fillClasses: Record<string, string> = {
   // 窄屏画框只有 20rem 高，地球再往下沉一些，免得压到左上的指标
   globe:
     "*:h-full! *:max-w-none *:rounded-none *:border-0 max-lg:**:data-[slot=globe]:translate-y-[62%]",
+  "value-slider": "*:h-full",
 }
 
 export function ComponentThumbnail({
