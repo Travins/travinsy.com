@@ -19,7 +19,7 @@ const VISITS = series([28, 27, 35, 29, 40, 57, 50, 38, 48, 47, 42, 51])
 const BUILD = series([48, 52, 47, 51, 44, 46, 43, 45, 41, 42, 40, 38])
 const DEPLOYS = series([2, 2, 3, 3, 3, 5, 5, 4, 4, 6, 6, 7])
 
-// 六块指标像一条小仪表盘：用 1px 间隙露出底色做分格线（窄屏两列、宽屏三列），每块用不同图形与 `--flow-*` 色调
+// 六块指标像一条小仪表盘：用 1px 间隙露出底色做分格线（窄屏两列、宽屏三列；窄屏只留前四块，预览不至于过长），每块用不同图形与 `--flow-*` 色调
 const CELL = "gap-2 rounded-none border-0 p-3 sm:p-4"
 
 export default function MiniChartDemo() {
@@ -110,7 +110,7 @@ export default function MiniChartDemo() {
           <StatTrend value={16.7} />
         </div>
       </StatCard>
-      <StatCard className={CELL}>
+      <StatCard className={`${CELL} max-sm:hidden`}>
         <StatLabel>缓存命中率</StatLabel>
         <div className="flex h-14 items-center">
           <MiniRing
@@ -139,7 +139,7 @@ export default function MiniChartDemo() {
           <StatTrend value={3.4} />
         </div>
       </StatCard>
-      <StatCard className={CELL}>
+      <StatCard className={`${CELL} max-sm:hidden`}>
         <StatLabel>流量来源</StatLabel>
         <div className="flex h-14 items-center">
           <MiniDonut

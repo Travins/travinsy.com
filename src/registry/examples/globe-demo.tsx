@@ -14,9 +14,13 @@ const NODES: GlobeMarker[] = [
 
 export default function GlobeDemo() {
   return (
-    <div className="[container-type:size] relative h-[26rem] w-full max-w-4xl overflow-hidden rounded-lg border border-edge bg-card">
+    <div className="[container-type:size] relative h-[26rem] w-full max-w-4xl overflow-hidden rounded-lg border border-edge bg-card sm:h-[23rem]">
       <div className="relative z-10 flex flex-col gap-4 p-5 sm:p-6">
-        <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
+        <span className="flex items-center gap-2 font-mono text-xs tracking-wider text-muted-foreground uppercase">
+          <span
+            aria-hidden="true"
+            className="size-1.5 rounded-full bg-(--flow-green) motion-safe:animate-pulse"
+          />
           Edge network
         </span>
         <div className="flex flex-col gap-1.5">
@@ -26,8 +30,8 @@ export default function GlobeDemo() {
             </span>
             <span className="text-sm text-muted-foreground">个在线节点</span>
           </p>
-          <p className="max-w-[16rem] text-sm leading-6 text-muted-foreground">
-            遍布 6 个大洲，就近接入，全球平均延迟 38 ms。
+          <p className="max-w-[18rem] text-sm leading-6 text-balance text-muted-foreground">
+            遍布 6 个大洲，就近接入，平均延迟 38 ms。
           </p>
         </div>
         <dl className="flex gap-6 text-sm">

@@ -28,7 +28,7 @@ const SOURCES = [
 
 const SOURCE_TOTAL = SOURCES.reduce((sum, item) => sum + item.value, 0)
 
-// 同一组原语拼成一块概览面板：卡片之间共用细线，不再是四张孤立的小卡
+// 同一组原语拼成一块概览面板：卡片之间共用细线，不再是四张孤立的小卡；窄屏只留前两块
 const CELL = "flex flex-col gap-3 rounded-none border-0 bg-transparent p-4"
 
 export default function StatCardDemo() {
@@ -68,7 +68,7 @@ export default function StatCardDemo() {
             />
           </div>
         </StatCard>
-        <StatCard className={`${CELL} border-b border-edge`}>
+        <StatCard className={`${CELL} border-b border-edge max-sm:border-b-0`}>
           <StatHeader className="items-center">
             <StatLabel>本月构建配额</StatLabel>
             <StatBadge status="watch">偏高</StatBadge>
@@ -88,7 +88,7 @@ export default function StatCardDemo() {
           </div>
         </StatCard>
         <StatCard
-          className={`${CELL} border-b border-edge sm:border-r sm:border-b-0`}
+          className={`${CELL} border-b border-edge max-sm:hidden sm:border-r sm:border-b-0`}
         >
           <StatHeader className="items-center">
             <StatLabel>服务健康度</StatLabel>
@@ -108,7 +108,7 @@ export default function StatCardDemo() {
             <span>P95 128 ms</span>
           </StatMeta>
         </StatCard>
-        <StatCard className={CELL}>
+        <StatCard className={`${CELL} max-sm:hidden`}>
           <StatHeader>
             <StatLabel>流量来源</StatLabel>
             <StatIcon tone="violet">

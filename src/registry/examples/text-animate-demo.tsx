@@ -14,14 +14,20 @@ import { GridCrosshair } from "@/registry/ui/grid-layout/grid-layout"
 export default function TextAnimateDemo() {
   const [paused, setPaused] = useState(false)
   return (
-    <div className="relative flex min-h-80 w-full min-w-0 flex-col justify-center gap-7 overflow-hidden bg-dots px-6 py-10 sm:min-h-96 sm:px-10">
-      <div className="flex items-center gap-3 font-mono text-[10px] tracking-widest text-muted-foreground">
-        <span className="size-1.5 bg-primary" aria-hidden />
+    <div className="relative flex min-h-80 w-full min-w-0 flex-col justify-center gap-6 overflow-hidden bg-dots px-6 py-8 sm:min-h-[22rem] sm:px-10">
+      {/* 蓝紫两团光晕：让关键词的色调有落脚的地方，亮暗模式下都靠 --flow-* 变量取色 */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_88%_6%,color-mix(in_oklab,var(--flow-blue)_20%,transparent),transparent_52%),radial-gradient(ellipse_at_6%_104%,color-mix(in_oklab,var(--flow-violet)_14%,transparent),transparent_50%)]"
+      />
+      <div className="relative flex items-center gap-3 font-mono text-[10px] tracking-widest text-muted-foreground">
+        <span className="size-1.5 bg-(--flow-blue)" aria-hidden />
         <span>WORDS BECOME INTERFACES</span>
       </div>
-      <h3 className="m-0! flex flex-col items-start gap-3 text-3xl! leading-tight! font-semibold tracking-tight sm:text-5xl!">
+      <h3 className="relative m-0! flex flex-col items-start gap-3 text-3xl! leading-tight! font-semibold tracking-tight sm:text-5xl!">
         <span>把界面写成</span>
         <TextFlip
+          className="[--primary:var(--flow-blue)]"
           paused={paused}
           words={["组件", "积木", "设计系统"]}
           interval={2800}
@@ -29,14 +35,16 @@ export default function TextAnimateDemo() {
           组件、积木或设计系统
         </TextFlip>
       </h3>
-      <p className="max-w-sm text-sm leading-7 text-muted-foreground">
+      <p className="relative max-w-sm text-sm leading-7 text-muted-foreground">
         <TextReveal by="word">从一行文字开始，让每个想法都有形状。</TextReveal>
         <br />
-        <TextHighlight>少一点重复，多一点创造。</TextHighlight>
+        <TextHighlight tone="amber" className="text-foreground">
+          少一点重复，多一点创造。
+        </TextHighlight>
       </p>
-      <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] text-muted-foreground">
+      <div className="relative flex flex-wrap items-center gap-2 pr-10 font-mono text-[10px] text-muted-foreground">
         <span>DECODING →</span>
-        <TextScramble className="text-primary" duration={1800}>
+        <TextScramble className="text-(--flow-green)" duration={1800}>
           构建完成 / READY TO SHIP
         </TextScramble>
       </div>

@@ -3,7 +3,7 @@ import type { ReactNode } from "react"
 import { BentoCard, BentoFlowPreview } from "@/components/home/bento-card"
 import { profile } from "@/config/profile"
 import { entryTitleEn } from "@/lib/source"
-import IsometricMarkDemo from "@/registry/examples/isometric-mark-demo"
+import IsometricMarkShowcaseDemo from "@/registry/examples/isometric-mark-showcase-demo"
 import { GreetingCard } from "@/registry/ui/greeting/greeting"
 import { AnalogClock, LocalTime } from "@/registry/ui/local-time/local-time"
 import registry from "../../../registry.json"
@@ -68,11 +68,8 @@ function LocalTimePreview() {
 /** 本站标志挤出成等轴测线条 3D，悬停出高光。 */
 function IsometricMarkPreview() {
   return (
-    <div className="relative flex size-full items-center justify-center p-4">
-      <DotsBackdrop />
-      <div className="relative w-full max-w-64">
-        <IsometricMarkDemo />
-      </div>
+    <div className="relative size-full p-4">
+      <IsometricMarkShowcaseDemo />
     </div>
   )
 }

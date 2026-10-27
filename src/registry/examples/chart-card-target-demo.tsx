@@ -25,7 +25,7 @@ export default function ChartCardTargetDemo() {
       <ChartCardHeader className="items-center">
         <div className="flex flex-col gap-1">
           <ChartCardTitle>十月增长</ChartCardTitle>
-          <ChartCardDescription>
+          <ChartCardDescription className="max-sm:hidden">
             组件安装与博客阅读 · 距年度目标还差 440 人
           </ChartCardDescription>
         </div>
@@ -35,18 +35,20 @@ export default function ChartCardTargetDemo() {
         </ChartMetrics>
       </ChartCardHeader>
       <div className="grid lg:grid-cols-5">
-        <div className="flex flex-col items-center justify-center gap-3 border-b border-edge p-4 lg:col-span-2 lg:border-r lg:border-b-0">
+        <div className="flex flex-col items-center justify-center gap-3 border-b border-edge p-4 max-sm:flex-row max-sm:justify-between lg:col-span-2 lg:border-r lg:border-b-0">
           <ChartGauge
             value={78}
             tone="green"
             ticks={64}
             caption="年度目标"
-            className="size-44"
+            className="size-28 sm:size-44"
             label="年度订阅目标完成 78%"
           />
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground max-sm:flex-col max-sm:items-start">
             <StatBadge status="ok">进度达标</StatBadge>
-            <span className="tabular-nums">1,560 / 2,000 人</span>
+            <span className="whitespace-nowrap tabular-nums">
+              1,560 / 2,000 人
+            </span>
           </div>
         </div>
         <ChartCardContent className="lg:col-span-3">
@@ -60,7 +62,7 @@ export default function ChartCardTargetDemo() {
             ]}
             xTickFormatter={(value) => formatDay(value, "long")}
             labelFormatter={(value) => formatDay(value, "long")}
-            className="h-56"
+            className="h-44 sm:h-56"
             label="十月每日组件安装与博客阅读面积图"
           />
         </ChartCardContent>

@@ -127,7 +127,10 @@ export default function FlowDiagramShowcaseDemo({
       exit={EXIT}
       rest={REST}
       speed={speed}
-      className={cn("aspect-[360/230] w-full max-w-xl p-3", className)}
+      className={cn(
+        "aspect-[360/230] w-full max-w-xl p-3 max-sm:-mx-3 max-sm:w-[calc(100%+1.5rem)] max-sm:max-w-none max-sm:p-0",
+        className,
+      )}
     >
       {/* 请求：三个入口错开出发，进网关前汇成一路 */}
       {REQUESTS.map((route, i) => (
