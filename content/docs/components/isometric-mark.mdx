@@ -2,7 +2,7 @@
 title: 等轴测标志
 titleEn: Isometric Mark
 group: graphics
-description: 把任意平面多边形挤出成等轴测线条 3D，带斜纹顶面、跟随鼠标的线条高光与点击按下效果。
+description: 把任意平面多边形挤出成等轴测线条 3D：多种顶面材质与地面、跟随鼠标的线条高光、点击按下与音效。
 ---
 
 <ComponentPreview name="isometric-mark-demo" />
@@ -47,21 +47,21 @@ export function BrandMark() {
 
 宽度由 `className` 控制，高度按 viewBox 自动适配。线宽、斜纹间距、虚线都跟着图形尺寸等比缩放，所以放大缩小时观感一致。
 
-### 朝向
+### 朝向与视角
 
-`rotation` 在投影前把图形绕中心旋转，用来选择它平躺在地上的朝向。建议只用 `0`、`90`、`180`、`-90`：这几个角度下图形的边始终沿等轴测的两条斜轴，看起来是一块平放的板；其他角度（例如 `-45`）会让顶面看起来像一堵立着的墙。
+`rotation` 在投影前把图形绕中心旋转，决定它平躺在地上的朝向；`elevation` 是视线的俯仰角，默认约 35.26°（标准等轴测），调大更接近俯视，调小更接近平视。
 
-`rotation={-90}` 时原图的横向沿右上方延伸、竖向沿右下方延伸，像把标志平铺在地上正着读，本页的示例都用这个朝向：
+取 `0`、`90`、`180`、`-90` 时图形的横竖边沿等轴测的两条斜轴，像一块平放的板；斜向的图形可以取任意角度，让它的长边顺着某条斜轴更好看。页首的本站标志用的是 `rotation={-65}`：
 
 ```tsx
-<IsometricMark shapes={SHAPES} rotation={-90} label="易" guides />
+<IsometricMark shapes={SHAPES} rotation={-65} label="易" guides="edges" />
 ```
 
-想直观比较不同朝向，打开下方任一示例的「调整」面板拖动朝向即可。
+想直观比较不同朝向和俯仰，打开下方任一示例的「调整」面板拖动即可。
 
 ## 示例
 
-每个示例的标题栏右侧都有「调整」开关：打开后可以拖动朝向、俯仰、挤出高度并切换辅助线，实时看效果，下方给出对应的属性写法。调整时画框固定，容器大小与图形比例都不变。
+每个示例的标题栏右侧都有「调整」开关：打开后可以实时调整朝向、俯仰、挤出高度、顶面材质、地面、辅助线与音色，并开关按下、高光与音效；未改动的项显示示例自己的取值。调整时画框固定，容器大小不变。
 
 ### 多个形状与色调
 
@@ -77,29 +77,23 @@ export function BrandMark() {
 
 ### 静态图形
 
-任何多边形都可以，最简单的一个三角形也行。下面是 Vercel 的三角标：素面材质、包围盒辅助线（`guides`），并关掉 `highlight`（需要完全静态时再关掉 `interactive`）；地面用站点的点阵底纹 `floor="dots"`。
-
-`guides` 默认（`true` 或 `"box"`）画包围盒四边的延长线，适合横平竖直的图形；斜向的图形用 `guides="edges"`，辅助线改为沿图形自己最长的两个边方向画外侧切线，`floor` 再在同一平面上铺一块对齐每条边的地面：`true` / `"grid"` 方格网、`"lines"` 条纹、`"dots"` 站点的点阵底纹（8px 间距、1px 方点）、`"checker"` 棋盘格。
+任何多边形都可以，最简单的一个三角形也行。下面是 Vercel 的三角标：素面材质（`material="plain"`）、包围盒辅助线（`guides`），关掉了 `highlight`；需要完全静态的插图时再关掉 `interactive`。地面用站点的点阵底纹 `floor="dots"`。
 
 <ComponentPreview name="isometric-mark-vercel-demo" />
+
+### 材质、地面与辅助线
+
+- `material` 是顶面材质：`hatch` 斜纹「/」（默认）、`hatch-reverse` 斜纹「\」、`cross` 网纹、`dots` 点阵、`lines` 横纹、`plain` 素面。斜纹与图形长边接近平行时会有视差感，换一个方向或用横纹即可。
+- `guides` 是背景虚线：`true` / `"box"` 画包围盒四边的延长线，适合横平竖直的图形；`"edges"` 沿图形自己最长的两个边方向画外侧切线，适合斜向的图形。
+- `floor` 是地面，和辅助线同方向、同一平面，并对齐图形的每条边：`true` / `"grid"` 方格网、`"lines"` 条纹、`"checker"` 棋盘格，`"dots"` 则是站点的点阵底纹（8px 间距、1px 方点，铺在屏幕平面上）。
 
 ### 挤出高度与按下
 
 `depth` 是挤出高度，单位与形状坐标相同，默认取图形平面尺寸的 12%。按住指针时图形被压到 `pressedDepth`（默认是 `depth` 的一半，设为 `0` 会被完全压平），松开或移出后弹回；线条高光跟随鼠标在窗口中的位置。触屏与“减少动态效果”下高光自动关闭，按下状态瞬间切换。这些都可以在示例的调整面板里直接试。
 
-## 几何说明
-
-组件不依赖手工描的路径，所有面都由平面多边形自动算出：
-
-- **投影**：`X = (x - y)·cos30°`，`Y = (x + y)·sin30° - z`。观察者位于 `(+x, +y, +z)` 一侧，viewBox 按投影后的包围盒自动计算并留少量边距。
-- **面的组成**：顶面在 `z = depth`，外轮廓与孔一起用 `evenodd` 填充；每个环的每条边挤出一面侧墙，孔被挤成通孔。
-- **背面剔除**：外轮廓取正面积、孔取负面积，所有环的“实体外侧”法线统一为 `(ey, -ex)`，只保留朝向观察者的墙。与观察方向垂直的墙在屏幕上面积为零，不绘制。
-- **消隐**：画家算法。墙在屏幕上只占据 `x - y` 方向上的一段范围，范围重叠的两面墙比较重叠区间中点的 `x + y`，得到“谁挡住谁”，再做拓扑排序，凹多边形也能排对。顺序只取决于平面形状，按下动画时不用重排。顶面最后绘制。
-- **按下动画**：一个弹簧驱动的高度值同时重算所有侧墙路径（只是 O(边数) 的字符串重建），顶面路径不变，整体用 `y` 偏移下移，斜纹因此始终贴着轮廓。
-
 ### 点击音效
 
-`sound` 打开按下与松开时的合成音效（Web Audio 现场生成，不需要音频文件），默认关闭，本页所有示例都已打开。静音偏好存在浏览器本地，页面上所有标志共用：`useIsometricMarkMuted()` 返回 `[muted, setMuted]`，可以用它做一个静音按钮，页首的示例右上角就是这样。`soundTone` 调音色：`0` 偏闷，是低沉的「咚」；`1` 偏脆，是清脆的「咔」，默认 `0.6`。
+`sound` 打开按下与松开时的合成音效（Web Audio 现场生成，不需要音频文件），默认关闭，本页所有示例都已打开。浏览器要求先有用户操作才能出声，所以音频在第一次按下时才初始化。静音偏好存在浏览器本地，页面上所有标志共用：`useIsometricMarkMuted()` 返回 `[muted, setMuted]`，可以用它做一个静音按钮，页首的示例右上角就是这样。`soundTone` 调音色：`0` 偏闷，是低沉的「咚」；`1` 偏脆，是清脆的「咔」，默认 `0.6`。
 
 ```tsx
 const [muted, setMuted] = useIsometricMarkMuted()
@@ -108,6 +102,17 @@ const [muted, setMuted] = useIsometricMarkMuted()
 <button onClick={() => setMuted(!muted)}>{muted ? "打开音效" : "静音"}</button>
 ```
 
+## 几何说明
+
+组件不依赖手工描的路径，所有面都由平面多边形自动算出：
+
+- **投影**：`X = (x - y)·cos30°`，`Y = (x + y)·k₁ - z·k₂`，其中 `k₁ = sin(e)·√2·cos30°`、`k₂ = cos(e)·√2·cos30°`，`e` 是 `elevation`；默认 35.26° 时 `k₁ = 0.5`、`k₂ = 1`，即标准等轴测。观察者位于 `(+x, +y, +z)` 一侧，viewBox 按投影后的包围盒自动计算并留少量边距。
+- **面的组成**：顶面在 `z = depth`，外轮廓与孔一起用 `evenodd` 填充；每个环的每条边挤出一面侧墙，孔被挤成通孔。
+- **背面剔除**：外轮廓取正面积、孔取负面积，所有环的“实体外侧”法线统一为 `(ey, -ex)`，只保留朝向观察者的墙。与观察方向垂直的墙在屏幕上面积为零，不绘制。
+- **消隐**：画家算法。墙在屏幕上只占据 `x - y` 方向上的一段范围，范围重叠的两面墙比较重叠区间中点的 `x + y`，得到“谁挡住谁”，再做拓扑排序，凹多边形也能排对。顺序只取决于平面形状，按下动画时不用重排。顶面最后绘制。
+- **按下动画**：一个弹簧驱动的高度值同时重算所有侧墙路径（只是 O(边数) 的字符串重建），顶面路径不变，整体用 `y` 偏移下移，材质纹理因此始终贴着轮廓。
+- **地面**：辅助线与地面网格取同样的两个方向。每个方向上，若所有边到外侧切线的距离有足够大的公约数，就按它等距铺线；否则每条边各画一条线，外侧按平均间距延伸。
+
 ## API
 
 ### IsometricMark
@@ -115,6 +120,17 @@ const [muted, setMuted] = useIsometricMarkMuted()
 <PropsTable name="isometric-mark" component="IsometricMark" />
 
 其余属性透传到根 `svg`，`className` 与内置样式合并。
+
+### useIsometricMarkMuted
+
+```ts
+function useIsometricMarkMuted(): readonly [
+  muted: boolean,
+  setMuted: (muted: boolean) => void,
+]
+```
+
+读写点击音效的静音偏好。偏好存在 `localStorage`，同一页面的所有标志共用，并在标签页之间同步；服务端与水合阶段按未静音渲染。
 
 ### 类型
 
@@ -126,36 +142,44 @@ type IsometricShape = {
   outer: readonly IsometricPoint[]
   /** 孔，会被挤成通孔 */
   holes?: readonly (readonly IsometricPoint[])[]
-  /** 这块形状的色调（任意 CSS 颜色，如 var(--flow-blue)）：顶面淡淡着色、线条取同色 */
+  /** 这块形状的色调（任意 CSS 颜色，如 var(--primary)）：顶面与侧墙淡淡着色、线条取同色 */
   tone?: string
 }
+
+type IsometricMaterial =
+  "hatch" | "hatch-reverse" | "cross" | "dots" | "lines" | "plain"
+
+type IsometricFloor = "grid" | "lines" | "dots" | "checker"
 ```
 
 页首的本站标志就用了 `tone`：上三道细斜杠用主题色由浅到深，下三道粗斜杠保持单色线稿。
 
 ### data-slot
 
-| 元素 | `data-slot` |
-| --- | --- |
-| 根元素 | `isometric-mark` |
-| 单面侧墙 | `isometric-mark-wall` |
-| 顶面 | `isometric-mark-top` |
-| 背景辅助线 | `isometric-mark-guides` |
+| 元素       | `data-slot`                                       |
+| ---------- | ------------------------------------------------- |
+| 根元素     | `isometric-mark`                                  |
+| 单面侧墙   | `isometric-mark-wall`                             |
+| 顶面       | `isometric-mark-top`                              |
+| 背景辅助线 | `isometric-mark-guides`                           |
+| 地面       | `isometric-mark-floor`（`data-floor` 为具体材质） |
 
 ## 可访问性
 
 - 不传 `label` 时根元素是 `aria-hidden`，读屏完全忽略，适合作为纯装饰；传入 `label` 后变成 `role="img"` 并带上 `aria-label`。
 - 按下效果只响应指针，没有键盘等价操作，不承载任何功能。需要可点击时请把它包进 `a` 或 `button`，由外层提供语义与键盘支持。
 - 高光在触屏设备（`(hover: none)`）与 `prefers-reduced-motion` 下自动关闭；减少动态效果时按下状态瞬间切换，不播放弹簧。
-- 所有颜色由 `--foreground` 与 `--background` 混合得到，亮暗模式与颜色主题下都有足够的线条对比。
+- 音效默认关闭；打开后请同时提供静音入口（`useIsometricMarkMuted`），音效只是点缀，不承载信息。
+- 颜色由 `--foreground`、`--background` 与形状的 `tone` 混合得到；暗色模式下顶面、线条、纹理与着色比例单独加重，亮暗模式与颜色主题下都有足够的对比。
 
 ## 注意事项
 
 - 高光位置取鼠标在**窗口**中的相对位置并映射到图形范围，因此鼠标不在图形上时高光也会随之移动；图形不在视口内（含 80px 缓冲）时不监听鼠标。
-- 各面都用 `--background` 填充来遮挡后面的线，所以图形背后若有图案，会被侧墙与顶面盖住；背景辅助线画在最底层。
+- 顶面与侧墙是实心填充（`--top`、`--wall`，亮色下等于背景色），用来遮挡后面的线，所以图形背后若有图案会被盖住；地面与背景辅助线画在最底层。
 - `depth` 默认取图形平面尺寸的 12%；`pressedDepth` 默认是 `depth` 的一半，设为 `0` 则会被完全压平。
-- 颜色变量 `--stroke`、`--pattern`、`--guide` 定义在根元素的 class 里，可以用 `className` 覆盖，例如 `[--stroke:var(--primary)]`。
-- 几何计算放在同目录的 `geometry.ts`，是不依赖 React 的纯函数。
+- 颜色变量 `--stroke`、`--pattern`、`--guide`、`--top`、`--wall` 以及着色比例 `--tone-top`、`--tone-wall`、`--tone-line` 定义在根元素的 class 里（亮暗各一套），可以用 `className` 覆盖，例如 `[--stroke:var(--primary)]`。
+- `floor="dots"` 按图形的实际渲染尺寸换算 8px，尺寸变化时自动重算。
+- 几何计算放在同目录的 `geometry.ts`，是不依赖 React 的纯函数；音效在 `sound.ts`。
 
 ## 源码
 

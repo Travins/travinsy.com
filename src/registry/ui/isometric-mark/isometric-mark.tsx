@@ -38,14 +38,18 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
   shapes: readonly IsometricShape[]
   /**
    * 投影前绕图形中心旋转的角度（度），用来选择图形平躺在地上的朝向。
-   * 取 90 的整数倍时图形的横竖边始终沿等轴测斜轴，看起来是一块平放的板；
-   * 传 -90 时原图的横向沿右上方延伸、竖向沿右下方延伸，最接近“正着读”。
+   * 取 90 的整数倍时横竖边沿等轴测斜轴，像一块平放的板；斜向的图形可取任意角度，让长边顺着斜轴
    * @default 0
    */
   rotation?: number
-  /** 挤出高度，默认取图形平面尺寸的 12% */
+  /**
+   * 视线的俯仰角（度，5–85）。调大更接近俯视（地面更方、厚度更薄），调小更接近平视（地面更扁、厚度更高）
+   * @default 35.26（标准等轴测）
+   */
+  elevation?: number
+  /** 挤出高度，单位与形状坐标相同；默认取图形平面尺寸的 12% */
   depth?: number
-  /** 按下后的挤出高度，默认是 `depth` 的一半 */
+  /** 按下后的挤出高度，默认是 `depth` 的一半；`0` 为完全压平 */
   pressedDepth?: number
   /**
    * 点击 / 触摸时是否有按下效果
@@ -65,13 +69,13 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
   guides?: boolean | "box" | "edges"
   /**
    * 顶面材质：`hatch` 斜纹「/」、`hatch-reverse` 斜纹「\」、`cross` 交叉网纹、`dots` 点阵、`lines` 横纹、`plain` 素面。
-   * 斜纹与图形的长边接近平行时会产生视差感，换成另一个方向或点阵即可
+   * 斜纹与图形的长边接近平行时会产生视差感，换成另一个方向或横纹即可
    * @default "hatch"
    */
   material?: IsometricMaterial
   /**
    * 图形下方的地面，与辅助线同方向、同平面、对齐每条边，向四周渐隐。
-   * `true` / `"grid"` 方格网、`"lines"` 只有一个方向的条纹、`"dots"` 站点的点阵底纹、`"checker"` 棋盘格
+   * `true` / `"grid"` 方格网、`"lines"` 只有一个方向的条纹、`"dots"` 站点的点阵底纹（屏幕平面，8px 间距）、`"checker"` 棋盘格
    * @default false
    */
   floor?: boolean | IsometricFloor
@@ -85,11 +89,6 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    * @default 0.6
    */
   soundTone?: number
-  /**
-   * 视线的俯仰角（度，5–85）。默认约 35.26° 即标准等轴测；
-   * 调大更接近俯视（地面更方、厚度更薄），调小更接近平视（地面更扁、厚度更高）
-   */
-  elevation?: number
   /** 可访问名称；不传时整个图形对读屏隐藏 */
   label?: string
 }
