@@ -96,7 +96,7 @@ export default function IsometricMarkDemo() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-[62%] left-1/2 -z-10 h-10 w-[34%] -translate-x-1/2 -rotate-[22deg] rounded-[50%] bg-foreground/10 blur-2xl"
+        className="pointer-events-none absolute top-[62%] left-1/2 -z-10 h-10 w-[34%] -translate-x-1/2 -rotate-[22deg] rounded-[50%] bg-foreground/10 blur-2xl dark:hidden"
       />
       <div className="relative w-full max-w-[17rem] sm:max-w-80">
         <IsometricMark

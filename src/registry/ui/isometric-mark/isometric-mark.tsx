@@ -103,15 +103,15 @@ function IsometricMarkWall({
       style={
         wall.tone
           ? ({
-              "--wall-fill": `color-mix(in oklab, ${wall.tone} 9%, var(--background))`,
-              "--wall-stroke": `color-mix(in oklab, ${wall.tone} 45%, var(--background))`,
+              "--wall-fill": `color-mix(in oklab, ${wall.tone} var(--tone-wall), var(--wall))`,
+              "--wall-stroke": `color-mix(in oklab, ${wall.tone} var(--tone-line), var(--background))`,
             } as React.CSSProperties)
           : undefined
       }
     >
       <motion.path
         d={d}
-        fill="var(--wall-fill, var(--background))"
+        fill="var(--wall-fill, var(--wall))"
         stroke="var(--wall-stroke, var(--stroke))"
       />
       <motion.path d={d} fill="none" stroke={`url(#${gradientId})`} />
@@ -333,7 +333,11 @@ function IsometricMarkView({
       aria-label={label}
       aria-hidden={label ? undefined : true}
       className={cn(
-        "block h-auto w-full touch-manipulation overflow-visible select-none [--guide:color-mix(in_oklab,var(--foreground)_14%,transparent)] [--pattern:color-mix(in_oklab,var(--foreground)_12%,var(--background))] [--stroke:color-mix(in_oklab,var(--foreground)_16%,var(--background))]",
+        "block h-auto w-full touch-manipulation overflow-visible select-none",
+        // 颜色变量：顶面、侧墙、纹理、线条、着色比例。暗色下背景接近黑色，按同样比例混色几乎看不见，
+        // 所以单独提亮：顶面比背景亮一档、侧墙再暗一点形成体积，纹理与线条加重，着色比例加大
+        "[--guide:color-mix(in_oklab,var(--foreground)_14%,transparent)] [--pattern:color-mix(in_oklab,var(--foreground)_12%,var(--background))] [--stroke:color-mix(in_oklab,var(--foreground)_16%,var(--background))] [--tone-line:60%] [--tone-top:16%] [--tone-wall:9%] [--top:var(--background)] [--wall:var(--background)]",
+        "dark:[--guide:color-mix(in_oklab,var(--foreground)_22%,transparent)] dark:[--pattern:color-mix(in_oklab,var(--foreground)_24%,var(--background))] dark:[--stroke:color-mix(in_oklab,var(--foreground)_38%,var(--background))] dark:[--tone-line:80%] dark:[--tone-top:30%] dark:[--tone-wall:18%] dark:[--top:color-mix(in_oklab,var(--foreground)_9%,var(--background))] dark:[--wall:color-mix(in_oklab,var(--foreground)_4%,var(--background))]",
         className,
       )}
       onPointerDown={(event) => {
@@ -459,8 +463,8 @@ function IsometricMarkView({
                   d={top.d}
                   fill={
                     top.tone
-                      ? `color-mix(in oklab, ${top.tone} 16%, var(--background))`
-                      : "var(--background)"
+                      ? `color-mix(in oklab, ${top.tone} var(--tone-top), var(--top))`
+                      : "var(--top)"
                   }
                 />
                 <path d={top.d} fill={`url(#${patternId})`} />
@@ -468,7 +472,7 @@ function IsometricMarkView({
                   d={top.d}
                   stroke={
                     top.tone
-                      ? `color-mix(in oklab, ${top.tone} 60%, var(--background))`
+                      ? `color-mix(in oklab, ${top.tone} var(--tone-line), var(--background))`
                       : "var(--stroke)"
                   }
                 />
@@ -476,7 +480,7 @@ function IsometricMarkView({
             ))
           ) : (
             <>
-              <path d={model.top} className="fill-background" />
+              <path d={model.top} fill="var(--top)" />
               <path d={model.top} fill={`url(#${patternId})`} />
               <path d={model.top} stroke="var(--stroke)" />
             </>

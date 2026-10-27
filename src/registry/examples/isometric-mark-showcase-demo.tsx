@@ -70,7 +70,7 @@ export default function IsometricMarkShowcaseDemo() {
       {/* 接触阴影：标志落在地面上的一团柔影 */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-[66%] left-1/2 -z-10 h-10 w-[46%] -translate-x-1/2 -rotate-[22deg] rounded-[50%] bg-foreground/10 blur-2xl"
+        className="pointer-events-none absolute top-[66%] left-1/2 -z-10 h-10 w-[46%] -translate-x-1/2 -rotate-[22deg] rounded-[50%] bg-foreground/10 blur-2xl dark:hidden"
       />
       <div className="relative w-[min(66%,16rem)]">
         <IsometricMark
