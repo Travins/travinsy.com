@@ -53,7 +53,7 @@ const POOL = [
 const SKILLS: ShuffleGridItem[] = POOL.map(({ Icon, tone }, index) => ({
   id: `skill-${index}`,
   tone,
-  content: <Icon strokeWidth={1.6} className="size-6" />,
+  content: <Icon strokeWidth={1.6} className="size-4" />,
 }))
 
 // 技术栈墙：十六枚图标轮流上墙，每一步只动一两个格子，同时有几枚按类别色亮起
@@ -64,10 +64,10 @@ export default function ShuffleGridDemo() {
         aria-hidden="true"
         className="pointer-events-none absolute -inset-4 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_72%)] opacity-70"
       />
-      <div className="relative flex w-full max-w-sm flex-col gap-4 rounded-lg border border-edge bg-card p-4 shadow-xs">
+      <div className="relative flex w-full max-w-[17rem] flex-col gap-3 rounded-lg border border-edge bg-card p-3.5 shadow-xs">
         <div className="flex items-baseline justify-between gap-3">
-          <p className="text-sm font-medium">技术栈</p>
-          <p className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
+          <p className="text-xs font-medium">技术栈</p>
+          <p className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
             <span
               aria-hidden="true"
               className="size-1.5 rounded-full bg-(--flow-green) motion-safe:animate-pulse"
@@ -84,12 +84,12 @@ export default function ShuffleGridDemo() {
           litCount={5}
           interval={1100}
         />
-        <ul className="flex flex-wrap gap-x-3.5 gap-y-1.5 text-xs text-muted-foreground">
+        <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
           {LEGEND.map(({ tone, label }) => (
             <li key={tone} className="flex items-center gap-1.5">
               <span
                 aria-hidden="true"
-                className="size-2 rounded-full"
+                className="size-1.5 rounded-full"
                 style={{ backgroundColor: `var(--flow-${tone})` }}
               />
               {label}
