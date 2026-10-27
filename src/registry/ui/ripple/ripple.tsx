@@ -206,8 +206,8 @@ function RippleMarker({
         className,
       )}
       style={{
-        left: `${50 + Math.sin(radians) * distance}%`,
-        top: `${50 - Math.cos(radians) * distance}%`,
+        left: `${(50 + Math.sin(radians) * distance).toFixed(3)}%`,
+        top: `${(50 - Math.cos(radians) * distance).toFixed(3)}%`,
         ...style,
       }}
     >

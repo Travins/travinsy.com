@@ -193,11 +193,13 @@ function OrbitItem({
   if (!ring) throw new Error("OrbitItem 必须放在 OrbitRing 内")
   const x = useTransform(
     ring.angle,
-    (value) => `${Math.cos(((value + offset) * Math.PI) / 180) * 50}%`,
+    (value) =>
+      `${(Math.cos(((value + offset) * Math.PI) / 180) * 50).toFixed(3)}%`,
   )
   const y = useTransform(
     ring.angle,
-    (value) => `${Math.sin(((value + offset) * Math.PI) / 180) * 50}%`,
+    (value) =>
+      `${(Math.sin(((value + offset) * Math.PI) / 180) * 50).toFixed(3)}%`,
   )
   return (
     <motion.div

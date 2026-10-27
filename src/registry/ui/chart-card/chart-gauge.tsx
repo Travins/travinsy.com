@@ -55,6 +55,11 @@ const TICK = 12
  * 刻度式环形仪表：一圈细刻度，按值依次点亮。
  * 点亮的刻度从起点向当前值逐格淡入；服务端直接输出最终状态，淡入是纯 CSS，没有脚本也完整显示；系统开启「减少动态效果」时不播放。
  */
+/** 三角函数在 Node 与浏览器里末位小数可能不同，取 3 位小数让服务端与客户端输出一致，避免水合告警。 */
+function round(value: number) {
+  return Math.round(value * 1000) / 1000
+}
+
 function ChartGauge({
   className,
   value,
@@ -88,10 +93,10 @@ function ChartGauge({
       index,
       head,
       on: index < lit,
-      x1: CENTER + (OUTER - length) * sin,
-      y1: CENTER - (OUTER - length) * cos,
-      x2: CENTER + OUTER * sin,
-      y2: CENTER - OUTER * cos,
+      x1: round(CENTER + (OUTER - length) * sin),
+      y1: round(CENTER - (OUTER - length) * cos),
+      x2: round(CENTER + OUTER * sin),
+      y2: round(CENTER - OUTER * cos),
       opacity: head || !fade || lit < 2 ? 1 : 0.3 + 0.7 * (index / (lit - 1)),
     }
   })
