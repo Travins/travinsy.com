@@ -126,6 +126,10 @@ export function ComponentGallery() {
                     </article>
                   )
                 })}
+                {/* 一行只有一个组件时补一个斜纹空格，保留中间的分栏线，右半边不空着 */}
+                {row.length === 1 ? (
+                  <div aria-hidden="true" className="hidden bg-hatch sm:block" />
+                ) : null}
               </GridColumns>
             </GridSection>
           ))}
