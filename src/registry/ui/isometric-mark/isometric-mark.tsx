@@ -61,6 +61,12 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    */
   guides?: boolean | "box" | "edges"
   /**
+   * 顶面材质：`hatch` 斜纹「/」、`hatch-reverse` 斜纹「\」、`cross` 交叉网纹、`dots` 点阵、`lines` 横纹、`plain` 素面。
+   * 斜纹与图形的长边接近平行时会产生视差感，换成另一个方向或点阵即可
+   * @default "hatch"
+   */
+  material?: IsometricMaterial
+  /**
    * 视线的俯仰角（度，5–85）。默认约 35.26° 即标准等轴测；
    * 调大更接近俯视（地面更方、厚度更薄），调小更接近平视（地面更扁、厚度更高）
    */
@@ -93,7 +99,10 @@ function IsometricMarkWall({
 }
 
 type IsometricMarkTuning = Partial<
-  Pick<IsometricMarkProps, "rotation" | "depth" | "elevation" | "guides">
+  Pick<
+    IsometricMarkProps,
+    "rotation" | "depth" | "elevation" | "guides" | "material"
+  >
 > & {
   /** 固定画框：调整时外框比例不变，图形缩放适应 */
   stableFrame?: boolean
@@ -104,6 +113,27 @@ type IsometricMarkTuning = Partial<
  * 用于调试面板一类的场景；不包这一层时组件行为不变。
  */
 const IsometricMarkTuningContext = React.createContext<IsometricMarkTuning>({})
+
+type IsometricMaterial =
+  "hatch" | "hatch-reverse" | "cross" | "dots" | "lines" | "plain"
+
+/** 各材质在一个 size×size 平铺单元里的路径（u 为一个像素对应的长度） */
+function materialPath(material: IsometricMaterial, size: number, u: number) {
+  const slash = `M${-u} ${u}l${u * 2} ${-u * 2}M0 ${size}l${size} ${-size}M${size - u} ${size + u}l${u * 2} ${-u * 2}`
+  const back = `M${-u} ${size - u}l${u * 2} ${u * 2}M0 0l${size} ${size}M${size - u} ${-u}l${u * 2} ${u * 2}`
+  switch (material) {
+    case "hatch":
+      return slash
+    case "hatch-reverse":
+      return back
+    case "cross":
+      return slash + back
+    case "lines":
+      return `M0 ${size / 2}H${size}`
+    default:
+      return ""
+  }
+}
 
 /** 把平面多边形挤出成等轴测线条 3D，带斜纹顶面、跟随鼠标的高光与按下效果。 */
 function IsometricMark(allProps: IsometricMarkProps) {
@@ -122,6 +152,7 @@ function IsometricMarkView({
   interactive = true,
   highlight = true,
   guides = false,
+  material = "hatch",
   elevation,
   label,
   className,
@@ -256,11 +287,20 @@ function IsometricMarkView({
           height={hatch}
           patternUnits="userSpaceOnUse"
         >
-          <path
-            d={`M${-unit} ${unit}l${unit * 2} ${-unit * 2}M0 ${hatch}l${hatch} ${-hatch}M${hatch - unit} ${hatch + unit}l${unit * 2} ${-unit * 2}`}
-            stroke="var(--pattern)"
-            strokeWidth={unit}
-          />
+          {material === "dots" ? (
+            <circle
+              cx={hatch / 2}
+              cy={hatch / 2}
+              r={unit * 1.1}
+              fill="var(--pattern)"
+            />
+          ) : (
+            <path
+              d={materialPath(material, hatch, unit)}
+              stroke="var(--pattern)"
+              strokeWidth={unit}
+            />
+          )}
         </pattern>
 
         <motion.radialGradient
@@ -316,6 +356,7 @@ export { IsometricMark, IsometricMarkTuningContext }
 export type {
   IsometricMarkProps,
   IsometricMarkTuning,
+  IsometricMaterial,
   IsometricPoint,
   IsometricShape,
 }

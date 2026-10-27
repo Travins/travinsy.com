@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import {
   IsometricMarkTuningContext,
   type IsometricMarkTuning,
+  type IsometricMaterial,
 } from "@/registry/ui/isometric-mark/isometric-mark"
 import { IconTip } from "./icon-tip"
 
@@ -22,7 +23,17 @@ type Values = {
   elevation?: number
   depth?: number
   guides?: "edges" | "box" | "off"
+  material?: IsometricMaterial
 }
+
+const MATERIALS: { value: IsometricMaterial; label: string }[] = [
+  { value: "hatch", label: "斜纹 /" },
+  { value: "hatch-reverse", label: "斜纹 \\" },
+  { value: "cross", label: "网纹" },
+  { value: "dots", label: "点阵" },
+  { value: "lines", label: "横纹" },
+  { value: "plain", label: "素面" },
+]
 
 const GUIDES = [
   { value: "edges", label: "沿边" },
@@ -39,6 +50,7 @@ export function useIsometricTuner() {
         rotation: values.rotation,
         elevation: values.elevation,
         depth: values.depth,
+        material: values.material,
         guides:
           values.guides === undefined
             ? undefined
@@ -133,6 +145,7 @@ export function IsometricTunerPanel({
     values.rotation !== undefined && `rotation={${values.rotation}}`,
     values.elevation !== undefined && `elevation={${values.elevation}}`,
     values.depth !== undefined && `depth={${values.depth}}`,
+    values.material !== undefined && `material="${values.material}"`,
     values.guides !== undefined &&
       (values.guides === "off"
         ? "guides={false}"
@@ -195,6 +208,22 @@ export function IsometricTunerPanel({
             <RotateCcw className="size-3.5" />
           </button>
         </IconTip>
+      </div>
+      <div className="flex flex-wrap items-center gap-1 sm:col-span-4">
+        <span className="mr-1 text-xs text-muted-foreground">
+          材质 material
+        </span>
+        {MATERIALS.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={values.material === option.value}
+            onClick={() => set({ material: option.value })}
+            className="h-7 rounded-md border border-edge px-2 font-mono text-xs text-muted-foreground aria-pressed:border-primary aria-pressed:bg-primary/10 aria-pressed:text-foreground"
+          >
+            {option.label}
+          </button>
+        ))}
       </div>
       <code className="font-mono text-[11px] text-muted-foreground sm:col-span-4">
         {code || "拖动滑块覆盖示例里的属性，未拖动的项保留示例原值"}
