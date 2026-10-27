@@ -46,20 +46,11 @@ const LOGO: readonly (readonly [number, number])[][] = [
   ],
 ]
 
-// 等轴测投影把平面坐标 (x, y) 映射成屏幕上的 ((x - y)·cos30°, (x + y)·sin30°)。
-// 反过来用：把标志在屏幕上应有的样子换算回平面坐标，挤出后顶面看起来就和 SVG 标志一模一样——
-// 1:2 的斜杠、竖直的切口都不变，厚度沿屏幕竖直方向往下露出。
-const COS30 = Math.cos(Math.PI / 6)
-const toPlan = ([x, y]: readonly [number, number]): [number, number] => [
-  (x / COS30 + 2 * y) / 2,
-  (2 * y - x / COS30) / 2,
-]
+// 不旋转：标志按 SVG 原样平放在地面上，细斜杠在右上、粗斜杠在左下，和平面标志的布局一致；
+// 挤出高度用默认值，立体感最足。辅助线用 "edges"，贴着斜杠的长边与齐平的切口
 const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar) => ({
-  outer: bar.map(toPlan),
+  outer: [...bar],
 }))
-
-// 厚度往屏幕下方露出，要小于斜杠之间 26 的缝，缝才不会被侧墙填满
-const DEPTH = 14
 
 // 标注标签：圆点取自 --flow-* 色调，说明这块几何由哪个部分生成
 function Callout({
@@ -101,12 +92,7 @@ export default function IsometricMarkDemo() {
         className="pointer-events-none absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_75%)] opacity-70"
       />
       <div className="relative w-full max-w-[17rem] sm:max-w-80">
-        <IsometricMark
-          shapes={MARK_SHAPES}
-          depth={DEPTH}
-          label="易"
-          guides="edges"
-        />
+        <IsometricMark shapes={MARK_SHAPES} label="易" guides="edges" />
       </div>
       <Callout tone="blue" className="top-[18%] left-5">
         TOP · 斜纹顶面
@@ -115,7 +101,7 @@ export default function IsometricMarkDemo() {
         WALL · 侧墙自动消隐
       </Callout>
       <Callout tone="amber" className="top-[24%] right-5">
-        depth = 14
+        depth · 默认 12%
       </Callout>
       <Callout tone="green" className="right-5 bottom-[26%]">
         SVG · 可用 className 缩放
