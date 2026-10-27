@@ -22,7 +22,7 @@ const thumbnailExamples: Record<string, string> = {
   "isometric-mark": "isometric-mark-showcase-demo",
   checklist: "checklist-demo",
   "shuffle-grid": "shuffle-grid-demo",
-  "glyph-field": "glyph-field-demo",
+  "glyph-field": "glyph-field-showcase-demo",
   "code-stack": "code-stack-demo",
   marquee: "marquee-demo",
   "text-animate": "text-animate-showcase-demo",

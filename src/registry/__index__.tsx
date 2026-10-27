@@ -44,6 +44,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "glyph-field-binary-demo": lazy(() => import("./examples/glyph-field-binary-demo")),
   "glyph-field-cjk-demo": lazy(() => import("./examples/glyph-field-cjk-demo")),
   "glyph-field-demo": lazy(() => import("./examples/glyph-field-demo")),
+  "glyph-field-showcase-demo": lazy(() => import("./examples/glyph-field-showcase-demo")),
   "glyph-field-stat-demo": lazy(() => import("./examples/glyph-field-stat-demo")),
   "greeting-card-demo": lazy(() => import("./examples/greeting-card-demo")),
   "greeting-demo": lazy(() => import("./examples/greeting-demo")),
