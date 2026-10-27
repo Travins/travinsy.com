@@ -1,76 +1,172 @@
-import { MiniChart } from "@/registry/ui/mini-chart/mini-chart"
+import {
+  MiniChart,
+  MiniDonut,
+  MiniRing,
+} from "@/registry/ui/mini-chart/mini-chart"
 import {
   StatCard,
-  StatHeader,
   StatLabel,
   StatTrend,
   StatValue,
 } from "@/registry/ui/stat-card/stat-card"
 
-const REQUESTS = [
-  120, 285, 190, 190, 315, 190, 220, 260, 240, 330, 310, 380,
-].map((value, index) => ({
-  label: `2026-02-${String(index + 1).padStart(2, "0")}`,
-  value,
-}))
-const VISITS = [280, 270, 350, 290, 400, 570, 500, 380, 480, 470, 420, 510].map(
-  (value, index) => ({
-    label: `2026-02-${String(index + 1).padStart(2, "0")}`,
-    value,
-  }),
-)
-const BUILD = [48, 52, 47, 51, 44, 46, 43, 45, 41, 42, 40, 38]
+const label = (index: number) => `10-${String(index + 1).padStart(2, "0")}`
+const series = (values: number[]) =>
+  values.map((value, index) => ({ label: label(index), value }))
+
+const REQUESTS = series([12, 19, 15, 26, 21, 31, 24, 29, 22, 34, 30, 41])
+const VISITS = series([28, 27, 35, 29, 40, 57, 50, 38, 48, 47, 42, 51])
+const BUILD = series([48, 52, 47, 51, 44, 46, 43, 45, 41, 42, 40, 38])
+const DEPLOYS = series([2, 2, 3, 3, 3, 5, 5, 4, 4, 6, 6, 7])
+
+// 六块指标像一条小仪表盘：用 1px 间隙露出底色做分格线（窄屏两列、宽屏三列），每块用不同图形与 `--flow-*` 色调
+const CELL = "gap-2 rounded-none border-0 p-3 sm:p-4"
 
 export default function MiniChartDemo() {
   return (
-    <div className="grid w-full max-w-3xl gap-3 sm:grid-cols-3">
-      <StatCard>
-        <StatHeader>
-          <StatLabel>API 调用量</StatLabel>
-        </StatHeader>
+    <div className="grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-lg border border-edge bg-edge sm:grid-cols-3">
+      <StatCard className={CELL}>
+        <StatLabel>API 调用量</StatLabel>
         <MiniChart
           type="bar"
-          track
           data={REQUESTS}
-          tickFormatter={(label) => label.slice(5)}
-          seriesLabel="调用量"
+          tone="blue"
+          highlight="last"
+          track
+          className="h-14"
+          tickFormatter={(text) => text.slice(3)}
+          seriesLabel="万次"
           label="近 12 天 API 调用量柱图"
         />
-        <div className="flex items-end justify-between">
-          <StatValue value={2_850_000} unit="次" size="sm" />
+        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
+          <StatValue
+            className="whitespace-nowrap"
+            value={41}
+            unit="万次"
+            size="sm"
+          />
           <StatTrend value={18.2} />
         </div>
       </StatCard>
-      <StatCard>
-        <StatHeader>
-          <StatLabel>博客访客</StatLabel>
-        </StatHeader>
+      <StatCard className={CELL}>
+        <StatLabel>博客访客</StatLabel>
         <MiniChart
           type="area"
           data={VISITS}
-          tone="blue"
+          tone="violet"
+          className="h-14"
           seriesLabel="访客"
           label="近 12 天博客访客面积图"
         />
-        <div className="flex items-end justify-between">
-          <StatValue value={4_810} unit="人" size="sm" />
+        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
+          <StatValue
+            className="whitespace-nowrap"
+            value={4810}
+            unit="人"
+            size="sm"
+          />
           <StatTrend value={-4.3} />
         </div>
       </StatCard>
-      <StatCard>
-        <StatHeader>
-          <StatLabel>构建时长</StatLabel>
-        </StatHeader>
+      <StatCard className={CELL}>
+        <StatLabel>构建时长</StatLabel>
         <MiniChart
           type="line"
           data={BUILD}
-          tone="violet"
+          tone="amber"
+          strokeWidth={2.5}
+          className="h-14"
           seriesLabel="秒"
           label="近 12 次构建时长折线图"
         />
-        <div className="flex items-end justify-between">
-          <StatValue value="38" unit="秒" size="sm" />
+        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
+          <StatValue
+            className="whitespace-nowrap"
+            value="38"
+            unit="秒"
+            size="sm"
+          />
           <StatTrend value={-20.8} invert />
+        </div>
+      </StatCard>
+      <StatCard className={CELL}>
+        <StatLabel>每日部署</StatLabel>
+        <MiniChart
+          type="step"
+          data={DEPLOYS}
+          tone="green"
+          strokeWidth={2.5}
+          className="h-14"
+          seriesLabel="次"
+          label="近 12 天部署次数阶梯线"
+        />
+        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
+          <StatValue
+            className="whitespace-nowrap"
+            value="7"
+            unit="次"
+            size="sm"
+          />
+          <StatTrend value={16.7} />
+        </div>
+      </StatCard>
+      <StatCard className={CELL}>
+        <StatLabel>缓存命中率</StatLabel>
+        <div className="flex h-14 items-center">
+          <MiniRing
+            value={86}
+            arc={270}
+            size={56}
+            thickness={12}
+            tone="cyan"
+            label="缓存命中率 86%"
+          >
+            <span className="text-xs font-semibold">86%</span>
+          </MiniRing>
+          <p className="ml-3 text-xs leading-5 text-muted-foreground max-sm:hidden">
+            命中 1.2 万
+            <br />
+            回源 1,950
+          </p>
+        </div>
+        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
+          <StatValue
+            className="whitespace-nowrap"
+            value="86"
+            unit="%"
+            size="sm"
+          />
+          <StatTrend value={3.4} />
+        </div>
+      </StatCard>
+      <StatCard className={CELL}>
+        <StatLabel>流量来源</StatLabel>
+        <div className="flex h-14 items-center">
+          <MiniDonut
+            size={56}
+            thickness={34}
+            segments={[
+              { label: "搜索引擎", value: 148, tone: "blue" },
+              { label: "直接访问", value: 93, tone: "violet" },
+              { label: "社交媒体", value: 64, tone: "amber" },
+              { label: "外链", value: 37, tone: "rose" },
+            ]}
+            label="流量来源占比"
+          />
+          <p className="ml-3 text-xs leading-5 text-muted-foreground max-sm:hidden">
+            搜索 43%
+            <br />
+            直接 27%
+          </p>
+        </div>
+        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
+          <StatValue
+            className="whitespace-nowrap"
+            value={34200}
+            unit="次"
+            size="sm"
+          />
+          <StatTrend value={9.6} />
         </div>
       </StatCard>
     </div>

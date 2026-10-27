@@ -5,69 +5,64 @@ import {
   ChartCardHeader,
   ChartCardTitle,
   ChartGauge,
+  ChartMetric,
+  ChartMetrics,
   ChartSeries,
 } from "@/registry/ui/chart-card/chart-card"
+import { StatBadge } from "@/registry/ui/stat-card/stat-card"
+import { formatDay } from "@/registry/lib/data-display"
 
-// 正值是今年，负值是去年同期，用 diverging 堆叠让它们分别向上、向下
-const DATA = [
-  { month: "1月", year2026: 21, year2025: -13 },
-  { month: "2月", year2026: 10, year2025: -16 },
-  { month: "3月", year2026: 13, year2025: -14 },
-  { month: "4月", year2026: 12, year2025: -10 },
-  { month: "5月", year2026: 20, year2025: -17 },
-  { month: "6月", year2026: 12, year2025: -13 },
-  { month: "7月", year2026: 15, year2025: -12 },
-]
+// 固定公式生成的演示数据：每次构建结果一致
+const DATA = Array.from({ length: 21 }, (_, index) => ({
+  day: `2026-10-${String(index + 1).padStart(2, "0")}`,
+  installs: Math.round(420 + index * 24 + 90 * Math.sin(index * 0.7)),
+  reads: Math.round(300 + index * 14 + 120 * Math.cos(index * 0.5 + 1)),
+}))
 
 export default function ChartCardTargetDemo() {
   return (
-    <ChartCard className="w-full max-w-3xl lg:grid lg:grid-cols-5">
-      <div className="flex flex-col border-b border-edge lg:col-span-3 lg:border-r lg:border-b-0">
-        <ChartCardHeader className="border-b-0 pb-0">
-          <div className="flex flex-col gap-1">
-            <ChartCardTitle>每月新增订阅</ChartCardTitle>
-            <ChartCardDescription>
-              今年与去年同期对比（人）
-            </ChartCardDescription>
-          </div>
-        </ChartCardHeader>
-        <ChartCardContent className="flex-1">
-          <ChartSeries
-            type="bar"
-            stacked="diverging"
-            data={DATA}
-            xKey="month"
-            series={[
-              { key: "year2026", label: "2026 年", tone: "primary" },
-              { key: "year2025", label: "2025 年", tone: "chart-3" },
-            ]}
-            yDomain={[-20, 30]}
-            yTicks={[-20, -10, 0, 10, 20, 30]}
-            barSize={14}
-            className="h-60"
-            label="今年与去年同期每月新增订阅对比"
-          />
-        </ChartCardContent>
-      </div>
-      <div className="flex flex-col lg:col-span-2">
-        <ChartCardHeader className="border-b-0 pb-0">
-          <div className="flex flex-col gap-1">
-            <ChartCardTitle>年度目标</ChartCardTitle>
-            <ChartCardDescription>目标 2,000 人</ChartCardDescription>
-          </div>
-        </ChartCardHeader>
-        <ChartCardContent className="flex flex-1 flex-col items-center justify-center gap-4">
+    <ChartCard className="w-full max-w-3xl">
+      <ChartCardHeader className="items-center">
+        <div className="flex flex-col gap-1">
+          <ChartCardTitle>十月增长</ChartCardTitle>
+          <ChartCardDescription>
+            组件安装与博客阅读 · 距年度目标还差 440 人
+          </ChartCardDescription>
+        </div>
+        <ChartMetrics>
+          <ChartMetric label="组件安装" value="1.2万" tone="blue" />
+          <ChartMetric label="博客阅读" value="3.9万" tone="amber" />
+        </ChartMetrics>
+      </ChartCardHeader>
+      <div className="grid lg:grid-cols-5">
+        <div className="flex flex-col items-center justify-center gap-3 border-b border-edge p-4 lg:col-span-2 lg:border-r lg:border-b-0">
           <ChartGauge
             value={78}
-            caption="已完成"
+            tone="green"
+            ticks={64}
+            caption="年度目标"
+            className="size-44"
             label="年度订阅目标完成 78%"
           />
-          <p className="text-xs text-muted-foreground">
-            较去年同期多{" "}
-            <span className="font-medium text-foreground tabular-nums">
-              62%
-            </span>
-          </p>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <StatBadge status="ok">进度达标</StatBadge>
+            <span className="tabular-nums">1,560 / 2,000 人</span>
+          </div>
+        </div>
+        <ChartCardContent className="lg:col-span-3">
+          <ChartSeries
+            type="area"
+            data={DATA}
+            xKey="day"
+            series={[
+              { key: "installs", label: "组件安装", tone: "blue" },
+              { key: "reads", label: "博客阅读", tone: "amber" },
+            ]}
+            xTickFormatter={(value) => formatDay(value, "long")}
+            labelFormatter={(value) => formatDay(value, "long")}
+            className="h-56"
+            label="十月每日组件安装与博客阅读面积图"
+          />
         </ChartCardContent>
       </div>
     </ChartCard>
