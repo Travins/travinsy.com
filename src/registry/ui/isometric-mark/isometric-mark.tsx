@@ -17,6 +17,7 @@ import {
   buildIsometricModel,
   rotateShapes,
   wallPath,
+  type IsometricModel,
   type IsometricPoint,
   type IsometricShape,
   type IsometricWall,
@@ -104,7 +105,7 @@ type IsometricMarkTuning = Partial<
     "rotation" | "depth" | "elevation" | "guides" | "material"
   >
 > & {
-  /** 固定画框：调整时外框比例不变，图形缩放适应 */
+  /** 固定画框：沿用原属性下的 viewBox，调整时容器大小与图形比例都不变 */
   stableFrame?: boolean
 }
 
@@ -139,10 +140,10 @@ function materialPath(material: IsometricMaterial, size: number, u: number) {
 function IsometricMark(allProps: IsometricMarkProps) {
   const tuning = React.useContext(IsometricMarkTuningContext)
   const { stableFrame, ...overrides } = tuning
-  // 固定画框比原来的 viewBox 大；按原属性算出的 viewBox 宽度作基准，把 svg 等比放大，
-  // 图形保持原来的大小，多出来的空间由容器长高承担，而不是把图形挤小
+  // 固定画框：沿用按原属性算出的 viewBox，调整时画框与图形比例都不变，
+  // 容器既不长高也不把图形挤小；转到画框外的部分照常显示（svg overflow: visible）
   const { shapes, rotation = 0, depth, guides, elevation } = allProps
-  const baseWidth = React.useMemo(
+  const fixedViewBox = React.useMemo(
     () =>
       stableFrame
         ? buildIsometricModel(
@@ -150,7 +151,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
             depth,
             guides === "edges" ? "edges" : "box",
             elevation,
-          ).viewBox.width
+          ).viewBox
         : undefined,
     [stableFrame, shapes, rotation, depth, guides, elevation],
   )
@@ -158,8 +159,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
     <IsometricMarkView
       {...allProps}
       {...overrides}
-      stableFrame={stableFrame}
-      baseWidth={baseWidth}
+      fixedViewBox={fixedViewBox}
     />
   )
 }
@@ -181,30 +181,12 @@ function IsometricMarkView({
   onPointerUp,
   onPointerCancel,
   onPointerLeave,
-  stableFrame = false,
-  baseWidth,
-  style,
+  fixedViewBox,
   ...props
-}: IsometricMarkProps & { stableFrame?: boolean; baseWidth?: number }) {
+}: IsometricMarkProps & { fixedViewBox?: IsometricModel["viewBox"] }) {
   const id = React.useId()
   const patternId = `isometric-mark-pattern-${id}`
   const gradientId = `isometric-mark-light-${id}`
-
-  // 固定画框用的旋转中心与半径：取未旋转形状包围盒的中心，与 rotateShapes 的旋转中心一致
-  const frame = React.useMemo(() => {
-    if (!stableFrame) return undefined
-    const points = shapes.flatMap((s) => [
-      ...s.outer,
-      ...(s.holes ?? []).flat(),
-    ])
-    if (!points.length) return undefined
-    const xs = points.map(([x]) => x)
-    const ys = points.map(([, y]) => y)
-    const cx = (Math.min(...xs) + Math.max(...xs)) / 2
-    const cy = (Math.min(...ys) + Math.max(...ys)) / 2
-    const r = Math.max(...points.map(([x, y]) => Math.hypot(x - cx, y - cy)))
-    return { cx, cy, r }
-  }, [shapes, stableFrame])
 
   const model = React.useMemo(
     () =>
@@ -213,11 +195,11 @@ function IsometricMarkView({
         depthProp,
         guides === "edges" ? "edges" : "box",
         elevation,
-        frame,
       ),
-    [shapes, rotation, depthProp, guides, elevation, frame],
+    [shapes, rotation, depthProp, guides, elevation],
   )
-  const { viewBox, unit, depth } = model
+  const { unit, depth } = model
+  const viewBox = fixedViewBox ?? model.viewBox
   const pressedHeight = pressedDepth ?? depth / 2
 
   const rootRef = React.useRef<SVGSVGElement | null>(null)
@@ -276,16 +258,6 @@ function IsometricMarkView({
       data-slot="isometric-mark"
       xmlns="http://www.w3.org/2000/svg"
       viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
-      style={
-        stableFrame && baseWidth
-          ? {
-              ...style,
-              width: `${(viewBox.width / baseWidth) * 100}%`,
-              maxWidth: "none",
-              marginInline: `${(-(viewBox.width / baseWidth - 1) / 2) * 100}%`,
-            }
-          : style
-      }
       fill="none"
       role={label ? "img" : undefined}
       aria-label={label}

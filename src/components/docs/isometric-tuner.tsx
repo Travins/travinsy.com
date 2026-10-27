@@ -15,7 +15,7 @@ import { IconTip } from "./icon-tip"
 /**
  * 等轴测标志文档专用的调整面板：开关放在示例标题栏，打开后示例下方出现滑块，
  * 通过 IsometricMarkTuningContext 覆盖示例里所有 IsometricMark 的朝向、俯仰、高度与辅助线。
- * 打开时启用固定画框（stableFrame），调整中容器高度不变、图形缩放适应。
+ * 打开时启用固定画框（stableFrame）：沿用示例原来的画框，调整中容器大小与图形比例都不变。
  */
 
 type Values = {
@@ -155,7 +155,7 @@ export function IsometricTunerPanel({
     .join(" ")
 
   return (
-    <div className="grid gap-4 border-t border-edge bg-muted/20 p-4 sm:grid-cols-[repeat(3,minmax(0,1fr))_auto] sm:items-end">
+    <div className="grid gap-4 px-4 pt-3 pb-4 sm:grid-cols-[repeat(3,minmax(0,1fr))_auto] sm:items-end">
       <Slider
         label="朝向 rotation"
         value={values.rotation}

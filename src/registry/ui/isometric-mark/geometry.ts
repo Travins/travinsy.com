@@ -185,11 +185,6 @@ function buildIsometricModel(
   depthOption?: number,
   guideMode: "box" | "edges" = "box",
   elevation: number = ISOMETRIC_ELEVATION,
-  /**
-   * 固定画框：给出旋转中心与半径时，viewBox 取一个只与半径、高度、俯仰有关的正方形，
-   * 转动朝向时画框不变、图形大小不变；调整高度或俯仰时图形缩放而外框比例不变。
-   */
-  frame?: { cx: number; cy: number; r: number },
 ): IsometricModel {
   setElevation(elevation)
   const rings: { ring: IsometricPoint[]; hole: boolean }[] = []
@@ -321,31 +316,12 @@ function buildIsometricModel(
     })
     .join("")
 
-  let viewBox = {
+  const viewBox = {
     x: bx0 - margin,
     y: by0 - margin,
     width: bx1 - bx0 + margin * 2,
     height: by1 - by0 + margin * 2,
   }
-  if (frame) {
-    // 任意朝向下，图形都落在以旋转中心为圆心、半径 r 的圆里；投影后横向半宽恒为 √2·r·cos30°。
-    // 正方形边长只取横向宽度，与朝向、俯仰、高度都无关，画框大小始终不变；
-    // 极端的俯仰与高度下纵向可能超出一点，svg 本身 overflow: visible，不会被裁。
-    const [ox, oy] = project(frame.cx, frame.cy)
-    const halfX = Math.SQRT2 * frame.r * COS30
-    const halfY = Math.SQRT2 * frame.r * KY
-    const lift = depth * KZ
-    void halfY
-    const side = halfX * 2 * 1.04
-    const centerY = oy - lift / 2
-    viewBox = {
-      x: ox - side / 2,
-      y: centerY - side / 2,
-      width: side,
-      height: side,
-    }
-  }
-
   return {
     viewBox,
     unit: size / 500,
