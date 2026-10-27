@@ -67,11 +67,11 @@ export default function MiniChartDemo() {
       {ROWS.map((row) => (
         <div
           key={row.name}
-          className="grid grid-cols-[minmax(0,1fr)_7rem_3.5rem_4rem] items-center gap-4 py-3 sm:grid-cols-[minmax(0,1fr)_10rem_4rem_4.5rem]"
+          className="grid grid-cols-[minmax(4.5rem,1fr)_minmax(3rem,10rem)_auto_auto] items-center gap-3 py-3 sm:gap-4"
         >
           <div className="min-w-0">
             <p className="truncate font-medium">{row.name}</p>
-            <p className="text-xs text-muted-foreground">{row.hint}</p>
+            <p className="truncate text-xs text-muted-foreground">{row.hint}</p>
           </div>
           <MiniChart
             type={row.type}

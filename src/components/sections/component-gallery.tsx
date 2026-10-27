@@ -67,52 +67,61 @@ export function ComponentGallery() {
 
                   return (
                     <article key={page.url} className="min-w-0 p-4 sm:p-6">
-                      <ComponentThumbnail
-                        name={name}
-                        label={`${page.data.title}演示`}
-                      />
-                      {/* 只有标题区是链接：上方的演示可以直接操作，不会误触跳转 */}
-                      <div className="group relative">
-                        <div className="mt-6 flex items-start justify-between gap-4">
-                          <div className="flex min-w-0 items-center gap-3">
-                            <div className="min-w-0">
-                              {/* 英文名为主标题（更直观），中文名小一号放在下一行 */}
-                              <CardTitle
-                                id={titleId}
-                                className="text-lg leading-6 font-medium tracking-tight"
-                              >
-                                {page.data.titleEn ? (
-                                  <>
-                                    <span lang="en" translate="no">
-                                      {page.data.titleEn}
-                                    </span>
-                                    <span className="mt-0.5 block truncate text-[13px] leading-5 font-normal tracking-normal text-muted-foreground">
-                                      {page.data.title}
-                                    </span>
-                                  </>
-                                ) : (
-                                  page.data.title
-                                )}
-                              </CardTitle>
-                            </div>
+                      {/* 演示与标题栏是一张整卡：同宽、共用外框；悬停标题栏时顶边亮起一条主题色线 */}
+                      <div className="group/card relative overflow-hidden rounded-lg border border-edge">
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute inset-x-0 top-0 z-20 h-px origin-left scale-x-0 bg-primary transition-transform duration-500 ease-out group-has-[a:focus-visible]/card:scale-x-100 group-has-[a:hover]/card:scale-x-100 motion-reduce:transition-none"
+                        />
+                        <ComponentThumbnail
+                          name={name}
+                          label={`${page.data.title}演示`}
+                        />
+                        {/* 只有标题栏是链接：上方的演示可以直接操作，不会误触跳转 */}
+                        <div className="group/link relative flex items-stretch border-t border-edge transition-colors has-[a:focus-visible]:bg-muted/30 has-[a:hover]:bg-muted/30">
+                          <div className="min-w-0 flex-1 px-4 py-3.5">
+                            {/* 英文名为主标题，中文名小一号跟在后面 */}
+                            <CardTitle
+                              id={titleId}
+                              className="flex items-baseline gap-2 truncate text-base leading-6 font-medium tracking-tight"
+                            >
+                              {page.data.titleEn ? (
+                                <>
+                                  <span
+                                    lang="en"
+                                    translate="no"
+                                    className="group-has-[a:hover]/link:text-primary"
+                                  >
+                                    {page.data.titleEn}
+                                  </span>
+                                  <span className="truncate text-[13px] font-normal tracking-normal text-muted-foreground">
+                                    {page.data.title}
+                                  </span>
+                                </>
+                              ) : (
+                                page.data.title
+                              )}
+                            </CardTitle>
+                            <p
+                              id={descriptionId}
+                              className="mt-1 line-clamp-2 text-[13px] leading-5 text-muted-foreground"
+                            >
+                              {page.data.description}
+                            </p>
                           </div>
-                          <ArrowUpRight
+                          <span
                             aria-hidden="true"
-                            className="mt-1 size-4 shrink-0 text-muted-foreground group-hover:text-foreground"
+                            className="flex w-12 shrink-0 items-center justify-center border-l border-edge text-muted-foreground transition-colors group-has-[a:hover]/link:text-foreground"
+                          >
+                            <ArrowUpRight className="size-4 transition-transform motion-safe:group-has-[a:hover]/link:translate-x-0.5 motion-safe:group-has-[a:hover]/link:-translate-y-0.5" />
+                          </span>
+                          <Link
+                            href={page.url}
+                            aria-labelledby={titleId}
+                            aria-describedby={descriptionId}
+                            className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
                           />
                         </div>
-                        <p
-                          id={descriptionId}
-                          className="mt-2 text-sm leading-7 text-muted-foreground"
-                        >
-                          {page.data.description}
-                        </p>
-                        <Link
-                          href={page.url}
-                          aria-labelledby={titleId}
-                          aria-describedby={descriptionId}
-                          className="absolute -inset-x-2 -top-4 -bottom-2 z-10 rounded-lg transition-colors hover:bg-muted/30 focus-visible:outline-2 focus-visible:outline-ring motion-reduce:transition-none"
-                        />
                       </div>
                     </article>
                   )
