@@ -48,8 +48,15 @@ const LOGO: readonly (readonly [number, number])[][] = [
 
 // 朝向 -65°、标准等轴测俯仰 35°、挤出 52：斜杠立起往右上斜，细的一组在后、粗的一组在前；
 // 辅助线用 "edges"，贴着斜杠的长边与齐平的切口；斜杠本身向右上斜，顶面用反向斜纹「\」避免与长边平行产生视差
-const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar) => ({
+// 上三道细斜杠用主题色由浅到深（从后往前），下三道粗斜杠保持单色线稿，主次分明
+const TONES = [
+  "color-mix(in oklab, var(--primary) 55%, var(--background))",
+  "color-mix(in oklab, var(--primary) 78%, var(--background))",
+  "var(--primary)",
+]
+const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar, index) => ({
   outer: [...bar],
+  tone: TONES[index],
 }))
 
 // 标注标签：圆点取自 --flow-* 色调，说明这块几何由哪个部分生成
