@@ -31,6 +31,7 @@ type Values = {
   interactive?: boolean
   highlight?: boolean
   sound?: boolean
+  soundTone?: number
   floor?: Floor
 }
 
@@ -84,6 +85,8 @@ export function useIsometricTuner() {
         interactive: values.interactive,
         highlight: values.highlight,
         sound: values.sound,
+        soundTone:
+          values.soundTone === undefined ? undefined : values.soundTone / 100,
         floor:
           values.floor === undefined
             ? undefined
@@ -294,6 +297,7 @@ export function IsometricTunerPanel({
     interactive: values.interactive ?? base?.interactive ?? true,
     highlight: values.highlight ?? base?.highlight ?? true,
     sound: values.sound ?? base?.sound ?? false,
+    soundTone: values.soundTone ?? Math.round((base?.soundTone ?? 0.6) * 100),
     floor:
       values.floor ??
       (base ? (base.floor === false ? "off" : base.floor) : undefined),
@@ -350,6 +354,15 @@ export function IsometricTunerPanel({
           onChange={(floor) => set({ floor })}
         />
       </div>
+      <Slider
+        label="音色 闷 → 脆"
+        value={current.soundTone}
+        unit=""
+        min={0}
+        max={100}
+        changed={values.soundTone !== undefined}
+        onChange={(soundTone) => set({ soundTone })}
+      />
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3 sm:col-span-3">
         <Toggle
           label="点击按下 interactive"

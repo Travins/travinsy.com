@@ -61,16 +61,33 @@ function tick(frequency: number, duration: number, volume: number) {
   source.start(now)
 }
 
-function playPress() {
-  // 低频收短、减轻，只留一点厚度；主体交给更高、更短的「咔」
-  tone(320, 140, 0.07, 0.14)
-  tone(1400, 900, 0.03, 0.07)
-  tick(3600, 0.015, 0.2)
+const mix = (a: number, b: number, t: number) => a + (b - a) * t
+
+/**
+ * 音色在「闷」与「脆」之间连续插值：0 是低沉的「咚」（长低频、暗噪声），
+ * 1 是清脆的「咔」（短低频、加一层高频短音、亮噪声）。默认 0.6。
+ */
+function playPress(crisp = 0.6) {
+  const t = Math.min(Math.max(crisp, 0), 1)
+  tone(
+    mix(150, 340, t),
+    mix(62, 150, t),
+    mix(0.14, 0.06, t),
+    mix(0.22, 0.12, t),
+  )
+  if (t > 0.05) tone(mix(900, 1600, t), mix(700, 1000, t), 0.03, 0.08 * t)
+  tick(mix(1600, 4200, t), mix(0.022, 0.013, t), mix(0.1, 0.22, t))
 }
 
-function playRelease() {
-  tone(620, 480, 0.04, 0.06)
-  tick(5200, 0.01, 0.12)
+function playRelease(crisp = 0.6) {
+  const t = Math.min(Math.max(crisp, 0), 1)
+  tone(
+    mix(260, 700, t),
+    mix(180, 520, t),
+    mix(0.06, 0.035, t),
+    mix(0.08, 0.06, t),
+  )
+  tick(mix(3000, 6000, t), mix(0.012, 0.009, t), mix(0.05, 0.13, t))
 }
 
 /* ---------- 静音偏好：存在 localStorage，同页所有标志共用 ---------- */

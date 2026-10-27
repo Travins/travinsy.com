@@ -81,6 +81,11 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    */
   sound?: boolean
   /**
+   * 音色：0 偏闷（低沉的「咚」），1 偏脆（清脆的「咔」）
+   * @default 0.6
+   */
+  soundTone?: number
+  /**
    * 视线的俯仰角（度，5–85）。默认约 35.26° 即标准等轴测；
    * 调大更接近俯视（地面更方、厚度更薄），调小更接近平视（地面更扁、厚度更高）
    */
@@ -137,6 +142,7 @@ type IsometricMarkTuning = Partial<
     | "interactive"
     | "highlight"
     | "sound"
+    | "soundTone"
     | "floor"
   >
 > & {
@@ -155,6 +161,7 @@ type IsometricMarkReport = {
   interactive: boolean
   highlight: boolean
   sound: boolean
+  soundTone: number
   floor: IsometricFloor | false
 }
 
@@ -203,6 +210,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
     interactive = true,
     highlight = true,
     sound = false,
+    soundTone = 0.6,
     floor = false,
   } = allProps
   const baseModel = React.useMemo(
@@ -229,6 +237,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
       interactive,
       highlight,
       sound,
+      soundTone,
       floor: floor === true ? "grid" : floor,
     })
   }, [
@@ -241,6 +250,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
     interactive,
     highlight,
     sound,
+    soundTone,
     floor,
   ])
   return (
@@ -264,6 +274,7 @@ function IsometricMarkView({
   elevation,
   floor = false,
   sound = false,
+  soundTone = 0.6,
   label,
   className,
   ref,
@@ -352,7 +363,7 @@ function IsometricMarkView({
           ? 1.3
           : 1
   const release = () => {
-    if (pressedRef.current && audible) playRelease()
+    if (pressedRef.current && audible) playRelease(soundTone)
     pressedRef.current = false
     setPressed(false)
   }
@@ -381,7 +392,7 @@ function IsometricMarkView({
         if (!interactive) return
         // 按住压下时别把旁边的文字一起选中（拖动或双击会从这里开始选区）
         if (event.pointerType === "mouse") event.preventDefault()
-        if (audible) playPress()
+        if (audible) playPress(soundTone)
         pressedRef.current = true
         setPressed(true)
       }}

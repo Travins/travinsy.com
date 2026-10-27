@@ -99,12 +99,12 @@ export function BrandMark() {
 
 ### 点击音效
 
-`sound` 打开按下与松开时的合成音效（本页所有示例都已打开）（Web Audio 现场生成，不需要音频文件），默认关闭。静音偏好存在浏览器本地，页面上所有标志共用：`useIsometricMarkMuted()` 返回 `[muted, setMuted]`，可以用它做一个静音按钮，页首的示例右上角就是这样。
+`sound` 打开按下与松开时的合成音效（Web Audio 现场生成，不需要音频文件），默认关闭，本页所有示例都已打开。静音偏好存在浏览器本地，页面上所有标志共用：`useIsometricMarkMuted()` 返回 `[muted, setMuted]`，可以用它做一个静音按钮，页首的示例右上角就是这样。`soundTone` 调音色：`0` 偏闷，是低沉的「咚」；`1` 偏脆，是清脆的「咔」，默认 `0.6`。
 
 ```tsx
 const [muted, setMuted] = useIsometricMarkMuted()
 
-<IsometricMark shapes={SHAPES} sound />
+<IsometricMark shapes={SHAPES} sound soundTone={0.6} />
 <button onClick={() => setMuted(!muted)}>{muted ? "打开音效" : "静音"}</button>
 ```
 
