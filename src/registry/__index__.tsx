@@ -59,6 +59,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "isometric-mark-depth-demo": lazy(() => import("./examples/isometric-mark-depth-demo")),
   "isometric-mark-interaction-demo": lazy(() => import("./examples/isometric-mark-interaction-demo")),
   "isometric-mark-legacy-demo": lazy(() => import("./examples/isometric-mark-legacy-demo")),
+  "isometric-mark-playground-demo": lazy(() => import("./examples/isometric-mark-playground-demo")),
   "isometric-mark-rotation-demo": lazy(() => import("./examples/isometric-mark-rotation-demo")),
   "isometric-mark-showcase-demo": lazy(() => import("./examples/isometric-mark-showcase-demo")),
   "isometric-mark-simple-demo": lazy(() => import("./examples/isometric-mark-simple-demo")),
