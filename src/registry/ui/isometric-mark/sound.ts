@@ -4,7 +4,7 @@ import * as React from "react"
 
 /**
  * 按下 / 松开的音效：用 Web Audio 现场合成，不需要音频文件。
- * 按下是一声低沉的「咚」（频率下滑的正弦 + 一小段带通噪声做触感），松开是更轻、更高的一声「嗒」。
+ * 按下是一声清脆的「咔」（短促的下滑正弦 + 高频带通噪声做触感，只留少量低频厚度），松开是更轻、更高的一声「嗒」。
  * AudioContext 在第一次按下（用户手势）时才创建，满足浏览器的自动播放限制。
  */
 let context: AudioContext | null = null
@@ -62,13 +62,15 @@ function tick(frequency: number, duration: number, volume: number) {
 }
 
 function playPress() {
-  tone(150, 62, 0.14, 0.22)
-  tick(1800, 0.02, 0.12)
+  // 低频收短、减轻，只留一点厚度；主体交给更高、更短的「咔」
+  tone(320, 140, 0.07, 0.14)
+  tone(1400, 900, 0.03, 0.07)
+  tick(3600, 0.015, 0.2)
 }
 
 function playRelease() {
-  tone(260, 180, 0.06, 0.08)
-  tick(3200, 0.012, 0.06)
+  tone(620, 480, 0.04, 0.06)
+  tick(5200, 0.01, 0.12)
 }
 
 /* ---------- 静音偏好：存在 localStorage，同页所有标志共用 ---------- */
