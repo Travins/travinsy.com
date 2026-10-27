@@ -5,62 +5,61 @@ import {
 } from "@/registry/ui/isometric-mark/isometric-mark"
 
 // 本站标志「易」：上三道细斜杠是「日」，下三道粗斜杠是「勿」，右端齐平；坐标与站点 SVG 标志相同
-const MARK_SHAPES: readonly IsometricShape[] = [
+const LOGO: readonly (readonly [number, number])[][] = [
   // 上组：细斜杠
-  {
-    outer: [
-      [156, 130],
-      [416, 0],
-      [416, 36],
-      [156, 166],
-    ],
-  },
-  {
-    outer: [
-      [156, 192],
-      [416, 62],
-      [416, 98],
-      [156, 228],
-    ],
-  },
-  {
-    outer: [
-      [156, 254],
-      [416, 124],
-      [416, 160],
-      [156, 290],
-    ],
-  },
+  [
+    [156, 130],
+    [416, 0],
+    [416, 36],
+    [156, 166],
+  ],
+  [
+    [156, 192],
+    [416, 62],
+    [416, 98],
+    [156, 228],
+  ],
+  [
+    [156, 254],
+    [416, 124],
+    [416, 160],
+    [156, 290],
+  ],
   // 下组：粗斜杠
-  {
-    outer: [
-      [0, 394],
-      [416, 186],
-      [416, 258],
-      [0, 466],
-    ],
-  },
-  {
-    outer: [
-      [78, 453],
-      [416, 284],
-      [416, 356],
-      [78, 525],
-    ],
-  },
-  {
-    outer: [
-      [156, 512],
-      [416, 382],
-      [416, 454],
-      [156, 584],
-    ],
-  },
+  [
+    [0, 394],
+    [416, 186],
+    [416, 258],
+    [0, 466],
+  ],
+  [
+    [78, 453],
+    [416, 284],
+    [416, 356],
+    [78, 525],
+  ],
+  [
+    [156, 512],
+    [416, 382],
+    [416, 454],
+    [156, 584],
+  ],
 ]
 
-// front 视角：标志像一块板向后倒下（默认 tilt 45°、turn -20°），斜杠与竖直切口的关系保持；
-// 辅助线用 "edges"，贴着斜杠的长边与左右两端的切口
-const DEPTH = 32
+// 等轴测投影把平面坐标 (x, y) 映射成屏幕上的 ((x - y)·cos30°, (x + y)·sin30°)。
+// 反过来用：把标志在屏幕上应有的样子换算回平面坐标，挤出后顶面看起来就和 SVG 标志一模一样——
+// 1:2 的斜杠、竖直的切口都不变，厚度沿屏幕竖直方向往下露出。
+const COS30 = Math.cos(Math.PI / 6)
+const toPlan = ([x, y]: readonly [number, number]): [number, number] => [
+  (x / COS30 + 2 * y) / 2,
+  (2 * y - x / COS30) / 2,
+]
+const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar) => ({
+  outer: bar.map(toPlan),
+}))
+
+// 厚度往屏幕下方露出，要小于斜杠之间 26 的缝，缝才不会被侧墙填满
+const DEPTH = 14
 
 // 标注标签：圆点取自 --flow-* 色调，说明这块几何由哪个部分生成
 function Callout({
@@ -104,20 +103,19 @@ export default function IsometricMarkDemo() {
       <div className="relative w-full max-w-[17rem] sm:max-w-80">
         <IsometricMark
           shapes={MARK_SHAPES}
-          view="front"
           depth={DEPTH}
           label="易"
           guides="edges"
         />
       </div>
       <Callout tone="blue" className="top-[18%] left-5">
-        FRONT · 斜纹正面
+        TOP · 斜纹顶面
       </Callout>
       <Callout tone="violet" className="bottom-[26%] left-5">
         WALL · 侧墙自动消隐
       </Callout>
       <Callout tone="amber" className="top-[24%] right-5">
-        depth = 32
+        depth = 14
       </Callout>
       <Callout tone="green" className="right-5 bottom-[26%]">
         SVG · 可用 className 缩放

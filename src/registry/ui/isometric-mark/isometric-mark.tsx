@@ -19,7 +19,6 @@ import {
   wallPath,
   type IsometricPoint,
   type IsometricShape,
-  type IsometricView,
   type IsometricWall,
 } from "./geometry"
 
@@ -61,22 +60,6 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    * @default false
    */
   guides?: boolean | "box" | "edges"
-  /**
-   * 视角。`isometric`：图形平放在地面上、沿等轴测方向挤出；
-   * `front`：把图形当作一块板，向后倒下 `tilt` 度、水平转 `turn` 度后正交投影，斜线与竖线的关系保持——适合要保留原样的标志
-   * @default "isometric"
-   */
-  view?: IsometricView
-  /**
-   * `front` 视角下板向后倒下的角度（度）：0 是正面立着，越大越往后躺
-   * @default 45
-   */
-  tilt?: number
-  /**
-   * `front` 视角下板水平转动的角度（度），负数向左转、露出右侧的厚度
-   * @default -20
-   */
-  turn?: number
   /** 可访问名称；不传时整个图形对读屏隐藏 */
   label?: string
 }
@@ -86,14 +69,12 @@ function IsometricMarkWall({
   wall,
   height,
   gradientId,
-  extrude,
 }: {
   wall: IsometricWall
   height: MotionValue<number>
   gradientId: string
-  extrude: readonly [number, number]
 }) {
-  const d = useTransform(height, (h) => wallPath(wall, h, extrude))
+  const d = useTransform(height, (h) => wallPath(wall, h))
 
   // 同一面先画底色线再画高光线，后画的近处面会盖住远处面的线
   return (
@@ -113,9 +94,6 @@ function IsometricMark({
   interactive = true,
   highlight = true,
   guides = false,
-  view = "isometric",
-  tilt = 45,
-  turn = -20,
   label,
   className,
   ref,
@@ -135,10 +113,8 @@ function IsometricMark({
         rotateShapes(shapes, rotation),
         depthProp,
         guides === "edges" ? "edges" : "box",
-        view,
-        { tilt, turn },
       ),
-    [shapes, rotation, depthProp, guides, view, tilt, turn],
+    [shapes, rotation, depthProp, guides],
   )
   const { viewBox, unit, depth } = model
   const pressedHeight = pressedDepth ?? depth / 2
@@ -165,9 +141,7 @@ function IsometricMark({
     else height.set(target)
   }, [pressed, pressedHeight, depth, reduceMotion, height])
   // 用 y 偏移而不是 transform 字符串，斜纹才会跟着轮廓一起走
-  const [ex, ey] = model.extrude
-  const topOffsetX = useTransform(height, (h) => -ex * (depth - h))
-  const topOffset = useTransform(height, (h) => -ey * (depth - h))
+  const topOffset = useTransform(height, (h) => depth - h)
 
   // 高光：鼠标在窗口中的相对位置映射到 viewBox
   const mouseX = useMotionValue(0.5)
@@ -275,14 +249,10 @@ function IsometricMark({
             wall={wall}
             height={height}
             gradientId={gradientId}
-            extrude={model.extrude}
           />
         ))}
 
-        <motion.g
-          data-slot="isometric-mark-top"
-          style={{ x: topOffsetX, y: topOffset }}
-        >
+        <motion.g data-slot="isometric-mark-top" style={{ y: topOffset }}>
           <path d={model.top} className="fill-background" />
           <path d={model.top} fill={`url(#${patternId})`} />
           <path d={model.top} stroke="var(--stroke)" />
@@ -294,9 +264,4 @@ function IsometricMark({
 }
 
 export { IsometricMark }
-export type {
-  IsometricMarkProps,
-  IsometricPoint,
-  IsometricShape,
-  IsometricView,
-}
+export type { IsometricMarkProps, IsometricPoint, IsometricShape }

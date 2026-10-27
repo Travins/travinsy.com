@@ -28,10 +28,8 @@ type IsometricModel = {
   top: string
   /** 可见侧墙，按从远到近排好序 */
   walls: IsometricWall[]
-  /** 背景辅助线路径（isometric 在 z = 0；front 在正面所在的平面） */
+  /** 背景辅助线路径（z = 0） */
   guides: string
-  /** 挤出方向（屏幕坐标的单位向量）：顶面 / 正面相对底面的偏移方向 */
-  extrude: [number, number]
 }
 
 const COS30 = Math.cos(Math.PI / 6)
@@ -42,32 +40,7 @@ const AUTO_DEPTH_RATIO = 0.12
 
 const fmt = (n: number) => String(Math.round(n * 100) / 100)
 
-/**
- * 视角：`isometric` 把平面放倒在地上，按等轴测投影沿 z 挤出；
- * `front` 把平面当作一块板：先向后倒下 `tilt` 度，再水平转 `turn` 度，正交投影。
- * 板上的图形只被整体压扁、错切，斜线与竖线的关系保持，适合要保留原样的标志。
- */
-type IsometricView = "isometric" | "front"
-
-type FrontAngles = { tilt: number; turn: number }
-
-let VIEW: IsometricView = "isometric"
-let FRONT = { cosT: 1, sinT: 0, cosR: 1, sinR: 0 }
-
-/** front 视角下沿观察方向的“深度”，越大越靠近观察者 */
-function frontDepth(x: number, y: number, z = 0) {
-  const d = y * FRONT.sinT + z * FRONT.cosT
-  return x * FRONT.sinR + d * FRONT.cosR
-}
-
 function project(x: number, y: number, z = 0): [number, number] {
-  if (VIEW === "front") {
-    // 板绕水平轴向后倒：板面朝上翻，厚度方向（z，朝向观察者）在屏幕上往上走
-    const sy = y * FRONT.cosT - z * FRONT.sinT
-    const d = y * FRONT.sinT + z * FRONT.cosT
-    // 再绕竖直轴转：x 与深度混合
-    return [x * FRONT.cosR - d * FRONT.sinR, sy]
-  }
   return [(x - y) * COS30, (x + y) * SIN30 - z]
 }
 
@@ -191,18 +164,7 @@ function buildIsometricModel(
   shapes: readonly IsometricShape[],
   depthOption?: number,
   guideMode: "box" | "edges" = "box",
-  view: IsometricView = "isometric",
-  angles: FrontAngles = { tilt: 45, turn: -20 },
 ): IsometricModel {
-  VIEW = view
-  const t = (angles.tilt * Math.PI) / 180
-  const r = (angles.turn * Math.PI) / 180
-  FRONT = {
-    cosT: Math.cos(t),
-    sinT: Math.sin(t),
-    cosR: Math.cos(r),
-    sinR: Math.sin(r),
-  }
   const rings: { ring: IsometricPoint[]; hole: boolean }[] = []
   for (const shape of shapes) {
     rings.push({ ring: orient(cleanRing(shape.outer), true), hole: false })
@@ -240,43 +202,11 @@ function buildIsometricModel(
       if (qy - py - (qx - px) > EPSILON) segments.push({ px, py, qx, qy })
     }
   }
-  let walls: IsometricWall[]
-  if (view === "front") {
-    // 投影是线性的：正面 = 底面整体平移 extrude * depth。
-    // 外轮廓为正面积、投影不翻转方向，所以屏幕里边的外法线仍是 (dy, -dx)；
-    // 法线与挤出方向相反的边，侧面朝向观察者，才看得见。按真实深度从远到近排序。
-    const [ex, ey] = project(0, 0, 1)
-    const visible: {
-      x0: number
-      y0: number
-      x1: number
-      y1: number
-      key: number
-    }[] = []
-    for (const { ring } of rings) {
-      for (let i = 0; i < ring.length; i++) {
-        const [px, py] = ring[i]
-        const [qx, qy] = ring[(i + 1) % ring.length]
-        const [x0, y0] = project(px, py)
-        const [x1, y1] = project(qx, qy)
-        const nx = y1 - y0
-        const ny = -(x1 - x0)
-        if (nx * ex + ny * ey < -EPSILON) {
-          const key = frontDepth((px + qx) / 2, (py + qy) / 2)
-          visible.push({ x0, y0, x1, y1, key })
-        }
-      }
-    }
-    walls = visible
-      .sort((a, b) => a.key - b.key)
-      .map(({ x0, y0, x1, y1 }) => ({ x0, y0, x1, y1 }))
-  } else {
-    walls = sortBackToFront(segments).map((s) => {
-      const [x0, y0] = project(s.px, s.py)
-      const [x1, y1] = project(s.qx, s.qy)
-      return { x0, y0, x1, y1 }
-    })
-  }
+  const walls = sortBackToFront(segments).map((s) => {
+    const [x0, y0] = project(s.px, s.py)
+    const [x1, y1] = project(s.qx, s.qy)
+    return { x0, y0, x1, y1 }
+  })
 
   // 投影后的包围盒：顶面在 z = depth（最高），底边在 z = 0（最低）
   let bx0 = Infinity
@@ -286,11 +216,10 @@ function buildIsometricModel(
   for (const { ring } of rings) {
     for (const [x, y] of ring) {
       const [px, py] = project(x, y)
-      const [tx, ty] = project(x, y, depth)
-      bx0 = Math.min(bx0, px, tx)
-      bx1 = Math.max(bx1, px, tx)
-      by0 = Math.min(by0, py, ty)
-      by1 = Math.max(by1, py, ty)
+      bx0 = Math.min(bx0, px)
+      bx1 = Math.max(bx1, px)
+      by0 = Math.min(by0, py - depth)
+      by1 = Math.max(by1, py)
     }
   }
   if (!rings.length) {
@@ -304,10 +233,9 @@ function buildIsometricModel(
   // - "edges"：沿图形自己的主方向——按边长统计各方向，取最长的两个，每个方向画两条外侧切线并延长。
   //   斜向的图形（如一组斜杠）辅助线会贴着它的长边与齐平的端点。
   const reach = planSize * 1.2
-  const guideZ = view === "front" ? depth : 0
   const line = (x0: number, y0: number, x1: number, y1: number) => {
-    const [ax, ay] = project(x0, y0, guideZ)
-    const [bx, by] = project(x1, y1, guideZ)
+    const [ax, ay] = project(x0, y0)
+    const [bx, by] = project(x1, y1)
     return `M${fmt(ax)} ${fmt(ay)}L${fmt(bx)} ${fmt(by)}`
   }
   const weights = new Map<number, { ux: number; uy: number; length: number }>()
@@ -378,17 +306,12 @@ function buildIsometricModel(
     top: rings.map(({ ring }) => ringPath(ring, depth)).join(""),
     walls,
     guides,
-    extrude: view === "front" ? project(0, 0, 1) : [0, -1],
   }
 }
 
 /** 高度为 h 时一面墙的路径：底边固定在 z = 0，顶边抬到 z = h。 */
-function wallPath(
-  { x0, y0, x1, y1 }: IsometricWall,
-  h: number,
-  [ex, ey]: readonly [number, number] = [0, -1],
-) {
-  return `M${fmt(x0 + ex * h)} ${fmt(y0 + ey * h)}L${fmt(x1 + ex * h)} ${fmt(y1 + ey * h)}L${fmt(x1)} ${fmt(y1)}L${fmt(x0)} ${fmt(y0)}Z`
+function wallPath({ x0, y0, x1, y1 }: IsometricWall, h: number) {
+  return `M${fmt(x0)} ${fmt(y0 - h)}L${fmt(x1)} ${fmt(y1 - h)}L${fmt(x1)} ${fmt(y1)}L${fmt(x0)} ${fmt(y0)}Z`
 }
 
 /**
@@ -421,11 +344,4 @@ function rotateShapes(
 }
 
 export { buildIsometricModel, rotateShapes, wallPath }
-export type {
-  IsometricModel,
-  IsometricPoint,
-  IsometricShape,
-  FrontAngles,
-  IsometricView,
-  IsometricWall,
-}
+export type { IsometricModel, IsometricPoint, IsometricShape, IsometricWall }
