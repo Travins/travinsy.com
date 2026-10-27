@@ -20,21 +20,17 @@ export default function TextAnimateDemo() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_88%_6%,color-mix(in_oklab,var(--flow-blue)_20%,transparent),transparent_52%),radial-gradient(ellipse_at_6%_104%,color-mix(in_oklab,var(--flow-violet)_14%,transparent),transparent_50%)]"
       />
-      <div className="relative flex items-center gap-3 font-mono text-[10px] tracking-widest text-muted-foreground">
-        <span className="size-1.5 bg-(--flow-blue)" aria-hidden />
-        <span>WORDS BECOME INTERFACES</span>
-      </div>
-      <h3 className="relative m-0! flex flex-col items-start gap-3 text-3xl! leading-tight! font-semibold tracking-tight sm:text-5xl!">
+      <p className="relative flex flex-col items-start gap-3 text-3xl leading-tight font-semibold tracking-tight sm:text-5xl">
         <span>把界面写成</span>
         <TextFlip
-          className="[--primary:var(--flow-blue)]"
+          tone="blue"
           paused={paused}
           words={["组件", "积木", "设计系统"]}
           interval={2800}
         >
           组件、积木或设计系统
         </TextFlip>
-      </h3>
+      </p>
       <p className="relative max-w-sm text-sm leading-7 text-muted-foreground">
         <TextReveal by="word">从一行文字开始，让每个想法都有形状。</TextReveal>
         <br />

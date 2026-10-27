@@ -319,17 +319,17 @@ a.docs-nav-head[aria-current="page"]::after {
   line-height: 1.75rem;
   overflow-wrap: anywhere;
 }
-.docs-prose h2 {
+.docs-prose h2:not(.not-prose *) {
   margin: 2.5rem 0 1rem;
   font-size: 1.25rem;
   line-height: 1.75rem;
   font-weight: 600;
   letter-spacing: -0.02em;
 }
-.docs-prose h2:first-child {
+.docs-prose h2:first-child:not(.not-prose *) {
   margin-top: 0;
 }
-.docs-prose h3 {
+.docs-prose h3:not(.not-prose *) {
   margin: 2rem 0 0.75rem;
   font-size: 1rem;
   line-height: 1.5rem;
@@ -379,7 +379,7 @@ a.docs-nav-head[aria-current="page"]::after {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
 }
-.docs-prose blockquote {
+.docs-prose blockquote:not(.not-prose *) {
   border-left: 2px solid var(--edge);
   padding-left: 1rem;
   color: var(--muted-foreground);

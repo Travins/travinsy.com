@@ -14,26 +14,26 @@ import {
   Terminal,
 } from "lucide-react"
 
-// 图标节点：淡色底（和背景混合，不透出轨道线）+ 同色描边；胶囊节点只是把宽度放开
+// 节点用同色淡底与描边；胶囊节点只是把宽度放开
 const NODE =
-  "border-(--flow-tone)/35 bg-[color-mix(in_oklab,var(--flow-tone)_12%,var(--background))] shadow-sm max-sm:scale-75"
+  "border-(--flow-tone)/35 bg-[color-mix(in_oklab,var(--flow-tone)_12%,var(--background))] shadow-sm"
 const PILL = `${NODE} h-8 w-auto px-2.5 text-[11px]`
 
 export default function OrbitDemo() {
   return (
     <Orbit
-      label="Next.js、Tailwind、TypeScript 等工具围绕个人站点标志运行的多层轨道"
+      label="Next.js、Tailwind、TypeScript 等工具围绕站点标志运行的多层轨道"
       size={360}
-      className="h-[22.5rem] max-sm:h-72"
+      className="h-[22.5rem]"
     >
-      {/* 上半弧：最外层只露出上半圈，边缘渐隐，制造纵深 */}
+      {/* 最外层只露出上半弧，边缘渐隐，制造纵深 */}
       <OrbitRing
         radius={166}
         arc="half"
         duration={70}
         startAngle={-140}
         dashed
-        className="max-sm:hidden [&>[data-slot=orbit-path]]:border-(--flow-violet)/35"
+        tone="violet"
       >
         <OrbitItem tone="violet" className={NODE}>
           <Sparkles />
@@ -42,12 +42,7 @@ export default function OrbitDemo() {
           <Braces />
         </OrbitItem>
       </OrbitRing>
-      <OrbitRing
-        radius={130}
-        duration={56}
-        startAngle={30}
-        className="[&>[data-slot=orbit-path]]:border-(--flow-cyan)/35"
-      >
+      <OrbitRing radius={130} duration={56} startAngle={30} tone="cyan">
         <OrbitItem tone="foreground" className={PILL}>
           Next.js
         </OrbitItem>
@@ -64,7 +59,7 @@ export default function OrbitDemo() {
         reverse
         dashed
         startAngle={-120}
-        className="[&>[data-slot=orbit-path]]:border-(--flow-amber)/40"
+        tone="amber"
       >
         <OrbitItem tone="green" className={NODE}>
           <Database />
@@ -76,12 +71,7 @@ export default function OrbitDemo() {
           <Globe />
         </OrbitItem>
       </OrbitRing>
-      <OrbitRing
-        radius={56}
-        duration={28}
-        startAngle={20}
-        className="[&>[data-slot=orbit-path]]:border-(--flow-blue)/45"
-      >
+      <OrbitRing radius={56} duration={28} startAngle={20} tone="blue">
         <OrbitItem tone="blue" className={NODE}>
           <Command />
         </OrbitItem>
@@ -89,7 +79,7 @@ export default function OrbitDemo() {
           <Layers />
         </OrbitItem>
       </OrbitRing>
-      <OrbitCenter className="size-14 rounded-xl bg-primary text-primary-foreground shadow-md ring-8 ring-primary/10 max-sm:size-10 max-sm:ring-4">
+      <OrbitCenter className="size-14 rounded-xl bg-primary text-primary-foreground shadow-md ring-8 ring-primary/10">
         <span className="font-mono text-xl font-semibold">T.</span>
       </OrbitCenter>
     </Orbit>

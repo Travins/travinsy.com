@@ -16,6 +16,7 @@ import {
 } from "@/registry/ui/flow-diagram/background"
 import {
   flowToneStyle,
+  type FlowTone,
   type FlowToneName,
 } from "@/registry/ui/flow-diagram/tone"
 
@@ -40,6 +41,8 @@ function useOrbitReducedMotion() {
 }
 
 type OrbitArc = "full" | "half"
+/** 画布在外框里的位置：`bottom` 让轨道中心落在外框底边，配合 `arc="half"` 得到贴地的半圆。 */
+type OrbitAnchor = "center" | "bottom"
 const OrbitContext = React.createContext({ active: false, size: 320 })
 const OrbitRingContext = React.createContext<{
   angle: MotionValue<number>
@@ -49,6 +52,7 @@ function Orbit({
   size = 320,
   paused = false,
   background = "dots",
+  anchor = "center",
   label,
   className,
   children,
@@ -58,6 +62,8 @@ function Orbit({
   size?: number
   paused?: boolean
   background?: FlowBackgroundName
+  /** 画布位置；`bottom` 把轨道中心放到外框底边，上半部分留在可视区内。@default "center" */
+  anchor?: OrbitAnchor
   /** 传入说明后作为图片朗读；默认作为装饰隐藏。内部不应放交互元素。 */
   label?: string
 }) {
@@ -69,11 +75,13 @@ function Orbit({
       {...props}
       ref={ref}
       data-slot="orbit"
+      data-anchor={anchor}
       role={label ? "img" : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
       className={cn(
         "relative flex h-72 w-full items-center justify-center overflow-hidden",
+        anchor === "bottom" && "items-end",
         className,
       )}
     >
@@ -87,7 +95,10 @@ function Orbit({
       />
       <div
         data-slot="orbit-canvas"
-        className="relative aspect-square shrink-0"
+        className={cn(
+          "relative aspect-square shrink-0",
+          anchor === "bottom" && "translate-y-1/2",
+        )}
         style={{ width: `min(100%, ${Math.max(1, size)}px)` }}
       >
         <OrbitContext.Provider
@@ -111,6 +122,7 @@ function OrbitRing({
   startAngle = -90,
   arc = "full",
   dashed = false,
+  tone,
   className,
   style,
   children,
@@ -126,6 +138,8 @@ function OrbitRing({
   /** half 只显示上半圆，节点在下半圆时隐藏，边缘渐隐。 */
   arc?: OrbitArc
   dashed?: boolean
+  /** 轨道线的色调：内置名或任意 CSS 颜色；不传沿用主题的线条色。节点的颜色由各自的 `tone` 决定。 */
+  tone?: FlowTone
 }) {
   const { active, size } = React.useContext(OrbitContext)
   const angle = useMotionValue(startAngle)
@@ -165,10 +179,15 @@ function OrbitRing({
       <div
         data-slot="orbit-path"
         className={cn(
-          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-edge",
+          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border",
+          tone ? "border-(--flow-tone)/40" : "border-edge",
           dashed && "border-dashed",
         )}
-        style={{ width: `${diameter}%`, height: `${diameter}%` }}
+        style={{
+          width: `${diameter}%`,
+          height: `${diameter}%`,
+          ...flowToneStyle(tone),
+        }}
       >
         <OrbitRingContext.Provider value={{ angle }}>
           {children}
@@ -236,4 +255,4 @@ function OrbitCenter({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 export { Orbit, OrbitRing, OrbitItem, OrbitCenter }
-export type { OrbitArc }
+export type { OrbitAnchor, OrbitArc }

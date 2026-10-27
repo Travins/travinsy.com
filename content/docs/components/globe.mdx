@@ -13,7 +13,7 @@ group: graphics
 
 ## 用法
 
-`Globe` 自身是一个正方形外框，球体占其中约 80%，外框的大小、位置完全由 `className` 决定：放大并推到卡片角落，就得到「半露出」的构图。`markers` 传入城市，`label` 是读屏时朗读的城市名。
+`Globe` 自身是一个正方形外框，球体占其中约 80%，外框的大小、位置完全由 `className` 决定：放大并推到卡片角落，就得到「半露出」的构图。`markers` 传入城市，`label` 是读屏时朗读的城市名，`labels` 在标记旁显示城市名胶囊。页首的预览把地球与 `GlobeLegend` 并排放置：图例是文字版本，不依赖颜色与动画。
 
 ```tsx title="components/globe-example.tsx"
 import { Globe, type GlobeMarker } from "@/components/ui/globe/globe"
@@ -42,21 +42,15 @@ export function GlobeExample() {
 
 ### 深色发光
 
-外层加 `dark` 强制暗色，点阵取 `--flow-cyan`，球体边缘自动带一圈同色光晕。`arcs` 的两端与标记重合，链路方向一目了然。
+外层加 `dark` 强制暗色，`dotTone="cyan"` 让点阵取 `--flow-cyan`，球体边缘自动带一圈同色光晕。`arcs` 的两端与标记重合，每条弧线可以用自己的 `tone`。`phi`、`theta` 把视角转到大西洋一侧。
 
 <ComponentPreview name="globe-dark-demo" />
 
 ### 拖拽旋转
 
-`draggable` 打开后可以用鼠标或手指转动地球，松手带惯性，俯仰角缓缓回到初始值，然后恢复自转。`focus` 让地球缓动转向并停在某个地点；再次传 `null` 就恢复自转。键盘聚焦后用左右方向键也能转。
+`draggable` 打开后可以用鼠标或手指转动地球，松手带惯性，俯仰角缓缓回到初始值，然后恢复自转。`focus` 让地球缓动转向并停在某个地点，示例用一组 `aria-pressed` 按钮驱动它；再次点击传 `null` 就恢复自转。键盘聚焦后用左右方向键也能转。
 
 <ComponentPreview name="globe-draggable-demo" />
-
-### 全球节点
-
-与 `stat-card`、`ripple` 组合：数字放在 stat-card，波纹做实时心跳，地球看分布，格子之间共用细线。
-
-<ComponentPreview name="globe-nodes-demo" />
 
 ## API
 
@@ -88,7 +82,7 @@ const { phi, theta } = globeAngles([48.85, 2.35])
 
 ### GlobeLegend
 
-标记图例：名称配彩色圆点，可选经纬度。放在地球旁边，给出不依赖颜色与动画的文字版本。
+标记图例：名称配彩色圆点，`coordinates` 同时列出经纬度。放在地球旁边，给出不依赖颜色与动画的文字版本。
 
 <PropsTable name="globe" component="GlobeLegend" />
 

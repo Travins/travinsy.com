@@ -22,7 +22,7 @@ const DATA = Array.from({ length: 21 }, (_, index) => ({
 export default function ChartCardTargetDemo() {
   return (
     <ChartCard className="w-full max-w-3xl">
-      <ChartCardHeader className="items-center">
+      <ChartCardHeader className="sm:items-center">
         <div className="flex flex-col gap-1">
           <ChartCardTitle>十月增长</ChartCardTitle>
           <ChartCardDescription className="max-sm:hidden">

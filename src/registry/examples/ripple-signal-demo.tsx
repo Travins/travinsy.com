@@ -1,16 +1,24 @@
 import { Ripple, RippleMarker } from "@/registry/ui/ripple/ripple"
 import { Radio } from "lucide-react"
 
+// 圆环直径 100 / 200 / 300，半径之比 1 : 2 : 3；标记的 radius 是相对最外圈的比例，刻度正好落在对应的圆环上
+const SCALE = [
+  { km: 1, radius: 1 / 3 },
+  { km: 2, radius: 2 / 3 },
+  { km: 3, radius: 1 },
+]
+
 export default function RippleSignalDemo() {
   return (
     <Ripple
-      label="信号正常，覆盖半径 5 千米"
+      label="信号正常，覆盖半径 3 千米"
       mode="reach"
       rings={3}
-      baseSize={88}
-      ringGap={80}
+      baseSize={100}
+      ringGap={100}
+      size={360}
       background="hatch"
-      duration={3}
+      className="h-[22.5rem]"
     >
       <RippleMarker
         radius={0}
@@ -19,20 +27,16 @@ export default function RippleSignalDemo() {
         <Radio className="size-6" />
         <span className="text-[10px]">信号正常</span>
       </RippleMarker>
-      <RippleMarker
-        angle={90}
-        radius={0.45}
-        className="bg-background px-1 font-mono text-[10px] text-muted-foreground"
-      >
-        1 km
-      </RippleMarker>
-      <RippleMarker
-        angle={90}
-        radius={1}
-        className="bg-background px-1 font-mono text-[10px] text-muted-foreground"
-      >
-        5 km
-      </RippleMarker>
+      {SCALE.map(({ km, radius }) => (
+        <RippleMarker
+          key={km}
+          angle={90}
+          radius={radius}
+          className="bg-background px-1 font-mono text-[10px] whitespace-nowrap text-muted-foreground"
+        >
+          {km} km
+        </RippleMarker>
+      ))}
     </Ripple>
   )
 }

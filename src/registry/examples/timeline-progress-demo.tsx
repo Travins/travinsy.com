@@ -1,16 +1,16 @@
 import { Check, Code, Flag } from "lucide-react"
+
 import {
   Timeline,
-  TimelineItem,
-  TimelineMarker,
   TimelineConnector,
   TimelineContent,
-  TimelineTitle,
   TimelineDescription,
-  type TimelineStatus,
+  TimelineItem,
+  TimelineMarker,
+  TimelineTitle,
 } from "@/registry/ui/timeline/timeline"
 
-const steps = [
+const STEPS = [
   {
     title: "需求整理",
     detail: "已完成 · 明确范围与交付清单",
@@ -30,11 +30,12 @@ const steps = [
     status: "upcoming",
   },
 ] as const
+
 export default function TimelineProgressDemo() {
   return (
-    <Timeline className="max-w-md" aria-label="项目进度">
-      {steps.map(({ title, detail, icon: Icon, status }) => (
-        <TimelineItem key={title} status={status as TimelineStatus}>
+    <Timeline aria-label="项目进度" className="max-w-md">
+      {STEPS.map(({ title, detail, icon: Icon, status }) => (
+        <TimelineItem key={title} status={status}>
           <TimelineMarker
             status={status}
             tone={status === "done" ? "green" : "primary"}
@@ -43,9 +44,7 @@ export default function TimelineProgressDemo() {
           </TimelineMarker>
           <TimelineConnector />
           <TimelineContent>
-            <TimelineTitle className="m-0! text-sm! font-medium!">
-              {title}
-            </TimelineTitle>
+            <TimelineTitle>{title}</TimelineTitle>
             <TimelineDescription>{detail}</TimelineDescription>
           </TimelineContent>
         </TimelineItem>

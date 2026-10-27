@@ -28,27 +28,27 @@ export function SecurityField() {
 }
 ```
 
-将 `paused` 设为 `false` 可播放随机闪烁。持续动画旁应提供暂停按钮，默认演示展示了受控暂停的做法。`glyphs` 可以是 `latin`、`binary`、`hex`、`katakana`、`cjk`，也可以直接传入任意字符串。字符按 Unicode 码点拆分，不会截断常见汉字。
+将 `paused` 设为 `false` 可播放随机闪烁。持续动画旁应提供暂停按钮，页首的演示展示了受控暂停的做法：按钮的状态直接绑定 `paused`。`glyphs` 可以是 `latin`、`binary`、`hex`、`katakana`、`cjk`，也可以直接传入任意字符串。字符按 Unicode 码点拆分，不会截断常见汉字。
 
 ## 示例
 
 ### 中文字符
 
-局部 `.dark` 提供深色背景，常用汉字与绿色字符交错排列。此处使用静帧；移除 `paused` 即可闪烁，仍会尊重系统的减少动态效果设置。
+外层加 `dark` 让这一块按暗色取色，常用汉字与绿色字符交错排列，`fade="center"` 给标题留出空位。此处使用静帧；移除 `paused` 即可闪烁，仍会尊重系统的减少动态效果设置。
 
 <ComponentPreview name="glyph-field-cjk-demo" />
 
 ### 二进制横幅
 
-更矮的容器也能自动铺满，`density` 控制格子占用率，`fontSize` 控制字符尺寸。
+更矮的容器也能自动铺满。`density` 控制格子占用率，`fontSize` 控制字符尺寸，`fade="none"` 保留完整矩阵，文字放在带底色的块里保证可读。
 
 <ComponentPreview name="glyph-field-binary-demo" />
 
-### 威胁拦截
+### 自定义字符集
 
-与 `stat-card` 组合，数字和说明保留普通文本语义，字符作为装饰。
+`glyphs` 接受任意字符串，按 Unicode 码点拆分。`tone` 数组里重复某个值可以提高它出现的频率，示例让紫色占一半。
 
-<ComponentPreview name="glyph-field-stat-demo" />
+<ComponentPreview name="glyph-field-custom-demo" />
 
 ## API
 
@@ -72,7 +72,7 @@ export function SecurityField() {
 - 服务端和无 JavaScript 环境输出同尺寸的淡底色占位与完整子内容，画布就绪不会改变布局。
 - 使用 ResizeObserver 跟随容器大小，设备像素比最高 2，单个画布最多 30000 个格子。
 - 只重绘发生变化的格子；颜色在主题、亮暗模式或祖先局部主题改变时重新解析。修改外部样式表时可通过更新 `tone` 触发重新取色。
-- 色调由 `flow-diagram` 的 `--flow-*` 变量提供；统计示例依赖 `stat-card`，安装时一并提供。
+- 色调由 `flow-diagram` 的 `--flow-*` 变量提供，安装时一并带入。
 
 ## 源码
 

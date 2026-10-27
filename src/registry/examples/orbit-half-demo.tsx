@@ -18,8 +18,8 @@ export default function OrbitHalfDemo() {
   return (
     <Orbit
       label="上半圆轨道，节点在地平线处淡出"
-      background="dots"
-      className="h-64 [&_[data-slot=orbit-canvas]]:translate-y-24"
+      anchor="bottom"
+      className="h-44"
     >
       <OrbitRing radius={80} arc="half" duration={20} startAngle={-120}>
         <OrbitItem>
@@ -40,20 +40,20 @@ export default function OrbitHalfDemo() {
         duration={32}
         startAngle={-60}
       >
-        <OrbitItem tone="blue">
+        <OrbitItem>
           <Component />
         </OrbitItem>
-        <OrbitItem angle={90} tone="violet">
+        <OrbitItem angle={90}>
           <Palette />
         </OrbitItem>
-        <OrbitItem angle={180} tone="amber">
+        <OrbitItem angle={180}>
           <Sparkles />
         </OrbitItem>
-        <OrbitItem angle={270} tone="green">
+        <OrbitItem angle={270}>
           <Blocks />
         </OrbitItem>
       </OrbitRing>
-      <OrbitCenter className="-translate-y-6 rounded-lg border border-edge bg-background px-3 py-1.5 font-mono text-xs text-foreground">
+      <OrbitCenter className="-translate-y-[calc(100%+0.5rem)] rounded-lg border border-edge bg-background px-3 py-1.5 font-mono text-xs">
         registry
       </OrbitCenter>
     </Orbit>

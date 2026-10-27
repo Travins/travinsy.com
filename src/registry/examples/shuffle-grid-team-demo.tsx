@@ -38,22 +38,15 @@ const TEAMS: ShuffleGridGroup[] = [
 
 export default function ShuffleGridTeamDemo() {
   return (
-    <div className="flex w-full max-w-sm flex-col gap-5 rounded-lg border border-edge bg-card p-5">
-      <div className="flex flex-col gap-1.5">
-        <p className="text-base font-medium">把任务指派给合适的人</p>
-        <p className="text-sm leading-6 text-muted-foreground">
-          按职能切换，团队成员自动换到对应的位置。
-        </p>
-      </div>
-      <ShuffleGrid
-        label="团队成员的首字母头像，按前端、设计、后端、运维分类在方格中换位"
-        variant="tiles"
-        items={MEMBERS}
-        groups={TEAMS}
-        litCount="all"
-        groupInterval={3200}
-        groupsLabel="团队分类"
-      />
-    </div>
+    <ShuffleGrid
+      label="团队成员的首字母头像，按前端、设计、后端、运维分类在方格中换位"
+      variant="tiles"
+      items={MEMBERS}
+      groups={TEAMS}
+      litCount="all"
+      groupInterval={3200}
+      groupsLabel="团队分类"
+      className="max-w-xs"
+    />
   )
 }

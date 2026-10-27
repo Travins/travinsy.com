@@ -8,7 +8,7 @@ import { TextReveal } from "@/registry/ui/text-animate/text-animate"
 export default function TextAnimateRevealDemo() {
   const [cycle, setCycle] = useState(0)
   return (
-    <div className="flex w-full flex-col items-start gap-6 px-6 py-10">
+    <div className="flex w-full max-w-md flex-col items-start gap-6">
       <p className="text-2xl leading-relaxed font-medium">
         <TextReveal key={cycle} trigger="mount">
           每一个字，都有自己的入场。

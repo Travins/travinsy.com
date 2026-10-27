@@ -1,7 +1,6 @@
 import {
   StatCard,
   StatDistribution,
-  StatHeader,
   StatLabel,
   StatValue,
 } from "@/registry/ui/stat-card/stat-card"
@@ -18,12 +17,10 @@ const TOTAL = SOURCES.reduce((sum, item) => sum + item.value, 0)
 export default function StatCardDistributionDemo() {
   return (
     <StatCard className="w-full max-w-3xl gap-4">
-      <StatHeader>
-        <div className="flex flex-col gap-2">
-          <StatLabel>博客阅读量 · 近 30 天</StatLabel>
-          <StatValue value={TOTAL} unit="次" size="lg" />
-        </div>
-      </StatHeader>
+      <div className="flex flex-col gap-2">
+        <StatLabel>博客阅读量 · 近 30 天</StatLabel>
+        <StatValue value={TOTAL} unit="次" size="lg" />
+      </div>
       <StatDistribution segments={SOURCES} />
     </StatCard>
   )

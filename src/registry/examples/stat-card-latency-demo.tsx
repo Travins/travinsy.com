@@ -17,13 +17,13 @@ export default function StatCardLatencyDemo() {
   return (
     <StatCard className="w-full max-w-md">
       <StatHeader>
-        <div className="flex flex-col gap-1.5">
-          <StatLabel>/api/posts 响应时间</StatLabel>
-          <StatValue value={86} unit="ms 均值" size="lg" />
+        <div className="flex flex-col gap-2">
+          <StatLabel>/api/posts 平均响应</StatLabel>
+          <StatValue value={86} unit="ms" size="lg" />
         </div>
-        <div className="flex flex-col items-end gap-1.5">
+        <div className="flex flex-col items-end gap-2">
           <StatLabel>请求数</StatLabel>
-          <span className="text-base font-medium tabular-nums">128.4万</span>
+          <StatValue value={1284000} size="sm" />
         </div>
       </StatHeader>
       <StatZones zones={ZONES} />

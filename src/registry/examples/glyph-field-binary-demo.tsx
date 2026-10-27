@@ -5,12 +5,13 @@ export default function GlyphFieldBinaryDemo() {
     <GlyphField
       glyphs="binary"
       tone="primary"
+      fade="none"
+      fontSize={16}
+      density={0.5}
       paused
-      fade="edges"
-      density={0.65}
-      className="min-h-44 rounded-lg"
+      className="min-h-40 rounded-lg"
     >
-      <p className="bg-background/90 px-5 py-2 font-mono text-sm tracking-wider">
+      <p className="rounded-md border border-edge bg-background px-5 py-2 font-mono text-sm tracking-wider">
         数据始终在路上
       </p>
     </GlyphField>

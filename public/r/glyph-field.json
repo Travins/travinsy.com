@@ -7,8 +7,7 @@
     "class-variance-authority"
   ],
   "registryDependencies": [
-    "https://travinsy.com/r/flow-diagram.json",
-    "https://travinsy.com/r/stat-card.json"
+    "https://travinsy.com/r/flow-diagram.json"
   ],
   "files": [
     {

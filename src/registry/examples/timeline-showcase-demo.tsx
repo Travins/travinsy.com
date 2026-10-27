@@ -22,9 +22,7 @@ export default function TimelineShowcaseDemo() {
           </TimelineMarker>
           <TimelineConnector />
           <TimelineContent className="pb-4">
-            <TimelineTitle className="m-0! text-sm! font-medium!">
-              想法，成为代码
-            </TimelineTitle>
+            <TimelineTitle>想法，成为代码</TimelineTitle>
             <TimelineDescription>01 / 原语与接口</TimelineDescription>
           </TimelineContent>
         </TimelineItem>
@@ -34,9 +32,7 @@ export default function TimelineShowcaseDemo() {
           </TimelineMarker>
           <TimelineConnector />
           <TimelineContent className="pb-4">
-            <TimelineTitle className="m-0! text-sm! font-medium!">
-              打磨每一个细节
-            </TimelineTitle>
+            <TimelineTitle>打磨每一个细节</TimelineTitle>
             <TimelineDescription>02 / 正在构建</TimelineDescription>
           </TimelineContent>
         </TimelineItem>
@@ -45,9 +41,7 @@ export default function TimelineShowcaseDemo() {
             <Flag />
           </TimelineMarker>
           <TimelineContent>
-            <TimelineTitle className="m-0! text-sm! font-medium!">
-              下一站，发布
-            </TimelineTitle>
+            <TimelineTitle>下一站，发布</TimelineTitle>
             <TimelineDescription>03 / 保持生长</TimelineDescription>
           </TimelineContent>
         </TimelineItem>

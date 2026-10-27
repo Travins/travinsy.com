@@ -37,19 +37,19 @@ export function ChecklistExample() {
 }
 ```
 
-`ChecklistItem` 同时支持受控与非受控：传 `checked` 与 `onCheckedChange` 由你管理状态，只传 `defaultChecked` 则组件自己管。`ChecklistItem` 要作为 `ChecklistList` 的直接子级（用 `map` 生成也可以），自动播放按子级顺序编号。
+`ChecklistItem` 同时支持受控与非受控：传 `checked` 与 `onCheckedChange` 由你管理状态，只传 `defaultChecked` 则组件自己管。`ChecklistItem` 要作为 `ChecklistList` 的直接子级（用 `map` 生成也可以），自动播放按子级顺序编号。页面顶部的预览给 `Checklist` 加了 `autoplay`，进入视口后会自己逐条划掉；每条用 `tone` 指定不同的划线色，用 `meta` 在行尾放耗时之类的辅助信息。
 
 ## 示例
 
 ### 交互式
 
-非受控条目配合进度条，点击任意一条划掉或恢复，计数实时更新。划线颜色用 `tone` 换成蓝色。
+非受控条目配合进度条，点击任意一条划掉或恢复，计数实时更新。划线与勾选后的复选框填充用 `tone` 换成蓝色；进度条的色调单独用 `ChecklistProgress` 的 `tone` 指定。
 
 <ComponentPreview name="checklist-interactive-demo" />
 
 ### 紧凑款
 
-`size="sm"` 缩小复选框与字号，适合侧栏和小卡片。划线换成玫红，像红笔批改。
+`size="sm"` 缩小复选框与字号，适合侧栏和小卡片。划线与复选框换成玫红，像红笔批改。
 
 <ComponentPreview name="checklist-compact-demo" />
 

@@ -19,8 +19,37 @@ const VISITS = series([28, 27, 35, 29, 40, 57, 50, 38, 48, 47, 42, 51])
 const BUILD = series([48, 52, 47, 51, 44, 46, 43, 45, 41, 42, 40, 38])
 const DEPLOYS = series([2, 2, 3, 3, 3, 5, 5, 4, 4, 6, 6, 7])
 
-// 六块指标像一条小仪表盘：用 1px 间隙露出底色做分格线（窄屏两列、宽屏三列；窄屏只留前四块，预览不至于过长），每块用不同图形与 `--flow-*` 色调
+// 六块指标像一条小仪表盘：用 1px 间隙露出底色做分格线（窄屏两列、宽屏三列），每块用不同图形与 `--flow-*` 色调
 const CELL = "gap-2 rounded-none border-0 p-3 sm:p-4"
+
+/** 卡片底部一行：左边数值，右边涨跌幅；两者都不换行，窄卡片里数字也不会断开 */
+function Reading({
+  value,
+  unit,
+  trend,
+  invert,
+}: {
+  value: number | string
+  unit: string
+  trend: number
+  invert?: boolean
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
+      <StatValue
+        value={value}
+        unit={unit}
+        size="sm"
+        className="shrink-0 whitespace-nowrap"
+      />
+      <StatTrend
+        value={trend}
+        invert={invert}
+        className="shrink-0 whitespace-nowrap"
+      />
+    </div>
+  )
+}
 
 export default function MiniChartDemo() {
   return (
@@ -38,15 +67,7 @@ export default function MiniChartDemo() {
           seriesLabel="万次"
           label="近 12 天 API 调用量柱图"
         />
-        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
-          <StatValue
-            className="whitespace-nowrap"
-            value={41}
-            unit="万次"
-            size="sm"
-          />
-          <StatTrend value={18.2} />
-        </div>
+        <Reading value={41} unit="万次" trend={18.2} />
       </StatCard>
       <StatCard className={CELL}>
         <StatLabel>博客访客</StatLabel>
@@ -58,15 +79,7 @@ export default function MiniChartDemo() {
           seriesLabel="访客"
           label="近 12 天博客访客面积图"
         />
-        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
-          <StatValue
-            className="whitespace-nowrap"
-            value={4810}
-            unit="人"
-            size="sm"
-          />
-          <StatTrend value={-4.3} />
-        </div>
+        <Reading value={4810} unit="人" trend={-4.3} />
       </StatCard>
       <StatCard className={CELL}>
         <StatLabel>构建时长</StatLabel>
@@ -79,15 +92,7 @@ export default function MiniChartDemo() {
           seriesLabel="秒"
           label="近 12 次构建时长折线图"
         />
-        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
-          <StatValue
-            className="whitespace-nowrap"
-            value="38"
-            unit="秒"
-            size="sm"
-          />
-          <StatTrend value={-20.8} invert />
-        </div>
+        <Reading value="38" unit="秒" trend={-20.8} invert />
       </StatCard>
       <StatCard className={CELL}>
         <StatLabel>每日部署</StatLabel>
@@ -100,17 +105,9 @@ export default function MiniChartDemo() {
           seriesLabel="次"
           label="近 12 天部署次数阶梯线"
         />
-        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
-          <StatValue
-            className="whitespace-nowrap"
-            value="7"
-            unit="次"
-            size="sm"
-          />
-          <StatTrend value={16.7} />
-        </div>
+        <Reading value="7" unit="次" trend={16.7} />
       </StatCard>
-      <StatCard className={`${CELL} max-sm:hidden`}>
+      <StatCard className={CELL}>
         <StatLabel>缓存命中率</StatLabel>
         <div className="flex h-14 items-center">
           <MiniRing
@@ -129,17 +126,9 @@ export default function MiniChartDemo() {
             回源 1,950
           </p>
         </div>
-        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
-          <StatValue
-            className="whitespace-nowrap"
-            value="86"
-            unit="%"
-            size="sm"
-          />
-          <StatTrend value={3.4} />
-        </div>
+        <Reading value="86" unit="%" trend={3.4} />
       </StatCard>
-      <StatCard className={`${CELL} max-sm:hidden`}>
+      <StatCard className={CELL}>
         <StatLabel>流量来源</StatLabel>
         <div className="flex h-14 items-center">
           <MiniDonut
@@ -159,15 +148,7 @@ export default function MiniChartDemo() {
             直接 27%
           </p>
         </div>
-        <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1 *:shrink-0 *:whitespace-nowrap">
-          <StatValue
-            className="whitespace-nowrap"
-            value={34200}
-            unit="次"
-            size="sm"
-          />
-          <StatTrend value={9.6} />
-        </div>
+        <Reading value={34200} unit="次" trend={9.6} />
       </StatCard>
     </div>
   )

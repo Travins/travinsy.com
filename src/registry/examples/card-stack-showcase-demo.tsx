@@ -19,9 +19,7 @@ export default function CardStackShowcaseDemo() {
                 <span>SELECTED WORK</span>
                 <span>0{index + 1}</span>
               </div>
-              <h3 className="m-0! text-lg! font-medium! tracking-tight">
-                {title}
-              </h3>
+              <h3 className="text-lg font-medium tracking-tight">{title}</h3>
               <p className="mt-3 text-xs leading-6 text-muted-foreground">
                 设计、代码，以及一点好奇心。
               </p>

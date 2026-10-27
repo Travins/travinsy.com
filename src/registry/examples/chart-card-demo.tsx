@@ -14,9 +14,9 @@ import { formatDay } from "@/registry/lib/data-display"
 // 固定公式生成的演示数据：每次构建结果一致
 const DATA = Array.from({ length: 28 }, (_, index) => ({
   day: `2026-02-${String(index + 1).padStart(2, "0")}`,
-  docs: Math.round(6200 + index * 190 + 900 * Math.sin(index * 0.8)),
-  blog: Math.round(4800 + index * 120 + 700 * Math.cos(index * 0.6)),
-  registry: Math.round(2600 + index * 260 + 500 * Math.sin(index * 1.1 + 1)),
+  docs: Math.round(5200 + index * 100 + 900 * Math.sin(index * 0.8)),
+  blog: Math.round(4200 + index * 50 + 700 * Math.cos(index * 0.6)),
+  registry: Math.round(1800 + index * 57 + 400 * Math.sin(index * 1.1 + 1)),
 }))
 
 const SERIES = [
@@ -82,6 +82,7 @@ export default function ChartCardDemo() {
           series={[...SERIES]}
           xTickFormatter={(value) => formatDay(value, "long")}
           labelFormatter={(value) => formatDay(value, "long")}
+          className="h-48"
           label="2 月各栏目每日访问量折线图"
         />
         <ChartTable columns={[...COLUMNS]} rows={[...ROWS]} />

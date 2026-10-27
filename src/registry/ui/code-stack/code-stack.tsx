@@ -190,7 +190,7 @@ function CodeFile({
       <div
         data-slot="code-file-lines"
         aria-hidden="true"
-        className="flex min-h-0 flex-1 flex-col justify-center gap-2 overflow-hidden px-3 py-3"
+        className="flex min-h-0 flex-1 flex-col justify-center-safe gap-2 overflow-hidden px-3 py-3"
       >
         {rows.map((line, index) => (
           <div key={index} className="flex h-2 shrink-0 items-center gap-2">

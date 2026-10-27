@@ -2,14 +2,14 @@ import { TextHighlight } from "@/registry/ui/text-animate/text-animate"
 
 export default function TextAnimateHighlightDemo() {
   return (
-    <div className="flex w-full flex-col gap-6 px-6 py-12 text-xl leading-loose font-medium">
-      <p>
+    <div className="flex w-full max-w-md flex-col gap-5 leading-loose font-medium">
+      <p className="text-xl">
         好设计，让 <TextHighlight>复杂变简单</TextHighlight>。
       </p>
-      <p>
+      <p className="text-xl">
         Keep it{" "}
         <TextHighlight tone="violet" variant="underline">
-          clear & purposeful
+          clear &amp; purposeful
         </TextHighlight>
         .
       </p>

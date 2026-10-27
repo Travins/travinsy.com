@@ -4,6 +4,7 @@ export default function RippleOnlineDemo() {
   return (
     <Ripple
       label="Travins 在线，可随时协作"
+      tone="green"
       rings={4}
       baseSize={64}
       ringGap={48}
@@ -13,7 +14,7 @@ export default function RippleOnlineDemo() {
       <RippleMarker radius={0}>
         <div className="relative flex size-20 items-center justify-center rounded-full border border-edge bg-muted font-mono text-2xl font-medium">
           TY
-          <span className="absolute right-1 bottom-1 size-4 rounded-full border-4 border-background bg-(--flow-green)" />
+          <span className="absolute right-1 bottom-1 size-4 rounded-full border-4 border-background bg-(--flow-tone)" />
         </div>
       </RippleMarker>
       <RippleMarker

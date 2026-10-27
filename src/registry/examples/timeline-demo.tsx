@@ -19,7 +19,6 @@ import {
 } from "@/registry/ui/timeline/timeline"
 
 // 标记按事件类型着色；done / current / upcoming 由实线、脉冲光环、虚线区分，不只靠颜色
-const TITLE = "m-0! text-sm! font-medium!"
 
 function Avatar({ children, tone }: { children: string; tone: string }) {
   return (
@@ -49,7 +48,7 @@ export default function TimelineDemo() {
           <TimelineConnector />
           <TimelineContent className="pb-4">
             <div className="flex items-baseline justify-between gap-3">
-              <TimelineTitle className={TITLE}>评审通过，已合并</TimelineTitle>
+              <TimelineTitle>评审通过，已合并</TimelineTitle>
               <TimelineTime dateTime="2026-10-27T10:02:00+08:00">
                 10:02
               </TimelineTime>
@@ -73,7 +72,7 @@ export default function TimelineDemo() {
           <TimelineConnector />
           <TimelineContent className="pb-4">
             <div className="flex items-baseline justify-between gap-3">
-              <TimelineTitle className={TITLE}>缓存命中率偏低</TimelineTitle>
+              <TimelineTitle>缓存命中率偏低</TimelineTitle>
               <TimelineTime dateTime="2026-10-27T10:11:00+08:00">
                 10:11
               </TimelineTime>
@@ -97,7 +96,7 @@ export default function TimelineDemo() {
           <TimelineConnector />
           <TimelineContent className="pb-4">
             <div className="flex items-baseline justify-between gap-3">
-              <TimelineTitle className={TITLE}>正在构建站点</TimelineTitle>
+              <TimelineTitle>正在构建站点</TimelineTitle>
               <TimelineTime dateTime="2026-10-27T10:16:00+08:00">
                 现在
               </TimelineTime>
@@ -121,7 +120,7 @@ export default function TimelineDemo() {
           </TimelineMarker>
           <TimelineContent>
             <div className="flex items-baseline justify-between gap-3">
-              <TimelineTitle className={`${TITLE} text-muted-foreground!`}>
+              <TimelineTitle className="text-muted-foreground">
                 发布到生产环境
               </TimelineTitle>
               <TimelineTime>待构建完成</TimelineTime>

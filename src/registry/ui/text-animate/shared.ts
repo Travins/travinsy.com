@@ -25,13 +25,28 @@ function useTextEntrance(trigger: "mount" | "in-view") {
   return { ref, active: !reduced && (trigger === "mount" || inView), reduced }
 }
 
-function segmentText(text: string, by: "char" | "word", locale = "zh-CN") {
-  return Array.from(
-    new Intl.Segmenter(locale, {
-      granularity: by === "char" ? "grapheme" : "word",
-    }).segment(text),
-    (part) => part.segment,
-  )
+// 不能出现在行首的标点：每个片段都是 inline-block，浏览器的禁则不再生效，
+// 所以把它们并进前一个片段，避免「。」孤零零掉到下一行
+const NO_LINE_START = /^[，。、；：！？）」』》”’…·.,;:!?)\]}]+$/u
+
+function segmentText(
+  text: string,
+  by: "char" | "word",
+  locale = "zh-CN",
+  /** 把行首禁则标点并进前一个片段，只有每个片段都是 inline-block 时才需要 */
+  glue = false,
+) {
+  const parts: string[] = []
+  for (const { segment } of new Intl.Segmenter(locale, {
+    granularity: by === "char" ? "grapheme" : "word",
+  }).segment(text)) {
+    if (glue && parts.length && NO_LINE_START.test(segment)) {
+      parts[parts.length - 1] += segment
+    } else {
+      parts.push(segment)
+    }
+  }
+  return parts
 }
 
 const TEXT_CSS = `

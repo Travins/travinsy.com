@@ -5,27 +5,7 @@ description: 纯 CSS 无缝跑马灯，支持四向滚动、恒定速度、渐�
 group: text
 ---
 
-import Example0 from "@/registry/examples/marquee-demo"
-import Example1 from "@/registry/examples/marquee-type-demo"
-import Example2 from "@/registry/examples/marquee-ticker-demo"
-import Example3 from "@/registry/examples/marquee-stack-demo"
-import Example4 from "@/registry/examples/marquee-vertical-demo"
-
-<noscript>
-  <style>{`[data-marquee-script-preview] { display: none } [data-no-script-demo] button { display: none }`}</style>
-</noscript>
-
-<div data-marquee-script-preview>
-  <ComponentPreview name="marquee-demo" />
-</div>
-<noscript>
-  <div
-    data-no-script-demo
-    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
-  >
-    <Example0 />
-  </div>
-</noscript>
+<ComponentPreview name="marquee-demo" />
 
 ## 安装
 
@@ -49,71 +29,33 @@ export function MarqueeExample() {
 }
 ```
 
+页首的预览是两条反向滚动的丝带：`rotate` 把整条带子旋转 ±9°，交叉成 X 形。旋转带应放在带 `overflow-hidden` 的外层，并加宽到覆盖两端。
+
 ## 示例
 
 ### 实心与描边
 
-同一条带里交替使用实心字与描边字，两行反向滚动。描边颜色取自前景色变量。
+同一条带里交替使用实心字与描边字，两行反向滚动。描边字用背景色填充，并先画描边（`paint-order: stroke fill`），字形重叠处的内部轮廓会被盖住。
 
-<div data-marquee-script-preview>
-  <ComponentPreview name="marquee-type-demo" />
-</div>
-<noscript>
-  <div
-    data-no-script-demo
-    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
-  >
-    <Example1 />
-  </div>
-</noscript>
+<ComponentPreview name="marquee-type-demo" />
 
 ### 项目行情
 
 用方向图标、正负号和数值表达变化。示例数据固定，仅展示布局，不连接实时服务。
 
-<div data-marquee-script-preview>
-  <ComponentPreview name="marquee-ticker-demo" />
-</div>
-<noscript>
-  <div
-    data-no-script-demo
-    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
-  >
-    <Example2 />
-  </div>
-</noscript>
+<ComponentPreview name="marquee-ticker-demo" />
 
 ### 技术栈
 
 两行文字胶囊以相同速度反向移动。使用通用工具图标，不依赖品牌图形资源。
 
-<div data-marquee-script-preview>
-  <ComponentPreview name="marquee-stack-demo" />
-</div>
-<noscript>
-  <div
-    data-no-script-demo
-    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
-  >
-    <Example3 />
-  </div>
-</noscript>
+<ComponentPreview name="marquee-stack-demo" />
 
 ### 纵向动态
 
-纵向滚动需要给容器设置明确高度，例如 `className="h-64"`。
+纵向滚动需要给容器设置明确高度，例如 `className="h-56"`。持续滚动的正文旁应提供暂停入口，示例里的按钮直接绑定 `paused`。
 
-<div data-marquee-script-preview>
-  <ComponentPreview name="marquee-vertical-demo" />
-</div>
-<noscript>
-  <div
-    data-no-script-demo
-    className="my-4 overflow-hidden rounded-lg border border-edge p-4"
-  >
-    <Example4 />
-  </div>
-</noscript>
+<ComponentPreview name="marquee-vertical-demo" />
 
 ## API
 
@@ -147,7 +89,7 @@ export function MarqueeExample() {
 
 - 无 JS 时仍运行 CSS 动画，使用每组 `30s` 的回退时长。精确的 px/s 换算需要客户端测量，不能从服务端获知任意字体与内容的实际宽度。
 - 请使用非交互展示内容，避免在复制组内放置表单、带固定 `id` 的元素或有副作用的组件。复制体虽然不可交互，仍会挂载。
-- 组件自身不设置色彩或背景；通过主题 token 组合带子和胶囊。点阵背景属于示例布局。
+- 组件自身不设置色彩或背景；通过主题 token 组合带子和胶囊。
 
 ## 源码
 

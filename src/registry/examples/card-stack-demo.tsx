@@ -74,7 +74,6 @@ function Sparkline() {
 }
 
 const projects: {
-  number: string
   tone: FlowToneName
   name: string
   title: string
@@ -83,7 +82,6 @@ const projects: {
   art: ReactNode
 }[] = [
   {
-    number: "01",
     tone: "blue",
     name: "个人组件库",
     title: "把界面，写成积木",
@@ -92,7 +90,6 @@ const projects: {
     art: <Blocks />,
   },
   {
-    number: "02",
     tone: "violet",
     name: "开发者笔记",
     title: "让想法有处安放",
@@ -101,7 +98,6 @@ const projects: {
     art: <TextLines />,
   },
   {
-    number: "03",
     tone: "amber",
     name: "构建面板",
     title: "把耗时，看得见",
@@ -110,7 +106,6 @@ const projects: {
     art: <Bars />,
   },
   {
-    number: "04",
     tone: "green",
     name: "站点数据",
     title: "访客，慢慢变多",
@@ -132,22 +127,19 @@ export default function CardStackDemo() {
       >
         {projects.map((project) => (
           <CardStackItem
-            key={project.number}
+            key={project.name}
             className="flex flex-col overflow-hidden p-0 shadow-sm"
             style={flowToneStyle(project.tone)}
           >
             <div className="relative flex h-24 items-center justify-center border-b border-edge bg-(--flow-tone)/8">
               <div aria-hidden="true" className={`absolute inset-0 ${LINES}`} />
-              <span className="absolute top-3 left-4 font-mono text-[11px] text-(--flow-tone)">
-                PROJECT / {project.number}
-              </span>
               <div className="relative mt-3">{project.art}</div>
             </div>
             <div className="flex flex-1 flex-col p-4">
               <p className="mb-1 text-xs text-muted-foreground">
                 {project.name}
               </p>
-              <h3 className="m-0! text-lg! font-medium! tracking-tight">
+              <h3 className="text-lg font-medium tracking-tight">
                 {project.title}
               </h3>
               <p className="mt-2 text-[13px] leading-5 text-muted-foreground">

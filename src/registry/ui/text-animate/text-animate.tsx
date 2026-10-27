@@ -20,8 +20,8 @@ import { TextScramble } from "./text-scramble"
 const textFlipVariants = cva("relative inline-grid max-w-full align-baseline", {
   variants: {
     variant: {
-      pill: "rounded-lg border border-edge bg-primary/10 px-2.5 py-0.5 text-primary",
-      underline: "border-b-2 border-primary px-1 text-primary",
+      pill: "rounded-lg border border-edge bg-(--flow-tone)/10 px-2.5 py-0.5 text-(--flow-tone)",
+      underline: "border-b-2 border-(--flow-tone) px-1 text-(--flow-tone)",
     },
   },
   defaultVariants: { variant: "pill" },
@@ -31,14 +31,18 @@ function TextFlip({
   words,
   interval = 2600,
   variant,
+  tone = "primary",
   paused = false,
   className,
+  style,
   children,
   ...props
 }: Omit<React.ComponentProps<"span">, "children"> &
   VariantProps<typeof textFlipVariants> & {
     words: string[]
     interval?: number
+    /** 胶囊 / 下划线的色调，默认主题强调色。 */
+    tone?: FlowToneName
     paused?: boolean
     /** 屏幕阅读器的完整替代文案。 */
     children?: string
@@ -79,6 +83,7 @@ function TextFlip({
       ref={ref}
       data-slot="text-flip"
       className={cn(textFlipVariants({ variant }), className)}
+      style={{ ...flowToneStyle(tone), ...style }}
     >
       <span className="sr-only">{children ?? words.join("、")}</span>
       <motion.span
@@ -124,7 +129,7 @@ function TextReveal({
   locale?: string
 }) {
   const { ref, active } = useTextEntrance(trigger)
-  const parts = segmentText(children, by, locale)
+  const parts = segmentText(children, by, locale, true)
   return (
     <span
       {...props}

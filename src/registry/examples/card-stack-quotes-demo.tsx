@@ -2,11 +2,11 @@
 
 import {
   CardStack,
-  CardStackItem,
   CardStackControls,
+  CardStackItem,
 } from "@/registry/ui/card-stack/card-stack"
 
-const quotes = [
+const QUOTES = [
   {
     quote: "好的工具，让人把注意力留给真正想做的事。",
     author: "林川",
@@ -23,26 +23,27 @@ const quotes = [
     role: "前端工程师",
   },
 ]
+
 export default function CardStackQuotesDemo() {
   return (
     <div className="w-full max-w-sm px-2 py-4">
       <CardStack label="开发者的话" interval={6000}>
-        {quotes.map((item) => (
-          <CardStackItem key={item.author}>
-            <blockquote className="border-0! pl-0! text-foreground!">
+        {QUOTES.map(({ quote, author, role }) => (
+          <CardStackItem key={author}>
+            <blockquote>
               <span
                 aria-hidden="true"
                 className="block h-14 font-serif text-7xl leading-none text-primary/40"
               >
                 “
               </span>
-              <p className="min-h-24 text-lg leading-8 tracking-tight">
-                {item.quote}
+              <p className="min-h-24 text-lg leading-8 tracking-tight text-balance">
+                {quote}
               </p>
               <footer className="mt-6 border-t border-edge pt-4 text-sm">
-                {item.author}
+                {author}
                 <span className="ml-3 text-xs text-muted-foreground">
-                  {item.role}
+                  {role}
                 </span>
               </footer>
             </blockquote>

@@ -16,8 +16,8 @@ import {
 
 export default function OrbitIconsDemo() {
   return (
-    <Orbit label="代码节点连接数据库、终端与网络" background="grid">
-      <OrbitRing radius={74} duration={26} startAngle={-90}>
+    <Orbit label="代码节点连接数据库、终端与网络" background="grid" className="h-80">
+      <OrbitRing radius={74} duration={26} tone="blue">
         <OrbitItem tone="blue">
           <Database />
         </OrbitItem>
@@ -28,7 +28,14 @@ export default function OrbitIconsDemo() {
           <Zap />
         </OrbitItem>
       </OrbitRing>
-      <OrbitRing radius={126} reverse duration={38} dashed startAngle={-30}>
+      <OrbitRing
+        radius={126}
+        duration={38}
+        reverse
+        dashed
+        startAngle={-30}
+        tone="violet"
+      >
         <OrbitItem tone="violet">
           <Layers />
         </OrbitItem>

@@ -52,7 +52,7 @@ export default function TextAnimateShowcaseDemo() {
         <span>
           写成{" "}
           <TextFlip
-            className="[--primary:var(--flow-blue)]"
+            tone="blue"
             interval={1800}
             words={["组件", "系统", "积木", "产品"]}
           />

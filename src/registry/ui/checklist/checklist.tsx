@@ -166,6 +166,8 @@ type ChecklistItemProps = Omit<
   readOnly?: boolean
   /** 这一条划线的色调，不传则用 `Checklist` 的 `tone` */
   tone?: FlowTone
+  /** 行尾的辅助信息（耗时、负责人等），等宽小字、靠右对齐，不参与划线 */
+  meta?: React.ReactNode
 }
 
 /** 清单条目：Base UI 复选框配手写划线，勾选时文字被划掉并变淡。 */
@@ -177,6 +179,7 @@ function ChecklistItem({
   disabled = false,
   readOnly = false,
   tone,
+  meta,
   children,
   style,
   ...props
@@ -203,6 +206,7 @@ function ChecklistItem({
   }, [report, index, checked])
 
   const locked = readOnly || !!driven
+  const itemTone = tone ?? ctx?.tone ?? "foreground"
   return (
     <li
       data-slot="checklist-item"
@@ -210,7 +214,14 @@ function ChecklistItem({
       data-readonly={locked || undefined}
       data-disabled={disabled || undefined}
       className={cn("group/item", className)}
-      style={{ ...flowToneStyle(tone ?? ctx?.tone ?? "foreground"), ...style }}
+      // 默认色调下复选框沿用主题强调色；指定了色调时，勾选后的填充也跟着划线变色
+      style={{
+        ...flowToneStyle(itemTone),
+        ...(itemTone !== "foreground" && {
+          "--checklist-fill": "var(--flow-tone)",
+        }),
+        ...style,
+      }}
       {...props}
     >
       <label
@@ -226,7 +237,7 @@ function ChecklistItem({
           disabled={disabled}
           readOnly={locked}
           data-slot="checklist-checkbox"
-          className="group/box relative flex size-5 shrink-0 items-center justify-center rounded-md border border-input bg-background text-primary-foreground transition-colors outline-none group-data-[size=sm]/checklist:size-4 group-data-[size=sm]/checklist:rounded-[5px] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none data-checked:border-primary data-checked:bg-primary"
+          className="group/box relative flex size-5 shrink-0 items-center justify-center rounded-md border border-input bg-background text-primary-foreground transition-colors outline-none group-data-[size=sm]/checklist:size-4 group-data-[size=sm]/checklist:rounded-[5px] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none data-checked:border-[var(--checklist-fill,var(--primary))] data-checked:bg-[var(--checklist-fill,var(--primary))]"
         >
           <CheckboxPrimitive.Indicator
             keepMounted
@@ -261,6 +272,14 @@ function ChecklistItem({
           </span>
           <Scribble checked={checked} seed={index ?? 0} />
         </span>
+        {meta ? (
+          <span
+            data-slot="checklist-meta"
+            className="ml-auto shrink-0 pl-3 font-mono text-[11px] text-muted-foreground/70"
+          >
+            {meta}
+          </span>
+        ) : null}
       </label>
     </li>
   )

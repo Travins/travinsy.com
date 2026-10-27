@@ -9,7 +9,7 @@ import { registryExamples } from "@/registry/__index__"
 const thumbnailExamples: Record<string, string> = {
   "flow-diagram": "flow-diagram-showcase-demo",
   orbit: "orbit-icons-demo",
-  ripple: "ripple-reach-demo",
+  ripple: "ripple-demo",
   greeting: "greeting-showcase-demo",
   "grid-layout": "grid-layout-showcase-demo",
   "local-time": "local-time-showcase-demo",

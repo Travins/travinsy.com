@@ -2,14 +2,12 @@ import { TextScramble } from "@/registry/ui/text-animate/text-animate"
 
 export default function TextAnimateScrambleDemo() {
   return (
-    <div className="flex w-full flex-col items-start gap-5 px-6 py-10">
-      <span className="font-mono text-[10px] text-muted-foreground">
-        悬停或聚焦，重新解码
-      </span>
+    <div className="flex w-full max-w-md flex-col items-start gap-5">
+      <p className="text-xs text-muted-foreground">悬停或聚焦，重新解码</p>
       <TextScramble
         trigger="hover"
         charset="symbols"
-        className="text-2xl font-semibold text-primary"
+        className="text-xl font-semibold text-primary sm:text-2xl"
       >
         DECODING → 构建完成
       </TextScramble>

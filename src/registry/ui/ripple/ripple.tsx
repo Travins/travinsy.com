@@ -14,6 +14,7 @@ import {
   FADE_MASK,
   type FlowBackgroundName,
 } from "@/registry/ui/flow-diagram/background"
+import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
 
 // 订阅系统偏好的实时变更，服务端始终使用静帧。
 function subscribeReducedMotion(callback: () => void) {
@@ -47,8 +48,10 @@ function Ripple({
   paused = false,
   size = 320,
   background = "dots",
+  tone,
   label,
   className,
+  style,
   children,
   ...props
 }: React.ComponentProps<"div"> & {
@@ -63,6 +66,11 @@ function Ripple({
   /** 设计画布边长，容器窄时整体缩小。 */
   size?: number
   background?: FlowBackgroundName
+  /**
+   * 波纹色调：内置名或任意 CSS 颜色；不传沿用主题的线条色。
+   * 同时写入 `--flow-tone`，内部的 `RippleMarker` 可用 `bg-(--flow-tone)` 取同一个颜色。
+   */
+  tone?: FlowTone
   /** 图示说明；不传时作为装饰隐藏。内部不应放交互元素。 */
   label?: string
 }) {
@@ -105,6 +113,7 @@ function Ripple({
         "relative flex h-72 w-full items-center justify-center overflow-hidden",
         className,
       )}
+      style={{ ...flowToneStyle(tone), ...style }}
     >
       <div
         data-slot="ripple-background"
@@ -128,6 +137,7 @@ function Ripple({
             gap={gap}
             size={canvasSize}
             mode={mode}
+            toned={tone !== undefined}
             time={time}
           />
         ))}
@@ -146,6 +156,7 @@ function RippleWave({
   gap,
   size,
   mode,
+  toned,
   time,
 }: {
   index: number
@@ -154,6 +165,7 @@ function RippleWave({
   gap: number
   size: number
   mode: RippleMode
+  toned: boolean
   time: MotionValue<number>
 }) {
   const progress = useTransform(
@@ -173,7 +185,12 @@ function RippleWave({
     <motion.div
       data-slot="ripple-wave"
       aria-hidden
-      className="pointer-events-none absolute top-1/2 left-1/2 aspect-square -translate-x-1/2 -translate-y-1/2 rounded-full border border-edge bg-primary/2"
+      className={cn(
+        "pointer-events-none absolute top-1/2 left-1/2 aspect-square -translate-x-1/2 -translate-y-1/2 rounded-full border",
+        toned
+          ? "border-(--flow-tone)/50 bg-(--flow-tone)/8"
+          : "border-edge bg-primary/2",
+      )}
       style={{ width: `${(diameter / size) * 100}%`, scale, opacity }}
     />
   )
