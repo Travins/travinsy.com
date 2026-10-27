@@ -49,7 +49,7 @@ export default function IsometricMarkPiDemo() {
           rotation={-90}
           depth={60}
           guides
-          floor
+          floor="checker"
           material="cross"
           label="Pi"
         />

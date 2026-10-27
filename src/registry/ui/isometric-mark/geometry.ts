@@ -42,6 +42,12 @@ type IsometricModel = {
   guides: string
   /** 地面网格路径（z = 0），与辅助线同方向 */
   floor: string
+  /** 只有第一个方向的地面横线 */
+  floorLines: string
+  /** 地面格点（两组格线的交点） */
+  floorDots: string
+  /** 棋盘格：隔一格填一格 */
+  floorCells: string
   /** 挤出高度 1 在屏幕上对应的竖直长度（随俯仰角变化，标准等轴测为 1） */
   heightScale: number
 }
@@ -326,58 +332,106 @@ function buildIsometricModel(
     while (b > tolerance) [a, b] = [b, a % b]
     return a
   }
-  const floor = directions
-    .flatMap(({ ux, uy }) => {
-      const nx = -uy
-      const ny = ux
-      let lo = Infinity
-      let hi = -Infinity
-      let a0 = Infinity
-      let a1 = -Infinity
-      for (const [x, y] of points) {
-        lo = Math.min(lo, x * nx + y * ny)
-        hi = Math.max(hi, x * nx + y * ny)
-        a0 = Math.min(a0, x * ux + y * uy)
-        a1 = Math.max(a1, x * ux + y * uy)
-      }
-      const span = hi - lo
-      const t0 = a0 - floorReach
-      const t1 = a1 + floorReach
-      const offsets = [...new Set(points.map(([x, y]) => x * nx + y * ny - lo))]
-        .sort((p, q) => p - q)
-        .filter((d, i, all) => i === 0 || d - all[i - 1] > planSize / 400)
-      let g = 0
-      for (const d of offsets) g = approxGcd(g, d)
-      let ds: number[]
-      let step: number
-      if (span > EPSILON && g >= span / 24) {
-        // 所有边的间距有公约数：按公约数等距铺，图形里的每条边都落在格线上
-        step = g
-        ds = []
-        for (let d = 0; d <= span + EPSILON; d += step) ds.push(d)
-      } else {
-        // 没有合适的公约数：每条边各画一条格线（像构造图那样），外侧按平均间距延伸
-        ds = offsets
-        step = offsets.length > 1 ? span / (offsets.length - 1) : floorTarget
-      }
-      const lines: string[] = []
-      const push = (d: number) => {
-        const off = lo + d
-        lines.push(
-          line(
-            off * nx + t0 * ux,
-            off * ny + t0 * uy,
-            off * nx + t1 * ux,
-            off * ny + t1 * uy,
-          ),
-        )
-      }
-      for (const d of ds) push(d)
-      for (let d = -step; d >= -floorReach; d -= step) push(d)
-      for (let d = span + step; d <= span + floorReach; d += step) push(d)
-      return lines
-    })
+  // 每个方向算出一组格线位置（法线方向上的绝对偏移），地面的各种材质都由这两组格线组合而成
+  const families = directions.map(({ ux, uy }) => {
+    const nx = -uy
+    const ny = ux
+    let lo = Infinity
+    let hi = -Infinity
+    let a0 = Infinity
+    let a1 = -Infinity
+    for (const [x, y] of points) {
+      lo = Math.min(lo, x * nx + y * ny)
+      hi = Math.max(hi, x * nx + y * ny)
+      a0 = Math.min(a0, x * ux + y * uy)
+      a1 = Math.max(a1, x * ux + y * uy)
+    }
+    const span = hi - lo
+    const offsets = [...new Set(points.map(([x, y]) => x * nx + y * ny - lo))]
+      .sort((p, q) => p - q)
+      .filter((d, i, all) => i === 0 || d - all[i - 1] > planSize / 400)
+    let g = 0
+    for (const d of offsets) g = approxGcd(g, d)
+    let ds: number[]
+    let step: number
+    if (span > EPSILON && g >= span / 24) {
+      // 所有边的间距有公约数：按公约数等距铺，图形里的每条边都落在格线上；
+      // 公约数太大（格子太稀）时再等分，等分后边依然在格线上
+      step = g / Math.max(1, Math.round(g / floorTarget))
+      ds = []
+      for (let d = 0; d <= span + EPSILON; d += step) ds.push(d)
+    } else {
+      // 没有合适的公约数：每条边各画一条格线（像构造图那样），外侧按平均间距延伸
+      ds = offsets
+      step = offsets.length > 1 ? span / (offsets.length - 1) : floorTarget
+    }
+    const all = [...ds]
+    for (let d = -step; d >= -floorReach; d -= step) all.push(d)
+    for (let d = span + step; d <= span + floorReach; d += step) all.push(d)
+    all.sort((p, q) => p - q)
+    return {
+      ux,
+      uy,
+      nx,
+      ny,
+      offsets: all.map((d) => lo + d),
+      t0: a0 - floorReach,
+      t1: a1 + floorReach,
+    }
+  })
+  const lineOf = (f: (typeof families)[number], off: number) =>
+    line(
+      off * f.nx + f.t0 * f.ux,
+      off * f.ny + f.t0 * f.uy,
+      off * f.nx + f.t1 * f.ux,
+      off * f.ny + f.t1 * f.uy,
+    )
+  const floor = families
+    .flatMap((f) => f.offsets.map((off) => lineOf(f, off)))
     .join("")
+  const floorLines = families[0]
+    ? families[0].offsets.map((off) => lineOf(families[0], off)).join("")
+    : ""
+  // 两组格线的交点：解 n1·p = d1、n2·p = d2
+  const cross = (d1: number, d2: number): [number, number] | null => {
+    const [f1, f2] = families
+    const det = f1.nx * f2.ny - f1.ny * f2.nx
+    if (Math.abs(det) < EPSILON) return null
+    return [(d1 * f2.ny - f1.ny * d2) / det, (f1.nx * d2 - d1 * f2.nx) / det]
+  }
+  let floorDots = ""
+  let floorCells = ""
+  if (families.length === 2) {
+    const [f1, f2] = families
+    const r = planSize / 130
+    f1.offsets.forEach((d1) => {
+      f2.offsets.forEach((d2) => {
+        const p = cross(d1, d2)
+        if (!p) return
+        const [x, y] = project(p[0], p[1])
+        floorDots += `M${fmt(x - r)} ${fmt(y)}a${fmt(r)} ${fmt(r)} 0 1 0 ${fmt(r * 2)} 0a${fmt(r)} ${fmt(r)} 0 1 0 ${fmt(-r * 2)} 0`
+      })
+    })
+    for (let i = 0; i < f1.offsets.length - 1; i++) {
+      for (let j = 0; j < f2.offsets.length - 1; j++) {
+        if ((i + j) % 2) continue
+        const corners = [
+          cross(f1.offsets[i], f2.offsets[j]),
+          cross(f1.offsets[i + 1], f2.offsets[j]),
+          cross(f1.offsets[i + 1], f2.offsets[j + 1]),
+          cross(f1.offsets[i], f2.offsets[j + 1]),
+        ]
+        if (corners.some((c) => !c)) continue
+        floorCells +=
+          corners
+            .map((c, k) => {
+              const [x, y] = project(c![0], c![1])
+              return `${k ? "L" : "M"}${fmt(x)} ${fmt(y)}`
+            })
+            .join("") + "Z"
+      }
+    }
+  }
 
   const guides = directions
     .flatMap(({ ux, uy }) => {
@@ -429,6 +483,9 @@ function buildIsometricModel(
     walls,
     guides,
     floor,
+    floorLines,
+    floorDots,
+    floorCells,
     heightScale: KZ,
   }
 }

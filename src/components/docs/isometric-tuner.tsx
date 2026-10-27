@@ -31,7 +31,18 @@ type Values = {
   interactive?: boolean
   highlight?: boolean
   sound?: boolean
+  floor?: Floor
 }
+
+type Floor = "grid" | "lines" | "dots" | "checker" | "off"
+
+const FLOORS: { value: Floor; label: string }[] = [
+  { value: "grid", label: "方格" },
+  { value: "lines", label: "条纹" },
+  { value: "dots", label: "格点" },
+  { value: "checker", label: "棋盘" },
+  { value: "off", label: "无" },
+]
 
 const MATERIALS: { value: IsometricMaterial; label: string }[] = [
   { value: "hatch", label: "斜纹" },
@@ -73,6 +84,12 @@ export function useIsometricTuner() {
         interactive: values.interactive,
         highlight: values.highlight,
         sound: values.sound,
+        floor:
+          values.floor === undefined
+            ? undefined
+            : values.floor === "off"
+              ? false
+              : values.floor,
         guides:
           values.guides === undefined
             ? undefined
@@ -277,6 +294,9 @@ export function IsometricTunerPanel({
     interactive: values.interactive ?? base?.interactive ?? true,
     highlight: values.highlight ?? base?.highlight ?? true,
     sound: values.sound ?? base?.sound ?? false,
+    floor:
+      values.floor ??
+      (base ? (base.floor === false ? "off" : base.floor) : undefined),
   }
   return (
     <div className="grid gap-x-6 gap-y-4 px-4 pt-3 pb-4 sm:grid-cols-3">
@@ -322,6 +342,14 @@ export function IsometricTunerPanel({
         value={current.guides}
         onChange={(guides) => set({ guides })}
       />
+      <div className="sm:col-span-2">
+        <Segmented
+          label="地面 floor"
+          options={FLOORS}
+          value={current.floor}
+          onChange={(floor) => set({ floor })}
+        />
+      </div>
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3 sm:col-span-3">
         <Toggle
           label="点击按下 interactive"

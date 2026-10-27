@@ -70,10 +70,11 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    */
   material?: IsometricMaterial
   /**
-   * 在图形下方画一块与辅助线同方向、同平面的地面网格，向四周渐隐
+   * 图形下方的地面，与辅助线同方向、同平面、对齐每条边，向四周渐隐。
+   * `true` / `"grid"` 方格网、`"lines"` 只有一个方向的条纹、`"dots"` 格点、`"checker"` 棋盘格
    * @default false
    */
-  floor?: boolean
+  floor?: boolean | IsometricFloor
   /**
    * 按下与松开时播放合成音效（Web Audio，无需音频文件）；尊重全站静音偏好，见 useIsometricMarkMuted
    * @default false
@@ -136,6 +137,7 @@ type IsometricMarkTuning = Partial<
     | "interactive"
     | "highlight"
     | "sound"
+    | "floor"
   >
 > & {
   /** 固定画框：沿用原属性下的 viewBox，调整时容器大小与图形比例都不变 */
@@ -153,6 +155,7 @@ type IsometricMarkReport = {
   interactive: boolean
   highlight: boolean
   sound: boolean
+  floor: IsometricFloor | false
 }
 
 /**
@@ -160,6 +163,8 @@ type IsometricMarkReport = {
  * 用于调试面板一类的场景；不包这一层时组件行为不变。
  */
 const IsometricMarkTuningContext = React.createContext<IsometricMarkTuning>({})
+
+type IsometricFloor = "grid" | "lines" | "dots" | "checker"
 
 type IsometricMaterial =
   "hatch" | "hatch-reverse" | "cross" | "dots" | "lines" | "plain"
@@ -198,6 +203,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
     interactive = true,
     highlight = true,
     sound = false,
+    floor = false,
   } = allProps
   const baseModel = React.useMemo(
     () =>
@@ -223,6 +229,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
       interactive,
       highlight,
       sound,
+      floor: floor === true ? "grid" : floor,
     })
   }, [
     onReport,
@@ -234,6 +241,7 @@ function IsometricMark(allProps: IsometricMarkProps) {
     interactive,
     highlight,
     sound,
+    floor,
   ])
   return (
     <IsometricMarkView
@@ -334,6 +342,15 @@ function IsometricMarkView({
   const [muted] = useIsometricMarkMuted()
   const audible = sound && !muted
   const pressedRef = React.useRef(false)
+  // 各种地面的浓淡：格点面积小要加重，棋盘格是整块填色要减轻
+  const floorStrength =
+    floor === "dots"
+      ? 3.2
+      : floor === "checker"
+        ? 0.45
+        : floor === "lines"
+          ? 1.3
+          : 1
   const release = () => {
     if (pressedRef.current && audible) playRelease()
     pressedRef.current = false
@@ -429,23 +446,39 @@ function IsometricMarkView({
           >
             <stop
               offset="0"
-              style={{ stopColor: "var(--foreground)", stopOpacity: 0.1 }}
+              style={{
+                stopColor: "var(--foreground)",
+                stopOpacity: 0.1 * floorStrength,
+              }}
             />
             <stop
               offset="0.55"
-              style={{ stopColor: "var(--foreground)", stopOpacity: 0.07 }}
+              style={{
+                stopColor: "var(--foreground)",
+                stopOpacity: 0.07 * floorStrength,
+              }}
             />
             <stop
               offset="1"
               style={{ stopColor: "var(--foreground)", stopOpacity: 0 }}
             />
           </radialGradient>
-          <path
-            data-slot="isometric-mark-floor"
-            d={model.floor}
-            stroke={`url(#${patternId}-floor)`}
-            strokeWidth={unit}
-          />
+          {floor === "dots" || floor === "checker" ? (
+            <path
+              data-slot="isometric-mark-floor"
+              data-floor={floor}
+              d={floor === "dots" ? model.floorDots : model.floorCells}
+              fill={`url(#${patternId}-floor)`}
+            />
+          ) : (
+            <path
+              data-slot="isometric-mark-floor"
+              data-floor={floor === "lines" ? "lines" : "grid"}
+              d={floor === "lines" ? model.floorLines : model.floor}
+              stroke={`url(#${patternId}-floor)`}
+              strokeWidth={floor === "lines" ? unit * 1.5 : unit}
+            />
+          )}
         </>
       ) : null}
 
@@ -518,6 +551,7 @@ export type {
   IsometricMarkProps,
   IsometricMarkReport,
   IsometricMarkTuning,
+  IsometricFloor,
   IsometricMaterial,
   IsometricPoint,
   IsometricShape,

@@ -27,7 +27,7 @@ export default function IsometricMarkVercelDemo() {
           rotation={0}
           depth={110}
           guides
-          floor
+          floor="dots"
           material="plain"
           interactive={false}
           highlight={false}

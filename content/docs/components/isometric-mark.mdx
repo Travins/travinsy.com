@@ -65,21 +65,21 @@ export function BrandMark() {
 
 ### 多个形状与色调
 
-`shapes` 可以放多块互不相连的多边形，它们之间的遮挡自动计算；每块可以用 `tone` 单独着色。下面是 shadcn/ui 的标志：两道斜杠各是一块，分别取主题色的深浅。
+`shapes` 可以放多块互不相连的多边形，它们之间的遮挡自动计算；每块可以用 `tone` 单独着色。下面是 shadcn/ui 的标志：两道斜杠各是一块，分别取主题色的深浅，地面用条纹 `floor="lines"`。
 
 <ComponentPreview name="isometric-mark-shadcn-demo" />
 
 ### 带孔的形状
 
-`holes` 在外轮廓里挖孔，孔壁同样按朝向自动消隐。下面是 Pi 的像素标志：左边一块挖出方孔，右下的方块独立成一块并着主题色，顶面用网纹材质。
+`holes` 在外轮廓里挖孔，孔壁同样按朝向自动消隐。下面是 Pi 的像素标志：左边一块挖出方孔，右下的方块独立成一块并着主题色，顶面用网纹材质，地面用棋盘格 `floor="checker"`。
 
 <ComponentPreview name="isometric-mark-pi-demo" />
 
 ### 静态图形
 
-任何多边形都可以，最简单的一个三角形也行。下面是 Vercel 的三角标：素面材质、包围盒辅助线（`guides`），并关掉 `interactive` 与 `highlight`，适合当纯静态的插图。
+任何多边形都可以，最简单的一个三角形也行。下面是 Vercel 的三角标：素面材质、包围盒辅助线（`guides`），并关掉 `interactive` 与 `highlight`，适合当纯静态的插图；地面用格点 `floor="dots"`。
 
-`guides` 默认（`true` 或 `"box"`）画包围盒四边的延长线，适合横平竖直的图形；斜向的图形用 `guides="edges"`，辅助线改为沿图形自己最长的两个边方向画外侧切线，`floor` 再在同一平面上铺一块对齐每条边的地面网格。
+`guides` 默认（`true` 或 `"box"`）画包围盒四边的延长线，适合横平竖直的图形；斜向的图形用 `guides="edges"`，辅助线改为沿图形自己最长的两个边方向画外侧切线，`floor` 再在同一平面上铺一块对齐每条边的地面：`true` / `"grid"` 方格网、`"lines"` 条纹、`"dots"` 格点、`"checker"` 棋盘格。
 
 <ComponentPreview name="isometric-mark-vercel-demo" />
 

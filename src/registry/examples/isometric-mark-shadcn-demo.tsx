@@ -40,7 +40,7 @@ export default function IsometricMarkShadcnDemo() {
           rotation={45}
           depth={56}
           guides="edges"
-          floor
+          floor="lines"
           material="lines"
           label="shadcn/ui"
         />
