@@ -110,10 +110,11 @@ function Control({
   )
 }
 
-// 调试面板：拖动滑块实时调整朝向、挤出高度与辅助线
+// 调试面板：拖动滑块实时调整朝向、俯仰、挤出高度与辅助线
 export default function IsometricMarkPlaygroundDemo() {
   const [rotation, setRotation] = React.useState(0)
   const [depth, setDepth] = React.useState(70)
+  const [elevation, setElevation] = React.useState(35)
   const [guides, setGuides] = React.useState<Guides>("edges")
 
   return (
@@ -124,6 +125,7 @@ export default function IsometricMarkPlaygroundDemo() {
             shapes={MARK_SHAPES}
             rotation={rotation}
             depth={depth}
+            elevation={elevation}
             guides={guides === "off" ? false : guides}
             label="易"
           />
@@ -138,6 +140,15 @@ export default function IsometricMarkPlaygroundDemo() {
           max={180}
           step={1}
           onChange={setRotation}
+        />
+        <Control
+          label="俯仰 elevation"
+          value={elevation}
+          unit="°"
+          min={5}
+          max={85}
+          step={1}
+          onChange={setElevation}
         />
         <Control
           label="挤出高度 depth"
@@ -167,7 +178,7 @@ export default function IsometricMarkPlaygroundDemo() {
           </div>
         </fieldset>
         <code className="block rounded-md bg-muted px-2 py-1.5 font-mono text-[11px] leading-5 break-all text-muted-foreground">
-          {`rotation={${rotation}} depth={${depth}}${guides === "off" ? "" : ` guides="${guides}"`}`}
+          {`rotation={${rotation}} elevation={${elevation}} depth={${depth}}${guides === "off" ? "" : ` guides="${guides}"`}`}
         </code>
       </div>
     </div>

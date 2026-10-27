@@ -30,6 +30,8 @@ type IsometricModel = {
   walls: IsometricWall[]
   /** 背景辅助线路径（z = 0） */
   guides: string
+  /** 挤出高度 1 在屏幕上对应的竖直长度（随俯仰角变化，标准等轴测为 1） */
+  heightScale: number
 }
 
 const COS30 = Math.cos(Math.PI / 6)
@@ -40,8 +42,26 @@ const AUTO_DEPTH_RATIO = 0.12
 
 const fmt = (n: number) => String(Math.round(n * 100) / 100)
 
+/** 标准等轴测的俯仰角：视线与地面成 arctan(1/√2) ≈ 35.26° */
+const ISOMETRIC_ELEVATION = (Math.atan(1 / Math.SQRT2) * 180) / Math.PI
+
+/**
+ * 投影系数：水平方位固定 45°（两条地面轴左右对称），俯仰角可调。
+ * 地面方向的竖直压缩 ky = sinE·√2·cos30°，高度方向 kz = cosE·√2·cos30°；
+ * 俯仰角取 35.26° 时 ky = 0.5、kz = 1，正好是标准等轴测。
+ * 俯仰角越大越接近俯视（地面越“方”、厚度越薄），越小越接近平视（地面越扁、厚度越高）。
+ */
+let KY = SIN30
+let KZ = 1
+
+function setElevation(degrees: number) {
+  const e = (Math.min(Math.max(degrees, 5), 85) * Math.PI) / 180
+  KY = Math.sin(e) * Math.SQRT2 * COS30
+  KZ = Math.cos(e) * Math.SQRT2 * COS30
+}
+
 function project(x: number, y: number, z = 0): [number, number] {
-  return [(x - y) * COS30, (x + y) * SIN30 - z]
+  return [(x - y) * COS30, (x + y) * KY - z * KZ]
 }
 
 /** 去掉首尾重复的闭合点，统一成不含重复端点的环。 */
@@ -164,7 +184,9 @@ function buildIsometricModel(
   shapes: readonly IsometricShape[],
   depthOption?: number,
   guideMode: "box" | "edges" = "box",
+  elevation: number = ISOMETRIC_ELEVATION,
 ): IsometricModel {
+  setElevation(elevation)
   const rings: { ring: IsometricPoint[]; hole: boolean }[] = []
   for (const shape of shapes) {
     rings.push({ ring: orient(cleanRing(shape.outer), true), hole: false })
@@ -218,7 +240,7 @@ function buildIsometricModel(
       const [px, py] = project(x, y)
       bx0 = Math.min(bx0, px)
       bx1 = Math.max(bx1, px)
-      by0 = Math.min(by0, py - depth)
+      by0 = Math.min(by0, py - depth * KZ)
       by1 = Math.max(by1, py)
     }
   }
@@ -306,11 +328,17 @@ function buildIsometricModel(
     top: rings.map(({ ring }) => ringPath(ring, depth)).join(""),
     walls,
     guides,
+    heightScale: KZ,
   }
 }
 
 /** 高度为 h 时一面墙的路径：底边固定在 z = 0，顶边抬到 z = h。 */
-function wallPath({ x0, y0, x1, y1 }: IsometricWall, h: number) {
+function wallPath(
+  { x0, y0, x1, y1 }: IsometricWall,
+  height: number,
+  heightScale = 1,
+) {
+  const h = height * heightScale
   return `M${fmt(x0)} ${fmt(y0 - h)}L${fmt(x1)} ${fmt(y1 - h)}L${fmt(x1)} ${fmt(y1)}L${fmt(x0)} ${fmt(y0)}Z`
 }
 
@@ -343,5 +371,5 @@ function rotateShapes(
   }))
 }
 
-export { buildIsometricModel, rotateShapes, wallPath }
+export { buildIsometricModel, ISOMETRIC_ELEVATION, rotateShapes, wallPath }
 export type { IsometricModel, IsometricPoint, IsometricShape, IsometricWall }

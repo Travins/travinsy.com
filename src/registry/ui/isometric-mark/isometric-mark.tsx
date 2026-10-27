@@ -60,6 +60,11 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    * @default false
    */
   guides?: boolean | "box" | "edges"
+  /**
+   * 视线的俯仰角（度，5–85）。默认约 35.26° 即标准等轴测；
+   * 调大更接近俯视（地面更方、厚度更薄），调小更接近平视（地面更扁、厚度更高）
+   */
+  elevation?: number
   /** 可访问名称；不传时整个图形对读屏隐藏 */
   label?: string
 }
@@ -69,12 +74,14 @@ function IsometricMarkWall({
   wall,
   height,
   gradientId,
+  heightScale,
 }: {
   wall: IsometricWall
   height: MotionValue<number>
   gradientId: string
+  heightScale: number
 }) {
-  const d = useTransform(height, (h) => wallPath(wall, h))
+  const d = useTransform(height, (h) => wallPath(wall, h, heightScale))
 
   // 同一面先画底色线再画高光线，后画的近处面会盖住远处面的线
   return (
@@ -94,6 +101,7 @@ function IsometricMark({
   interactive = true,
   highlight = true,
   guides = false,
+  elevation,
   label,
   className,
   ref,
@@ -113,8 +121,9 @@ function IsometricMark({
         rotateShapes(shapes, rotation),
         depthProp,
         guides === "edges" ? "edges" : "box",
+        elevation,
       ),
-    [shapes, rotation, depthProp, guides],
+    [shapes, rotation, depthProp, guides, elevation],
   )
   const { viewBox, unit, depth } = model
   const pressedHeight = pressedDepth ?? depth / 2
@@ -141,7 +150,7 @@ function IsometricMark({
     else height.set(target)
   }, [pressed, pressedHeight, depth, reduceMotion, height])
   // 用 y 偏移而不是 transform 字符串，斜纹才会跟着轮廓一起走
-  const topOffset = useTransform(height, (h) => depth - h)
+  const topOffset = useTransform(height, (h) => (depth - h) * model.heightScale)
 
   // 高光：鼠标在窗口中的相对位置映射到 viewBox
   const mouseX = useMotionValue(0.5)
@@ -249,6 +258,7 @@ function IsometricMark({
             wall={wall}
             height={height}
             gradientId={gradientId}
+            heightScale={model.heightScale}
           />
         ))}
 
