@@ -29,7 +29,9 @@ import { V0Icon } from "./v0-icon"
  */
 const FULL_BLEED = new Set([
   "isometric-mark-demo",
-  "isometric-mark-legacy-demo",
+  "isometric-mark-shadcn-demo",
+  "isometric-mark-pi-demo",
+  "isometric-mark-vercel-demo",
   "glyph-field-demo",
   "glyph-field-icon-demo",
   "glyph-field-binary-demo",

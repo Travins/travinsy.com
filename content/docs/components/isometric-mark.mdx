@@ -57,45 +57,35 @@ export function BrandMark() {
 <IsometricMark shapes={SHAPES} rotation={-90} label="易" guides />
 ```
 
-下面用一个不对称的 L 形对比四个朝向：
-
-<ComponentPreview name="isometric-mark-rotation-demo" />
+想直观比较不同朝向，打开下方任一示例的「调整」面板拖动朝向即可。
 
 ## 示例
 
 每个示例的标题栏右侧都有「调整」开关：打开后可以拖动朝向、俯仰、挤出高度并切换辅助线，实时看效果，下方给出对应的属性写法。调整时画框固定，容器大小与图形比例都不变。
 
-### 多个形状
+### 多个形状与色调
 
-`shapes` 可以放多块互不相连的多边形，它们之间的遮挡同样自动计算。下面是本站上一版标志：倾斜的横梁和竖笔是两块独立的多边形，中间留着一道 V 形缝。
+`shapes` 可以放多块互不相连的多边形，它们之间的遮挡自动计算；每块可以用 `tone` 单独着色。下面是 shadcn/ui 的标志：两道斜杠各是一块，分别取主题色的深浅。
 
-<ComponentPreview name="isometric-mark-t-demo" />
+<ComponentPreview name="isometric-mark-shadcn-demo" />
 
 ### 带孔的形状
 
-`holes` 在外轮廓里挖孔，孔壁同样按朝向自动消隐。下面是本站曾经的「易」字标志：一圈外轮廓里挖出 `>` 与 `_` 两个孔。
+`holes` 在外轮廓里挖孔，孔壁同样按朝向自动消隐。下面是 Pi 的像素标志：左边一块挖出方孔，右下的方块独立成一块并着主题色，顶面用网纹材质。
 
-<ComponentPreview name="isometric-mark-legacy-demo" />
+<ComponentPreview name="isometric-mark-pi-demo" />
 
-### 简单图形与辅助线
+### 静态图形
 
-任何多边形都可以：带方孔的正方形，并打开 `guides` 显示背景里沿等轴测方向延伸的虚线。
+任何多边形都可以，最简单的一个三角形也行。下面是 Vercel 的三角标：素面材质、包围盒辅助线（`guides`），并关掉 `interactive` 与 `highlight`，适合当纯静态的插图。
 
-`guides` 默认（`true` 或 `"box"`）画包围盒四边的延长线，适合横平竖直的图形；斜向的图形用 `guides="edges"`，辅助线改为沿图形自己最长的两个边方向画外侧切线。页首的本站标志就是这样：先用 `rotation` 把 1:2 坡度的斜杠转到等轴测轴上，辅助线一组贴着斜杠的长边，另一组穿过右端齐平的那条线。
+`guides` 默认（`true` 或 `"box"`）画包围盒四边的延长线，适合横平竖直的图形；斜向的图形用 `guides="edges"`，辅助线改为沿图形自己最长的两个边方向画外侧切线，`floor` 再在同一平面上铺一块对齐每条边的地面网格。
 
-<ComponentPreview name="isometric-mark-simple-demo" />
+<ComponentPreview name="isometric-mark-vercel-demo" />
 
-### 挤出高度
+### 挤出高度与按下
 
-`depth` 是挤出高度，单位与形状坐标相同，默认取图形平面尺寸的 12%。按下时的高度由 `pressedDepth` 决定，默认是 `depth` 的一半，设为 `0` 会被完全压平。
-
-<ComponentPreview name="isometric-mark-depth-demo" />
-
-### 悬停与按下
-
-线条高光跟随鼠标在窗口中的位置，按住指针时图形被压下去，松开或移出后弹回。在左边的方块上试试；右边关掉了 `interactive` 与 `highlight`，适合当纯静态图形。触屏与“减少动态效果”下高光自动关闭，按下状态瞬间切换。
-
-<ComponentPreview name="isometric-mark-interaction-demo" />
+`depth` 是挤出高度，单位与形状坐标相同，默认取图形平面尺寸的 12%。按住指针时图形被压到 `pressedDepth`（默认是 `depth` 的一半，设为 `0` 会被完全压平），松开或移出后弹回；线条高光跟随鼠标在窗口中的位置。触屏与“减少动态效果”下高光自动关闭，按下状态瞬间切换。这些都可以在示例的调整面板里直接试。
 
 ## 几何说明
 
