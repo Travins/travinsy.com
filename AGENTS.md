@@ -114,6 +114,7 @@ scripts/                     构建辅助脚本
 | `next-dev-loop` | 在运行中的 `next dev` 里验证行为 | 验收 UI 改动 |
 | `component-conventions` | **组件书写规范（强制）** | 写/改 src/registry 下任何代码 |
 | `registry-item` | 本项目新增 registry 组件的完整流程 | 新增/修改组件、区块、模板、主题 |
+| `component-acceptance` | 组件从开发到验收的流程、标准与验收清单 | 新增组件、重做示例、发布前验收 |
 | `grid-design` | 本项目线条网格设计规范 | 做任何页面布局 |
 | `humanizer-zh` | 中文文本润色：去空话、套话和模板化表达 | 撰写或修改 `content/blog/` 下的博客，成稿前必须用它过一遍 |
 
