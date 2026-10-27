@@ -20,7 +20,7 @@ const RIBBONS = [
 
 export default function MarqueeDemo() {
   return (
-    <div className="relative h-56 w-full overflow-hidden">
+    <div className="relative h-56 w-full overflow-hidden bg-dots">
       {RIBBONS.map(({ rotate, direction, className }) => (
         <Marquee
           key={rotate}
