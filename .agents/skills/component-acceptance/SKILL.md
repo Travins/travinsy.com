@@ -40,7 +40,7 @@ description: travinsy.com 组件从开发到验收的整体流程与验收标准
 
 - 用知名品牌的标志或真实场景做素材（如 shadcn/ui、Pi、Vercel），比几何方块更有说服力；坐标取自官方图标（`simple-icons`）。
 - 每个示例打开一项或两项能力，并在 MDX 小节里点名属性（如「地面用棋盘格 `floor="checker"`」）。
-- 对于参数多的组件，提供文档专用的**调整面板**（参考 `src/components/docs/isometric-tuner.tsx`）：
+- 对于参数多的组件，提供文档专用的**调整面板**（参考 `src/components/docs/tuner/`：组件导出覆盖 Context 与 `onReport`，在 `tuner/<name>.tsx` 声明控件并登记到 `tuner/index.ts`）：
   - 通过组件导出的 Context 覆盖子树属性，不改示例源码；
   - 未改动的项显示示例的实际取值（组件通过 `onReport` 回报），改动过的高亮；
   - 打开面板时画框固定，**容器高度不变、图形不缩小**；

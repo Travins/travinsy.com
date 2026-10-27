@@ -43,15 +43,51 @@ function useOrbitReducedMotion() {
 type OrbitArc = "full" | "half"
 /** 画布在外框里的位置：`bottom` 让轨道中心落在外框底边，配合 `arc="half"` 得到贴地的半圆。 */
 type OrbitAnchor = "center" | "bottom"
-const OrbitContext = React.createContext({ active: false, size: 320 })
+
+/**
+ * 调整用的覆盖项：`Orbit` 子树里所有轨道的对应属性被这里的值替换。
+ * 用于调试面板一类的场景；不包 `OrbitTuningContext.Provider` 时组件行为不变。
+ */
+type OrbitTuning = {
+  /** 速度倍率，轨道实际用时为 `duration / speed`。 */
+  speed?: number
+  /** 为 true 时所有轨道的方向取反。 */
+  flip?: boolean
+  /** 覆盖根的 `paused`。 */
+  paused?: boolean
+  /** 覆盖每条轨道的 `dashed`。 */
+  dashed?: boolean
+  /** 覆盖每条轨道的 `tone`；`false` 表示不上色，沿用主题线条色。 */
+  tone?: FlowTone | false
+  /** 覆盖根的 `background`。 */
+  background?: FlowBackgroundName
+  /** 回报示例自己的实际取值（未被覆盖前），面板据此显示当前值。 */
+  onReport?: (values: OrbitReport) => void
+}
+
+type OrbitReport = {
+  paused: boolean
+  background: FlowBackgroundName
+}
+
+const OrbitTuningContext = React.createContext<OrbitTuning>({})
+
+const OrbitContext = React.createContext<{
+  active: boolean
+  size: number
+  speed: number
+  flip: boolean
+  dashed?: boolean
+  tone?: FlowTone | false
+}>({ active: false, size: 320, speed: 1, flip: false })
 const OrbitRingContext = React.createContext<{
   angle: MotionValue<number>
 } | null>(null)
 
 function Orbit({
   size = 320,
-  paused = false,
-  background = "dots",
+  paused: pausedProp = false,
+  background: backgroundProp = "dots",
   anchor = "center",
   label,
   className,
@@ -70,6 +106,13 @@ function Orbit({
   const ref = React.useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { amount: 0.2 })
   const reduced = useOrbitReducedMotion()
+  const tuning = React.useContext(OrbitTuningContext)
+  const { onReport } = tuning
+  const paused = tuning.paused ?? pausedProp
+  const background = tuning.background ?? backgroundProp
+  React.useEffect(() => {
+    onReport?.({ paused: pausedProp, background: backgroundProp })
+  }, [onReport, pausedProp, backgroundProp])
   return (
     <div
       {...props}
@@ -105,6 +148,10 @@ function Orbit({
           value={{
             active: inView && !paused && !reduced,
             size: Math.max(1, size),
+            speed: Math.max(0.01, tuning.speed ?? 1),
+            flip: tuning.flip ?? false,
+            dashed: tuning.dashed,
+            tone: tuning.tone,
           }}
         >
           {children}
@@ -117,12 +164,12 @@ function Orbit({
 function OrbitRing({
   radius = 100,
   duration = 24,
-  reverse = false,
+  reverse: reverseProp = false,
   paused = false,
   startAngle = -90,
   arc = "full",
-  dashed = false,
-  tone,
+  dashed: dashedProp = false,
+  tone: toneProp,
   className,
   style,
   children,
@@ -141,7 +188,12 @@ function OrbitRing({
   /** 轨道线的色调：内置名或任意 CSS 颜色；不传沿用主题的线条色。节点的颜色由各自的 `tone` 决定。 */
   tone?: FlowTone
 }) {
-  const { active, size } = React.useContext(OrbitContext)
+  const { active, size, speed, flip, ...overrides } =
+    React.useContext(OrbitContext)
+  const reverse = flip ? !reverseProp : reverseProp
+  const dashed = overrides.dashed ?? dashedProp
+  const tone =
+    overrides.tone === false ? undefined : (overrides.tone ?? toneProp)
   const angle = useMotionValue(startAngle)
   const reduced = useOrbitReducedMotion()
   React.useEffect(() => {
@@ -154,14 +206,14 @@ function OrbitRing({
       angle.set(
         angle.get() +
           (((Math.min(now - last, 100) / 1000) * 360) /
-            Math.max(0.1, duration)) *
+            Math.max(0.1, duration / speed)) *
             (reverse ? -1 : 1),
       )
       last = now
       frame = requestAnimationFrame(tick)
     })
     return () => cancelAnimationFrame(frame)
-  }, [active, paused, duration, reverse, angle])
+  }, [active, paused, duration, speed, reverse, angle])
   const diameter = ((Math.max(0, radius) * 2) / size) * 100
   return (
     <div
@@ -254,5 +306,5 @@ function OrbitCenter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { Orbit, OrbitRing, OrbitItem, OrbitCenter }
-export type { OrbitAnchor, OrbitArc }
+export { Orbit, OrbitRing, OrbitItem, OrbitCenter, OrbitTuningContext }
+export type { OrbitAnchor, OrbitArc, OrbitReport, OrbitTuning }

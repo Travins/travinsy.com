@@ -30,6 +30,8 @@ export function RippleExample() {
 
 ## 示例
 
+每个示例的标题栏右侧都有「调整」开关：打开后可以实时调整模式、环数、环间距、周期与色调，并开关暂停；未改动的项显示示例自己的取值。调整时外框与设计画布大小不变，环数和间距只改变圆环本身。
+
 ### 在线状态
 
 `tone="green"` 让脉冲呈绿色，头像上的状态点取同一个 `--flow-tone`；在线状态同时通过文字表达。
@@ -73,6 +75,7 @@ export function RippleExample() {
 
 ## 注意事项
 
+- 调整面板通过 `RippleTuningContext` 覆盖子树里 `Ripple` 的 `rings`、`ringGap`、`baseSize`、`mode`、`duration`、`paused`、`background` 与 `tone`，并用 `onReport` 回报示例自己的取值。不包这一层时组件行为不变；它面向调试与文档，正常使用不需要。
 - 动画由共享 MotionValue 推导，每帧不触发 React 渲染。服务端输出确定性的同心环，不使用随机粒子，可用于静态导出。
 - `RippleMarker` 应放在 `Ripple` 内。它按设计画布定位，不会跟随脉冲伸缩；覆盖关系明确的场景建议使用 `reach`。
 - 大半径或长标签可能被容器边缘裁切，请预留标记尺寸。高度可以按使用场景调整，小格子中建议减少环数。

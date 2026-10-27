@@ -15,11 +15,12 @@ import {
 import { IconTip } from "./icon-tip"
 import { v0Url } from "./registry-items"
 import {
-  IsometricTunerPanel,
-  IsometricTunerProvider,
-  IsometricTunerToggle,
-  useIsometricTuner,
-} from "./isometric-tuner"
+  TunerPanel,
+  TunerProvider,
+  TunerToggle,
+  tuners,
+  useTuner,
+} from "./tuner"
 import { PreviewBackdrop } from "./preview-backdrop"
 import { V0Icon } from "./v0-icon"
 
@@ -65,9 +66,9 @@ export function ComponentPreviewClient({
 }) {
   const Preview = registryExamples[name]
   const [view, setView] = useState("preview")
-  // 等轴测标志的每个示例都带一个可开关的调整面板
-  const tuner = useIsometricTuner()
-  const tunable = item === "isometric-mark"
+  // 在 tuner/ 里登记过的组件，每个示例都带一个可开关的调整面板
+  const tunerConfig = item ? tuners[item] : undefined
+  const tuner = useTuner(tunerConfig)
   return (
     <Tabs
       value={view}
@@ -80,8 +81,9 @@ export function ComponentPreviewClient({
           <DocTabsTrigger value="code">代码</DocTabsTrigger>
         </DocTabsList>
         <div className="flex items-center gap-0.5">
-          {tunable && view === "preview" && (
-            <IsometricTunerToggle
+          {tunerConfig && view === "preview" && (
+            <TunerToggle
+              config={tunerConfig}
               open={tuner.open}
               onOpenChange={tuner.setOpen}
             />
@@ -117,14 +119,15 @@ export function ComponentPreviewClient({
         )}
       >
         <PreviewBackdrop name={item} />
-        <IsometricTunerProvider tuning={tuner.tuning}>
+        <TunerProvider config={tunerConfig} tuning={tuner.tuning}>
           <Suspense fallback={<p role="status">正在加载示例…</p>}>
             {Preview ? <Preview /> : <p>找不到示例：{name}</p>}
           </Suspense>
-        </IsometricTunerProvider>
+        </TunerProvider>
       </TabsContent>
-      {tunable && tuner.open && view === "preview" ? (
-        <IsometricTunerPanel
+      {tunerConfig && tuner.open && view === "preview" ? (
+        <TunerPanel
+          config={tunerConfig}
           values={tuner.values}
           base={tuner.base}
           onChange={tuner.setValues}

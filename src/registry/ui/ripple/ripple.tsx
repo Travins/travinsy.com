@@ -37,18 +37,49 @@ function useRippleReducedMotion() {
 }
 
 type RippleMode = "pulse" | "reach"
+
+/**
+ * 调整用的覆盖项：子树里所有 `Ripple` 的对应属性被这里的值替换。
+ * 用于调试面板一类的场景；不包 `RippleTuningContext.Provider` 时组件行为不变。
+ */
+type RippleTuning = {
+  rings?: number
+  ringGap?: number
+  baseSize?: number
+  mode?: RippleMode
+  duration?: number
+  paused?: boolean
+  background?: FlowBackgroundName
+  /** `false` 表示不上色，沿用主题线条色。 */
+  tone?: FlowTone | false
+  /** 回报示例自己的实际取值（未被覆盖前），面板据此显示当前值。 */
+  onReport?: (values: RippleReport) => void
+}
+
+type RippleReport = {
+  rings: number
+  ringGap: number
+  baseSize: number
+  mode: RippleMode
+  duration: number
+  paused: boolean
+  background: FlowBackgroundName
+  tone: FlowTone | undefined
+}
+
+const RippleTuningContext = React.createContext<RippleTuning>({})
 const RippleContext = React.createContext({ outerSize: 256, size: 320 })
 
 function Ripple({
-  rings = 4,
-  ringGap = 48,
-  baseSize = 48,
-  mode = "pulse",
-  duration = 4,
-  paused = false,
+  rings: ringsProp = 4,
+  ringGap: ringGapProp = 48,
+  baseSize: baseSizeProp = 48,
+  mode: modeProp = "pulse",
+  duration: durationProp = 4,
+  paused: pausedProp = false,
   size = 320,
-  background = "dots",
-  tone,
+  background: backgroundProp = "dots",
+  tone: toneProp,
   label,
   className,
   style,
@@ -78,6 +109,38 @@ function Ripple({
   const inView = useInView(ref, { amount: 0.2 })
   const reduced = useRippleReducedMotion()
   const time = useMotionValue(0)
+  const tuning = React.useContext(RippleTuningContext)
+  const { onReport } = tuning
+  React.useEffect(() => {
+    onReport?.({
+      rings: ringsProp,
+      ringGap: ringGapProp,
+      baseSize: baseSizeProp,
+      mode: modeProp,
+      duration: durationProp,
+      paused: pausedProp,
+      background: backgroundProp,
+      tone: toneProp,
+    })
+  }, [
+    onReport,
+    ringsProp,
+    ringGapProp,
+    baseSizeProp,
+    modeProp,
+    durationProp,
+    pausedProp,
+    backgroundProp,
+    toneProp,
+  ])
+  const rings = tuning.rings ?? ringsProp
+  const ringGap = tuning.ringGap ?? ringGapProp
+  const baseSize = tuning.baseSize ?? baseSizeProp
+  const mode = tuning.mode ?? modeProp
+  const duration = tuning.duration ?? durationProp
+  const paused = tuning.paused ?? pausedProp
+  const background = tuning.background ?? backgroundProp
+  const tone = tuning.tone === false ? undefined : (tuning.tone ?? toneProp)
   const count = Math.min(24, Math.max(1, Math.floor(rings)))
   const base = Math.max(1, baseSize)
   const gap = Math.max(0, ringGap)
@@ -233,5 +296,5 @@ function RippleMarker({
   )
 }
 
-export { Ripple, RippleMarker }
-export type { RippleMode }
+export { Ripple, RippleMarker, RippleTuningContext }
+export type { RippleMode, RippleReport, RippleTuning }
