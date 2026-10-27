@@ -51,6 +51,7 @@ export default function IsometricMarkPiDemo() {
           guides
           floor="checker"
           material="cross"
+          sound
           label="Pi"
         />
       </div>

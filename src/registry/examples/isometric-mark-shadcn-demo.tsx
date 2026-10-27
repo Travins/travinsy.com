@@ -42,6 +42,7 @@ export default function IsometricMarkShadcnDemo() {
           guides="edges"
           floor="lines"
           material="lines"
+          sound
           label="shadcn/ui"
         />
       </div>

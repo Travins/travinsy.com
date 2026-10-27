@@ -3,7 +3,7 @@ import {
   type IsometricShape,
 } from "@/registry/ui/isometric-mark/isometric-mark"
 
-// Vercel 的三角标：最简单的单个多边形，素面 + 包围盒辅助线；关掉交互与高光，作纯静态图形
+// Vercel 的三角标：最简单的单个多边形，素面 + 包围盒辅助线；关掉指针高光，画面更安静
 const SHAPES: readonly IsometricShape[] = [
   {
     outer: [
@@ -29,8 +29,8 @@ export default function IsometricMarkVercelDemo() {
           guides
           floor="dots"
           material="plain"
-          interactive={false}
           highlight={false}
+          sound
           label="Vercel"
         />
       </div>
