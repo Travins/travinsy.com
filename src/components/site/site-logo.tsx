@@ -10,7 +10,7 @@ export function SiteLogo({ className, ...props }: React.ComponentProps<"svg">) {
       viewBox="0 0 416 584"
       fill="currentColor"
       aria-hidden="true"
-      className={cn("h-8 w-auto", className)}
+      className={cn("h-8 w-auto overflow-visible", className)}
       {...props}
     >
       <path

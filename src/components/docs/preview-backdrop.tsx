@@ -24,7 +24,7 @@ export function PreviewBackdrop({ name }: { name?: string }) {
     <div
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)]",
+        "pointer-events-none absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_90%)]",
         kind === "dots" ? "bg-dots" : "bg-grid opacity-70",
       )}
     />

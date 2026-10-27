@@ -22,7 +22,7 @@ export function SiteHeader() {
             aria-label={`${SITE_NAME} 首页`}
             className="group/logo flex shrink-0 items-center pr-3 text-foreground outline-none"
           >
-            <SiteLogo className="h-8 w-auto rounded-sm transition-transform duration-200 group-focus-visible/logo:ring-3 group-focus-visible/logo:ring-ring/50 motion-safe:group-hover/logo:-rotate-3" />
+            <SiteLogo className="transition-transform duration-200 group-focus-visible/logo:ring-3 group-focus-visible/logo:ring-ring/50 motion-safe:group-hover/logo:-rotate-3" />
           </Link>
 
           {/* 菜单靠右，与右侧工具图标之间用一条整高竖线隔开 */}
