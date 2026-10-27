@@ -71,7 +71,7 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
   material?: IsometricMaterial
   /**
    * 图形下方的地面，与辅助线同方向、同平面、对齐每条边，向四周渐隐。
-   * `true` / `"grid"` 方格网、`"lines"` 只有一个方向的条纹、`"dots"` 格点、`"checker"` 棋盘格
+   * `true` / `"grid"` 方格网、`"lines"` 只有一个方向的条纹、`"dots"` 站点的点阵底纹、`"checker"` 棋盘格
    * @default false
    */
   floor?: boolean | IsometricFloor
@@ -353,6 +353,21 @@ function IsometricMarkView({
   const [muted] = useIsometricMarkMuted()
   const audible = sound && !muted
   const pressedRef = React.useRef(false)
+  // 点阵地面要和站点的 bg-dots 一样按屏幕像素算（8px 间距、1px 方点），所以量出 1px 对应多少 viewBox 单位
+  const [pixel, setPixel] = React.useState(unit * 2)
+  React.useEffect(() => {
+    const svg = rootRef.current
+    if (floor !== "dots" || !svg) return
+    const update = () => {
+      const width = svg.getBoundingClientRect().width
+      if (width > 0) setPixel(viewBox.width / width)
+    }
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(svg)
+    return () => observer.disconnect()
+  }, [floor, viewBox.width])
+
   // 各种地面的浓淡：格点面积小要加重，棋盘格是整块填色要减轻
   const floorStrength =
     floor === "dots"
@@ -474,11 +489,66 @@ function IsometricMarkView({
               style={{ stopColor: "var(--foreground)", stopOpacity: 0 }}
             />
           </radialGradient>
-          {floor === "dots" || floor === "checker" ? (
+          {floor === "dots" ? (
+            // 格点地面用站点的点阵底纹：8px 间距、1px 方点、前景色 34%（同 grid.css 的 bg-dots），
+            // 铺在屏幕平面上，用径向渐变遮罩向四周淡出
+            <>
+              <pattern
+                id={`${patternId}-dots`}
+                width={pixel * 8}
+                height={pixel * 8}
+                patternUnits="userSpaceOnUse"
+              >
+                <rect
+                  x={pixel * 4}
+                  y={pixel * 4}
+                  width={pixel}
+                  height={pixel}
+                  fill="color-mix(in oklab, var(--foreground) 34%, transparent)"
+                />
+              </pattern>
+              <mask
+                id={`${patternId}-dots-mask`}
+                maskUnits="userSpaceOnUse"
+                x={viewBox.x - viewBox.width * 2}
+                y={viewBox.y - viewBox.height * 2}
+                width={viewBox.width * 5}
+                height={viewBox.height * 5}
+              >
+                <rect
+                  x={viewBox.x - viewBox.width * 2}
+                  y={viewBox.y - viewBox.height * 2}
+                  width={viewBox.width * 5}
+                  height={viewBox.height * 5}
+                  fill={`url(#${patternId}-dots-fade)`}
+                />
+              </mask>
+              <radialGradient
+                id={`${patternId}-dots-fade`}
+                cx={viewBox.x + viewBox.width / 2}
+                cy={viewBox.y + viewBox.height / 2}
+                r={Math.max(viewBox.width, viewBox.height) * 1.5}
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop offset="0.3" stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
+              </radialGradient>
+              <rect
+                data-slot="isometric-mark-floor"
+                data-floor="dots"
+                x={viewBox.x - viewBox.width * 2}
+                y={viewBox.y - viewBox.height * 2}
+                width={viewBox.width * 5}
+                height={viewBox.height * 5}
+                fill={`url(#${patternId}-dots)`}
+                mask={`url(#${patternId}-dots-mask)`}
+              />
+            </>
+          ) : floor === "checker" ? (
             <path
               data-slot="isometric-mark-floor"
-              data-floor={floor}
-              d={floor === "dots" ? model.floorDots : model.floorCells}
+              data-floor="checker"
+              d={model.floorCells}
               fill={`url(#${patternId}-floor)`}
             />
           ) : (

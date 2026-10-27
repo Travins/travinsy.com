@@ -77,9 +77,9 @@ export function BrandMark() {
 
 ### 静态图形
 
-任何多边形都可以，最简单的一个三角形也行。下面是 Vercel 的三角标：素面材质、包围盒辅助线（`guides`），并关掉 `highlight`（需要完全静态时再关掉 `interactive`）；地面用格点 `floor="dots"`。
+任何多边形都可以，最简单的一个三角形也行。下面是 Vercel 的三角标：素面材质、包围盒辅助线（`guides`），并关掉 `highlight`（需要完全静态时再关掉 `interactive`）；地面用站点的点阵底纹 `floor="dots"`。
 
-`guides` 默认（`true` 或 `"box"`）画包围盒四边的延长线，适合横平竖直的图形；斜向的图形用 `guides="edges"`，辅助线改为沿图形自己最长的两个边方向画外侧切线，`floor` 再在同一平面上铺一块对齐每条边的地面：`true` / `"grid"` 方格网、`"lines"` 条纹、`"dots"` 格点、`"checker"` 棋盘格。
+`guides` 默认（`true` 或 `"box"`）画包围盒四边的延长线，适合横平竖直的图形；斜向的图形用 `guides="edges"`，辅助线改为沿图形自己最长的两个边方向画外侧切线，`floor` 再在同一平面上铺一块对齐每条边的地面：`true` / `"grid"` 方格网、`"lines"` 条纹、`"dots"` 站点的点阵底纹（8px 间距、1px 方点）、`"checker"` 棋盘格。
 
 <ComponentPreview name="isometric-mark-vercel-demo" />
 
