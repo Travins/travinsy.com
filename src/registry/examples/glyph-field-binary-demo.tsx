@@ -8,10 +8,10 @@ export default function GlyphFieldBinaryDemo() {
       paused
       fade="edges"
       density={0.65}
-      className="min-h-44 rounded-lg border border-edge"
+      className="min-h-44 rounded-lg"
     >
       <p className="bg-background/90 px-5 py-2 font-mono text-sm tracking-wider">
-        0101 / 数据始终在路上
+        数据始终在路上
       </p>
     </GlyphField>
   )

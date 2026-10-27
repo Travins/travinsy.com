@@ -10,7 +10,7 @@ export default function GlyphFieldDemo() {
   return (
     <div
       data-slot="glyph-field-demo"
-      className="relative w-full overflow-hidden rounded-lg border border-edge"
+      className="relative w-full overflow-hidden rounded-lg"
     >
       <GlyphField
         glyphs="hex"
@@ -53,8 +53,7 @@ export default function GlyphFieldDemo() {
           端到端加密 · 零信任
         </p>
       </GlyphField>
-      <div className="absolute inset-x-4 top-4 flex items-center justify-between font-mono text-[10px] tracking-wider text-muted-foreground">
-        <span className="bg-background/80 px-1">SECURITY</span>
+      <div className="absolute top-4 right-4">
         <Button
           className="bg-background/80"
           variant="ghost"
@@ -65,10 +64,6 @@ export default function GlyphFieldDemo() {
         >
           {paused ? <Play /> : <Pause />}
         </Button>
-      </div>
-      <div className="pointer-events-none absolute inset-x-4 bottom-4 flex justify-between font-mono text-[10px] text-muted-foreground">
-        <span className="bg-background/80 px-1">TLS 1.3</span>
-        <span className="bg-background/80 px-1">连接已加密</span>
       </div>
     </div>
   )

@@ -8,7 +8,7 @@ export default function GlyphFieldCjkDemo() {
       paused
       fontSize={18}
       density={0.55}
-      className="dark h-80 rounded-lg border border-edge bg-background text-foreground"
+      className="dark h-80 rounded-lg bg-background text-foreground"
     >
       <p className="font-mono text-xs tracking-[0.3em] text-muted-foreground">
         文字之间，自有秩序
