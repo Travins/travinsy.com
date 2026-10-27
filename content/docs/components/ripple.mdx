@@ -13,7 +13,7 @@ group: graphics
 
 ## 用法
 
-`pulse` 模式让波纹持续向外扩散，`reach` 模式保留固定圆环并轻轻改变透明度。内容通过 `RippleMarker` 按角度和半径定位，`radius={0}` 表示中心。`tone` 给波纹上色，同时写入 `--flow-tone`，标记里可以直接用 `bg-(--flow-tone)` 取同一个颜色。页首的预览就是最小的 `pulse` 用法。
+`pulse` 模式让波纹持续向外扩散，`reach` 模式保留固定圆环并轻轻改变透明度。内容通过 `RippleMarker` 按角度和半径定位，`radius={0}` 表示中心。`tone` 给波纹上色，同时写入 `--flow-tone`，标记里可以直接用 `bg-(--flow-tone)` 取同一个颜色。页首的预览是 `pulse` 模式加四个地区标记：波纹持续扩散，标记按延迟远近落在不同半径上。
 
 ```tsx title="components/ripple-example.tsx"
 import { Ripple, RippleMarker } from "@/components/ui/ripple/ripple"
@@ -36,15 +36,15 @@ export function RippleExample() {
 
 <ComponentPreview name="ripple-online-demo" />
 
-### 脉冲
+### 只有中心
 
-默认的 `mode="pulse"`：波纹从中心持续向外扩散，`tone` 统一设置波纹与中心标记的色调。
+最小用法：一个中心标记加 `tone`，波纹与中心标记同色。
 
 <ComponentPreview name="ripple-pulse-demo" />
 
-### 状态信号
+### 固定圆环
 
-中心展示信号状态，圆环旁用距离刻度说明覆盖范围，背景使用轻斜纹。圆环直径 100 / 200 / 300，`RippleMarker` 的 `radius` 取 1/3、2/3、1，刻度正好落在对应圆环上。
+`mode="reach"` 保留固定圆环，便于比较距离。中心展示信号状态，圆环旁用距离刻度说明覆盖范围，背景使用轻斜纹。圆环直径 100 / 200 / 300，`RippleMarker` 的 `radius` 取 1/3、2/3、1，刻度正好落在对应圆环上。
 
 <ComponentPreview name="ripple-signal-demo" />
 

@@ -19,8 +19,11 @@ const TASKS = [
 // 自动播放的默认清单：服务端直接输出划到第 3 条的画面，进入视口后逐条往下划，划完停一会儿再重来
 export default function ChecklistDemo() {
   return (
-    <Checklist autoplay className="w-full max-w-md">
-      <div className="flex flex-col gap-3.5 rounded-lg bg-[linear-gradient(to_bottom,color-mix(in_oklab,var(--flow-green)_9%,transparent),transparent)] px-5 py-4">
+    <Checklist
+      autoplay
+      className="w-full max-w-md overflow-hidden rounded-xl border border-edge bg-card shadow-xs"
+    >
+      <div className="flex flex-col gap-3.5 border-b border-edge bg-[linear-gradient(to_bottom,color-mix(in_oklab,var(--flow-green)_9%,transparent),transparent)] px-5 py-4">
         <div className="flex items-center gap-3">
           <span
             aria-hidden="true"
@@ -37,7 +40,7 @@ export default function ChecklistDemo() {
         </div>
         <ChecklistProgress total={TASKS.length} tone="green" />
       </div>
-      <ChecklistList className="px-5 py-2">
+      <ChecklistList className="px-5 py-3">
         {TASKS.map((task) => (
           <ChecklistItem key={task.text} tone={task.tone} meta={task.meta}>
             {task.text}

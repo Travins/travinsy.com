@@ -1,57 +1,25 @@
 "use client"
 
-import { Suspense } from "react"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import { registryExamples } from "@/registry/__index__"
 
-// 未指定时缩略图取 `${name}-demo`；基础演示太素的组件在这里换成专为封面设计的示例。
-const thumbnailExamples: Record<string, string> = {
+/**
+ * 缩略图一律展示组件详情页的第一个示例，保证列表里看到的效果在详情页都能找到。
+ * 默认取 `${name}-demo`；详情页首个示例不叫这个名字的组件在这里登记（与 MDX 第一个 ComponentPreview 保持一致）。
+ */
+const firstExamples: Record<string, string> = {
+  "chart-card": "chart-card-target-demo",
   "flow-diagram": "flow-diagram-showcase-demo",
-  orbit: "orbit-icons-demo",
-  ripple: "ripple-demo",
-  greeting: "greeting-showcase-demo",
-  "grid-layout": "grid-layout-showcase-demo",
-  "local-time": "local-time-showcase-demo",
-  "stat-card": "stat-card-showcase-demo",
-  "mini-chart": "mini-chart-showcase-demo",
-  "chart-card": "chart-card-showcase-demo",
-  timeline: "timeline-showcase-demo",
-  "card-stack": "card-stack-showcase-demo",
-  globe: "globe-showcase-demo",
-  "isometric-mark": "isometric-mark-showcase-demo",
-  checklist: "checklist-demo",
-  "shuffle-grid": "shuffle-grid-demo",
-  "glyph-field": "glyph-field-showcase-demo",
-  "code-stack": "code-stack-demo",
-  marquee: "marquee-demo",
-  "text-animate": "text-animate-showcase-demo",
+  greeting: "greeting-card-demo",
+  "local-time": "local-time-world-clock-demo",
 }
 
-// 封面示例自己适应缩略图的大小：`*:` 开头的类作用在示例的根元素上，让它直接铺满整张缩略图，不再缩放。
-const fillExample = "size-full *:size-full! *:max-w-none!"
-// 其余示例固定演示的布局宽度，缩小后的内容始终留在卡片的裁切区域内。
-const previewClasses: Record<string, string> = {
-  "flow-diagram": fillExample,
-  orbit: fillExample,
-  ripple: fillExample,
-  greeting: fillExample,
-  "grid-layout": fillExample,
-  "local-time": fillExample,
-  "stat-card": fillExample,
-  "mini-chart": fillExample,
-  "chart-card": fillExample,
-  timeline: fillExample,
-  "card-stack": fillExample,
-  globe: fillExample,
-  checklist: "w-96 scale-[0.72]",
-  "shuffle-grid": "w-96 scale-[0.68]",
-  "glyph-field": fillExample,
-  "code-stack": fillExample,
-  marquee: fillExample,
-  "text-animate": fillExample,
-  "isometric-mark": fillExample,
-}
+/** 示例按这个宽度排版，再整体等比缩放进固定比例的画框，所有分辨率下构图一致。 */
+const STAGE_WIDTH = 720
+/** 缩放后四周留出的空隙（占画框的比例）。 */
+const INSET = 0.9
 
 export function ComponentThumbnail({
   name,
@@ -60,24 +28,58 @@ export function ComponentThumbnail({
   name: string
   label: string
 }) {
-  const Preview = registryExamples[thumbnailExamples[name] ?? `${name}-demo`]
+  const Preview = registryExamples[firstExamples[name] ?? `${name}-demo`]
+  const frameRef = React.useRef<HTMLDivElement>(null)
+  const stageRef = React.useRef<HTMLDivElement>(null)
+  const [scale, setScale] = React.useState<number | null>(null)
+
+  React.useLayoutEffect(() => {
+    const frame = frameRef.current
+    const stage = stageRef.current
+    if (!frame || !stage) return
+    // 宽度与高度各算一个比例，取较小的那个，保证示例完整放进画框；不放大超过原尺寸
+    const update = () => {
+      const height = stage.offsetHeight
+      if (!height) return
+      setScale(
+        Math.min(
+          1,
+          (frame.clientWidth * INSET) / STAGE_WIDTH,
+          (frame.clientHeight * INSET) / height,
+        ),
+      )
+    }
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(frame)
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [])
 
   return (
     // 缩略图是可交互的实时演示（悬停、点击都生效），跳转只交给下方的标题区
     <div
+      ref={frameRef}
       role="group"
       aria-label={label}
-      className="flex h-64 min-w-0 items-center justify-center overflow-hidden bg-muted/20 sm:h-72"
+      className="relative aspect-[16/10] min-w-0 overflow-hidden bg-muted/20"
     >
       <div
+        ref={stageRef}
         className={cn(
-          "flex shrink-0 items-center justify-center",
-          previewClasses[name] ?? "w-96 scale-75",
+          "absolute top-1/2 left-1/2 flex origin-center items-center justify-center transition-opacity duration-300",
+          scale === null && "opacity-0",
         )}
+        style={{
+          width: STAGE_WIDTH,
+          transform: `translate(-50%, -50%) scale(${scale ?? 0.5})`,
+        }}
       >
-        <Suspense fallback={<div className="h-24 w-48 rounded-md bg-muted" />}>
+        <React.Suspense
+          fallback={<div className="h-48 w-96 rounded-md bg-muted" />}
+        >
           {Preview ? <Preview /> : null}
-        </Suspense>
+        </React.Suspense>
       </div>
     </div>
   )
