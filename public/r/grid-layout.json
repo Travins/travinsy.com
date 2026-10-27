@@ -102,6 +102,10 @@
       "background-size": "8px 8px",
       "background-position": "4px 4px"
     },
+    "@utility bg-grid": {
+      "background-image": "linear-gradient(var(--edge) 1px, transparent 1px),\n    linear-gradient(90deg, var(--edge) 1px, transparent 1px)",
+      "background-size": "16px 16px"
+    },
     "@layer base": {
       "html": {
         "overflow-x": "clip"

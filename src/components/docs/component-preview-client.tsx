@@ -14,6 +14,7 @@ import {
 } from "./doc-frame"
 import { IconTip } from "./icon-tip"
 import { v0Url } from "./registry-items"
+import { PreviewBackdrop } from "./preview-backdrop"
 import { V0Icon } from "./v0-icon"
 
 export function ComponentPreviewClient({
@@ -65,9 +66,10 @@ export function ComponentPreviewClient({
         keepMounted
         className={cn(
           docFramePanelClass,
-          "flex min-h-80 items-center justify-center p-4 sm:p-8",
+          "relative isolate flex min-h-80 items-center justify-center p-4 sm:p-8",
         )}
       >
+        <PreviewBackdrop name={item} />
         <Suspense fallback={<p role="status">正在加载示例…</p>}>
           {Preview ? <Preview /> : <p>找不到示例：{name}</p>}
         </Suspense>

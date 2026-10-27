@@ -31,6 +31,7 @@ async function main() {
     "pattern-wave",
     "bg-hatch",
     "bg-dots",
+    "bg-grid",
   ]
   const missing = expected.filter((name) => !css[`@utility ${name}`])
   if (missing.length || Object.keys(css).length !== expected.length)

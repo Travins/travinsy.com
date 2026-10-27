@@ -124,3 +124,11 @@
   background-size: 8px 8px;
   background-position: 4px 4px;
 }
+
+/* 方格底纹：16px 正方格，线色同网格竖线（--edge） */
+@utility bg-grid {
+  background-image:
+    linear-gradient(var(--edge) 1px, transparent 1px),
+    linear-gradient(90deg, var(--edge) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
