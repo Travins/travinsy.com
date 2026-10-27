@@ -45,8 +45,8 @@ const LOGO: readonly (readonly [number, number])[][] = [
   ],
 ]
 
-// 不旋转：标志按 SVG 原样平放在地面上，细斜杠在右上、粗斜杠在左下，和平面标志的布局一致；
-// 挤出高度用默认值，立体感最足。辅助线用 "edges"，贴着斜杠的长边与齐平的切口
+// 朝向 -65°、标准等轴测俯仰 35°、挤出 52：斜杠立起往右上斜，细的一组在后、粗的一组在前；
+// 辅助线用 "edges"，贴着斜杠的长边与齐平的切口
 const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar) => ({
   outer: [...bar],
 }))
@@ -64,7 +64,14 @@ export default function IsometricMarkShowcaseDemo() {
         className="pointer-events-none absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_75%)] opacity-70"
       />
       <div className="relative w-[min(88%,21rem)]">
-        <IsometricMark shapes={MARK_SHAPES} label="易" guides="edges" />
+        <IsometricMark
+          shapes={MARK_SHAPES}
+          rotation={-65}
+          elevation={35}
+          depth={52}
+          label="易"
+          guides="edges"
+        />
       </div>
     </div>
   )

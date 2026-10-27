@@ -92,8 +92,29 @@ function IsometricMarkWall({
   )
 }
 
+type IsometricMarkTuning = Partial<
+  Pick<IsometricMarkProps, "rotation" | "depth" | "elevation" | "guides">
+> & {
+  /** 固定画框：调整时外框比例不变，图形缩放适应 */
+  stableFrame?: boolean
+}
+
+/**
+ * 可选的调整上下文：子树里所有 IsometricMark 的对应属性被这里的值覆盖。
+ * 用于调试面板一类的场景；不包这一层时组件行为不变。
+ */
+const IsometricMarkTuningContext = React.createContext<IsometricMarkTuning>({})
+
 /** 把平面多边形挤出成等轴测线条 3D，带斜纹顶面、跟随鼠标的高光与按下效果。 */
-function IsometricMark({
+function IsometricMark(allProps: IsometricMarkProps) {
+  const tuning = React.useContext(IsometricMarkTuningContext)
+  const { stableFrame, ...overrides } = tuning
+  return (
+    <IsometricMarkView {...allProps} {...overrides} stableFrame={stableFrame} />
+  )
+}
+
+function IsometricMarkView({
   shapes,
   rotation = 0,
   depth: depthProp,
@@ -109,11 +130,28 @@ function IsometricMark({
   onPointerUp,
   onPointerCancel,
   onPointerLeave,
+  stableFrame = false,
   ...props
-}: IsometricMarkProps) {
+}: IsometricMarkProps & { stableFrame?: boolean }) {
   const id = React.useId()
   const patternId = `isometric-mark-pattern-${id}`
   const gradientId = `isometric-mark-light-${id}`
+
+  // 固定画框用的旋转中心与半径：取未旋转形状包围盒的中心，与 rotateShapes 的旋转中心一致
+  const frame = React.useMemo(() => {
+    if (!stableFrame) return undefined
+    const points = shapes.flatMap((s) => [
+      ...s.outer,
+      ...(s.holes ?? []).flat(),
+    ])
+    if (!points.length) return undefined
+    const xs = points.map(([x]) => x)
+    const ys = points.map(([, y]) => y)
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2
+    const cy = (Math.min(...ys) + Math.max(...ys)) / 2
+    const r = Math.max(...points.map(([x, y]) => Math.hypot(x - cx, y - cy)))
+    return { cx, cy, r }
+  }, [shapes, stableFrame])
 
   const model = React.useMemo(
     () =>
@@ -122,8 +160,9 @@ function IsometricMark({
         depthProp,
         guides === "edges" ? "edges" : "box",
         elevation,
+        frame,
       ),
-    [shapes, rotation, depthProp, guides, elevation],
+    [shapes, rotation, depthProp, guides, elevation, frame],
   )
   const { viewBox, unit, depth } = model
   const pressedHeight = pressedDepth ?? depth / 2
@@ -273,5 +312,10 @@ function IsometricMark({
   )
 }
 
-export { IsometricMark }
-export type { IsometricMarkProps, IsometricPoint, IsometricShape }
+export { IsometricMark, IsometricMarkTuningContext }
+export type {
+  IsometricMarkProps,
+  IsometricMarkTuning,
+  IsometricPoint,
+  IsometricShape,
+}

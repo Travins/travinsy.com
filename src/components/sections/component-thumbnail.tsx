@@ -40,7 +40,7 @@ const fillClasses: Record<string, string> = {
   marquee: "*:h-full",
   "text-animate": "*:h-full *:min-h-0",
   "isometric-mark":
-    "*:h-full *:min-h-0 *:max-w-none *:rounded-none *:border-0",
+    "*:h-full *:min-h-0 *:max-w-none *:rounded-none *:border-0 **:data-[slot=isometric-mark]:mx-auto **:data-[slot=isometric-mark]:w-3/4",
   "glyph-field":
     "*:h-full *:rounded-none **:data-[slot=glyph-field]:h-full",
   // 窄屏画框只有 20rem 高，地球再往下沉一些，免得压到左上的指标

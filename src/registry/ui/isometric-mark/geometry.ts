@@ -185,6 +185,11 @@ function buildIsometricModel(
   depthOption?: number,
   guideMode: "box" | "edges" = "box",
   elevation: number = ISOMETRIC_ELEVATION,
+  /**
+   * 固定画框：给出旋转中心与半径时，viewBox 取一个只与半径、高度、俯仰有关的正方形，
+   * 转动朝向时画框不变、图形大小不变；调整高度或俯仰时图形缩放而外框比例不变。
+   */
+  frame?: { cx: number; cy: number; r: number },
 ): IsometricModel {
   setElevation(elevation)
   const rings: { ring: IsometricPoint[]; hole: boolean }[] = []
@@ -316,13 +321,31 @@ function buildIsometricModel(
     })
     .join("")
 
+  let viewBox = {
+    x: bx0 - margin,
+    y: by0 - margin,
+    width: bx1 - bx0 + margin * 2,
+    height: by1 - by0 + margin * 2,
+  }
+  if (frame) {
+    // 任意朝向下，图形都落在以旋转中心为圆心、半径 r 的圆里；投影后横向半宽 √2·r·cos30°，
+    // 地面纵向半高 √2·r·KY，再加上挤出高度。取两者较大者作正方形边长。
+    const [ox, oy] = project(frame.cx, frame.cy)
+    const halfX = Math.SQRT2 * frame.r * COS30
+    const halfY = Math.SQRT2 * frame.r * KY
+    const lift = depth * KZ
+    const side = Math.max(halfX * 2, halfY * 2 + lift) * 1.04
+    const centerY = oy - lift / 2
+    viewBox = {
+      x: ox - side / 2,
+      y: centerY - side / 2,
+      width: side,
+      height: side,
+    }
+  }
+
   return {
-    viewBox: {
-      x: bx0 - margin,
-      y: by0 - margin,
-      width: bx1 - bx0 + margin * 2,
-      height: by1 - by0 + margin * 2,
-    },
+    viewBox,
     unit: size / 500,
     depth,
     top: rings.map(({ ring }) => ringPath(ring, depth)).join(""),

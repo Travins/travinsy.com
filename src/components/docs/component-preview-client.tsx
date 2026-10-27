@@ -14,6 +14,12 @@ import {
 } from "./doc-frame"
 import { IconTip } from "./icon-tip"
 import { v0Url } from "./registry-items"
+import {
+  IsometricTunerPanel,
+  IsometricTunerProvider,
+  IsometricTunerToggle,
+  useIsometricTuner,
+} from "./isometric-tuner"
 import { PreviewBackdrop } from "./preview-backdrop"
 import { V0Icon } from "./v0-icon"
 
@@ -30,6 +36,9 @@ export function ComponentPreviewClient({
 }) {
   const Preview = registryExamples[name]
   const [view, setView] = useState("preview")
+  // 等轴测标志的每个示例都带一个可开关的调整面板
+  const tuner = useIsometricTuner()
+  const tunable = item === "isometric-mark"
   return (
     <Tabs
       value={view}
@@ -42,6 +51,12 @@ export function ComponentPreviewClient({
           <DocTabsTrigger value="code">代码</DocTabsTrigger>
         </DocTabsList>
         <div className="flex items-center gap-0.5">
+          {tunable && view === "preview" && (
+            <IsometricTunerToggle
+              open={tuner.open}
+              onOpenChange={tuner.setOpen}
+            />
+          )}
           {item && (
             <IconTip label="在 v0 中打开">
               <a
@@ -70,10 +85,15 @@ export function ComponentPreviewClient({
         )}
       >
         <PreviewBackdrop name={item} />
-        <Suspense fallback={<p role="status">正在加载示例…</p>}>
-          {Preview ? <Preview /> : <p>找不到示例：{name}</p>}
-        </Suspense>
+        <IsometricTunerProvider tuning={tuner.tuning}>
+          <Suspense fallback={<p role="status">正在加载示例…</p>}>
+            {Preview ? <Preview /> : <p>找不到示例：{name}</p>}
+          </Suspense>
+        </IsometricTunerProvider>
       </TabsContent>
+      {tunable && tuner.open && view === "preview" ? (
+        <IsometricTunerPanel values={tuner.values} onChange={tuner.setValues} />
+      ) : null}
       <TabsContent value="code" keepMounted className={docFramePanelClass}>
         {code}
       </TabsContent>
