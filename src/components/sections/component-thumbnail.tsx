@@ -16,10 +16,23 @@ const firstExamples: Record<string, string> = {
   "local-time": "local-time-world-clock-demo",
 }
 
-/** 示例按这个宽度排版，再整体等比缩放进固定比例的画框，所有分辨率下构图一致。 */
-const STAGE_WIDTH = 720
-/** 缩放后四周留出的空隙（占画框的比例）。 */
-const INSET = 0.9
+/**
+ * 示例按原尺寸居中展示；画框宽屏为 16:10，窄屏固定 20rem 高（aspect-ratio 与 min-height 同时设置会把宽度撑开，所以分开写）。
+ * 少数示例原尺寸放不进画框，在这里单独缩小（transform 只影响视觉，不改变示例自身排版）。
+ */
+const fitClasses: Record<string, string> = {
+  "grid-layout": "max-lg:scale-[0.6]",
+  "local-time": "max-lg:scale-[0.78]",
+  "stat-card": "scale-[0.85] max-lg:scale-[0.8]",
+  "mini-chart": "max-lg:scale-[0.65]",
+  "chart-card": "max-lg:scale-[0.55]",
+  timeline: "max-lg:scale-[0.85]",
+  "card-stack": "max-lg:scale-90",
+  "text-animate": "max-lg:scale-75",
+  "isometric-mark": "scale-90 max-lg:scale-[0.8]",
+  orbit: "max-lg:scale-[0.85]",
+  globe: "max-lg:scale-75",
+}
 
 export function ComponentThumbnail({
   name,
@@ -29,51 +42,19 @@ export function ComponentThumbnail({
   label: string
 }) {
   const Preview = registryExamples[firstExamples[name] ?? `${name}-demo`]
-  const frameRef = React.useRef<HTMLDivElement>(null)
-  const stageRef = React.useRef<HTMLDivElement>(null)
-  const [scale, setScale] = React.useState<number | null>(null)
-
-  React.useLayoutEffect(() => {
-    const frame = frameRef.current
-    const stage = stageRef.current
-    if (!frame || !stage) return
-    // 宽度与高度各算一个比例，取较小的那个，保证示例完整放进画框；不放大超过原尺寸
-    const update = () => {
-      const height = stage.offsetHeight
-      if (!height) return
-      setScale(
-        Math.min(
-          1,
-          (frame.clientWidth * INSET) / STAGE_WIDTH,
-          (frame.clientHeight * INSET) / height,
-        ),
-      )
-    }
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(frame)
-    observer.observe(stage)
-    return () => observer.disconnect()
-  }, [])
 
   return (
     // 缩略图是可交互的实时演示（悬停、点击都生效），跳转只交给下方的标题区
     <div
-      ref={frameRef}
       role="group"
       aria-label={label}
-      className="relative aspect-[16/10] min-w-0 overflow-hidden bg-muted/20"
+      className="relative flex h-80 min-w-0 lg:h-auto lg:aspect-[16/10] items-center justify-center overflow-hidden bg-muted/20 px-6"
     >
       <div
-        ref={stageRef}
         className={cn(
-          "absolute top-1/2 left-1/2 flex origin-center items-center justify-center transition-opacity duration-300",
-          scale === null && "opacity-0",
+          "flex w-full shrink-0 items-center justify-center",
+          fitClasses[name],
         )}
-        style={{
-          width: STAGE_WIDTH,
-          transform: `translate(-50%, -50%) scale(${scale ?? 0.5})`,
-        }}
       >
         <React.Suspense
           fallback={<div className="h-48 w-96 rounded-md bg-muted" />}
