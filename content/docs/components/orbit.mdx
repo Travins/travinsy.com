@@ -1,0 +1,100 @@
+---
+title: 轨道环绕
+titleEn: Orbit
+description: 可组合的同心轨道与正向节点，支持半弧、反向运行与离屏暂停。
+group: graphics
+---
+
+<ComponentPreview name="orbit-demo" />
+
+## 安装
+
+<InstallCommand name="orbit" />
+
+## 用法
+
+用 `OrbitRing` 定义轨道，用 `OrbitItem` 放入任意非交互节点。同一圈的节点通过 `angle` 分开，位置变化时内容始终保持正向。
+
+```tsx title="components/orbit-example.tsx"
+import {
+  Orbit,
+  OrbitRing,
+  OrbitItem,
+  OrbitCenter,
+} from "@/components/ui/orbit/orbit"
+
+export function OrbitExample() {
+  return (
+    <Orbit label="工具围绕核心环绕">
+      <OrbitRing radius={100} duration={24}>
+        <OrbitItem>01</OrbitItem>
+        <OrbitItem angle={180}>02</OrbitItem>
+      </OrbitRing>
+      <OrbitCenter>核心</OrbitCenter>
+    </Orbit>
+  )
+}
+```
+
+## 示例
+
+### 半弧
+
+`arc="half"` 保留上半圆，并在地平线处渐隐。节点继续沿整圆运动，在下半圆时隐藏。示例把画布中心下移，适合放在区块底部。
+
+<ComponentPreview name="orbit-half-demo" />
+
+### 多彩图标
+
+六种 `--flow-*` 色调只用于节点，轨道保持单色。底纹换成方格，中心用代码图标连接不同工具。
+
+<ComponentPreview name="orbit-icons-demo" />
+
+### 技术栈
+
+节点可以放文字，追加 `w-auto px-3` 即可呈现胶囊式标签。宽标签需要给轨道两侧留出空间。
+
+<ComponentPreview name="orbit-stack-demo" />
+
+## API
+
+### Orbit
+
+`size` 默认 `320`，表示正方形设计画布边长；容器更窄时画布缩小，轨道按比例缩放，节点文字保留原字号。外框默认高 `288px`，可以用 `className` 调整。支持 `dots / grid / lines / hatch / none` 底纹。
+
+<PropsTable name="orbit" component="Orbit" />
+
+### OrbitRing
+
+`radius` 默认 `100`，单位是设计像素；`duration` 默认 `24` 秒。`startAngle` 默认 `-90`，0 度在右侧，正值顺时针。`reverse` 改变运动方向。父级或当前轨道 `paused` 时暂停，恢复后从当前角度继续。
+
+<PropsTable name="orbit" component="OrbitRing" />
+
+### OrbitItem
+
+`angle` 是相对轨道起始角的偏移，默认 `0`。`tone` 默认 `foreground`，支持主题色及 `blue / green / amber / rose / violet / cyan`。必须置于 `OrbitRing` 内。
+
+<PropsTable name="orbit" component="OrbitItem" />
+
+### OrbitCenter
+
+将内容放在画布正中央，自行组合标志、图标或文字。
+
+<PropsTable name="orbit" component="OrbitCenter" />
+
+## 可访问性
+
+- 默认作为装饰隐藏；传入 `label` 后使用 `role="img"` 和文字说明，说明应概括整张图。
+- 图示内不放按钮或链接，避免隐藏内容仍可获得键盘焦点。
+- 尊重系统“减少动态效果”，以指定的起始角展示静帧；离开视口时自动暂停。
+- 色调之外请用图标或文字区分节点。
+
+## 注意事项
+
+- 动画由 `motion/react` 的 MotionValue 驱动，不逐帧触发 React 渲染。服务端首帧不依赖随机值或浏览器尺寸，可用于静态导出。
+- 底纹、`--edge` 和多彩变量由 `flow-diagram` 的 registry 依赖一并提供，手动安装时也需要这些依赖。
+- 所有同圈节点默认在同一位置，请显式设置不同 `angle`。最大半径加节点半宽应小于可用画布尺寸的一半；超出的部分由外框裁切。
+
+## 源码
+
+<ComponentSource name="orbit" />

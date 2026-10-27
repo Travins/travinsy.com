@@ -3,6 +3,12 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from "react"
 
 export const registryExamples: Record<string, LazyExoticComponent<ComponentType>> = {
+  "chart-card-demo": lazy(() => import("./examples/chart-card-demo")),
+  "chart-card-gauge-demo": lazy(() => import("./examples/chart-card-gauge-demo")),
+  "chart-card-ranking-demo": lazy(() => import("./examples/chart-card-ranking-demo")),
+  "chart-card-showcase-demo": lazy(() => import("./examples/chart-card-showcase-demo")),
+  "chart-card-stacked-demo": lazy(() => import("./examples/chart-card-stacked-demo")),
+  "chart-card-target-demo": lazy(() => import("./examples/chart-card-target-demo")),
   "flow-diagram-agent-demo": lazy(() => import("./examples/flow-diagram-agent-demo")),
   "flow-diagram-auth-demo": lazy(() => import("./examples/flow-diagram-auth-demo")),
   "flow-diagram-background-demo": lazy(() => import("./examples/flow-diagram-background-demo")),
@@ -45,6 +51,29 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "local-time-inline-demo": lazy(() => import("./examples/local-time-inline-demo")),
   "local-time-showcase-demo": lazy(() => import("./examples/local-time-showcase-demo")),
   "local-time-world-clock-demo": lazy(() => import("./examples/local-time-world-clock-demo")),
+  "mini-chart-axis-demo": lazy(() => import("./examples/mini-chart-axis-demo")),
+  "mini-chart-demo": lazy(() => import("./examples/mini-chart-demo")),
+  "mini-chart-donut-demo": lazy(() => import("./examples/mini-chart-donut-demo")),
+  "mini-chart-ring-demo": lazy(() => import("./examples/mini-chart-ring-demo")),
+  "mini-chart-showcase-demo": lazy(() => import("./examples/mini-chart-showcase-demo")),
+  "mini-chart-trend-demo": lazy(() => import("./examples/mini-chart-trend-demo")),
+  "mini-chart-types-demo": lazy(() => import("./examples/mini-chart-types-demo")),
+  "orbit-demo": lazy(() => import("./examples/orbit-demo")),
+  "orbit-half-demo": lazy(() => import("./examples/orbit-half-demo")),
+  "orbit-icons-demo": lazy(() => import("./examples/orbit-icons-demo")),
+  "orbit-stack-demo": lazy(() => import("./examples/orbit-stack-demo")),
+  "ripple-demo": lazy(() => import("./examples/ripple-demo")),
+  "ripple-online-demo": lazy(() => import("./examples/ripple-online-demo")),
+  "ripple-reach-demo": lazy(() => import("./examples/ripple-reach-demo")),
+  "ripple-signal-demo": lazy(() => import("./examples/ripple-signal-demo")),
+  "stat-card-convention-demo": lazy(() => import("./examples/stat-card-convention-demo")),
+  "stat-card-demo": lazy(() => import("./examples/stat-card-demo")),
+  "stat-card-distribution-demo": lazy(() => import("./examples/stat-card-distribution-demo")),
+  "stat-card-goal-demo": lazy(() => import("./examples/stat-card-goal-demo")),
+  "stat-card-health-demo": lazy(() => import("./examples/stat-card-health-demo")),
+  "stat-card-latency-demo": lazy(() => import("./examples/stat-card-latency-demo")),
+  "stat-card-quota-demo": lazy(() => import("./examples/stat-card-quota-demo")),
+  "stat-card-showcase-demo": lazy(() => import("./examples/stat-card-showcase-demo")),
 }
 
 // 区块 / 页面模板的整页预览，键为 registry 条目名

@@ -1,0 +1,100 @@
+---
+title: 迷你图
+titleEn: Mini Chart
+group: data
+description: 放进卡片的极简图表：柱、折线、面积、阶梯线、进度环与环形图。无网格无纵轴，可选 11px 横轴，涨跌色随配色约定变化，尊重「减少动态效果」。
+---
+
+<ComponentPreview name="mini-chart-demo" />
+
+## 安装
+
+<InstallCommand name="mini-chart" />
+
+条目依赖 shadcn 的 `chart`（`recharts` 的封装），安装时会一并添加。示例里的卡片外壳用了 [统计卡片](/components/stat-card)，它不是必需的依赖。
+
+## 用法
+
+`MiniChart` 一个组件画四种图，用 `type` 切换；`data` 可以是纯数字，也可以是带标签的 `{ label, value }`。高度用 `className` 控制，默认 `h-16`，宽度撑满父级。
+
+```tsx title="app/spark.tsx"
+import { MiniChart } from "@/components/ui/mini-chart/mini-chart"
+
+export function Spark() {
+  return (
+    <MiniChart
+      type="area"
+      data={[28, 27, 35, 29, 40, 57, 50]}
+      seriesLabel="访客"
+      label="近 7 天博客访客走势"
+    />
+  )
+}
+```
+
+`label` 是读屏名称，说清楚这张图表示什么。进度环 `MiniRing` 和环形图 `MiniDonut` 从同一个入口导入。
+
+## 示例
+
+### 四种图形
+
+`bar` 柱、`line` 折线、`area` 面积（带极淡的渐变）、`step` 阶梯线。折线和面积的纵轴范围贴着数据的最小到最大值，起伏更明显；柱图从 0 开始。
+
+<ComponentPreview name="mini-chart-types-demo" />
+
+### 横轴与强调
+
+`showAxis` 打开极简横轴：11px 刻度，没有轴线和刻度线，只保留首尾和间隔均匀的标签。`tickFormatter` 把标签变成想要的样子，星期轴用单字「一…日」。柱图的 `highlight` 强调一根（下标、`"last"` 或 `"max"`），其余变淡；`track` 给每根柱加上底槽。
+
+<ComponentPreview name="mini-chart-axis-demo" />
+
+### 涨跌配色
+
+`tone="trend"` 按首尾两点自动选涨色或跌色。颜色来自 `--stat-up` / `--stat-down`，由 `convention` 切换绿涨红跌与红涨绿跌，用法见 [统计卡片](/components/stat-card#涨跌配色约定)。
+
+<ComponentPreview name="mini-chart-trend-demo" />
+
+### 进度环
+
+`MiniRing` 是纯 SVG，没有用图表库：`arc` 控制圆弧总角度（360 是整圆，270 是下方留口的仪表），`thickness` 控制粗细，`children` 替换中央的默认百分比。
+
+<ComponentPreview name="mini-chart-ring-demo" />
+
+### 环形图
+
+`MiniDonut` 画几个分类的占比，分段之间留 2° 的缝，悬停有提示框，中央放合计。图例由你自己写，颜色按顺序对应默认色板。
+
+<ComponentPreview name="mini-chart-donut-demo" />
+
+## API
+
+### MiniChart
+
+<PropsTable name="mini-chart" component="MiniChart" />
+
+根元素 `data-slot="mini-chart"`，带 `data-type`；图形颜色通过 shadcn `ChartContainer` 注入 `--color-value`。
+
+### MiniRing
+
+<PropsTable name="mini-chart" component="MiniRing" />
+
+### MiniDonut
+
+<PropsTable name="mini-chart" component="MiniDonut" />
+
+## 可访问性
+
+- 图表本身是 `role="img"`，名称来自 `label`；数据通过悬停提示框读取，需要精确数值请同时在文字里写出（如卡片里的大号数字）。
+- `MiniRing` 是 `role="meter"`，带 `aria-valuenow` 和 `aria-valuemax`。
+- 开启「减少动态效果」后，recharts 的入场动画关闭，进度环直接到位。
+- 涨跌趋势不只靠颜色：请在旁边配 [`StatTrend`](/components/stat-card) 这样带箭头和文字的元素。
+
+## 注意事项
+
+- 图表由 `ResponsiveContainer` 撑满父级，服务端渲染时先按 160×64 占位，水合后量出真实尺寸；父级必须有确定宽度。
+- 同一页面放很多迷你图时，给不需要提示框的设置 `showTooltip={false}`，可以省掉事件监听。
+- 提示框的数值用 `format`（`StatFormatOptions`）格式化，默认 `zh-CN` 压缩。
+
+## 源码
+
+<ComponentSource name="mini-chart" />

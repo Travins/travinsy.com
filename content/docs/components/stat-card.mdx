@@ -1,0 +1,195 @@
+---
+title: 统计卡片
+titleEn: Stat Card
+group: data
+description: 一组可组合的统计卡片原语：KPI 数字与涨跌幅（绿涨红跌 / 红涨绿跌可切换）、目标状态行、配额进度条、分格计量条、延迟分区表、占比分布条与图例，数字默认按万 / 亿压缩。
+---
+
+<ComponentPreview name="stat-card-demo" />
+
+## 安装
+
+<InstallCommand name="stat-card" />
+
+## 用法
+
+统计卡片不是一个大组件，而是一组小原语：`StatCard` 提供外壳，其余按需要拼进去。同一份数据在不同卡片里长什么样，由你选哪几块决定。
+
+```tsx title="app/stats.tsx"
+import {
+  StatCard,
+  StatHeader,
+  StatLabel,
+  StatTrend,
+  StatValue,
+} from "@/components/ui/stat-card/stat-card"
+
+export function Stats() {
+  return (
+    <StatCard>
+      <StatHeader>
+        <StatLabel>API 调用量</StatLabel>
+      </StatHeader>
+      <StatValue value={12840000} unit="次" />
+      <StatTrend value={12.4}>较上周</StatTrend>
+    </StatCard>
+  )
+}
+```
+
+`StatValue` 收到数字时用 `formatStat` 格式化：默认按 `zh-CN` 压缩，`12840000` 显示为 `1284万`，单位 `unit` 跟在数字后面，字号更小、颜色更淡。数字一律 `tabular-nums`，涨跌时宽度不抖。
+
+| 原语 | 用途 |
+| --- | --- |
+| `StatCard` / `StatGroup` | 卡片外壳 / 只设置涨跌配色约定的容器 |
+| `StatHeader` / `StatLabel` / `StatIcon` | 标题行、指标名、图标方块 |
+| `StatValue` / `StatTrend` / `StatMeta` | 大号数字、涨跌幅、两端对齐的说明行 |
+| `StatStatus` / `StatBadge` | 状态行（图标 + 两行文字）、状态徽标 |
+| `StatProgress` / `StatMeter` | 进度条、分格计量条 |
+| `StatSegments` / `StatDistribution` | 横向分段条、分段条加图例格 |
+| `StatZones` | 分区表（快 / 正常 / 慢 / 严重） |
+
+## 示例
+
+### 目标与状态
+
+`StatStatus` 是卡片底部的一行：状态图标方块、说明文字和状态名。状态有四种——`ok` 达标、`watch` 关注、`risk` 风险、`review` 审核中，各自带固定的图标和色调；加 `render={<a href="…" />}` 与 `showChevron` 就成了一个入口。
+
+<ComponentPreview name="stat-card-goal-demo" />
+
+### 配额与进度
+
+`StatProgress` 的 `tone="usage"` 按用量自动变色：65% 起关注、90% 起风险。`usageStatus` 和 `healthStatus` 把百分比换成状态名，可以拿去驱动 `StatBadge`。
+
+<ComponentPreview name="stat-card-quota-demo" />
+
+### 延迟分区
+
+`StatZones` 展示「落在哪一档」的分布：每行一根彩色竖条、分区名、区间和占比。默认颜色按绿、蓝、琥珀、玫红排列，也可以逐行指定 `tone`。
+
+<ComponentPreview name="stat-card-latency-demo" />
+
+### 占比分布
+
+`StatDistribution` 把合计、分段条和图例格放在一起，图例同时写出占比与数值。只想要那条分段条时用 `StatSegments`，或设置 `legend={false}`。
+
+<ComponentPreview name="stat-card-distribution-demo" />
+
+### 分格计量
+
+`StatMeter` 是 N 个小格，按值从左向右依次点亮；颜色默认按健康度变化，低于 40% 风险、低于 75% 关注。
+
+<ComponentPreview name="stat-card-health-demo" />
+
+### 涨跌配色约定
+
+涨跌色有两套习惯：国际通用绿涨红跌，国内行情软件红涨绿跌。组件不把颜色写死，只读 `--stat-up` / `--stat-down` 两个 CSS 变量，由 `convention` 改写：
+
+- `intl`（默认）：绿涨红跌；
+- `cn`：红涨绿跌。
+
+变量沿 DOM 向下继承，所以在最外层的 `StatGroup`（或任意一张 `StatCard`）上设置一次，里面所有涨跌幅都会跟着变，包括 [迷你图](/components/mini-chart) 与 [图表卡片](/components/chart-card) 里的涨跌色。涨跌之外的状态色（达标 / 风险）不受它影响，达标永远是绿、风险永远是红。
+
+<ComponentPreview name="stat-card-convention-demo" />
+
+延迟、错误率这类「越低越好」的指标，给 `StatTrend` 加 `invert`：下降用「好」的颜色，箭头方向不变。
+
+### 数字格式
+
+`formatStat` 是独立的工具函数，卡片内部用的就是它：
+
+```tsx
+import { formatStat } from "@/lib/data-display"
+
+formatStat(12480) // "1.2万"
+formatStat(345000000) // "3.5亿"
+formatStat(12480, { locale: "en" }) // "12.5K"
+formatStat(1250000, { style: "currency" }) // "¥125万"
+formatStat(12.5, { style: "percent" }) // "12.5%"，传入的是百分点
+formatStat(6.2, { style: "percent", sign: true }) // "+6.2%"
+```
+
+## API
+
+### StatCard
+
+<PropsTable name="stat-card" component="StatCard" />
+
+根元素 `data-slot="stat-card"`，设置 `convention` 时带 `data-convention`。
+
+### StatGroup
+
+<PropsTable name="stat-card" component="StatGroup" />
+
+### StatIcon
+
+<PropsTable name="stat-card" component="StatIcon" />
+
+### StatValue
+
+<PropsTable name="stat-card" component="StatValue" />
+
+### StatTrend
+
+<PropsTable name="stat-card" component="StatTrend" />
+
+根元素带 `data-trend="up" | "down" | "flat"`。
+
+### StatStatus
+
+<PropsTable name="stat-card" component="StatStatus" />
+
+根元素带 `data-status`。
+
+### StatBadge
+
+<PropsTable name="stat-card" component="StatBadge" />
+
+### StatProgress
+
+<PropsTable name="stat-card" component="StatProgress" />
+
+### StatMeter
+
+<PropsTable name="stat-card" component="StatMeter" />
+
+### StatSegments
+
+<PropsTable name="stat-card" component="StatSegments" />
+
+### StatDistribution
+
+<PropsTable name="stat-card" component="StatDistribution" />
+
+### StatZones
+
+<PropsTable name="stat-card" component="StatZones" />
+
+`StatHeader`、`StatLabel`、`StatMeta` 只是带样式的容器，属性同对应的原生元素。
+
+### 工具函数
+
+| 函数 | 说明 |
+| --- | --- |
+| `formatStat(value, options)` | 数字格式化，`options` 为 `style`、`locale`、`compact`、`currency`、`digits`、`sign` |
+| `formatDay(date, style, locale)` | 日期轴文字：`long` → `2月14日`，`short` → `02/14`，`weekday` → `一` |
+| `usageStatus(percent)` / `healthStatus(percent)` | 百分比换成 `ok` / `watch` / `risk`，分别是「越高越危险」和「越高越好」两种口径 |
+
+这些工具随条目一起安装到 `lib/data-display.ts`，[迷你图](/components/mini-chart) 和 [图表卡片](/components/chart-card) 共用同一份。
+
+## 可访问性
+
+- 进度条是 `role="progressbar"`，计量条与进度环是 `role="meter"`，都带 `aria-valuenow` 等取值，并用 `label` 提供读屏名称。
+- 涨跌幅同时有箭头图标和 `sr-only` 的「上升 / 下降 / 持平」；状态行、徽标永远带文字，颜色不是唯一信息。
+- 分段条是 `role="img"`，名称默认把每段的占比念出来；图例格写明占比与数值。
+- 进度条、计量条、分段条的入场动画在系统开启「减少动态效果」时直接到位。
+
+## 注意事项
+
+- 小数位与压缩单位由 `Intl.NumberFormat` 决定：`zh-CN` 是「万 / 亿」，`en` 是 K / M / B。`Intl` 实例按参数缓存，反复格式化没有额外开销。
+- 日期轴按 UTC 解析与输出，`"2026-02-14"` 这样的字符串在任何时区得到同样的文字，静态导出的 HTML 与客户端首屏一致。
+- 进度条等入场动画在服务端先渲染为 0 宽，水合后展开；需要无脚本也显示满值时，请在自己的页面里把 `StatProgress` 换成静态元素。
+
+## 源码
+
+<ComponentSource name="stat-card" />

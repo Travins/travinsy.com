@@ -1,0 +1,83 @@
+---
+title: 波纹脉冲
+titleEn: Ripple
+description: 同心波纹与径向标记，支持扩散脉冲、覆盖范围与离屏暂停。
+group: graphics
+---
+
+<ComponentPreview name="ripple-demo" />
+
+## 安装
+
+<InstallCommand name="ripple" />
+
+## 用法
+
+`pulse` 模式让波纹持续向外扩散，`reach` 模式保留固定圆环并轻轻改变透明度。内容通过 `RippleMarker` 按角度和半径定位，`radius={0}` 表示中心。
+
+```tsx title="components/ripple-example.tsx"
+import { Ripple, RippleMarker } from "@/components/ui/ripple/ripple"
+
+export function RippleExample() {
+  return (
+    <Ripple mode="reach" label="服务覆盖范围">
+      <RippleMarker radius={0}>中心</RippleMarker>
+      <RippleMarker angle={45} radius={0.8} node="华东" />
+    </Ripple>
+  )
+}
+```
+
+## 示例
+
+### 在线状态
+
+首字母头像配合状态点和文字。绿色来自 `--flow-green`，在线状态同时通过文字表达。
+
+<ComponentPreview name="ripple-online-demo" />
+
+### 覆盖范围
+
+固定圆环便于比较标记与中心的距离，标记不随波纹漂移。地区标签通过角度和半径比例布局。
+
+<ComponentPreview name="ripple-reach-demo" />
+
+### 状态信号
+
+中心展示信号状态，圆环旁用距离刻度说明覆盖范围，背景使用轻斜纹。
+
+<ComponentPreview name="ripple-signal-demo" />
+
+## API
+
+### Ripple
+
+<PropsTable name="ripple" component="Ripple" />
+
+默认 `rings={4}`、`ringGap={48}`、`baseSize={48}`、`duration={4}`、`mode="pulse"`。`ringGap` 表示相邻圆环的**直径差**，最外圈直径为 `baseSize + (rings - 1) × ringGap`；脉冲模式扩散到再外一圈后淡出。数量限制为 1–24，负间距按 0 处理，时长最小 0.1 秒。
+
+`size` 默认 `320`，表示设计画布边长。容器更窄时圆环与标记位置等比缩小，内容字号保持不变。外框默认高 `288px`，可用 `className` 调整。底纹支持 `dots / grid / lines / hatch / none`。
+
+### RippleMarker
+
+<PropsTable name="ripple" component="RippleMarker" />
+
+`angle` 默认 `0`，0 度在上方，正值顺时针。`radius` 默认 `1`，相对于最外圈半径：0 在中心，1 在最外圈，大于 1 在圆环外。`node` 和 `children` 均可承载内容，同时传入时使用 `node`。
+
+## 可访问性
+
+- 默认作为装饰隐藏；传入 `label` 后以图片语义朗读概括说明。
+- 内容应是非交互元素，图示不产生键盘焦点。
+- 系统开启“减少动态效果”时显示错开的完整静帧；离开视口或 `paused` 时停止计时，恢复后继续。
+- 状态用文字配合颜色表达，数字有明确的单位说明。
+
+## 注意事项
+
+- 动画由共享 MotionValue 推导，每帧不触发 React 渲染。服务端输出确定性的同心环，不使用随机粒子，可用于静态导出。
+- `RippleMarker` 应放在 `Ripple` 内。它按设计画布定位，不会跟随脉冲伸缩；覆盖关系明确的场景建议使用 `reach`。
+- 大半径或长标签可能被容器边缘裁切，请预留标记尺寸。高度可以按使用场景调整，小格子中建议减少环数。
+- 底纹和变量依赖 `flow-diagram` registry 条目，安装时会一并提供；手动安装时需自行引入对应工具类和变量。
+
+## 源码
+
+<ComponentSource name="ripple" />

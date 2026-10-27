@@ -609,6 +609,210 @@
           "flow-cyan": "oklch(0.82 0.11 208)"
         }
       }
+    },
+    {
+      "name": "stat-card",
+      "type": "registry:ui",
+      "title": "统计卡片",
+      "description": "一组可组合的统计卡片原语：KPI 数字与涨跌幅（绿涨红跌 / 红涨绿跌可切换）、目标状态行、配额进度条、分格计量条、延迟分区表、占比分布条与图例，数字默认按万 / 亿压缩。",
+      "dependencies": [
+        "lucide-react",
+        "motion",
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/stat-card/stat-card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/stat-card/stat-status.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/stat-card/stat-bars.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/stat-card/stat-zones.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/stat-card/config.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/lib/data-display.ts",
+          "type": "registry:lib",
+          "target": "lib/data-display.ts"
+        }
+      ],
+      "cssVars": {
+        "light": {
+          "flow-blue": "oklch(0.56 0.2 258)",
+          "flow-green": "oklch(0.62 0.16 150)",
+          "flow-amber": "oklch(0.7 0.16 70)",
+          "flow-rose": "oklch(0.62 0.21 5)",
+          "flow-violet": "oklch(0.56 0.22 292)",
+          "flow-cyan": "oklch(0.66 0.12 215)"
+        },
+        "dark": {
+          "flow-blue": "oklch(0.72 0.15 255)",
+          "flow-green": "oklch(0.77 0.17 152)",
+          "flow-amber": "oklch(0.82 0.15 82)",
+          "flow-rose": "oklch(0.74 0.16 8)",
+          "flow-violet": "oklch(0.74 0.15 295)",
+          "flow-cyan": "oklch(0.82 0.11 208)"
+        }
+      }
+    },
+    {
+      "name": "mini-chart",
+      "type": "registry:ui",
+      "title": "迷你图",
+      "description": "放进卡片的极简图表：柱、折线、面积、阶梯线、进度环与环形图。无网格无纵轴，可选 11px 横轴，涨跌色随配色约定变化，尊重「减少动态效果」。",
+      "dependencies": [
+        "recharts",
+        "motion"
+      ],
+      "registryDependencies": [
+        "chart"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/mini-chart/mini-chart.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/mini-chart/mini-ring.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/mini-chart/mini-donut.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/lib/data-display.ts",
+          "type": "registry:lib",
+          "target": "lib/data-display.ts"
+        }
+      ],
+      "cssVars": {
+        "light": {
+          "flow-blue": "oklch(0.56 0.2 258)",
+          "flow-green": "oklch(0.62 0.16 150)",
+          "flow-amber": "oklch(0.7 0.16 70)",
+          "flow-rose": "oklch(0.62 0.21 5)",
+          "flow-violet": "oklch(0.56 0.22 292)",
+          "flow-cyan": "oklch(0.66 0.12 215)"
+        },
+        "dark": {
+          "flow-blue": "oklch(0.72 0.15 255)",
+          "flow-green": "oklch(0.77 0.17 152)",
+          "flow-amber": "oklch(0.82 0.15 82)",
+          "flow-rose": "oklch(0.74 0.16 8)",
+          "flow-violet": "oklch(0.74 0.15 295)",
+          "flow-cyan": "oklch(0.82 0.11 208)"
+        }
+      }
+    },
+    {
+      "name": "chart-card",
+      "type": "registry:ui",
+      "title": "图表卡片",
+      "description": "图表卡片布局（标题、指标行、图例、明细表）加三个图表：刻度式环形仪表、多序列折线 / 柱 / 面积图（支持堆叠与正负对比）、横向排名条。基于 shadcn chart，颜色全部取自主题变量。",
+      "dependencies": [
+        "recharts",
+        "motion"
+      ],
+      "registryDependencies": [
+        "chart"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/chart-card/chart-card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/chart-card/chart-gauge.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/chart-card/chart-series.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/chart-card/chart-ranking.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/chart-card/chart-legend.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/chart-card/chart-parts.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/lib/data-display.ts",
+          "type": "registry:lib",
+          "target": "lib/data-display.ts"
+        }
+      ],
+      "cssVars": {
+        "light": {
+          "flow-blue": "oklch(0.56 0.2 258)",
+          "flow-green": "oklch(0.62 0.16 150)",
+          "flow-amber": "oklch(0.7 0.16 70)",
+          "flow-rose": "oklch(0.62 0.21 5)",
+          "flow-violet": "oklch(0.56 0.22 292)",
+          "flow-cyan": "oklch(0.66 0.12 215)"
+        },
+        "dark": {
+          "flow-blue": "oklch(0.72 0.15 255)",
+          "flow-green": "oklch(0.77 0.17 152)",
+          "flow-amber": "oklch(0.82 0.15 82)",
+          "flow-rose": "oklch(0.74 0.16 8)",
+          "flow-violet": "oklch(0.74 0.15 295)",
+          "flow-cyan": "oklch(0.82 0.11 208)"
+        }
+      }
+    },
+    {
+      "name": "orbit",
+      "type": "registry:ui",
+      "title": "轨道环绕",
+      "description": "可组合的同心轨道与正向节点，支持半弧、反向运行与离屏暂停。",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/orbit/orbit.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "ripple",
+      "type": "registry:ui",
+      "title": "波纹脉冲",
+      "description": "同心波纹与径向标记，支持扩散脉冲、覆盖范围与离屏暂停。",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/ripple/ripple.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

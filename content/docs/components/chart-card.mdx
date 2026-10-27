@@ -1,0 +1,158 @@
+---
+title: 图表卡片
+titleEn: Chart Card
+group: data
+description: 图表卡片布局（标题、指标行、图例、明细表）加三个图表：刻度式环形仪表、多序列折线 / 柱 / 面积图（支持堆叠与正负对比）、横向排名条。基于 shadcn chart，颜色全部取自主题变量。
+---
+
+<ComponentPreview name="chart-card-target-demo" />
+
+## 安装
+
+<InstallCommand name="chart-card" />
+
+条目依赖 shadcn 的 `chart`（`recharts` 的封装），安装时会一并添加。
+
+## 用法
+
+`ChartCard` 是外壳，分 `Header` / `Content` / `Footer` 三个区域，区域之间用细线隔开；图表放在 `Content` 里。
+
+```tsx title="app/traffic.tsx"
+import {
+  ChartCard,
+  ChartCardContent,
+  ChartCardDescription,
+  ChartCardHeader,
+  ChartCardTitle,
+  ChartSeries,
+} from "@/components/ui/chart-card/chart-card"
+
+const data = [
+  { day: "2026-02-01", docs: 6200, blog: 4800 },
+  { day: "2026-02-02", docs: 6900, blog: 5100 },
+  // …
+]
+
+export function Traffic() {
+  return (
+    <ChartCard>
+      <ChartCardHeader>
+        <div>
+          <ChartCardTitle>站点流量</ChartCardTitle>
+          <ChartCardDescription>每日页面访问量</ChartCardDescription>
+        </div>
+      </ChartCardHeader>
+      <ChartCardContent>
+        <ChartSeries
+          data={data}
+          xKey="day"
+          series={[
+            { key: "docs", label: "文档" },
+            { key: "blog", label: "博客" },
+          ]}
+        />
+      </ChartCardContent>
+    </ChartCard>
+  )
+}
+```
+
+| 组件 | 用途 |
+| --- | --- |
+| `ChartCard` + `Header` / `Title` / `Description` / `Action` / `Content` / `Footer` | 卡片布局 |
+| `ChartMetrics` + `ChartMetric` | 竖线隔开的指标行 |
+| `ChartTable` | 图表下方的明细表，首列带与序列同色的竖条 |
+| `ChartGauge` | 刻度式环形仪表 |
+| `ChartSeries` | 折线 / 柱 / 面积，支持堆叠与正负对比 |
+| `ChartRanking` | 横向排名条 + 图例格 |
+| `ChartLegendList` / `ChartLegendGrid` | 行内图例、图例格 |
+
+## 示例
+
+### 刻度式环形仪表
+
+`ChartGauge` 由一圈细刻度组成，按值依次点亮：点亮的刻度由淡到浓，最后一格最亮最长，像指针停在当前值上。`ticks` 控制刻度数，`arc` 控制总角度（默认 270° 下方留口，360 为整圈），`fade={false}` 关掉渐变，`children` 替换中央内容。
+
+<ComponentPreview name="chart-card-gauge-demo" />
+
+### 多序列折线与明细表
+
+`ChartSeries` 默认画折线；序列多于一条时在上方显示图例。图表下方的 `ChartTable` 用 `columns` 和 `rows` 描述明细，行里的 `tone` 对应图表里的序列。
+
+<ComponentPreview name="chart-card-demo" />
+
+### 堆叠柱与指标行
+
+`type="bar"` 加 `stacked` 得到堆叠柱；头部的 `ChartMetrics` 把几个关键指标并排摆在一起。
+
+<ComponentPreview name="chart-card-stacked-demo" />
+
+### 正负对比
+
+`stacked="diverging"` 让正值向上、负值向下堆叠，适合把「今年」和「去年同期」放在零线两侧；本页顶部的预览就是它加上 `ChartGauge`。
+
+### 排名条
+
+`ChartRanking` 用名次作纵轴，条末标出数值，旁边（窄屏在下方）是带名称的图例格。百分比数据传 `max={100}`，其他数据默认取最大值作满值。
+
+<ComponentPreview name="chart-card-ranking-demo" />
+
+### 配色与坐标轴
+
+序列没有指定 `tone` 时按顺序取默认色板：主题强调色、蓝、琥珀、紫、青、绿、玫红，颜色全部来自主题变量，14 个颜色主题和亮暗模式下都能正确显示。`tone` 也可以是 `chart-1` … `chart-5`、`up` / `down`（涨跌色，随 `convention` 变化）或任意 CSS 颜色。
+
+坐标轴字号 11px，网格只有水平虚线，颜色是线条网格的 `--edge`。日期轴用 `formatDay` 变成「2月14日」或「02/14」，星期轴是单字「一…日」，数字轴默认 `zh-CN` 压缩。
+
+## API
+
+### ChartCard
+
+<PropsTable name="chart-card" component="ChartCard" />
+
+### ChartMetric
+
+<PropsTable name="chart-card" component="ChartMetric" />
+
+### ChartTable
+
+<PropsTable name="chart-card" component="ChartTable" />
+
+### ChartGauge
+
+<PropsTable name="chart-card" component="ChartGauge" />
+
+### ChartSeries
+
+<PropsTable name="chart-card" component="ChartSeries" />
+
+### ChartRanking
+
+<PropsTable name="chart-card" component="ChartRanking" />
+
+### ChartLegendList
+
+<PropsTable name="chart-card" component="ChartLegendList" />
+
+### ChartLegendGrid
+
+<PropsTable name="chart-card" component="ChartLegendGrid" />
+
+`ChartCardHeader`、`ChartCardTitle`、`ChartCardDescription`、`ChartCardAction`、`ChartCardContent`、`ChartCardFooter`、`ChartMetrics` 是带样式的容器，属性同对应的原生元素。
+
+## 可访问性
+
+- 图表容器是 `role="img"`，名称来自 `label`；悬停提示框读取精确数值。需要让读屏用户拿到数据时，配一张 `ChartTable` 或在文字里写出关键数字。
+- `ChartGauge` 是 `role="meter"`，带 `aria-valuenow` 和 `aria-valuemax`；中央的数字是真实文本。
+- `ChartTable` 用语义化的 `<table>`，表头 `scope="col"`，窄屏横向滚动而不是挤压。
+- 序列靠图例的名称区分，不只靠颜色。
+- 开启「减少动态效果」后，recharts 的入场动画关闭，仪表的刻度不再依次淡入。
+
+## 注意事项
+
+- 图表由 `ResponsiveContainer` 撑满容器，服务端渲染时先按 320×200 占位，水合后量出真实尺寸；`ChartSeries` 的高度用 `className`（默认 `h-64`）控制。
+- 纵轴宽度用 `width="auto"` 按刻度文字自适应，需要和别的图表对齐时给相同的 `yDomain` 与 `yTicks`。
+- 涨跌配色约定见 [统计卡片](/components/stat-card#涨跌配色约定)；`ChartCard` 与 `ChartSeries` 也接受 `convention`。
+
+## 源码
+
+<ComponentSource name="chart-card" />

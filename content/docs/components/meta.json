@@ -4,7 +4,12 @@
     "grid-layout",
     "local-time",
     "greeting",
+    "stat-card",
+    "mini-chart",
+    "chart-card",
     "isometric-mark",
-    "flow-diagram"
+    "flow-diagram",
+    "orbit",
+    "ripple"
   ]
 }
