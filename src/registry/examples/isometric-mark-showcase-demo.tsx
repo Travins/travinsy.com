@@ -58,15 +58,10 @@ const MARK_SHAPES: readonly IsometricShape[] = LOGO.map((bar, index) => ({
   tone: TONES[index],
 }))
 
-/** 首页封面：等轴测地面网格 + 主题色光晕 + 接触阴影，铺满格子，不带标注标签。 */
+/** 首页封面：与辅助线同平面的地面网格（floor）+ 主题色光晕 + 接触阴影，铺满格子，不带标注标签。 */
 export default function IsometricMarkShowcaseDemo() {
   return (
     <div className="relative isolate flex size-full items-center justify-center overflow-hidden">
-      {/* 地面：沿两条等轴测轴（±30°）的细线网格，和标志同一套透视，向四周渐隐 */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[repeating-linear-gradient(30deg,var(--edge)_0_1px,transparent_1px_28px),repeating-linear-gradient(150deg,var(--edge)_0_1px,transparent_1px_28px)] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_58%,black_20%,transparent_80%)]"
-      />
       {/* 主题色光晕：从标志下方向外晕开，颜色随主题变化 */}
       <div
         aria-hidden="true"
@@ -86,6 +81,7 @@ export default function IsometricMarkShowcaseDemo() {
           material="lines"
           label="易"
           guides="edges"
+          floor
         />
       </div>
     </div>

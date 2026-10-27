@@ -69,6 +69,11 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    */
   material?: IsometricMaterial
   /**
+   * 在图形下方画一块与辅助线同方向、同平面的地面网格，向四周渐隐
+   * @default false
+   */
+  floor?: boolean
+  /**
    * 视线的俯仰角（度，5–85）。默认约 35.26° 即标准等轴测；
    * 调大更接近俯视（地面更方、厚度更薄），调小更接近平视（地面更扁、厚度更高）
    */
@@ -238,6 +243,7 @@ function IsometricMarkView({
   guides = false,
   material = "hatch",
   elevation,
+  floor = false,
   label,
   className,
   ref,
@@ -385,6 +391,38 @@ function IsometricMarkView({
           <stop offset="1" stopColor="var(--foreground)" stopOpacity="0" />
         </motion.radialGradient>
       </defs>
+
+      {floor ? (
+        <>
+          {/* 地面网格直接用径向渐变描边：中心清晰、向外淡出，不影响图形本身 */}
+          <radialGradient
+            id={`${patternId}-floor`}
+            cx={viewBox.x + viewBox.width / 2}
+            cy={viewBox.y + viewBox.height / 2}
+            r={Math.max(viewBox.width, viewBox.height) * 0.7}
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop
+              offset="0"
+              style={{ stopColor: "var(--foreground)", stopOpacity: 0.1 }}
+            />
+            <stop
+              offset="0.55"
+              style={{ stopColor: "var(--foreground)", stopOpacity: 0.07 }}
+            />
+            <stop
+              offset="1"
+              style={{ stopColor: "var(--foreground)", stopOpacity: 0 }}
+            />
+          </radialGradient>
+          <path
+            data-slot="isometric-mark-floor"
+            d={model.floor}
+            stroke={`url(#${patternId}-floor)`}
+            strokeWidth={unit}
+          />
+        </>
+      ) : null}
 
       {guides ? (
         <path

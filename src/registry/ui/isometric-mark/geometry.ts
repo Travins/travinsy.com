@@ -40,6 +40,8 @@ type IsometricModel = {
   walls: IsometricWall[]
   /** 背景辅助线路径（z = 0） */
   guides: string
+  /** 地面网格路径（z = 0），与辅助线同方向 */
+  floor: string
   /** 挤出高度 1 在屏幕上对应的竖直长度（随俯仰角变化，标准等轴测为 1） */
   heightScale: number
 }
@@ -314,6 +316,44 @@ function buildIsometricModel(
           { ux: 0, uy: 1, length: 0 },
         ]
   const points = rings.flatMap(({ ring }) => ring)
+  // 地面网格：与辅助线同两个方向、同一个平面（z = 0），从图形的切线往外按固定间距铺开，
+  // 和辅助线严格平行，所以看起来是同一块地面
+  const floorStep = planSize / 10
+  const floorReach = planSize * 0.9
+  const floor = directions
+    .flatMap(({ ux, uy }) => {
+      const nx = -uy
+      const ny = ux
+      let lo = Infinity
+      let hi = -Infinity
+      let a0 = Infinity
+      let a1 = -Infinity
+      for (const [x, y] of points) {
+        lo = Math.min(lo, x * nx + y * ny)
+        hi = Math.max(hi, x * nx + y * ny)
+        a0 = Math.min(a0, x * ux + y * uy)
+        a1 = Math.max(a1, x * ux + y * uy)
+      }
+      const lines: string[] = []
+      const k0 = Math.floor(-floorReach / floorStep)
+      const k1 = Math.ceil((hi - lo + floorReach) / floorStep)
+      for (let k = k0; k <= k1; k++) {
+        const d = lo + k * floorStep
+        const t0 = a0 - floorReach
+        const t1 = a1 + floorReach
+        lines.push(
+          line(
+            d * nx + t0 * ux,
+            d * ny + t0 * uy,
+            d * nx + t1 * ux,
+            d * ny + t1 * uy,
+          ),
+        )
+      }
+      return lines
+    })
+    .join("")
+
   const guides = directions
     .flatMap(({ ux, uy }) => {
       const nx = -uy
@@ -363,6 +403,7 @@ function buildIsometricModel(
     })),
     walls,
     guides,
+    floor,
     heightScale: KZ,
   }
 }
