@@ -122,7 +122,11 @@ export function ComponentPreviewClient({
         </IsometricTunerProvider>
       </TabsContent>
       {tunable && tuner.open && view === "preview" ? (
-        <IsometricTunerPanel values={tuner.values} onChange={tuner.setValues} />
+        <IsometricTunerPanel
+          values={tuner.values}
+          base={tuner.base}
+          onChange={tuner.setValues}
+        />
       ) : null}
       <TabsContent value="code" keepMounted className={docFramePanelClass}>
         {code}

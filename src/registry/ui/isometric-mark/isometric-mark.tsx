@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 
 import {
   buildIsometricModel,
+  ISOMETRIC_ELEVATION,
   rotateShapes,
   wallPath,
   type IsometricModel,
@@ -107,6 +108,16 @@ type IsometricMarkTuning = Partial<
 > & {
   /** 固定画框：沿用原属性下的 viewBox，调整时容器大小与图形比例都不变 */
   stableFrame?: boolean
+  /** 回报示例自己的实际取值（未被覆盖前，含自动高度与默认俯仰），面板据此显示当前值 */
+  onReport?: (values: IsometricMarkReport) => void
+}
+
+type IsometricMarkReport = {
+  rotation: number
+  elevation: number
+  depth: number
+  guides: "box" | "edges" | false
+  material: IsometricMaterial
 }
 
 /**
@@ -139,22 +150,40 @@ function materialPath(material: IsometricMaterial, size: number, u: number) {
 /** 把平面多边形挤出成等轴测线条 3D，带斜纹顶面、跟随鼠标的高光与按下效果。 */
 function IsometricMark(allProps: IsometricMarkProps) {
   const tuning = React.useContext(IsometricMarkTuningContext)
-  const { stableFrame, ...overrides } = tuning
+  const { stableFrame, onReport, ...overrides } = tuning
   // 固定画框：沿用按原属性算出的 viewBox，调整时画框与图形比例都不变，
   // 容器既不长高也不把图形挤小；转到画框外的部分照常显示（svg overflow: visible）
-  const { shapes, rotation = 0, depth, guides, elevation } = allProps
-  const fixedViewBox = React.useMemo(
+  const {
+    shapes,
+    rotation = 0,
+    depth,
+    guides = false,
+    elevation,
+    material = "hatch",
+  } = allProps
+  const baseModel = React.useMemo(
     () =>
-      stableFrame
+      stableFrame || onReport
         ? buildIsometricModel(
             rotateShapes(shapes, rotation),
             depth,
             guides === "edges" ? "edges" : "box",
             elevation,
-          ).viewBox
+          )
         : undefined,
-    [stableFrame, shapes, rotation, depth, guides, elevation],
+    [stableFrame, onReport, shapes, rotation, depth, guides, elevation],
   )
+  const fixedViewBox = stableFrame ? baseModel?.viewBox : undefined
+  React.useEffect(() => {
+    if (!onReport || !baseModel) return
+    onReport({
+      rotation,
+      elevation: elevation ?? ISOMETRIC_ELEVATION,
+      depth: baseModel.depth,
+      guides: guides === true ? "box" : guides,
+      material,
+    })
+  }, [onReport, baseModel, rotation, elevation, guides, material])
   return (
     <IsometricMarkView
       {...allProps}
@@ -359,6 +388,7 @@ function IsometricMarkView({
 export { IsometricMark, IsometricMarkTuningContext }
 export type {
   IsometricMarkProps,
+  IsometricMarkReport,
   IsometricMarkTuning,
   IsometricMaterial,
   IsometricPoint,
