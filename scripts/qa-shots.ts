@@ -1,0 +1,301 @@
+/**
+ * 组件验收截图：对 `out/`（先 `pnpm build`）起临时静态服务，按 component-acceptance 技能第 5 节的组合截图，
+ * 并检查 hydration / 运行时报错与横向溢出，最后生成一页对比报告。
+ *
+ *   pnpm qa:shots isometric-mark            # 一个组件
+ *   pnpm qa:shots orbit ripple              # 多个组件
+ *   pnpm qa:shots isometric-mark --open     # 生成后用浏览器打开报告
+ *
+ * 输出：.qa/<时间戳>/index.html（含所有截图与检查结果）。Chrome 路径可用 CHROME_PATH 覆盖。
+ */
+import {
+  createReadStream,
+  existsSync,
+  mkdirSync,
+  statSync,
+  writeFileSync,
+} from "node:fs"
+import { createServer, type Server } from "node:http"
+import { exec } from "node:child_process"
+import { extname, join, resolve } from "node:path"
+import { chromium, type Browser, type Page } from "playwright-core"
+
+const ROOT = resolve("out")
+const CHROME =
+  process.env.CHROME_PATH ??
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+const THEMES = ["blue", "orange", "violet"]
+const TYPES: Record<string, string> = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript",
+  ".css": "text/css",
+  ".json": "application/json",
+  ".txt": "text/plain",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".woff2": "font/woff2",
+}
+
+type Shot = { group: string; label: string; file: string }
+type Issue = { component: string; where: string; message: string }
+
+function serve(): Promise<{ server: Server; port: number }> {
+  const server = createServer((req, res) => {
+    let file = join(ROOT, decodeURIComponent((req.url ?? "/").split("?")[0]))
+    if (existsSync(file) && statSync(file).isDirectory())
+      file = join(file, "index.html")
+    if (!existsSync(file)) {
+      res.writeHead(404)
+      res.end()
+      return
+    }
+    res.writeHead(200, {
+      "content-type": TYPES[extname(file)] ?? "application/octet-stream",
+    })
+    createReadStream(file).pipe(res)
+  })
+  return new Promise((done) =>
+    server.listen(0, () => {
+      const address = server.address()
+      done({
+        server,
+        port: typeof address === "object" && address ? address.port : 0,
+      })
+    }),
+  )
+}
+
+async function open(
+  browser: Browser,
+  url: string,
+  options: { width: number; dark?: boolean; theme?: string },
+  issues: Issue[],
+  component: string,
+) {
+  const page = await browser.newPage({
+    viewport: { width: options.width, height: 1000 },
+    colorScheme: options.dark ? "dark" : "light",
+  })
+  const where = `${url} @${options.width}${options.dark ? " dark" : ""}${options.theme ? ` ${options.theme}` : ""}`
+  page.on("pageerror", (error) =>
+    issues.push({ component, where, message: error.message }),
+  )
+  page.on("console", (message) => {
+    if (message.type() === "error")
+      issues.push({ component, where, message: message.text().slice(0, 300) })
+  })
+  await page.goto(url, { waitUntil: "networkidle" })
+  if (options.theme) {
+    await page.evaluate(
+      (theme) => document.documentElement.setAttribute("data-theme", theme),
+      options.theme,
+    )
+  }
+  await page.waitForTimeout(1200)
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  )
+  if (overflow > 1)
+    issues.push({ component, where, message: `页面横向溢出 ${overflow}px` })
+  return page
+}
+
+async function previews(page: Page) {
+  const panels = page.locator("[role=tabpanel]:visible")
+  const result = []
+  for (let i = 0; i < (await panels.count()); i++) {
+    const panel = panels.nth(i)
+    // 只要示例预览：跳过安装命令、代码等面板（它们包含命令或代码文本）
+    const text = (await panel.innerText()).slice(0, 400)
+    if (/shadcn@latest|npx |pnpm |yarn |bun /.test(text)) continue
+    if (await panel.locator("pre").count()) continue
+    result.push(panel)
+  }
+  return result
+}
+
+async function main() {
+  const args = process.argv.slice(2)
+  const names = args.filter((arg) => !arg.startsWith("--"))
+  if (!names.length) {
+    console.error("用法：pnpm qa:shots <组件名> [更多组件名] [--open]")
+    process.exit(1)
+  }
+  if (!existsSync(join(ROOT, "index.html"))) {
+    console.error("没有找到 out/，先运行 pnpm build")
+    process.exit(1)
+  }
+
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)
+  const dir = resolve(".qa", stamp)
+  mkdirSync(dir, { recursive: true })
+  const { server, port } = await serve()
+  const base = `http://localhost:${port}`
+  const browser = await chromium.launch({
+    executablePath: CHROME,
+    args: ["--enable-unsafe-swiftshader"],
+  })
+  const shots: Shot[] = []
+  const issues: Issue[] = []
+  let index = 0
+  const save = async (
+    group: string,
+    label: string,
+    target: { screenshot: (o: { path: string }) => Promise<unknown> },
+  ) => {
+    const file = `${String(index++).padStart(3, "0")}.png`
+    await target.screenshot({ path: join(dir, file) })
+    shots.push({ group, label, file })
+  }
+
+  for (const name of names) {
+    const detail = `${base}/components/${name}/`
+    console.log(`· ${name}`)
+
+    // 组件页全部示例：1440 亮 / 暗、375 亮
+    for (const [width, dark] of [
+      [1440, false],
+      [1440, true],
+      [375, false],
+    ] as const) {
+      const page = await open(browser, detail, { width, dark }, issues, name)
+      const list = await previews(page)
+      if (!list.length)
+        issues.push({
+          component: name,
+          where: detail,
+          message: "没有找到示例预览",
+        })
+      for (const [i, panel] of list.entries()) {
+        await panel.scrollIntoViewIfNeeded()
+        await page.waitForTimeout(400)
+        await save(
+          `${name} · 示例 ${width}${dark ? " 暗" : " 亮"}`,
+          `#${i + 1}`,
+          panel,
+        )
+      }
+      await page.close()
+    }
+
+    // 颜色主题：只截默认示例
+    for (const theme of THEMES) {
+      const page = await open(
+        browser,
+        detail,
+        { width: 1440, theme },
+        issues,
+        name,
+      )
+      const [first] = await previews(page)
+      if (first) await save(`${name} · 颜色主题`, theme, first)
+      await page.close()
+    }
+
+    // 组件列表缩略图：1440 / 768 / 375
+    for (const width of [1440, 768, 375]) {
+      const page = await open(
+        browser,
+        `${base}/components/`,
+        { width },
+        issues,
+        name,
+      )
+      const card = page
+        .locator(`article:has(a[href="/components/${name}/"])`)
+        .first()
+      if (await card.count()) {
+        await card.scrollIntoViewIfNeeded()
+        await page.waitForTimeout(800)
+        await save(`${name} · 列表缩略图`, `${width}`, card)
+      } else {
+        issues.push({
+          component: name,
+          where: "/components/",
+          message: "列表里没有找到这个组件",
+        })
+      }
+      await page.close()
+    }
+
+    // 首页 Bento（入选时）：1440 亮 / 暗、375
+    for (const [width, dark] of [
+      [1440, false],
+      [1440, true],
+      [375, false],
+    ] as const) {
+      const page = await open(
+        browser,
+        `${base}/`,
+        { width, dark },
+        issues,
+        name,
+      )
+      const link = page.locator(`a[href="/components/${name}/"]`).first()
+      if (!(await link.count())) {
+        await page.close()
+        break
+      }
+      const card = link.locator(
+        "xpath=ancestor::*[@role='group' or contains(@class,'group/card')][1]",
+      )
+      const target = (await card.count()) ? card : link
+      await target.scrollIntoViewIfNeeded()
+      await page.waitForTimeout(800)
+      await save(`${name} · 首页`, `${width}${dark ? " 暗" : " 亮"}`, target)
+      await page.close()
+    }
+  }
+
+  await browser.close()
+  server.close()
+
+  const groups = [...new Set(shots.map((shot) => shot.group))]
+  const html = `<!doctype html><meta charset="utf-8"><title>QA · ${names.join(", ")}</title>
+<style>
+body{font:14px/1.5 system-ui,sans-serif;margin:24px;background:#f6f6f6;color:#111}
+h1{font-size:18px}h2{font-size:14px;margin:28px 0 8px}
+.grid{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+figure{margin:0;background:#fff;border:1px solid #ddd;border-radius:6px;padding:6px;max-width:520px}
+figure img{display:block;max-width:100%;height:auto}
+figcaption{font-size:12px;color:#666;margin-top:4px}
+.issues{background:#fff4f4;border:1px solid #f0c4c4;border-radius:6px;padding:8px 12px}
+.ok{background:#f2fbf4;border:1px solid #bfe3c8;border-radius:6px;padding:8px 12px}
+</style>
+<h1>组件验收截图 · ${names.join("、")} · ${stamp}</h1>
+${
+  issues.length
+    ? `<div class="issues"><b>${issues.length} 个问题</b><ul>${issues
+        .map(
+          (i) =>
+            `<li><b>${i.component}</b> · ${i.where}<br>${i.message.replace(/</g, "&lt;")}</li>`,
+        )
+        .join("")}</ul></div>`
+    : `<div class="ok">没有发现运行时报错与横向溢出</div>`
+}
+${groups
+  .map(
+    (group) =>
+      `<h2>${group}</h2><div class="grid">${shots
+        .filter((shot) => shot.group === group)
+        .map(
+          (shot) =>
+            `<figure><img src="${shot.file}" loading="lazy"><figcaption>${shot.label}</figcaption></figure>`,
+        )
+        .join("")}</div>`,
+  )
+  .join("")}`
+  const report = join(dir, "index.html")
+  writeFileSync(report, html)
+  console.log(`\n${shots.length} 张截图，${issues.length} 个问题`)
+  for (const issue of issues)
+    console.log(`  ✗ ${issue.component} · ${issue.where}\n    ${issue.message}`)
+  console.log(`报告：${report}`)
+  if (args.includes("--open")) exec(`open "${report}"`)
+  process.exitCode = issues.length ? 1 : 0
+}
+
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})

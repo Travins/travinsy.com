@@ -48,3 +48,6 @@ next-env.d.ts
 
 # 禁提词清单，只在本机，不进仓库
 /.forbidden-terms
+
+# 组件验收截图（pnpm qa:shots）
+/.qa

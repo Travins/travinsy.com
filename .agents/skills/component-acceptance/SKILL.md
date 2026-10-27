@@ -60,7 +60,13 @@ description: travinsy.com 组件从开发到验收的整体流程与验收标准
 
 ## 5. 视觉验收
 
-用 Playwright（`/tmp/pw` 下的 `playwright-core` + 系统 Chrome，WebGL 加 `--enable-unsafe-swiftshader`），对 `out/` 起静态服务截图，每张都看：
+先 `pnpm build`，再运行：
+
+```bash
+pnpm qa:shots <组件名> [更多组件名] [--open]
+```
+
+脚本（`scripts/qa-shots.ts`）对 `out/` 起临时静态服务，用系统 Chrome（`CHROME_PATH` 可覆盖）按下表截图，同时检查运行时报错（含 hydration）与横向溢出，生成 `.qa/<时间戳>/index.html` 报告；有问题时退出码为 1。每张截图都要看：
 
 | 场景 | 宽度 | 检查 |
 | --- | --- | --- |
@@ -85,6 +91,7 @@ description: travinsy.com 组件从开发到验收的整体流程与验收标准
 ```bash
 source ~/.nvm/nvm.sh && nvm use
 pnpm registry:build && pnpm lint && pnpm registry:lint && pnpm build
+pnpm qa:shots <组件名>    # 报告里 0 个问题，截图逐张看过
 grep -rIil -f .forbidden-terms --exclude-dir={node_modules,.next,.source,.git} --exclude=.forbidden-terms .   # 必须为空
 ```
 
@@ -100,7 +107,7 @@ grep -rIil -f .forbidden-terms --exclude-dir={node_modules,.next,.source,.git} -
 - [ ] 默认示例在 16:10 画框与 375 宽下完整
 - [ ] 内页示例一个讲一件事，无并排对比，素材有说服力
 - [ ] 背景与色彩用站点语言和主题变量
-- [ ] 亮 / 暗 / 三个颜色主题截图通过
+- [ ] `pnpm qa:shots` 0 个问题，亮 / 暗 / 三个颜色主题 / 三种宽度截图逐张看过
 - [ ] 无 hydration 报错，无文字误选，reduced-motion 与离屏暂停正常
 - [ ] 文档逐段与实现一致；API、类型、data-slot 完整
 - [ ] registry:build / lint / registry:lint / build 全过，禁提词为空

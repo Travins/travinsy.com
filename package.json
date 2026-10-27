@@ -13,7 +13,8 @@
     "registry:index": "tsx scripts/build-registry-index.ts",
     "prebuild": "pnpm registry:lint --max-warnings 0 && pnpm registry:build",
     "postinstall": "fumadocs-mdx",
-    "registry:lint": "tsx scripts/registry-lint.ts"
+    "registry:lint": "tsx scripts/registry-lint.ts",
+    "qa:shots": "tsx scripts/qa-shots.ts"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.157",
@@ -47,6 +48,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
+    "playwright-core": "^1.64.1",
     "postcss": "^8.5.31",
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
