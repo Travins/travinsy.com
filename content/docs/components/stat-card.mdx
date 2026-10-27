@@ -173,6 +173,7 @@ formatStat(6.2, { style: "percent", sign: true }) // "+6.2%"
 | --- | --- |
 | `formatStat(value, options)` | 数字格式化，`options` 为 `style`、`locale`、`compact`、`currency`、`digits`、`sign` |
 | `formatDay(date, style, locale)` | 日期轴文字：`long` → `2月14日`，`short` → `02/14`，`weekday` → `一` |
+| `createAxisFormatter(max, options)` | 按整条轴统一单位的刻度格式化：最大值 ≥ 1 万时所有刻度都用「万」（`9000` 显示为 `0.9万`），≥ 1 亿用「亿」；`en` 换成 K / M / B |
 | `usageStatus(percent)` / `healthStatus(percent)` | 百分比换成 `ok` / `watch` / `risk`，分别是「越高越危险」和「越高越好」两种口径 |
 
 这些工具随条目一起安装到 `lib/data-display.ts`，[迷你图](/components/mini-chart) 和 [图表卡片](/components/chart-card) 共用同一份。
@@ -188,7 +189,7 @@ formatStat(6.2, { style: "percent", sign: true }) // "+6.2%"
 
 - 小数位与压缩单位由 `Intl.NumberFormat` 决定：`zh-CN` 是「万 / 亿」，`en` 是 K / M / B。`Intl` 实例按参数缓存，反复格式化没有额外开销。
 - 日期轴按 UTC 解析与输出，`"2026-02-14"` 这样的字符串在任何时区得到同样的文字，静态导出的 HTML 与客户端首屏一致。
-- 进度条等入场动画在服务端先渲染为 0 宽，水合后展开；需要无脚本也显示满值时，请在自己的页面里把 `StatProgress` 换成静态元素。
+- 进度条、计量条、分段条服务端直接输出最终宽度和点亮的格数，入场动画是纯 CSS（`@keyframes`，样式由组件以 `<style href precedence>` 提供，React 19 会去重并提升到 `<head>`），没有脚本也完整显示。
 
 ## 源码
 

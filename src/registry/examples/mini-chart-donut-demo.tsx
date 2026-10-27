@@ -23,9 +23,9 @@ export default function MiniChartDonutDemo() {
               className="size-2 rounded-full"
               style={{
                 backgroundColor: [
-                  "var(--primary)",
                   "var(--flow-blue)",
                   "var(--flow-amber)",
+                  "var(--flow-green)",
                 ][index],
               }}
             />

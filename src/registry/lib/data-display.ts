@@ -1,3 +1,5 @@
+import * as React from "react"
+
 /**
  * 数据展示共用工具：涨跌配色约定、色调、数字与日期格式化。
  * stat-card、mini-chart、chart-card 三个条目共用这一份，所以涨跌色、数字格式只在这里定义。
@@ -90,15 +92,18 @@ function toneColor(tone: DataTone): string {
   return Object.hasOwn(TONES, tone) ? TONES[tone as DataToneName] : tone
 }
 
-/** 多序列图表默认的色调轮换：第一条跟随主题强调色，其余取多彩色调。 */
+/**
+ * 多序列图表默认的色调轮换：六种互不相近的多彩色调。
+ * 不把主题强调色放进来：强调色会落在蓝、绿、紫、琥珀任意一种附近，
+ * 切到对应的颜色主题时会与其中一条序列撞色。单条序列想跟随主题，显式写 `tone="primary"`。
+ */
 const SERIES_TONES: DataTone[] = [
-  "primary",
   "blue",
   "amber",
-  "violet",
-  "cyan",
   "green",
+  "violet",
   "rose",
+  "cyan",
 ]
 
 type StatFormatOptions = {
@@ -193,16 +198,103 @@ function formatDay(
   return formatter.format(new Date(input))
 }
 
+type AxisFormatOptions = Pick<
+  StatFormatOptions,
+  "style" | "locale" | "currency" | "digits"
+>
+
+// 压缩单位表：从大到小，命中第一个不超过轴最大值的单位
+const AXIS_UNITS = {
+  zh: [
+    [1e8, "亿"],
+    [1e4, "万"],
+  ],
+  "zh-trad": [
+    [1e8, "億"],
+    [1e4, "萬"],
+  ],
+  en: [
+    [1e9, "B"],
+    [1e6, "M"],
+    [1e3, "K"],
+  ],
+} as const
+
+/**
+ * 按「整条轴」统一单位的刻度格式化：先用轴的最大值选定一个单位，所有刻度都换算成它，
+ * 避免 `9000` 与 `1.2万` 混在同一根轴上。例如最大值 12000 时刻度是 `0`、`0.3万`、`0.6万`、`0.9万`、`1.2万`；
+ * 最大值 8000 时全部是整数（`2000`、`4000`…）。`en` 同理换成 K / M / B。
+ *
+ * @param max 轴上数据的最大绝对值；留 15% 余量，因为图表会把坐标轴上沿取整到比数据更大的刻度
+ */
+function createAxisFormatter(
+  max: number,
+  options: AxisFormatOptions = {},
+): (value: number) => string {
+  const { style = "number", locale = "zh-CN", currency = "CNY" } = options
+  if (style === "percent")
+    return (value) =>
+      formatStat(value, { style: "percent", locale, digits: options.digits })
+  const family = /^zh-(TW|HK|MO|Hant)/i.test(locale)
+    ? "zh-trad"
+    : /^zh/i.test(locale)
+      ? "zh"
+      : "en"
+  const reach = Math.abs(max) * 1.15
+  const unit = AXIS_UNITS[family].find(([size]) => reach >= size)
+  const divisor = unit?.[0] ?? 1
+  const suffix = unit?.[1] ?? ""
+  const formatter = new Intl.NumberFormat(locale, {
+    style: style === "currency" ? "currency" : "decimal",
+    currency: style === "currency" ? currency : undefined,
+    currencyDisplay: style === "currency" ? "narrowSymbol" : undefined,
+    notation: "standard",
+    maximumFractionDigits: options.digits ?? 2,
+  })
+  return (value) =>
+    value === 0
+      ? formatter.format(0)
+      : `${formatter.format(value / divisor)}${suffix}`
+}
+
+// 进度条、计量条、分段条、进度环、刻度仪表的入场动画：纯 CSS，服务端直接输出最终状态，
+// 所以没有脚本时也完整显示；系统开启「减少动态效果」时不播放。
+const MOTION_CSS = `@media (prefers-reduced-motion: no-preference) {
+@keyframes dd-reveal { from { clip-path: inset(0 100% 0 0 round 9999px) } to { clip-path: inset(0 0 0 0 round 9999px) } }
+@keyframes dd-rise { from { opacity: 0; transform: scaleY(0.35) } }
+@keyframes dd-fade { from { opacity: 0 } }
+@keyframes dd-arc { from { stroke-dasharray: 0 1 } }
+[data-dd-anim="reveal"] { animation: dd-reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) both }
+[data-dd-anim="rise"] { animation: dd-rise 0.3s cubic-bezier(0.22, 1, 0.36, 1) both }
+[data-dd-anim="fade"] { animation: dd-fade 0.35s cubic-bezier(0.22, 1, 0.36, 1) both }
+[data-dd-anim="arc"] { animation: dd-arc 0.9s cubic-bezier(0.22, 1, 0.36, 1) both }
+}`
+
+/**
+ * 渲染上面的动画样式。React 19 会按 `href` 去重并提升到 `<head>`，
+ * 同一页放多少个组件都只有一份；放在服务端组件里也能用。
+ */
+function motionStyles() {
+  return React.createElement(
+    "style",
+    { href: "data-display-motion", precedence: "default" },
+    MOTION_CSS,
+  )
+}
+
 export {
   TREND_TEXT,
   SERIES_TONES,
   conventionClass,
+  createAxisFormatter,
   formatDay,
   formatStat,
+  motionStyles,
   toneColor,
   trendOf,
 }
 export type {
+  AxisFormatOptions,
   DataConvention,
   DataTone,
   DataToneName,

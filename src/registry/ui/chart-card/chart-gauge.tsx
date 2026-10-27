@@ -1,11 +1,9 @@
-"use client"
-
 import * as React from "react"
-import { motion, useReducedMotion } from "motion/react"
 
 import { cn } from "@/lib/utils"
 import {
   formatStat,
+  motionStyles,
   toneColor,
   type DataTone,
   type StatFormatOptions,
@@ -52,11 +50,10 @@ type ChartGaugeProps = Omit<React.ComponentProps<"div">, "children"> & {
 const CENTER = 100
 const OUTER = 94
 const TICK = 12
-const EASE = [0.22, 1, 0.36, 1] as const
 
 /**
  * 刻度式环形仪表：一圈细刻度，按值依次点亮。
- * 点亮的刻度从起点向当前值逐格淡入；系统开启「减少动态效果」时直接到位。
+ * 点亮的刻度从起点向当前值逐格淡入；服务端直接输出最终状态，淡入是纯 CSS，没有脚本也完整显示；系统开启「减少动态效果」时不播放。
  */
 function ChartGauge({
   className,
@@ -72,7 +69,6 @@ function ChartGauge({
   label,
   ...props
 }: ChartGaugeProps) {
-  const reduced = useReducedMotion()
   const ratio = max > 0 ? Math.min(1, Math.max(0, value / max)) : 0
   const lit = Math.round(ratio * ticks)
   const color = toneColor(tone)
@@ -114,6 +110,7 @@ function ChartGauge({
       )}
       {...props}
     >
+      {motionStyles()}
       <svg
         viewBox="0 0 200 200"
         aria-hidden="true"
@@ -121,8 +118,9 @@ function ChartGauge({
       >
         {marks.map((mark) =>
           mark.on ? (
-            <motion.line
+            <line
               key={mark.index}
+              data-dd-anim="fade"
               x1={mark.x1}
               y1={mark.y1}
               x2={mark.x2}
@@ -130,12 +128,9 @@ function ChartGauge({
               stroke={color}
               strokeWidth={mark.head ? 3.5 : 3}
               strokeLinecap="round"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: mark.opacity }}
-              transition={{
-                duration: reduced ? 0 : 0.35,
-                delay: reduced ? 0 : (mark.index / ticks) * 0.7,
-                ease: EASE,
+              opacity={mark.opacity}
+              style={{
+                animationDelay: `${Math.round((mark.index / ticks) * 700)}ms`,
               }}
             />
           ) : (

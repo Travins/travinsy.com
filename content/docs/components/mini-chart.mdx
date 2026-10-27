@@ -86,7 +86,7 @@ export function Spark() {
 
 - 图表本身是 `role="img"`，名称来自 `label`；数据通过悬停提示框读取，需要精确数值请同时在文字里写出（如卡片里的大号数字）。
 - `MiniRing` 是 `role="meter"`，带 `aria-valuenow` 和 `aria-valuemax`。
-- 开启「减少动态效果」后，recharts 的入场动画关闭，进度环直接到位。
+- 开启「减少动态效果」后，recharts 的入场动画关闭，进度环不播放入场动画；进度环由服务端直接输出最终弧长，没有脚本也完整显示。
 - 涨跌趋势不只靠颜色：请在旁边配 [`StatTrend`](/components/stat-card) 这样带箭头和文字的元素。
 
 ## 注意事项

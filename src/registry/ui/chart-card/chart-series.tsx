@@ -23,6 +23,7 @@ import {
 import {
   SERIES_TONES,
   conventionClass,
+  createAxisFormatter,
   formatStat,
   toneColor,
   type DataConvention,
@@ -38,7 +39,7 @@ type ChartSeriesItem = {
   key: string
   /** 图例与提示框里的名称 */
   label: string
-  /** 色调，不设置时按顺序取默认色板（主题强调色、蓝、琥珀、紫……） */
+  /** 色调，不设置时按顺序取默认色板（蓝、琥珀、绿、紫、玫红、青） */
   tone?: DataTone
 }
 
@@ -68,7 +69,7 @@ type ChartSeriesProps = Omit<React.ComponentProps<"div">, "children"> & {
   xTickFormatter?: (value: string, index: number) => string
   /** 提示框标题的格式化，默认同横轴刻度 */
   labelFormatter?: (value: string) => string
-  /** 纵轴刻度与提示框里数值的格式，默认 `zh-CN` 压缩 */
+  /** 提示框里数值的格式，默认 `zh-CN` 压缩；纵轴取其中的 `style`、`locale`、`currency`、`digits`，并按整条轴统一单位（万 / 亿或 K / M / B） */
   format?: StatFormatOptions
   /** 纵轴范围，不设置时自动 */
   yDomain?: [number, number]
@@ -128,7 +129,24 @@ function ChartSeries({
   for (const item of resolved)
     config[item.key] = { label: item.label, color: item.color }
 
-  const axisFormat: StatFormatOptions = { digits: 1, ...format }
+  // 纵轴整条轴共用一个单位：先找出数据（堆叠时是每列的合计）的最大绝对值，再选「万 / 亿」或 K / M
+  const keys = series.map((item) => item.key)
+  const peak =
+    yDomain && yDomain.length === 2
+      ? Math.max(Math.abs(yDomain[0]), Math.abs(yDomain[1]))
+      : Math.max(
+          0,
+          ...data.map((row) => {
+            const values = keys.map((key) => Number(row[key]) || 0)
+            return stacked
+              ? Math.max(
+                  values.filter((v) => v > 0).reduce((a, b) => a + b, 0),
+                  -values.filter((v) => v < 0).reduce((a, b) => a + b, 0),
+                )
+              : Math.max(...values.map(Math.abs))
+          }),
+        )
+  const formatTick = createAxisFormatter(peak, format)
   const margin = { top: 8, right: 8, bottom: 0, left: 0 }
   const grid = showGrid ? <CartesianGrid {...CHART_GRID} /> : null
   const xAxis = (
@@ -152,7 +170,7 @@ function ChartSeries({
       tick={CHART_AXIS_TICK}
       domain={yDomain}
       ticks={yTicks}
-      tickFormatter={(value: number) => formatStat(value, axisFormat)}
+      tickFormatter={formatTick}
     />
   )
   const tooltip = (

@@ -617,7 +617,6 @@
       "description": "一组可组合的统计卡片原语：KPI 数字与涨跌幅（绿涨红跌 / 红涨绿跌可切换）、目标状态行、配额进度条、分格计量条、延迟分区表、占比分布条与图例，数字默认按万 / 亿压缩。",
       "dependencies": [
         "lucide-react",
-        "motion",
         "@base-ui/react"
       ],
       "files": [

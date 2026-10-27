@@ -1,12 +1,10 @@
-"use client"
-
 import * as React from "react"
-import { motion, useReducedMotion } from "motion/react"
 
 import { cn } from "@/lib/utils"
 import {
   SERIES_TONES,
   formatStat,
+  motionStyles,
   toneColor,
   type DataTone,
   type StatFormatOptions,
@@ -19,8 +17,6 @@ import {
   usageStatus,
   type StatLabels,
 } from "./config"
-
-const EASE = [0.22, 1, 0.36, 1] as const
 
 function toneVar(tone: DataTone, style?: React.CSSProperties) {
   return { "--stat-tone": toneColor(tone), ...style } as React.CSSProperties
@@ -62,7 +58,7 @@ function autoTone(tone: StatProgressProps["tone"], percent: number): DataTone {
   return tone ?? "primary"
 }
 
-/** 进度条：填充从左向右展开，系统开启「减少动态效果」时直接到位。 */
+/** 进度条：服务端直接输出最终宽度，填充用 CSS 从左向右展开；系统开启「减少动态效果」时不播放。 */
 function StatProgress({
   className,
   value,
@@ -74,7 +70,6 @@ function StatProgress({
   style,
   ...props
 }: StatProgressProps) {
-  const reduced = useReducedMotion()
   const percent = clampPercent(value, max)
   return (
     <div
@@ -92,12 +87,12 @@ function StatProgress({
       style={toneVar(autoTone(tone, percent), style)}
       {...props}
     >
-      <motion.div
+      {motionStyles()}
+      <div
         data-slot="stat-progress-fill"
+        data-dd-anim="reveal"
         className="h-full rounded-full bg-[color:var(--stat-tone)]"
-        initial={{ width: 0 }}
-        animate={{ width: `${percent}%` }}
-        transition={{ duration: reduced ? 0 : 0.7, ease: EASE }}
+        style={{ width: `${percent}%` }}
       />
     </div>
   )
@@ -133,7 +128,6 @@ function StatMeter({
   style,
   ...props
 }: StatMeterProps) {
-  const reduced = useReducedMotion()
   const percent = clampPercent(value, 100)
   const lit = Math.round((percent * segments) / 100)
   return (
@@ -148,19 +142,15 @@ function StatMeter({
       style={toneVar(autoTone(tone, percent), style)}
       {...props}
     >
+      {motionStyles()}
       {Array.from({ length: segments }, (_, index) =>
         index < lit ? (
-          <motion.span
+          <span
             key={index}
             data-state="on"
+            data-dd-anim="rise"
             className="flex-1 origin-bottom rounded-[3px] bg-[color:var(--stat-tone)]"
-            initial={{ opacity: 0, scaleY: 0.35 }}
-            animate={{ opacity: 1, scaleY: 1 }}
-            transition={{
-              duration: reduced ? 0 : 0.3,
-              delay: reduced ? 0 : index * 0.04,
-              ease: EASE,
-            }}
+            style={{ animationDelay: `${index * 40}ms` }}
           />
         ) : (
           <span
@@ -197,7 +187,6 @@ function StatSegments({
   label,
   ...props
 }: StatSegmentsProps) {
-  const reduced = useReducedMotion()
   const total = segments.reduce((sum, item) => sum + item.value, 0)
   const summary =
     label ??
@@ -215,11 +204,10 @@ function StatSegments({
       className={cn("h-2 w-full", className)}
       {...props}
     >
-      <motion.div
+      {motionStyles()}
+      <div
+        data-dd-anim="reveal"
         className="flex size-full gap-0.5 overflow-hidden rounded-full"
-        initial={{ clipPath: "inset(0 100% 0 0 round 9999px)" }}
-        animate={{ clipPath: "inset(0 0% 0 0 round 9999px)" }}
-        transition={{ duration: reduced ? 0 : 0.8, ease: EASE }}
       >
         {segments.map((item, index) =>
           item.value > 0 ? (
@@ -235,7 +223,7 @@ function StatSegments({
             />
           ) : null,
         )}
-      </motion.div>
+      </div>
     </div>
   )
 }

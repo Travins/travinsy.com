@@ -20,9 +20,9 @@ const DATA = Array.from({ length: 28 }, (_, index) => ({
 }))
 
 const SERIES = [
-  { key: "docs", label: "文档", tone: "primary" },
-  { key: "blog", label: "博客", tone: "blue" },
-  { key: "registry", label: "组件库", tone: "amber" },
+  { key: "docs", label: "文档", tone: "blue" },
+  { key: "blog", label: "博客", tone: "amber" },
+  { key: "registry", label: "组件库", tone: "green" },
 ] as const
 
 const COLUMNS = [
@@ -35,7 +35,7 @@ const COLUMNS = [
 
 const ROWS = [
   {
-    tone: "primary",
+    tone: "blue",
     site: "文档",
     views: "18.4万",
     duration: "3 分 12 秒",
@@ -43,7 +43,7 @@ const ROWS = [
     share: "46.9%",
   },
   {
-    tone: "blue",
+    tone: "amber",
     site: "博客",
     views: "13.6万",
     duration: "4 分 40 秒",
@@ -51,7 +51,7 @@ const ROWS = [
     share: "34.7%",
   },
   {
-    tone: "amber",
+    tone: "green",
     site: "组件库",
     views: "7.2万",
     duration: "2 分 05 秒",
