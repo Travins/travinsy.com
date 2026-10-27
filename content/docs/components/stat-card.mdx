@@ -51,6 +51,12 @@ export function Stats() {
 
 ## 示例
 
+### 概览面板
+
+四块统计共用细线拼成一块面板：KPI 与迷你走势、配额进度、分格健康度、流量来源分布。
+
+<ComponentPreview name="stat-card-overview-demo" />
+
 ### 目标与状态
 
 `StatStatus` 是卡片底部的一行：状态图标方块、说明文字和状态名。状态有四种——`ok` 达标、`watch` 关注、`risk` 风险、`review` 审核中，各自带固定的图标和色调；加 `render={<a href="…" />}` 与 `showChevron` 就成了一个入口。

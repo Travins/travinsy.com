@@ -14,8 +14,8 @@ const BUILDS = [42, 38, 55, 47, 40, 36, 33].map((value, index) => ({
 
 export default function MiniChartAxisDemo() {
   return (
-    <div className="grid w-full max-w-2xl gap-x-8 gap-y-8 sm:grid-cols-2">
-      <figure className="flex flex-col gap-3">
+    <div className="grid w-full max-w-2xl gap-3 sm:grid-cols-2">
+      <figure className="flex flex-col gap-3 rounded-lg border border-edge bg-card p-4">
         <figcaption className="text-sm text-muted-foreground">
           本周博客阅读量 · 强调最高的一天
         </figcaption>
@@ -30,7 +30,7 @@ export default function MiniChartAxisDemo() {
           label="本周每天博客阅读量"
         />
       </figure>
-      <figure className="flex flex-col gap-3">
+      <figure className="flex flex-col gap-3 rounded-lg border border-edge bg-card p-4">
         <figcaption className="text-sm text-muted-foreground">
           近 7 天构建时长 · 底槽与最近一天
         </figcaption>

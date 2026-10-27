@@ -60,10 +60,10 @@ const ROWS: Row[] = [
   },
 ]
 
-// 迷你图嵌在一行文字里：名称、走势、当前值、涨跌各占一列，不需要卡片外壳
+// 迷你图嵌在一行文字里：名称、走势、当前值、涨跌各占一列
 export default function MiniChartDemo() {
   return (
-    <div className="w-full max-w-xl divide-y divide-edge text-sm">
+    <div className="w-full max-w-xl divide-y divide-edge rounded-lg border border-edge bg-card px-4 text-sm">
       {ROWS.map((row) => (
         <div
           key={row.name}
