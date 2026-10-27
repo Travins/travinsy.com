@@ -3,44 +3,56 @@ import {
   type IsometricShape,
 } from "@/registry/ui/isometric-mark/isometric-mark"
 
-// 本站标志「易」：与默认示例是同一份几何
+// 本站标志「易」：上三道细斜杠是「日」，下三道粗斜杠是「勿」，右端齐平；坐标与站点 SVG 标志相同
 const MARK_SHAPES: readonly IsometricShape[] = [
+  // 上组：细斜杠
   {
     outer: [
-      [60, 0],
-      [315, 0],
-      [315, 281],
-      [264, 332],
-      [264, 232],
-      [164, 332],
-      [133, 301],
-      [264, 170],
-      [226, 170],
-      [64, 332],
-      [33, 301],
-      [164, 170],
-      [126, 170],
-      [17, 279],
-      [17, 217],
-      [64, 170],
-      [17, 170],
-      [17, 43],
+      [156, 130],
+      [416, 0],
+      [416, 36],
+      [156, 166],
     ],
-    holes: [
-      [
-        [85, 43],
-        [123, 43],
-        [163, 83],
-        [123, 123],
-        [85, 123],
-        [125, 83],
-      ],
-      [
-        [174, 101],
-        [235, 101],
-        [235, 123],
-        [174, 123],
-      ],
+  },
+  {
+    outer: [
+      [156, 192],
+      [416, 62],
+      [416, 98],
+      [156, 228],
+    ],
+  },
+  {
+    outer: [
+      [156, 254],
+      [416, 124],
+      [416, 160],
+      [156, 290],
+    ],
+  },
+  // 下组：粗斜杠
+  {
+    outer: [
+      [0, 394],
+      [416, 186],
+      [416, 258],
+      [0, 466],
+    ],
+  },
+  {
+    outer: [
+      [78, 453],
+      [416, 284],
+      [416, 356],
+      [78, 525],
+    ],
+  },
+  {
+    outer: [
+      [156, 512],
+      [416, 382],
+      [416, 454],
+      [156, 584],
     ],
   },
 ]
@@ -57,7 +69,7 @@ export default function IsometricMarkShowcaseDemo() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_75%)] opacity-70"
       />
-      <div className="relative w-[min(78%,19rem)]">
+      <div className="relative w-[min(68%,17rem)]">
         <IsometricMark shapes={MARK_SHAPES} rotation={-90} label="易" guides />
       </div>
     </div>
