@@ -58,6 +58,9 @@ const MARK_SHAPES: readonly IsometricShape[] = [
   },
 ]
 
+// 斜杠的坡度是 1:2，转过 atan(1/2) - 90° 后正好落在等轴测轴上，侧墙与辅助线平行
+const ROTATION = (Math.atan(1 / 2) * 180) / Math.PI - 90
+
 // 标注标签：圆点取自 --flow-* 色调，说明这块几何由哪个部分生成
 function Callout({
   tone,
@@ -98,7 +101,12 @@ export default function IsometricMarkDemo() {
         className="pointer-events-none absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_75%)] opacity-70"
       />
       <div className="relative w-full max-w-[17rem] sm:max-w-80">
-        <IsometricMark shapes={MARK_SHAPES} rotation={-90} label="易" guides />
+        <IsometricMark
+          shapes={MARK_SHAPES}
+          rotation={ROTATION}
+          label="易"
+          guides="edges"
+        />
       </div>
       <Callout tone="blue" className="top-[18%] left-5">
         TOP · 斜纹顶面

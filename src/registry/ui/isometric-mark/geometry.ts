@@ -163,6 +163,7 @@ function sortBackToFront(segments: Segment[]) {
 function buildIsometricModel(
   shapes: readonly IsometricShape[],
   depthOption?: number,
+  guideMode: "box" | "edges" = "box",
 ): IsometricModel {
   const rings: { ring: IsometricPoint[]; hole: boolean }[] = []
   for (const shape of shapes) {
@@ -227,18 +228,71 @@ function buildIsometricModel(
   const size = Math.max(bx1 - bx0, by1 - by0, 1)
   const margin = size * 0.02
 
+  // 辅助线：
+  // - "box"：包围盒四条边沿两条等轴测轴延长（横平竖直的图形最合适）；
+  // - "edges"：沿图形自己的主方向——按边长统计各方向，取最长的两个，每个方向画两条外侧切线并延长。
+  //   斜向的图形（如一组斜杠）辅助线会贴着它的长边与齐平的端点。
   const reach = planSize * 1.2
   const line = (x0: number, y0: number, x1: number, y1: number) => {
     const [ax, ay] = project(x0, y0)
     const [bx, by] = project(x1, y1)
     return `M${fmt(ax)} ${fmt(ay)}L${fmt(bx)} ${fmt(by)}`
   }
-  const guides = [
-    line(minX, minY - reach, minX, maxY + reach),
-    line(maxX, minY - reach, maxX, maxY + reach),
-    line(minX - reach, minY, maxX + reach, minY),
-    line(minX - reach, maxY, maxX + reach, maxY),
-  ].join("")
+  const weights = new Map<number, { ux: number; uy: number; length: number }>()
+  for (const { ring } of rings) {
+    for (let i = 0; i < ring.length; i++) {
+      const [px, py] = ring[i]
+      const [qx, qy] = ring[(i + 1) % ring.length]
+      const length = Math.hypot(qx - px, qy - py)
+      if (length < EPSILON) continue
+      // 方向取 [0°, 180°)，按 0.5° 分桶，避免浮点误差把同一方向拆开
+      let angle = (Math.atan2(qy - py, qx - px) * 180) / Math.PI
+      angle = ((angle % 180) + 180) % 180
+      const key = Math.round(angle * 2) % 360
+      const entry = weights.get(key)
+      if (entry) entry.length += length
+      else {
+        const r = (key / 2) * (Math.PI / 180)
+        weights.set(key, { ux: Math.cos(r), uy: Math.sin(r), length })
+      }
+    }
+  }
+  const directions =
+    guideMode === "edges"
+      ? [...weights.values()].sort((a, b) => b.length - a.length).slice(0, 2)
+      : [
+          { ux: 1, uy: 0, length: 0 },
+          { ux: 0, uy: 1, length: 0 },
+        ]
+  const points = rings.flatMap(({ ring }) => ring)
+  const guides = directions
+    .flatMap(({ ux, uy }) => {
+      const nx = -uy
+      const ny = ux
+      let lo = Infinity
+      let hi = -Infinity
+      let a0 = Infinity
+      let a1 = -Infinity
+      for (const [x, y] of points) {
+        const d = x * nx + y * ny
+        const t = x * ux + y * uy
+        lo = Math.min(lo, d)
+        hi = Math.max(hi, d)
+        a0 = Math.min(a0, t)
+        a1 = Math.max(a1, t)
+      }
+      return [lo, hi].map((d) => {
+        const t0 = a0 - reach
+        const t1 = a1 + reach
+        return line(
+          d * nx + t0 * ux,
+          d * ny + t0 * uy,
+          d * nx + t1 * ux,
+          d * ny + t1 * uy,
+        )
+      })
+    })
+    .join("")
 
   return {
     viewBox: {

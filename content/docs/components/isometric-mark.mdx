@@ -79,6 +79,8 @@ export function BrandMark() {
 
 任何多边形都可以：带方孔的正方形，并打开 `guides` 显示背景里沿等轴测方向延伸的虚线。
 
+`guides` 默认（`true` 或 `"box"`）画包围盒四边的延长线，适合横平竖直的图形；斜向的图形用 `guides="edges"`，辅助线改为沿图形自己最长的两个边方向画外侧切线。页首的本站标志就是这样：先用 `rotation` 把 1:2 坡度的斜杠转到等轴测轴上，辅助线一组贴着斜杠的长边，另一组穿过右端齐平的那条线。
+
 <ComponentPreview name="isometric-mark-simple-demo" />
 
 ### 挤出高度

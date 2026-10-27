@@ -55,10 +55,11 @@ type IsometricMarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
    */
   highlight?: boolean
   /**
-   * 是否显示背景里沿等轴测方向延伸的虚线辅助线
+   * 背景里的虚线辅助线。`true` 或 `"box"`：包围盒四边沿等轴测轴延长；
+   * `"edges"`：沿图形自己最长的两个边方向画外侧切线（适合斜向的图形，辅助线贴着长边与齐平的端点）
    * @default false
    */
-  guides?: boolean
+  guides?: boolean | "box" | "edges"
   /** 可访问名称；不传时整个图形对读屏隐藏 */
   label?: string
 }
@@ -107,8 +108,13 @@ function IsometricMark({
   const gradientId = `isometric-mark-light-${id}`
 
   const model = React.useMemo(
-    () => buildIsometricModel(rotateShapes(shapes, rotation), depthProp),
-    [shapes, rotation, depthProp],
+    () =>
+      buildIsometricModel(
+        rotateShapes(shapes, rotation),
+        depthProp,
+        guides === "edges" ? "edges" : "box",
+      ),
+    [shapes, rotation, depthProp, guides],
   )
   const { viewBox, unit, depth } = model
   const pressedHeight = pressedDepth ?? depth / 2
