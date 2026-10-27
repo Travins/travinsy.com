@@ -316,10 +316,16 @@ function buildIsometricModel(
           { ux: 0, uy: 1, length: 0 },
         ]
   const points = rings.flatMap(({ ring }) => ring)
-  // 地面网格：与辅助线同两个方向、同一个平面（z = 0），从图形的切线往外按固定间距铺开，
-  // 和辅助线严格平行，所以看起来是同一块地面
-  const floorStep = planSize / 10
+  // 地面网格：与辅助线同两个方向、同一个平面（z = 0），目标是图形的每条边都落在格线上。
+  // 每个方向单独算：所有顶点在法线方向上的距离若有足够大的公约数（如标志左端切口
+  // 0 / 78 / 156 / 416 的公约数 26），就按它等距铺；否则每条边各画一条线，外侧按平均间距延伸。
+  const floorTarget = planSize / 10
   const floorReach = planSize * 0.9
+  const approxGcd = (a: number, b: number): number => {
+    const tolerance = planSize / 400
+    while (b > tolerance) [a, b] = [b, a % b]
+    return a
+  }
   const floor = directions
     .flatMap(({ ux, uy }) => {
       const nx = -uy
@@ -334,22 +340,41 @@ function buildIsometricModel(
         a0 = Math.min(a0, x * ux + y * uy)
         a1 = Math.max(a1, x * ux + y * uy)
       }
+      const span = hi - lo
+      const t0 = a0 - floorReach
+      const t1 = a1 + floorReach
+      const offsets = [...new Set(points.map(([x, y]) => x * nx + y * ny - lo))]
+        .sort((p, q) => p - q)
+        .filter((d, i, all) => i === 0 || d - all[i - 1] > planSize / 400)
+      let g = 0
+      for (const d of offsets) g = approxGcd(g, d)
+      let ds: number[]
+      let step: number
+      if (span > EPSILON && g >= span / 24) {
+        // 所有边的间距有公约数：按公约数等距铺，图形里的每条边都落在格线上
+        step = g
+        ds = []
+        for (let d = 0; d <= span + EPSILON; d += step) ds.push(d)
+      } else {
+        // 没有合适的公约数：每条边各画一条格线（像构造图那样），外侧按平均间距延伸
+        ds = offsets
+        step = offsets.length > 1 ? span / (offsets.length - 1) : floorTarget
+      }
       const lines: string[] = []
-      const k0 = Math.floor(-floorReach / floorStep)
-      const k1 = Math.ceil((hi - lo + floorReach) / floorStep)
-      for (let k = k0; k <= k1; k++) {
-        const d = lo + k * floorStep
-        const t0 = a0 - floorReach
-        const t1 = a1 + floorReach
+      const push = (d: number) => {
+        const off = lo + d
         lines.push(
           line(
-            d * nx + t0 * ux,
-            d * ny + t0 * uy,
-            d * nx + t1 * ux,
-            d * ny + t1 * uy,
+            off * nx + t0 * ux,
+            off * ny + t0 * uy,
+            off * nx + t1 * ux,
+            off * ny + t1 * uy,
           ),
         )
       }
+      for (const d of ds) push(d)
+      for (let d = -step; d >= -floorReach; d -= step) push(d)
+      for (let d = span + step; d <= span + floorReach; d += step) push(d)
       return lines
     })
     .join("")
