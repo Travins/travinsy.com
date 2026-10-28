@@ -2,17 +2,19 @@ import { NavigationProgress } from "./navigation-progress"
 import Link from "next/link"
 
 import { SearchButton } from "@/components/search/search-button"
-import { GithubIcon } from "@/components/site/github-icon"
+import { GithubStars } from "@/components/site/github-stars"
 import { ModeToggle } from "@/components/site/mode-toggle"
 import { GITHUB_URL, SITE_NAME } from "@/components/site/site-config"
 import { SiteLogo } from "@/components/site/site-logo"
 import { profile } from "@/config/profile"
 import { MobileNav, SiteNav } from "@/components/site/site-nav"
 import { ThemeSwitcher } from "@/components/site/theme-switcher"
-import { buttonVariants } from "@/components/ui/button"
+import { GITHUB_REPO, getRepoStars } from "@/lib/github"
 import { GridContainer } from "@/registry/ui/grid-layout/grid-layout"
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  // 构建时读一次仓库星标数，失败为 null（只显示图标）
+  const stars = await getRepoStars()
   return (
     <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       {/* screen-line-bottom 自带 position: relative，所以放在内层，避免和 sticky 冲突 */}
@@ -53,15 +55,7 @@ export function SiteHeader() {
             <SearchButton />
             <ThemeSwitcher />
             <ModeToggle />
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className={buttonVariants({ variant: "ghost", size: "icon" })}
-            >
-              <GithubIcon />
-            </a>
+            <GithubStars href={GITHUB_URL} repo={GITHUB_REPO} initial={stars} />
             <MobileNav />
           </div>
         </GridContainer>
