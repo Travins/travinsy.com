@@ -30,14 +30,14 @@ function PageHeader({
     <header
       data-slot="app-shell-page-header"
       className={cn(
-        "sticky top-0 z-20 flex h-[76px] shrink-0 items-center justify-between gap-4 border-b border-border bg-background/95 px-4 backdrop-blur sm:px-6",
+        "sticky top-0 z-20 flex min-h-[76px] shrink-0 flex-wrap items-center justify-between gap-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur @lg/main:px-6",
         className
       )}
       {...props}
     >
-      <div className="min-w-0">
+      <div className="min-w-0 basis-full @min-[600px]/main:basis-auto @min-[600px]/main:flex-1">
         {section ? (
-          <p className="flex items-center gap-2 text-[11px] font-medium tracking-widest text-muted-foreground">
+          <p className="flex items-center gap-2 text-[11px] font-medium whitespace-nowrap tracking-widest text-muted-foreground">
             <span
               className="size-1.5 rounded-full bg-primary"
               aria-hidden="true"
@@ -45,13 +45,13 @@ function PageHeader({
             {section}
           </p>
         ) : null}
-        <div className="mt-1 flex min-w-0 items-baseline gap-3">
-          <h1 className="truncate text-xl font-semibold tracking-tight sm:text-2xl">
+        <div className="mt-1 flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h1 className="shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight @lg/main:text-2xl">
             {title}
           </h1>
           {description ? (
             <p
-              className="hidden min-w-0 truncate text-xs text-muted-foreground sm:block"
+              className="hidden min-w-0 truncate text-xs text-muted-foreground @min-[600px]/main:block"
               title={description}
             >
               {description}
@@ -59,7 +59,7 @@ function PageHeader({
           ) : null}
         </div>
         {description ? (
-          <p className="mt-1 truncate text-[11px] text-muted-foreground sm:hidden">
+          <p className="mt-1 truncate text-[11px] text-muted-foreground @min-[600px]/main:hidden">
             {description}
           </p>
         ) : null}
@@ -100,7 +100,7 @@ function PageTabs({
     <div
       data-slot="app-shell-page-tabs"
       className={cn(
-        "flex min-w-0 items-center gap-3 border-b border-border px-4 py-2 sm:px-6",
+        "flex min-w-0 items-center gap-3 border-b border-border px-4 py-2 @lg/main:px-6",
         className
       )}
       {...props}
@@ -109,7 +109,7 @@ function PageTabs({
         <SegmentedControl
           size="sm"
           aria-label={text.scopeSwitch}
-          className="w-auto"
+          className="w-max min-w-max"
           value={value}
           onValueChange={onValueChange}
           options={tabs.map(({ value: tab, label, icon: Icon }) => ({
@@ -120,7 +120,7 @@ function PageTabs({
         />
       </div>
       {trailing ? (
-        <div className="ml-auto hidden shrink-0 text-[11px] text-muted-foreground lg:block">
+        <div className="ml-auto hidden shrink-0 text-[11px] text-muted-foreground @min-[700px]/main:block">
           {trailing}
         </div>
       ) : null}
@@ -133,7 +133,7 @@ function PageContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="app-shell-page-content"
-      className={cn("flex min-w-0 flex-col gap-5 p-4 sm:p-6", className)}
+      className={cn("flex min-w-0 flex-col gap-5 p-4 @lg/main:p-6", className)}
       {...props}
     />
   )

@@ -175,7 +175,7 @@ function DashboardOverview() {
       <PageContent className="@container">
         <section
           aria-label={text.keyMetrics}
-          className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+          className="grid gap-4 @min-[480px]:grid-cols-2 @min-[960px]:grid-cols-4"
         >
           {stats.map((stat) => (
             <StatCard key={stat.id}>

@@ -38,7 +38,7 @@ type AppShellProps = Omit<React.ComponentProps<"div">, "children"> & {
   brand?: AppShellBrand
   /** 顶栏右侧的额外操作区，例如「AI 助手」按钮、服务状态 */
   headerActions?: React.ReactNode
-  /** 主区域右侧的侧栏插槽（如 AI 助手面板）：与 main 并排，高度占满顶栏以下区域 */
+  /** 主区域右侧插槽；agent-chat 嵌入面板在空间不足时覆盖显示，高度占满工作区 */
   aside?: React.ReactNode
   /** 当前登录用户，用于顶栏右侧的用户菜单；不传则不显示 */
   user?: AppShellUser
@@ -196,7 +196,7 @@ function AppShell({
                 data-slot="app-shell-sidebar"
                 data-collapsed={collapsed ? "" : undefined}
                 className={cn(
-                  "hidden shrink-0 border-r border-sidebar-border bg-sidebar md:flex",
+                  "hidden shrink-0 border-r border-sidebar-border bg-sidebar min-[800px]:flex",
                   NAV_WIDTH_CLASS.sidebar,
                   NAV_WIDTH_TRANSITION
                 )}
@@ -217,17 +217,20 @@ function AppShell({
                   labels={labels}
                 />
               ) : null}
-              <main
-                data-slot="app-shell-main"
-                id="main-content"
-                ref={mainRef}
-                tabIndex={-1}
-                aria-label={text.mainContent}
-                className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-background outline-none"
-              >
-                {children}
-              </main>
-              {aside}
+              <div data-slot="app-shell-workspace" className="@container/workspace relative flex min-h-0 min-w-0 flex-1">
+                <main
+                  data-slot="app-shell-main"
+                  id="main-content"
+                  ref={mainRef}
+                  tabIndex={-1}
+                  aria-label={text.mainContent}
+                  className="@container/main min-h-0 min-w-0 flex-1 overflow-y-auto bg-background outline-none"
+                >
+                  {children}
+                </main>
+                {/* 留足主区域 600px；助手最大拖拽宽度 640px，空间不足时覆盖显示。 */}
+                <div className="contents [&>[data-mode=embedded]]:absolute [&>[data-mode=embedded]]:inset-y-0 [&>[data-mode=embedded]]:right-0 [&>[data-mode=embedded]]:z-30 [&>[data-mode=embedded]]:max-w-full [&>[data-mode=embedded]]:shadow-xl @min-[1240px]/workspace:[&>[data-mode=embedded]]:relative @min-[1240px]/workspace:[&>[data-mode=embedded]]:shadow-none">{aside}</div>
+              </div>
             </div>
             <SheetContent
               side="left"

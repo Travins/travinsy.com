@@ -97,7 +97,7 @@ function StatLabel({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       data-slot="stat-label"
-      className={cn("text-[13px] leading-5 text-muted-foreground", className)}
+      className={cn("min-w-0 truncate text-[13px] leading-5 text-muted-foreground", className)}
       {...props}
     />
   )
@@ -240,14 +240,14 @@ function StatTrend({
       data-slot="stat-trend"
       data-trend={trend}
       className={cn(
-        "inline-flex items-center gap-0.5 text-xs font-medium tabular-nums",
+        "inline-flex flex-wrap items-center gap-0.5 whitespace-nowrap text-xs font-medium tabular-nums",
         TREND_TEXT[invert ? OPPOSITE[trend] : trend],
         conventionClass(convention),
         className,
       )}
       {...props}
     >
-      {showIcon ? <Icon aria-hidden="true" className="size-3.5" /> : null}
+      {showIcon ? <Icon aria-hidden="true" className="size-3.5 shrink-0" /> : null}
       <span className="sr-only">{text[trend]}</span>
       {formatStat(value, { style: "percent", sign: true, ...format })}
       {children ? (

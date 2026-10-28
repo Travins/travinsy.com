@@ -91,7 +91,7 @@ function AppHeader({
             navigation={navigation}
             aria-label={formatLabel(text.brandHome, brand.name)}
             className={cn(
-              "flex h-full min-w-0 items-center gap-2.5 rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50 max-md:justify-center group-data-[collapsed]/app-shell:justify-center"
+              "flex h-full min-w-0 items-center gap-2.5 rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50 max-[800px]:justify-center group-data-[collapsed]/app-shell:justify-center"
             )}
           >
             <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
@@ -104,7 +104,7 @@ function AppHeader({
                 </span>
               )}
             </span>
-            <span className="hidden min-w-0 leading-tight md:block md:group-data-[collapsed]/app-shell:hidden">
+            <span className="hidden min-w-0 leading-tight min-[800px]:block min-[800px]:group-data-[collapsed]/app-shell:hidden">
               <span className="block truncate text-sm font-semibold">
                 {brand.name}
               </span>
@@ -123,7 +123,7 @@ function AppHeader({
               <Button
                 variant="ghost"
                 size="icon"
-                className="-ml-1 md:hidden"
+                className="-ml-1 min-[800px]:hidden"
                 aria-label={text.openNavigation}
               />
             }
@@ -133,7 +133,7 @@ function AppHeader({
           <Button
             variant="ghost"
             size="icon"
-            className="-ml-1 hidden md:inline-flex"
+            className="-ml-1 hidden min-[800px]:inline-flex"
             onClick={onToggleCollapsed}
             aria-label={toggleLabel}
             aria-expanded={!collapsed}

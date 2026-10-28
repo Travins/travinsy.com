@@ -200,7 +200,7 @@ function NodesSummary() {
     <section
       data-slot="app-shell-nodes-summary"
       aria-label={text.nodeResources}
-      className="grid gap-4 @xl:grid-cols-2 @4xl:grid-cols-4"
+      className="grid gap-4 @min-[480px]:grid-cols-2 @min-[960px]:grid-cols-4"
     >
       {nodeGroups.map((node) => {
         const healthy =

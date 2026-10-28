@@ -20,7 +20,7 @@ const NAV_WIDTH_CLASS = {
   /** 侧栏：展开 200px，折叠 60px */
   sidebar: "w-[200px] group-data-[collapsed]/app-shell:w-[60px]",
   /** 顶栏品牌区：同侧栏；窄屏下始终按图标栏宽度 */
-  brand: "w-[200px] group-data-[collapsed]/app-shell:w-[60px] max-md:w-[60px]",
+  brand: "w-[200px] group-data-[collapsed]/app-shell:w-[60px] max-[800px]:w-[60px]",
 } as const
 
 /**

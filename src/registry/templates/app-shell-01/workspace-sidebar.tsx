@@ -56,7 +56,7 @@ function WorkspaceNav({
       className={cn(
         "flex",
         mobile
-          ? "h-10 shrink-0 items-center gap-1.5 overflow-x-auto overflow-y-hidden border-b border-border bg-muted/20 px-3 [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden"
+          ? "h-10 shrink-0 items-center gap-1.5 overflow-x-auto overflow-y-hidden border-b border-border bg-muted/20 px-3 [scrollbar-width:none] xl:hidden [&::-webkit-scrollbar]:hidden"
           : "min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto px-3 py-4",
         className
       )}
@@ -125,7 +125,7 @@ function WorkspaceSidebar({
       data-slot="app-shell-workspace-sidebar"
       aria-label={formatLabel(text.workspaceSidebar, group.label)}
       className={cn(
-        "hidden h-full min-h-0 w-[220px] shrink-0 flex-col border-r border-border bg-muted/20 md:flex",
+        "hidden h-full min-h-0 w-[220px] shrink-0 flex-col border-r border-border bg-muted/20 xl:flex",
         className
       )}
     >
