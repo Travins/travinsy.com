@@ -3,15 +3,16 @@
 import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 
-/** 超过这个时长仍没完成的站内跳转才亮起进度线；预取命中时跳转几乎瞬间完成，不会出现 */
+/** 超过这个时长仍没完成的站内跳转才出现加载指示；预取命中时跳转几乎瞬间完成，不会出现 */
 const SHOW_AFTER = 200
-/** 兜底：链接被其他处理器拦下、页面始终没变时，过一段时间自动熄灭 */
+/** 兜底：链接被其他处理器拦下、页面始终没变时，过一段时间自动隐藏 */
 const GIVE_UP_AFTER = 8000
 
 /**
- * 站内跳转进度线：页头底边一条 1px 主题色细线。
+ * 站内跳转加载指示：页头标志右侧三道小斜杠依次点亮，呼应「易」标志的斜杠造型。
+ * 不放在页头底边，避免和导航当前项的指示线叠在一起干扰菜单。
  * 静态导出没有服务端等待，只有慢网下预取未命中的跳转才会慢，所以只在点击站内链接 200ms 后仍未完成时显示，
- * 路径变化后熄灭。用捕获阶段监听点击，不干预 Link 自身的预取与跳转。
+ * 路径变化后隐藏。用捕获阶段监听点击，不干预 Link 自身的预取与跳转。
  */
 function NavigationProgress() {
   const pathname = usePathname()
@@ -53,13 +54,22 @@ function NavigationProgress() {
     }
   }, [])
   return (
-    <div
+    <span
       ref={line}
       data-slot="navigation-progress"
       data-pending="false"
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-primary opacity-0 transition-opacity duration-150 data-[pending=true]:opacity-100 motion-reduce:transition-none"
-    />
+      className="pointer-events-none flex items-center gap-[3px] self-center opacity-0 transition-opacity duration-150 data-[pending=true]:opacity-100 motion-reduce:transition-none"
+    >
+      {[0, 1, 2].map((index) => (
+        <span
+          key={index}
+          data-slot="navigation-progress-bar"
+          className="h-3 w-[3px] -skew-x-[30deg] rounded-[1px] bg-primary"
+          style={{ animationDelay: `${index * 160}ms` }}
+        />
+      ))}
+    </span>
   )
 }
 export { NavigationProgress }

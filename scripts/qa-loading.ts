@@ -290,7 +290,7 @@ async function main() {
           )
         }),
       )
-    if (!feedback) issues.push("导航延迟用例未观察到骨架或进度线")
+    if (!feedback) issues.push("导航延迟用例未观察到骨架或加载指示")
     await page.close()
     const slow = await browser.newPage({
       viewport: { width: 1280, height: 900 },
@@ -311,7 +311,7 @@ async function main() {
         .locator('[data-slot="navigation-progress"][data-pending="true"]')
         .count()) !== 1
     )
-      issues.push("未预取导航缺少进度线")
+      issues.push("未预取导航缺少加载指示")
     await slow.screenshot({ path: `${directory}/navigation-progress.png` })
     holdData = false
     releaseData.forEach((resolve) => resolve())
@@ -321,7 +321,7 @@ async function main() {
         .locator('[data-slot="navigation-progress"][data-pending="true"]')
         .count()
     )
-      issues.push("导航完成后进度线未结束")
+      issues.push("导航完成后加载指示未结束")
     await slow.close()
     await writeFile(
       `${directory}/report.json`,

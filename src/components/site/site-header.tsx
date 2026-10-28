@@ -38,6 +38,7 @@ export function SiteHeader() {
               </span>
             </span>
           </Link>
+          <NavigationProgress />
 
           {/* 菜单靠右，与右侧工具图标之间用一条整高竖线隔开 */}
           <div className="ml-auto flex items-stretch">
@@ -65,7 +66,6 @@ export function SiteHeader() {
           </div>
         </GridContainer>
       </div>
-      <NavigationProgress />
     </header>
   )
 }

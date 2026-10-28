@@ -564,21 +564,23 @@ a.docs-nav-head[aria-current="page"]::after {
   }
 }
 
-[data-slot="navigation-progress"][data-pending="true"] {
-  transform-origin: left;
-  animation: navigation-progress-flow 1.6s ease-in-out infinite;
+/* 站内跳转加载指示：三道小斜杠依次点亮；只在 data-pending="true" 时播放 */
+[data-slot="navigation-progress"][data-pending="true"]
+  [data-slot="navigation-progress-bar"] {
+  animation: navigation-progress-bar 960ms ease-in-out infinite both;
 }
-@keyframes navigation-progress-flow {
+@keyframes navigation-progress-bar {
   0%,
   100% {
-    transform: scaleX(0.65);
+    opacity: 0.25;
   }
-  50% {
-    transform: scaleX(1);
+  40% {
+    opacity: 1;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-slot="navigation-progress"][data-pending="true"] {
+  [data-slot="navigation-progress"][data-pending="true"]
+    [data-slot="navigation-progress-bar"] {
     animation: none;
   }
 }
