@@ -34,6 +34,7 @@ pnpm dev                              # 开发
 pnpm build                            # 静态构建，产物在 out/
 pnpm lint
 pnpm registry:build                   # 生成 public/r/*.json（registry 管道建好后可用）
+python3 scripts/build-og-font.py      # 分享卡片（out/og/*.png）出现方块字时，重新生成中文字体子集并提交
 ```
 
 **环境注意**：本机 `ALL_PROXY` 是 SOCKS 代理，会导致 `shadcn` CLI 请求失败（`other side closed`）。

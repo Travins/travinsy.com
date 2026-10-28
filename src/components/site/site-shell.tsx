@@ -10,7 +10,8 @@ import { SiteHeader } from "@/components/site/site-header"
  */
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
-    <div className="[--grid-width:80rem]">
+    // 至少一屏高：内容很短的页面（如 404）页脚也落在底部，正文用 flex-1 填满中间
+    <div className="flex min-h-svh flex-col [--grid-width:80rem]">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-background focus:p-3"

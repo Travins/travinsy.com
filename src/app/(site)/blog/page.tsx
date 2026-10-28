@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react"
 import { siteConfig } from "@/config/site"
 import { PostEntry } from "@/components/blog/post-entry"
 import { formatBlogDate, readingMinutes } from "@/lib/blog"
+import { pageMetadata } from "@/lib/metadata"
 import { blogPosts } from "@/lib/source"
 import {
   GridContainer,
@@ -11,11 +12,16 @@ import {
   GridSeparator,
 } from "@/registry/ui/grid-layout/grid-layout"
 
-export const metadata: Metadata = {
+const baseMetadata = pageMetadata({
   title: "博客",
   description: "关于组件、设计与个人网站的实践记录。",
+  path: "/blog/",
+  ogKey: "blog",
+})
+export const metadata: Metadata = {
+  ...baseMetadata,
   alternates: {
-    canonical: `${siteConfig.url}/blog/`,
+    ...baseMetadata.alternates,
     types: { "application/rss+xml": `${siteConfig.url}/rss.xml` },
   },
 }

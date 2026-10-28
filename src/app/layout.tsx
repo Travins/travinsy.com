@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 
+import { siteConfig } from "@/config/site"
+import { DEFAULT_OG_KEY } from "@/lib/og-cards"
+import { OG_IMAGE_SIZE, ogImageUrl } from "@/lib/metadata"
 import { ThemeProvider } from "@/components/site/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { COLOR_THEME_INIT_SCRIPT } from "@/lib/themes"
@@ -17,12 +20,33 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 })
 
+const ogImages = [
+  { url: ogImageUrl(DEFAULT_OG_KEY), ...OG_IMAGE_SIZE, alt: "travinsy" },
+]
+const description = "travinsy 的个人作品集，以及一套线条网格风格的 shadcn 组件库。"
+
 export const metadata: Metadata = {
+  // 让 openGraph / twitter 的相对地址（含 opengraph-image）解析成绝对地址
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: "travinsy",
     template: "%s · travinsy",
   },
-  description: "travinsy 的个人作品集，以及一套线条网格风格的 shadcn 组件库。",
+  description,
+  openGraph: {
+    type: "website",
+    siteName: siteConfig.name,
+    locale: "zh_CN",
+    title: "travinsy",
+    description,
+    images: ogImages,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "travinsy",
+    description,
+    images: ogImages,
+  },
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

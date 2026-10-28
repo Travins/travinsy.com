@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { siteConfig } from "@/config/site"
+import { pageMetadata } from "@/lib/metadata"
 import { PostAside, PostTocMobile } from "@/components/blog/post-aside"
 import { PostMeta } from "@/components/blog/post-meta"
 import { ReadingProgress } from "@/components/blog/reading-progress"
@@ -28,18 +28,18 @@ function getPost(slug: string) {
 }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPost((await params).slug)
-  const url = `${siteConfig.url}${post.url}`
-  return {
+  const base = pageMetadata({
     title: post.data.title,
     description: post.data.description,
-    alternates: { canonical: url },
+    path: post.url,
+    ogKey: `blog/${post.slugs[0]}`,
+    type: "article",
+  })
+  return {
+    ...base,
     openGraph: {
+      ...base.openGraph,
       type: "article",
-      title: post.data.title,
-      description: post.data.description,
-      url,
-      siteName: siteConfig.name,
-      locale: "zh_CN",
       publishedTime: `${post.data.date}T00:00:00+08:00`,
       tags: post.data.tags,
     },

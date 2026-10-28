@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { source, sectionPages, type DocsSection } from "@/lib/source"
 import { siteConfig } from "@/config/site"
+import { pageMetadata } from "@/lib/metadata"
 import { DocsShell } from "./docs-shell"
 import { createMdxComponents } from "./mdx-components"
 import { pageMarkdown } from "./page-markdown"
@@ -21,11 +22,12 @@ export async function docsMetadata(
   { params }: DocsRouteProps,
 ): Promise<Metadata> {
   const page = getPage(section, (await params).slug)
-  return {
+  return pageMetadata({
     title: page.data.title,
     description: page.data.description,
-    alternates: { canonical: `${siteConfig.url}${page.url}` },
-  }
+    path: page.url,
+    ogKey: page.slugs.join("/"),
+  })
 }
 export function docsParams(section: DocsSection) {
   return sectionPages(section).map((page) => ({ slug: page.slugs.slice(1) }))

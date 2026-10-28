@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import type { MDXComponents } from "mdx/types"
 import { source } from "@/lib/source"
 import { siteConfig } from "@/config/site"
+import { pageMetadata } from "@/lib/metadata"
 import { DocsShell } from "./docs-shell"
 import { BlockViewer } from "./block-viewer"
 import { mdxComponents } from "./mdx-components"
@@ -34,11 +35,12 @@ export async function entryMetadata(
   { params }: EntryRouteProps,
 ): Promise<Metadata> {
   const page = getPage(section, (await params).slug)
-  return {
+  return pageMetadata({
     title: page.data.title,
     description: page.data.description,
-    alternates: { canonical: `${siteConfig.url}${page.url}` },
-  }
+    path: page.url,
+    ogKey: page.slugs.join("/"),
+  })
 }
 
 export async function EntryPage({
