@@ -38,11 +38,12 @@ export const marqueeTuner = defineTuner<MarqueeTuning, MarqueeReport>({
     },
     {
       key: "rotate",
-      type: "slider",
+      type: "angle",
       label: "旋转 rotate",
+      // 刻度尺要有足够的长度才好拖，占两列
+      span: 2,
       min: -15,
       max: 15,
-      unit: "°",
     },
     { key: "reverse", type: "switch", label: "反向 reverse" },
     { key: "fade", type: "switch", label: "两端渐隐 fade" },

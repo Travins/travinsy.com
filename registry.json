@@ -939,6 +939,50 @@
       ]
     },
     {
+      "name": "angle-dial",
+      "type": "registry:ui",
+      "title": "角度刻度尺",
+      "description": "方条样式的角度输入：左右拖动刻度、中间竖线指针读数，满一圈首尾相接，与数值滑块同一套高度。",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/angle-dial/angle-dial.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "xy-pad",
+      "type": "registry:ui",
+      "title": "二维拖拽板",
+      "description": "一块带网格的区域，拖动手柄同时调两个值，十字线与淡色填充标出位置，键盘左右 / 上下分别调两条轴。",
+      "dependencies": [],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/xy-pad/xy-pad.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
       "name": "control-panel",
       "type": "registry:ui",
       "title": "控制面板",

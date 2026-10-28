@@ -9,7 +9,7 @@ import { orbitTuner } from "./orbit"
 import { rippleTuner } from "./ripple"
 import { shuffleGridTuner } from "./shuffle-grid"
 import { textAnimateTuner } from "./text-animate"
-import type { AnyTunerConfig } from "./types"
+import { controlKeys, type AnyTunerConfig } from "./types"
 import { valueSliderTuner } from "./value-slider"
 
 /**
@@ -46,7 +46,9 @@ export function resolveTuner(
   return {
     ...config,
     controls: config.controls.filter(
-      (control) => !rule.omit.includes(control.key),
+      (control) =>
+        !rule.omit.includes(control.key) &&
+        !controlKeys(control).some((key) => rule.omit.includes(key)),
     ),
   }
 }

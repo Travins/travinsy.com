@@ -20,17 +20,28 @@ import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-cont
 import { TonePicker } from "@/registry/ui/tone-picker/tone-picker"
 import { ToggleSwitch } from "@/registry/ui/toggle-switch/toggle-switch"
 import { ValueSlider } from "@/registry/ui/value-slider/value-slider"
-import type {
-  AnyTunerConfig,
-  TunerControl,
-  TunerValue,
-  TunerValues,
+import { AngleDial } from "@/registry/ui/angle-dial/angle-dial"
+import { XyPad } from "@/registry/ui/xy-pad/xy-pad"
+import {
+  controlKeys,
+  type AnyTunerConfig,
+  type TunerControl,
+  type TunerValue,
+  type TunerValues,
+  type XyAxisControl,
 } from "./types"
 
 const SPAN_CLASS = {
   1: "",
   2: "sm:col-span-2",
   3: "sm:col-span-3",
+} as const
+
+const ROW_SPAN_CLASS = {
+  1: "",
+  2: "sm:row-span-2",
+  3: "sm:row-span-3",
+  4: "sm:row-span-4",
 } as const
 
 /** 读数：步长小于 1 的保留两位小数，否则一位，再接上单位 */
@@ -49,7 +60,8 @@ function buildCode(
   current: (key: string) => TunerValue | undefined,
 ) {
   const all: TunerValues = {}
-  for (const control of config.controls) all[control.key] = current(control.key)
+  for (const control of config.controls)
+    for (const key of controlKeys(control)) all[key] = current(key)
   const props = config.toTuning(all) as Record<string, unknown>
   const defaults = config.toTuning(config.defaults) as Record<string, unknown>
   const kept: Record<string, unknown> = {}
@@ -131,7 +143,9 @@ export function TunerPanel({
   ]
 
   const renderControl = (control: TunerControl) => {
-    const modified = values[control.key] !== undefined
+    const modified = controlKeys(control).some(
+      (key) => values[key] !== undefined,
+    )
     switch (control.type) {
       case "slider": {
         const step = control.step ?? 1
@@ -177,6 +191,50 @@ export function TunerPanel({
             onValueChange={(value) => set(control.key, value)}
           />
         )
+      case "angle":
+        return (
+          <AngleDial
+            className="text-xs"
+            label={control.label}
+            value={Number(current(control.key) ?? 0)}
+            min={control.min}
+            max={control.max}
+            step={control.step}
+            modified={modified}
+            onValueChange={(value) => set(control.key, value)}
+          />
+        )
+      case "xy": {
+        const axis = (spec: XyAxisControl) => ({
+          min: spec.min,
+          max: spec.max,
+          step: spec.step,
+          label: spec.label,
+          format: (value: number) =>
+            formatReadout(value, spec.step ?? 1, spec.unit),
+        })
+        return (
+          <XyPad
+            // 宽屏跟着所占的行数撑满高度；窄屏单列时没有行高可依，用 4:3 比例
+            className="aspect-[4/3] sm:aspect-auto sm:h-full"
+            label={control.label}
+            x={axis(control.x)}
+            y={axis(control.y)}
+            value={{
+              x: Number(current(control.x.key) ?? control.x.min),
+              y: Number(current(control.y.key) ?? control.y.min),
+            }}
+            modified={modified}
+            onValueChange={(next) =>
+              onChange({
+                ...values,
+                [control.x.key]: next.x,
+                [control.y.key]: next.y,
+              })
+            }
+          />
+        )
+      }
       case "switch":
         return (
           <ToggleSwitch
@@ -209,11 +267,19 @@ export function TunerPanel({
         </ControlPanelActions>
       </ControlPanelHeader>
       {/* 控件取 32px 高方便点按，字号留在 12px */}
-      <ControlPanelGroup columns={3} className="pt-1">
+      {/* 二维板会纵向占几行，dense 让后面的控件补进它旁边的空格 */}
+      <ControlPanelGroup
+        columns={3}
+        className="pt-1 *:data-[slot=control-panel-grid]:grid-flow-row-dense"
+      >
         {controls.map((control) => (
           <div
             key={control.key}
-            className={cn("min-w-0", SPAN_CLASS[control.span ?? 1])}
+            className={cn(
+              "min-w-0",
+              SPAN_CLASS[control.span ?? 1],
+              ROW_SPAN_CLASS[control.rowSpan ?? 1],
+            )}
           >
             {renderControl(control)}
           </div>

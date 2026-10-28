@@ -15,6 +15,8 @@ type ControlBase = {
   label: string
   /** 在三列网格里占几列，默认 1 */
   span?: 1 | 2 | 3
+  /** 纵向占几行（二维拖拽板这类高控件用），默认 1 */
+  rowSpan?: 1 | 2 | 3 | 4
 }
 
 export type SliderControl = ControlBase & {
@@ -52,8 +54,46 @@ export type ToneControl = ControlBase & {
   options: ToneOption[]
 }
 
+/** 角度：方条刻度尺（AngleDial），范围正好 360° 时首尾相接 */
+export type AngleControl = ControlBase & {
+  type: "angle"
+  min: number
+  max: number
+  step?: number
+}
+
+export type XyAxisControl = {
+  /** 这条轴对应的面板值的键 */
+  key: string
+  label: string
+  min: number
+  max: number
+  step?: number
+  unit?: string
+}
+
+/**
+ * 二维拖拽板（XyPad）：一个控件同时改两个值，两条轴各自对应一个键。
+ * 控件自己的 `key` 只用于 React 列表与按示例收窄（omit 写它或任一轴的键都会去掉整个控件）。
+ */
+export type XyControl = ControlBase & {
+  type: "xy"
+  x: XyAxisControl
+  y: XyAxisControl
+}
+
 export type TunerControl =
-  SliderControl | SegmentedControl | SwitchControl | ToneControl
+  | SliderControl
+  | SegmentedControl
+  | SwitchControl
+  | ToneControl
+  | AngleControl
+  | XyControl
+
+/** 控件实际读写的面板值的键：二维板是两条轴的键，其余就是自己的 key */
+export function controlKeys(control: TunerControl): string[] {
+  return control.type === "xy" ? [control.x.key, control.y.key] : [control.key]
+}
 
 export type TunerConfig<
   Tuning extends { onReport?: (report: Report) => void },
