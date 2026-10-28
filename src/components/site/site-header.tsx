@@ -18,12 +18,24 @@ export function SiteHeader() {
       <div className="screen-line-bottom">
         {/* 高度取 --header-height（globals.css）；Logo 靠左，菜单与工具区靠右，导航项占满整高 */}
         <GridContainer className="flex h-(--header-height) items-stretch gap-2 px-4">
+          {/*
+            标志 + 字标：上行是组件库名 Yi UI，下行小号等宽注明出自 travinsy，
+            与右侧导航「中文在上、等宽英文在下」的两行写法呼应
+          */}
           <Link
             href="/"
-            aria-label={`${SITE_NAME} 首页`}
-            className="group/logo flex shrink-0 items-center pr-3 text-foreground outline-none"
+            aria-label={`Yi UI，${SITE_NAME} 首页`}
+            className="group/logo flex shrink-0 items-center gap-2.5 rounded-md pr-3 text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
-            <SiteLogo className="transition-transform duration-200 group-focus-visible/logo:ring-3 group-focus-visible/logo:ring-ring/50 motion-safe:group-hover/logo:-rotate-3" />
+            <SiteLogo className="transition-transform duration-200 motion-safe:group-hover/logo:-rotate-3" />
+            <span aria-hidden="true" className="flex flex-col leading-none">
+              <span className="text-[17px] font-semibold tracking-tight">
+                Yi UI
+              </span>
+              <span className="mt-1 font-mono text-[9px] tracking-[0.14em] text-muted-foreground uppercase">
+                by {SITE_NAME}
+              </span>
+            </span>
           </Link>
 
           {/* 菜单靠右，与右侧工具图标之间用一条整高竖线隔开 */}
