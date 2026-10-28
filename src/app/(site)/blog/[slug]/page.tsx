@@ -1,5 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
+
+import { buttonVariants } from "@/components/ui/button"
 import { notFound } from "next/navigation"
 import { pageMetadata } from "@/lib/metadata"
 import { PostAside, PostTocMobile } from "@/components/blog/post-aside"
@@ -68,13 +71,18 @@ export default async function BlogPost({ params }: Props) {
         />
         <article className="post-main">
           <div className="post-column">
+            {/* 返回列表：所有宽度都放在标题上方，用按钮的形态，和文档页的「← 组件」一致 */}
             <Link
               href="/blog/"
-              className="text-xs text-muted-foreground hover:text-foreground xl:hidden"
+              className={buttonVariants({
+                variant: "secondary",
+                className: "-ml-0.5",
+              })}
             >
-              ← 全部文章
+              <ArrowLeft aria-hidden="true" data-icon="inline-start" />
+              全部文章
             </Link>
-            <h1 className="mt-8 text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl xl:mt-0">
+            <h1 className="mt-6 text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl">
               {post.data.title}
             </h1>
             <p className="mt-5 leading-7 text-muted-foreground">

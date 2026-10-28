@@ -1,11 +1,9 @@
-import Link from "next/link"
-
 import type { TOCItemType } from "fumadocs-core/toc"
 
 import { formatBlogDate } from "@/lib/blog"
 
 /**
- * 文章左栏（≥1280px 显示，随页面吸顶）：返回列表与文章元信息。
+ * 文章左栏（≥1280px 显示，随页面吸顶）：文章元信息；返回列表的按钮放在正文标题上方。
  * 版式沿用文档侧栏的「标签行 + 虚线分行」，窄屏的同一份信息由正文头部的 PostMeta 展示。
  */
 export function PostAside({
@@ -52,9 +50,6 @@ export function PostAside({
             </div>
           )}
         </dl>
-        <Link href="/blog/" className="post-meta-back">
-          <span aria-hidden="true">←</span> 全部文章
-        </Link>
       </div>
     </aside>
   )
