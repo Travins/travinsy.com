@@ -154,12 +154,10 @@ function HeroMark() {
 
   return (
     <div className="relative flex min-w-0 flex-col lg:h-full">
-      {/* 舞台：点阵底纹向四周淡出，标志像摆在图纸上 */}
+      {/*
+        舞台：底纹只由面板里的「地面」决定，不再另铺一层点阵——否则选「无」时点阵还在，看起来像设置没生效
+      */}
       <div className="relative isolate h-80 overflow-hidden sm:h-96 lg:h-auto lg:min-h-72 lg:flex-1">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_85%)]"
-        />
         {/* 主题色光晕：从标志下方向外晕开，颜色随主题变化 */}
         <div
           aria-hidden="true"
