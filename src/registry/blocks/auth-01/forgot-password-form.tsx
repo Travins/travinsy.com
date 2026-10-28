@@ -63,7 +63,7 @@ function ForgotPasswordForm({
             {after}
           </p>
         </div>
-        <Button className="h-10 w-full" onClick={onSwitchToSignIn}>
+        <Button size="lg" className="w-full" onClick={onSwitchToSignIn}>
           {text.backToSignIn}
         </Button>
       </div>
@@ -103,7 +103,7 @@ function ForgotPasswordForm({
           {text.sendResetLink}
         </SubmitButton>
       </form>
-      <Button variant="ghost" className="h-10" onClick={onSwitchToSignIn}>
+      <Button variant="ghost" size="lg" onClick={onSwitchToSignIn}>
         {text.backToSignIn}
       </Button>
     </div>

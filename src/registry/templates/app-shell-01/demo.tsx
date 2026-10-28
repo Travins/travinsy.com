@@ -14,6 +14,7 @@ import { HeaderStatus } from "./header-status"
 import { ListPage } from "./list-page"
 import { navConfig } from "./nav-config"
 import { resolveNav } from "./nav-types"
+import { PageSummary } from "./page-summaries"
 import { services } from "./sample-data"
 
 /**
@@ -53,6 +54,7 @@ export default function AppShell01Demo() {
             section={active.trail.at(-2)}
             title={active.item.label}
             description={active.item.description}
+            summary={<PageSummary id={active.item.id} />}
           />
         )}
       </AppShell>

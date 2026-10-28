@@ -29,6 +29,11 @@ import {
 } from "@/registry/ui/stat-card/stat-card"
 
 import { formatLabel, useAppShellLabels } from "./config"
+import {
+  ErrorBudgetCard,
+  SlowestEndpointsCard,
+  StatusCodeCard,
+} from "./overview-charts"
 import { PageContent, PageHeader, PageTabs } from "./page-header"
 import {
   dateRange,
@@ -115,7 +120,11 @@ function EventsTable({
   )
 }
 
-/** 概览仪表盘：统计卡片（含迷你走势）+ 响应耗时图表卡片 + 最近事件表。全部用站内自研的数据展示组件拼成。 */
+/**
+ * 概览仪表盘：统计卡片（含迷你走势）、响应耗时与错误预算、状态码分布与最慢接口、最近事件表。
+ * 全部用站内自研的数据展示组件拼成；图表区用容器查询（@container）排版，
+ * 主区域被右侧 aside 挤窄时会自动改为单列，而不是只看浏览器视口宽度。
+ */
 function DashboardOverview() {
   const text = useAppShellLabels()
   const [scope, setScope] = React.useState("all")
@@ -163,7 +172,7 @@ function DashboardOverview() {
         onValueChange={setScope}
         trailing={dateRange}
       />
-      <PageContent>
+      <PageContent className="@container">
         <section
           aria-label={text.keyMetrics}
           className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
@@ -199,31 +208,45 @@ function DashboardOverview() {
           ))}
         </section>
 
-        <ChartCard>
-          <ChartCardHeader>
-            <div className="flex flex-col gap-1">
-              <ChartCardTitle>{text.latencyTrend}</ChartCardTitle>
-              <ChartCardDescription>{text.latencyTrendUnit}</ChartCardDescription>
-            </div>
-            <ChartMetrics>
-              <ChartMetric label={text.latencyPeak} value={`${max} ms`} />
-              <ChartMetric label={text.latencyLow} value={`${min} ms`} />
-              <ChartMetric label={text.latencyAverage} value={`${average} ms`} />
-            </ChartMetrics>
-          </ChartCardHeader>
-          <ChartCardContent>
-            <ChartSeries
-              type="area"
-              className="h-44"
-              data={latencyData}
-              xKey="hour"
-              series={[
-                { key: "latency", label: text.latencySeries, tone: "primary" },
-              ]}
-              label={formatLabel(text.latencyChartLabel, { max, min })}
-            />
-          </ChartCardContent>
-        </ChartCard>
+        <section
+          aria-label={text.latencyTrend}
+          className="grid gap-4 @3xl:grid-cols-3"
+        >
+          <ChartCard className="@3xl:col-span-2">
+            <ChartCardHeader>
+              <div className="flex flex-col gap-1">
+                <ChartCardTitle>{text.latencyTrend}</ChartCardTitle>
+                <ChartCardDescription>{text.latencyTrendUnit}</ChartCardDescription>
+              </div>
+              <ChartMetrics>
+                <ChartMetric label={text.latencyPeak} value={`${max} ms`} />
+                <ChartMetric label={text.latencyLow} value={`${min} ms`} />
+                <ChartMetric label={text.latencyAverage} value={`${average} ms`} />
+              </ChartMetrics>
+            </ChartCardHeader>
+            <ChartCardContent className="flex-1">
+              <ChartSeries
+                type="area"
+                className="h-full min-h-44"
+                data={latencyData}
+                xKey="hour"
+                series={[
+                  { key: "latency", label: text.latencySeries, tone: "primary" },
+                ]}
+                label={formatLabel(text.latencyChartLabel, { max, min })}
+              />
+            </ChartCardContent>
+          </ChartCard>
+          <ErrorBudgetCard />
+        </section>
+
+        <section
+          aria-label={text.statusCodes}
+          className="grid gap-4 @3xl:grid-cols-3"
+        >
+          <StatusCodeCard />
+          <SlowestEndpointsCard className="@3xl:col-span-2" />
+        </section>
 
         <ChartCard>
           <ChartCardHeader>

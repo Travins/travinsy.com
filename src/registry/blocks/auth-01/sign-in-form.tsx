@@ -168,7 +168,8 @@ function CodeSignIn({
           <Button
             type="button"
             variant="outline"
-            className="h-10 w-28 shrink-0 tabular-nums"
+            size="lg"
+            className="w-28 shrink-0 tabular-nums"
             disabled={sender.pending || seconds > 0}
             onClick={sendCode}
           >

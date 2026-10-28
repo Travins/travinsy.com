@@ -31,7 +31,6 @@ const DEFAULT_LABELS = {
   notUseful: "回答无用",
   feedback: "反馈已更新，仅保存在当前页面",
   regenerate: "重新生成回答",
-  steps: "分析过程",
   reasoningSummary: "分析摘要",
   thinkingStopped: "思考已停止",
   preparing: "正在准备分析摘要…",

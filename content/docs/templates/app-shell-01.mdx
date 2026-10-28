@@ -15,7 +15,10 @@ description: 提炼自企业监控平台的控制台外壳：固定顶栏、可�
 - **右侧 `aside` 插槽**：与 `main` 并排，高度占满顶栏以下的区域，用来放 AI 助手面板等。
 - **窄屏适配**：宽度小于 768px 时，一级导航变成左侧 Sheet 抽屉，二级导航变成顶栏下方的横向标签条。
 - 页面侧附带 `PageHeader`、`PageTabs`、`PageToolbar`、`PageFrame`，对应原项目的页面框架、范围切换和列表工具栏。
-- 演示页直接用站内自研的数据展示组件拼成：概览页的指标是 [统计卡片](/components/stat-card) 加 [迷你图](/components/mini-chart) 走势，响应耗时与事件表放在 [图表卡片](/components/chart-card) 里，范围切换用 [分段选择](/components/segmented-control)。
+- 演示页直接用站内自研的数据展示组件拼成：
+  - 概览页：指标是 [统计卡片](/components/stat-card) 加 [迷你图](/components/mini-chart) 走势；[图表卡片](/components/chart-card) 里依次是响应耗时趋势、错误预算（刻度仪表）、状态码分布（环形图）、最慢接口排行与最近事件表；范围切换用 [分段选择](/components/segmented-control)。
+  - 拨测记录、接口探测、节点监控、事件与异常：各自带一组贴合主题的数据摘要（拨测量堆叠柱与异常原因环形图、耗时分布与 SLO 达标环、各区域 CPU / 内存进度环、事件趋势与处理进度），由 `ListPage` 的 `summary` 插槽放在列表上方。
+  - 图表区用 Tailwind 的容器查询（`@container`）排版：主区域被右侧 `aside`（如 AI 助手面板）挤窄时自动改为单列，不只看浏览器视口宽度。
 - 颜色全部来自主题变量，切换颜色主题和亮暗模式后自动跟随，预览里可以直接试。
 
 预览里没有真实路由，所以演示用 `activeHref` + `onNavigate` 在本地模拟导航；接入 Next.js 时这两个属性都不用传，组件会用 `usePathname()` 高亮当前页。
@@ -53,12 +56,15 @@ components/app-shell/
 ├── user-menu.tsx              # 头像 + 下拉菜单
 ├── theme-toggle.tsx           # 亮暗模式切换
 ├── use-stored-flag.ts         # 持久化到 localStorage 的布尔状态
-├── dashboard-overview.tsx     # 演示：概览仪表盘（统计卡片 + 迷你走势 + 图表卡片 + 事件表）
-├── list-page.tsx              # 演示：列表页（工具栏 + 图表卡片里的明细表）
+├── dashboard-overview.tsx     # 演示：概览仪表盘（统计卡片 + 趋势图 + 图表区 + 事件表）
+├── overview-charts.tsx        # 演示：概览的错误预算、状态码分布、最慢接口三张图表卡片
+├── distribution-card.tsx      # 演示：环形图 + 图例格的占比卡片（概览与拨测记录共用）
+├── page-summaries.tsx         # 演示：各导航页的数据摘要（按导航项 id 选择）
+├── list-page.tsx              # 演示：列表页（工具栏 + summary 插槽 + 图表卡片里的明细表）
 └── sample-data.ts             # 演示用假数据
 ```
 
-演示相关的三个文件（`dashboard-overview.tsx`、`list-page.tsx`、`sample-data.ts`）只用来展示布局效果，接入真实数据后可以直接删除。
+演示相关的文件（`dashboard-overview.tsx`、`overview-charts.tsx`、`distribution-card.tsx`、`page-summaries.tsx`、`list-page.tsx`、`sample-data.ts`）只用来展示布局效果，接入真实数据后可以直接删除。
 
 ## 用法
 

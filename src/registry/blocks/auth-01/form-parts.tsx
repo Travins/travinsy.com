@@ -50,7 +50,7 @@ function TextField({
             id={id}
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? errorId : undefined}
-            className={cn("h-10 pl-9", trailing && "pr-10", className)}
+            className={cn("h-9 pl-9", trailing && "pr-10", className)}
             {...props}
           />
           {trailing}
@@ -124,7 +124,8 @@ function SubmitButton({
     <Button
       data-slot="auth-01-submit-button"
       type="submit"
-      className="h-10 w-full"
+      size="lg"
+      className="w-full"
       disabled={pending}
     >
       {pending ? (

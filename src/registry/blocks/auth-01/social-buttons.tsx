@@ -65,7 +65,7 @@ function SocialButtons({
             key={provider}
             type="button"
             variant="outline"
-            className="h-10"
+            size="lg"
             disabled={pending}
             onClick={() => onSelect(provider)}
           >

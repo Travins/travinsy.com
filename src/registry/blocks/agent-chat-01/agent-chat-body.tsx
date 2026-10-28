@@ -210,7 +210,7 @@ function AgentChatBody({
                 <Button
                   key={question}
                   variant="outline"
-                  className="h-auto justify-start py-3 text-left whitespace-normal"
+                  className="h-auto justify-start bg-card py-3 text-left whitespace-normal hover:bg-muted dark:bg-card dark:hover:bg-muted"
                   onClick={() => send(question)}
                 >
                   {question}

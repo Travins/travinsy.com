@@ -1,3 +1,5 @@
+import type { ChatChart } from "./types"
+
 type Script = {
   match: RegExp
   reasoning: string
@@ -8,6 +10,8 @@ type Script = {
     error?: string
   }[]
   source: { title: string; url: string }
+  /** 工具返回后出现在分析过程与回答之间的图表，尺寸克制，保持消息紧凑 */
+  chart?: ChatChart
   answer: string
 }
 
@@ -40,6 +44,29 @@ const scripts: Script[] = [
     source: {
       title: "Prometheus 查询基础",
       url: "https://prometheus.io/docs/prometheus/latest/querying/basics/",
+    },
+    chart: {
+      kind: "series",
+      title: "api-gateway 可用率",
+      description: "近 15 分钟 · 演示数据",
+      label:
+        "api-gateway 近 15 分钟可用率走势，14:05 发布后从 99.9% 降到 97.8%",
+      seriesLabel: "可用率",
+      type: "area",
+      tone: "trend",
+      format: { style: "percent", digits: 2 },
+      metrics: [
+        { label: "当前", value: "97.80%", tone: "rose" },
+        { label: "基线", value: "99.95%", tone: "green" },
+        { label: "发布", value: "14:05 v2.8.1" },
+      ],
+      data: [
+        99.96, 99.95, 99.97, 99.95, 99.94, 99.2, 98.4, 97.9, 97.6, 97.7, 97.9,
+        97.8, 97.7, 97.8, 97.8,
+      ].map((value, index) => ({
+        label: `14:${String(index).padStart(2, "0")}`,
+        value,
+      })),
     },
     answer:
       "可用率下降与 `orders` 上游的连接池超时相关。演示窗口内可用率从 99.95% 降到 97.8%，错误集中在 `v2.8.1` 发布之后。\n\n- 先对照发布前后的连接池配置与慢查询。\n- 检查等待连接数、请求并发和数据库延迟。\n- 若错误持续扩大，按你的发布流程评估回滚。\n\n这些是模拟观测结果，尚未执行任何变更。",
@@ -80,6 +107,17 @@ const scripts: Script[] = [
       title: "vLLM 性能与调优",
       url: "https://docs.vllm.ai/en/latest/configuration/optimization/",
     },
+    chart: {
+      kind: "rings",
+      title: "A100 80GB 资源占用",
+      description: "显存、KV cache 与算力 · 演示数据",
+      label: "显存已用 90%，KV cache 已用 84%，GPU 利用率 61%",
+      items: [
+        { label: "显存 72/80G", value: 90, display: "90%", tone: "blue" },
+        { label: "KV cache", value: 84, display: "84%", tone: "amber" },
+        { label: "GPU 利用率", value: 61, display: "61%", tone: "green" },
+      ],
+    },
     answer:
       "当前演示服务使用约 `72 / 80 GiB` 显存。`gpu_memory_utilization=0.9` 会预留大部分显存，因此高占用本身不等于泄漏。\n\n- KV cache 已用 84%，同时有 12 个请求排队，建议观察峰值并发。\n- 若长上下文并非必需，可评估降低 `max_model_len`。\n- 调整前记录吞吐、首 token 延迟与 OOM 次数，并做压测对比。\n\n我只展示了模拟检查结果，没有修改推理服务。",
   },
@@ -109,6 +147,28 @@ const scripts: Script[] = [
       },
     ],
     source: { title: "pnpm install 文档", url: "https://pnpm.io/cli/install" },
+    chart: {
+      kind: "series",
+      title: "frontend-build 各步骤耗时",
+      description: "上一次成功运行 · 单位：秒 · 演示数据",
+      label: "上一次成功运行的各步骤耗时，安装依赖最长，为 94 秒",
+      seriesLabel: "耗时（秒）",
+      type: "bar",
+      tone: "blue",
+      highlight: "max",
+      format: { digits: 0 },
+      metrics: [
+        { label: "本次安装", value: "失败 · 3 秒", tone: "rose" },
+        { label: "上次总耗时", value: "238 秒" },
+      ],
+      data: [
+        { label: "安装", value: 94 },
+        { label: "构建", value: 71 },
+        { label: "类型", value: 38 },
+        { label: "测试", value: 26 },
+        { label: "检查", value: 9 },
+      ],
+    },
     answer:
       "这次模拟失败来自锁文件不同步：`--frozen-lockfile` 检测到依赖声明发生变化，CI 与本地 pnpm 版本也不一致。\n\n- 在 `packageManager` 中固定团队使用的 pnpm 版本。\n- 使用相同版本在本地运行 `pnpm install`，检查并提交锁文件差异。\n- 让 CI 使用固定版本，然后重新运行安装任务。\n\n保留 `--frozen-lockfile`，有助于保证安装可复现。",
   },

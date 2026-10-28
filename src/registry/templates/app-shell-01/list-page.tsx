@@ -17,15 +17,20 @@ import { events } from "./sample-data"
 
 const PAGE_SIZE = 6
 
-/** 通用列表页示例：标题栏 + 工具栏（搜索、翻页）+ 表格。其余导航项在演示里都显示它。 */
+/**
+ * 通用列表页示例：标题栏 + 工具栏（搜索、翻页）+ 可选的数据摘要 + 表格。其余导航项在演示里都显示它。
+ * summary 插槽放在表格上方，通常是该页自己的指标与图表（见 page-summaries.tsx）。
+ */
 function ListPage({
   title,
   description,
   section,
+  summary,
 }: {
   title: string
   description?: string
   section?: string
+  summary?: React.ReactNode
 }) {
   const text = useAppShellLabels()
   const [search, setSearch] = React.useState("")
@@ -68,6 +73,12 @@ function ListPage({
         />
       }
     >
+      {/* 摘要按所在区域的宽度排版：右侧挂着 aside 时主区域变窄，图表会自动改为单列 */}
+      {summary ? (
+        <div data-slot="app-shell-list-summary" className="@container empty:hidden">
+          {summary}
+        </div>
+      ) : null}
       <ChartCard>
         <ChartCardContent>
           <EventsTable

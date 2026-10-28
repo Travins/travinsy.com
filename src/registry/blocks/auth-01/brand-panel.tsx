@@ -30,7 +30,9 @@ function Logo({
 
 /**
  * 大屏左半边的品牌面板：主色渐变 + 模糊光斑 + 向外扩散的波纹 + 四周的字符矩阵。
- * 所有颜色都来自 primary / primary-foreground，跟随颜色主题与亮暗模式。
+ * 亮色下是主色底配 primary-foreground 文字；暗色下 primary 会变成浅色，整块面板会变亮，
+ * 所以暗色改为 card 深底，只用 primary 的低透明度渐变染上主题色，文字回到 foreground。
+ * 光斑、波纹、字符矩阵、图标底共用 --panel-glow，随亮暗一起切换。
  */
 function BrandPanel({
   brand,
@@ -44,16 +46,16 @@ function BrandPanel({
     <aside
       data-slot="auth-01-brand-panel"
       aria-label={formatLabel(text.brandPanelLabel, { name: brand.name })}
-      className="relative hidden overflow-hidden bg-linear-to-br from-primary/90 via-primary to-primary/80 text-primary-foreground lg:flex lg:w-1/2"
+      className="relative hidden overflow-hidden bg-linear-to-br from-primary/90 via-primary to-primary/80 text-primary-foreground [--panel-glow:var(--primary-foreground)] lg:flex lg:w-1/2 dark:bg-card dark:from-primary/16 dark:via-primary/7 dark:to-primary/3 dark:text-foreground dark:[--panel-glow:var(--primary)]"
     >
       <div aria-hidden="true" className="absolute inset-0">
-        <div className="absolute top-20 left-10 size-72 rounded-full bg-primary-foreground/10 blur-3xl" />
-        <div className="absolute right-10 bottom-20 size-96 rounded-full bg-primary-foreground/5 blur-3xl" />
+        <div className="absolute top-20 left-10 size-72 rounded-full bg-(--panel-glow)/10 blur-3xl" />
+        <div className="absolute right-10 bottom-20 size-96 rounded-full bg-(--panel-glow)/5 blur-3xl" />
         {/* 字符矩阵只铺在四周，中间留白给文字；GlyphField 自带底色，这里改成透明 */}
         <GlyphField
           fade="center"
           glyphs="01"
-          tone="var(--primary-foreground)"
+          tone="var(--panel-glow)"
           density={0.4}
           fontSize={13}
           speed={0.02}
@@ -66,7 +68,7 @@ function BrandPanel({
           baseSize={200}
           duration={8}
           background="none"
-          tone="var(--primary-foreground)"
+          tone="var(--panel-glow)"
           className="absolute inset-0 h-full"
         />
       </div>
@@ -82,7 +84,7 @@ function BrandPanel({
             {brand.title}
           </TextReveal>
         </p>
-        <p className="mb-10 max-w-md text-lg leading-8 text-primary-foreground/80">
+        <p className="mb-10 max-w-md text-lg leading-8 text-current/80">
           {brand.description}
         </p>
         <ul className="flex flex-col gap-4">
@@ -90,13 +92,13 @@ function BrandPanel({
             <li key={feature.title} className="flex items-center gap-4">
               <span
                 aria-hidden="true"
-                className="rounded-lg bg-primary-foreground/20 p-2 [&_svg]:size-5"
+                className="rounded-lg bg-(--panel-glow)/20 p-2 [&_svg]:size-5"
               >
                 {feature.icon}
               </span>
               <div>
                 <div className="font-medium">{feature.title}</div>
-                <div className="text-sm text-primary-foreground/70">
+                <div className="text-sm text-current/70">
                   {feature.description}
                 </div>
               </div>

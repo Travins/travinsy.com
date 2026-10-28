@@ -126,12 +126,123 @@ const services = [
   { id: "notify", label: "通知通道", state: "healthy" as const, detail: "站内信、邮件均可用" },
 ]
 
+/** 每 2 小时一档的横轴标签，共 12 档，概览以外的页面摘要共用 */
+const bucketHours = Array.from(
+  { length: 12 },
+  (_, index) => `${String(index * 2).padStart(2, "0")}:00`,
+)
+
+/** 状态码分布：近 24 小时 128 640 次请求；tone 同时用于环形图与图例 */
+const statusCodes = [
+  { id: "2xx", label: "2xx 成功", value: 118420, tone: "green" },
+  { id: "3xx", label: "3xx 重定向", value: 6310, tone: "blue" },
+  { id: "4xx", label: "4xx 客户端", value: 2980, tone: "amber" },
+  { id: "5xx", label: "5xx 服务端", value: 930, tone: "rose" },
+] as const
+
+/** 错误预算（30 天窗口，SLA 99.95% 对应 21.6 分钟不可用时间） */
+const errorBudget = {
+  target: 99.95,
+  current: 99.96,
+  totalMinutes: 21.6,
+  usedMinutes: 8.2,
+}
+
+/** 最慢接口：近 24 小时 P95 耗时（ms），已按从慢到快排序 */
+const slowestEndpoints = [
+  { label: "POST /api/pay/notify", value: 1840 },
+  { label: "GET /api/items?page=1", value: 1420 },
+  { label: "POST /api/login", value: 960 },
+  { label: "GET /api/push/queue", value: 780 },
+  { label: "POST /api/orders", value: 540 },
+  { label: "GET /api/orders/9021", value: 310 },
+]
+
+/** 拨测记录：每 2 小时一档、按拨测类型的次数，合计 128 640 次，与概览的拨测次数一致 */
+const probeVolume = [
+  [4787, 1390, 927, 618],
+  [5196, 1509, 1006, 670],
+  [5489, 1593, 1062, 708],
+  [5897, 1712, 1141, 761],
+  [6305, 1831, 1221, 814],
+  [6773, 1966, 1311, 874],
+  [7065, 2051, 1367, 912],
+  [6890, 2000, 1333, 889],
+  [7240, 2102, 1401, 934],
+  [7707, 2238, 1492, 994],
+  [8116, 2356, 1571, 1047],
+  [8292, 2407, 1605, 1070],
+].map(([http, tcp, dns, ping], index) => ({
+  hour: bucketHours[index],
+  http,
+  tcp,
+  dns,
+  ping,
+}))
+
+/** 拨测记录：失败与超时共 515 次，按原因拆分 */
+const failureReasons = [
+  { label: "连接超时", value: 236, tone: "rose" },
+  { label: "状态码异常", value: 139, tone: "amber" },
+  { label: "DNS 解析", value: 78, tone: "violet" },
+  { label: "TLS 握手", value: 62, tone: "blue" },
+] as const
+
+/** 接口探测：近 24 小时各耗时区间的请求数，合计 128 640 */
+const latencyBuckets = [
+  { bucket: "<50", count: 18420 },
+  { bucket: "50–100", count: 41260 },
+  { bucket: "100–200", count: 39870 },
+  { bucket: "200–500", count: 21540 },
+  { bucket: "0.5–1 s", count: 5980 },
+  { bucket: ">1 s", count: 1570 },
+]
+
+/** 接口探测：各分位耗时的 SLO 达标率（%） */
+const sloTargets = [
+  { id: "p50", label: "P50", target: "≤ 150 ms", value: 98 },
+  { id: "p95", label: "P95", target: "≤ 800 ms", value: 94 },
+  { id: "p99", label: "P99", target: "≤ 1.5 s", value: 91 },
+]
+
+/** 节点监控：按区域汇总的节点资源，cpu / memory 是使用率（%） */
+const nodeGroups = [
+  { id: "bj", name: "华北 · 北京", online: 12, total: 12, cpu: 38, memory: 52 },
+  { id: "sh", name: "华东 · 上海", online: 16, total: 16, cpu: 46, memory: 61 },
+  { id: "gz", name: "华南 · 广州", online: 8, total: 9, cpu: 71, memory: 78 },
+  { id: "sg", name: "海外 · 新加坡", online: 6, total: 6, cpu: 29, memory: 44 },
+]
+
+/** 事件与异常：每 2 小时一档的事件数，按级别拆分 */
+const eventVolume = [
+  [1, 4], [0, 3], [0, 2], [2, 5], [1, 4], [0, 3],
+  [1, 6], [3, 7], [2, 5], [1, 6], [4, 8], [3, 7],
+].map(([error, warning], index) => ({
+  hour: bucketHours[index],
+  error,
+  warning,
+}))
+
+/** 事件与异常：异常事件的处理进度，三项相加为异常总数 18 */
+const resolution = { recovered: 15, inProgress: 2, pending: 1 }
+
 export {
+  bucketHours,
   dateRange,
+  errorBudget,
+  eventVolume,
   events,
+  failureReasons,
+  latencyBuckets,
   latencySeries,
+  nodeGroups,
+  probeVolume,
+  resolution,
   scopes,
   services,
+  slowestEndpoints,
+  sloTargets,
+  statusCodes,
   stats,
 }
 export type { EventRow, EventStatus, StatItem }

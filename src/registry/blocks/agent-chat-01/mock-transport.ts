@@ -47,6 +47,7 @@ function createMockTransport(): ChatTransport<UIMessage> {
           800,
         )
       }
+      if (script.chart) push({ type: "data-chart", data: script.chart }, 400)
       push({ type: "source-url", sourceId: "reference", ...script.source })
       push({ type: "text-start", id: "answer" })
       for (const delta of script.answer.match(/.{1,6}|\n/gu) ?? [])

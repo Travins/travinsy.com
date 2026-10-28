@@ -399,7 +399,7 @@
       "name": "agent-chat-01",
       "type": "registry:block",
       "title": "AI 助手面板",
-      "description": "从企业监控平台提炼的 AI 助手：嵌入与浮动布局切换，时间线展示分析摘要、工具调用与来源，内置流式演示。",
+      "description": "从企业监控平台提炼的 AI 助手：嵌入与浮动布局切换，Trace 展示分析摘要、工具调用与来源，内置流式演示。",
       "dependencies": [
         "ai",
         "@ai-sdk/react",
@@ -416,10 +416,12 @@
         "textarea",
         "avatar",
         "sheet",
-        "https://travinsy.com/r/timeline.json",
         "https://travinsy.com/r/glyph-field.json",
         "https://travinsy.com/r/text-animate.json",
-        "https://travinsy.com/r/segmented-control.json"
+        "https://travinsy.com/r/segmented-control.json",
+        "trace",
+        "https://travinsy.com/r/chart-card.json",
+        "https://travinsy.com/r/mini-chart.json"
       ],
       "files": [
         {
@@ -453,9 +455,9 @@
           "target": "components/agent-chat/chat-message.tsx"
         },
         {
-          "path": "src/registry/blocks/agent-chat-01/chat-trace.tsx",
+          "path": "src/registry/blocks/agent-chat-01/chat-charts.tsx",
           "type": "registry:component",
-          "target": "components/agent-chat/chat-trace.tsx"
+          "target": "components/agent-chat/chat-charts.tsx"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/chat-markdown.tsx",
@@ -616,6 +618,21 @@
           "path": "src/registry/templates/app-shell-01/dashboard-overview.tsx",
           "type": "registry:component",
           "target": "components/app-shell/dashboard-overview.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/page-summaries.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/page-summaries.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/distribution-card.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/distribution-card.tsx"
+        },
+        {
+          "path": "src/registry/templates/app-shell-01/overview-charts.tsx",
+          "type": "registry:component",
+          "target": "components/app-shell/overview-charts.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/list-page.tsx",
