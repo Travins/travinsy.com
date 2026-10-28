@@ -1,0 +1,187 @@
+---
+title: 分段选择
+titleEn: Segmented Control
+description: 方条样式的互斥选项组，选中块在选项间滑动，可带图标或小样，与数值滑块同一套高度。
+group: input
+---
+
+<ComponentPreview name="segmented-control-demo" />
+
+## 安装
+
+<InstallCommand name="segmented-control" />
+
+## 用法
+
+```tsx title="components/view-switch.tsx"
+import { LayoutGrid, List } from "lucide-react"
+import { useState } from "react"
+import { SegmentedControl } from "@/components/ui/segmented-control/segmented-control"
+
+const OPTIONS = [
+  { value: "list", label: "列表", icon: <List /> },
+  { value: "grid", label: "网格", icon: <LayoutGrid /> },
+]
+
+export function ViewSwitch() {
+  const [view, setView] = useState("list")
+
+  return (
+    <SegmentedControl
+      aria-label="视图"
+      options={OPTIONS}
+      value={view}
+      onValueChange={setView}
+    />
+  )
+}
+```
+
+`options` 是必需项，值是字符串。传 `value` 与 `onValueChange` 走受控；只传 `defaultValue`（或都不传，此时落在第一项）由组件自己管。
+
+### 结构与语义
+
+外框是方条：细边框（`border-edge`）、小圆角、`bg-muted/60` 的淡底，和数值滑块同一副外观。每个选项是一个 `Radio.Root`，整块可点；选中时选项背后滑入一块 `segmented-control-indicator`，用 Motion 的共享布局动画在选项之间滑动，不会闪一下再出现。
+
+`label` 画在最左边单独的格子里，与选项之间隔一条竖线，同时作为整个单选组的可访问名称（`aria-labelledby`）——写了 `label` 就不必再写 `aria-label`。
+
+```tsx
+<SegmentedControl label="对齐" options={ALIGN_OPTIONS} defaultValue="left" />
+```
+
+### 高度与色调
+
+`variant` 与 `size` 共同决定高度，两档与数值滑块完全一致，放在同一个面板里能对齐：
+
+| `variant` | `sm` | `default` | `lg` |
+| --------- | ---- | --------- | ---- |
+| `bar`     | 28px | 32px      | 36px |
+| `compact` | 18px | 22px      | 24px |
+
+`compact` 同时把字号收到 `text-xs`，适合挤在调整面板里的一排排参数。
+
+`tone` 给选中块染上一档淡色。它会把 `--flow-tone` 写在根元素上，所以子树里其他读同一个变量的图形也会跟着变色。不传 `tone` 时选中块用背景色加一圈细描边，在浅色底上像一块浮起的白色贴片。
+
+```tsx
+<SegmentedControl
+  aria-label="时间范围"
+  tone="blue"
+  size="sm"
+  options={OPTIONS}
+/>
+```
+
+### 选项里的小样
+
+`icon` 是选项文字前的小样，放图标、色点、材质方块都行；它包在 `aria-hidden` 的容器里，读屏只念 `label`。图标尺寸默认收到 14px（`size-3.5`），自己给 `size-*` 可以覆盖。
+
+```tsx
+const OPTIONS = [
+  { value: "cool", label: "冷色", icon: <Swatch tones={["blue", "cyan"]} /> },
+  { value: "warm", label: "暖色", icon: <Swatch tones={["amber", "rose"]} /> },
+]
+```
+
+## 示例
+
+### 色调
+
+访问量卡片上的时间范围切换。`tone="blue"` 只给选中块染上一档淡蓝；下面那条柱状图自己拿 `--flow-tone` 取色，和选中块用的是同一个变量。
+
+<ComponentPreview name="segmented-control-tone-demo" />
+
+### 左侧标签
+
+`label` 占最左边一格，与选项之间隔着一条竖线，读起来像「字段名 + 取值」。下面把对齐方式直接套在段落上，看得见这一行确实在起作用。
+
+<ComponentPreview name="segmented-control-label-demo" />
+
+### 小样
+
+选项文字前的 `icon` 换成两个色点，「中性 / 冷色 / 暖色」一眼可辨。色点对读屏隐藏，信息仍由文字承担。
+
+<ComponentPreview name="segmented-control-swatch-demo" />
+
+## API
+
+### SegmentedControl
+
+<PropsTable name="segmented-control" component="SegmentedControl" />
+
+除上表外，其余属性直接交给 Base UI 的 `RadioGroup.Root`：`disabled`（整组禁用，选中块与文字一起淡到 50%）、`aria-label`、`required` 等。
+
+### segmentedControlVariants
+
+`cva` 生成的根元素样式函数，有 `size` 与 `variant` 两个变体。写自己的包装层时可以复用它，高度通过根元素上的 `--segmented-control-height` 变量传给内部。
+
+```ts
+const segmentedControlVariants: (props?: {
+  size?: SegmentedControlSize
+  variant?: SegmentedControlVariant
+}) => string
+```
+
+### 类型
+
+```ts
+type SegmentedControlSize = "sm" | "default" | "lg"
+
+type SegmentedControlVariant = "bar" | "compact"
+
+type SegmentedControlOption = {
+  value: string
+  label: React.ReactNode
+  /** 文字前的小样：图标、色点、材质方块 */
+  icon?: React.ReactNode
+  disabled?: boolean
+}
+
+type SegmentedControlProps = Omit<
+  React.ComponentProps<typeof RadioGroup>,
+  "value" | "defaultValue" | "onValueChange" | "children"
+> & {
+  options: readonly SegmentedControlOption[]
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  label?: React.ReactNode
+  variant?: SegmentedControlVariant
+  size?: SegmentedControlSize
+  tone?: FlowTone
+  modified?: boolean
+  className?: string
+  style?: React.CSSProperties
+}
+```
+
+## data-slot
+
+| 元素     | `data-slot`                   |
+| -------- | ----------------------------- |
+| 根元素   | `segmented-control`           |
+| 左侧标签 | `segmented-control-label`     |
+| 选项     | `segmented-control-item`      |
+| 选中块   | `segmented-control-indicator` |
+
+根元素始终带 `data-variant`（`bar` / `compact`），`modified` 为真时带 `data-modified`，禁用时带 `data-disabled`；选项上是 Base UI 给的 `data-checked`、`data-disabled`。
+
+## 可访问性
+
+- 语义是单选组：根元素是 `role="radiogroup"`，每个选项是 `role="radio"`，选中状态由 `aria-checked` 表达。方向键在选项间移动并**直接选中**（不是「移过去再空格确认」）。
+- 组的名称取自 `label`（`aria-labelledby`）；没写 `label` 时请务必给 `aria-label`，否则读屏只能念出一个没有名字的单选组。
+- 选项的小样是装饰，`aria-hidden`；选项文字才是名称。
+- 键盘焦点在选项上时有一圈 `focus-visible` 焦点环，并临时抬高 `z-index`，不会被旁边滑过来的选中块盖住。
+- `modified` 只有配 `label` 时才有可见效果（标签从次要色变成前景色）；没有 `label` 时只留下 `data-modified`，供外界用选择器自己加样式。
+
+## 注意事项
+
+- 同一页里可能有多个分段选择，选中块的共享布局 id 用 `React.useId()` 各自生成，动画不会串到另一个组上。
+- 系统开启「减少动态效果」时，选中块直接跳到位，不做滑动。
+- 选项文字不换行（`whitespace-nowrap` + `truncate`），选项太多太窄时优先缩短文字，不要靠缩小字号。
+- 值是字符串。需要数字或其他类型时在 `onValueChange` 里自己转，或者用 `String(value)` 存选项的 `value`。
+- 受控 / 非受控共用一个 `useControllableState`；`options` 变化后如果当前值已不存在，组件不会自动改选，请在父级同步。
+- `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取。
+
+## 源码
+
+<ComponentSource name="segmented-control" />

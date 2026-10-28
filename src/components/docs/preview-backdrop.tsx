@@ -16,6 +16,10 @@ const BACKDROPS: Record<string, "dots" | "grid"> = {
   checklist: "grid",
   "code-stack": "dots",
   "value-slider": "dots",
+  "control-panel": "dots",
+  "segmented-control": "dots",
+  "toggle-switch": "dots",
+  "tone-picker": "dots",
 }
 
 export function PreviewBackdrop({ name }: { name?: string }) {

@@ -1,0 +1,161 @@
+---
+title: 色调选择
+titleEn: Tone Picker
+description: 方条左侧标签、右侧一排色点的单选组，色点取主题变量，跟随亮暗与颜色主题。
+group: input
+---
+
+<ComponentPreview name="tone-picker-demo" />
+
+## 安装
+
+<InstallCommand name="tone-picker" />
+
+## 用法
+
+```tsx title="components/accent-picker.tsx"
+import { useState } from "react"
+import { TonePicker } from "@/components/ui/tone-picker/tone-picker"
+
+export function AccentPicker() {
+  const [tone, setTone] = useState("primary")
+
+  return <TonePicker label="强调色" value={tone} onValueChange={setTone} />
+}
+```
+
+不传 `options` 时用内置的七个色调：主题色、蓝、绿、琥珀、玫红、紫、青，色点旁的名称也一并带上。`value` 存的是选项的 `value`（字符串），拿到之后自己去拼 `style={{ "--flow-tone": ... }}` 或套组件的 `tone` 属性。
+
+### 选项与色点
+
+每个选项有三个字段：
+
+| 字段    | 说明                                                                 |
+| ------- | -------------------------------------------------------------------- |
+| `value` | 提交给 `onValueChange` 的值，字符串                                  |
+| `label` | 可访问名称（`aria-label`）与悬停提示（`title`），**必填**            |
+| `tone`  | 色点颜色：内置色调名（`primary`、`blue`…）、任意 CSS 颜色，或 `null` |
+
+`tone: null` 画成虚线空心圆，通常表示「不上色」「跟随上级」这类不指定颜色的选项。任意 CSS 颜色都行，写 `var(--flow-cyan)`、`oklch(…)`、`#f97316` 都可以；想要跟随颜色主题，就写主题变量。
+
+`toneOptions(tones)` 把一串色调名变成选项数组，名称取内置的中文名表（`primary` 主题色、`foreground` 前景色、`blue` 蓝、`green` 绿、`amber` 琥珀、`rose` 玫红、`violet` 紫、`cyan` 青），不在表里的名字原样用作名称。
+
+```tsx
+import { toneOptions } from "@/components/ui/tone-picker/tone-picker"
+
+const TONES = toneOptions(["primary", "blue", "violet"])
+// [{ value: "primary", label: "主题色", tone: "primary" }, …]
+```
+
+### 高度
+
+`variant` 与 `size` 的对照表和数值滑块一致；色点大小跟着档位走，`sm` 12px、`default` 14px、`lg` 16px，`compact` 统一 10px：
+
+| `variant` | `sm` | `default` | `lg` |
+| --------- | ---- | --------- | ---- |
+| `bar`     | 28px | 32px      | 36px |
+| `compact` | 18px | 22px      | 24px |
+
+标签省略时色点推到最右（`ms-auto`），此时务必给 `aria-label`——单选组本身也需要一个名字。
+
+## 示例
+
+### 自定义选项
+
+标签的强调色。第一项 `tone: null` 画成虚线空心圆，表示「跟随上级」；最后一项用 `var(--flow-cyan)` 演示任意 CSS 颜色也能当色点。
+
+<ComponentPreview name="tone-picker-custom-demo" />
+
+### 多行
+
+图表三组数据的配色。`variant="compact"` 让三条色点选择器排成一列也不占地方，每条只管自己那一组；上面的柱状图读同一份 `--flow-tone`，改完立刻换色。
+
+<ComponentPreview name="tone-picker-series-demo" />
+
+## API
+
+### TonePicker
+
+<PropsTable name="tone-picker" component="TonePicker" />
+
+除上表外，其余属性直接交给 Base UI 的 `RadioGroup.Root`：`disabled`、`aria-label`、`required`、`orientation` 等。
+
+### toneOptions
+
+```ts
+function toneOptions(tones?: readonly FlowTone[]): TonePickerOption[]
+```
+
+不传 `tones` 时返回默认的七项。名称取自内置的中文名表，表里没有的名字直接当名称用。
+
+### tonePickerVariants
+
+`cva` 生成的根元素样式函数，有 `size` 与 `variant` 两个变体。高度通过根元素的 `--tone-picker-height`、色点直径通过 `--tone-picker-swatch` 传给内部。
+
+```ts
+const tonePickerVariants: (props?: {
+  size?: TonePickerSize
+  variant?: TonePickerVariant
+}) => string
+```
+
+### 类型
+
+```ts
+type TonePickerSize = "sm" | "default" | "lg"
+
+type TonePickerVariant = "bar" | "compact"
+
+type TonePickerOption = {
+  value: string
+  /** 可访问名称，悬停时也作为提示 */
+  label: string
+  /** 内置色调名或任意 CSS 颜色；`null` 画成空心圆 */
+  tone: FlowTone | null
+}
+
+type TonePickerProps = Omit<
+  React.ComponentProps<typeof RadioGroup>,
+  "value" | "defaultValue" | "onValueChange" | "children"
+> & {
+  options?: readonly TonePickerOption[]
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  label?: React.ReactNode
+  variant?: TonePickerVariant
+  size?: TonePickerSize
+  modified?: boolean
+  className?: string
+}
+```
+
+## data-slot
+
+| 元素     | `data-slot`            |
+| -------- | ---------------------- |
+| 根元素   | `tone-picker`          |
+| 左侧标签 | `tone-picker-label`    |
+| 色点容器 | `tone-picker-swatches` |
+| 色点     | `tone-picker-swatch`   |
+
+根元素始终带 `data-variant`（`bar` / `compact`），`modified` 为真时带 `data-modified`；色点上是 Base UI 给的 `data-checked`，`data-disabled` 落在根元素上。
+
+## 可访问性
+
+- 语义是单选组：根元素 `role="radiogroup"`，每个色点 `role="radio"`。方向键在色点间移动并直接选中。
+- 每个色点必须有名称，`label` 同时写进 `aria-label` 与 `title`。颜色不是唯一的信息载体——不要写只有色点、没有名称的选项。
+- 选中状态除了名称还有两层视觉：色点外一圈前景色细环（`ring-2` 加 2px 偏移），色点本身在悬停时放大 10%。
+- 组的名称取自 `label`（`aria-labelledby`）；省略 `label` 时用 `aria-label` 补上。
+- 焦点环只在键盘聚焦时出现（`focus-visible`）。
+
+## 注意事项
+
+- 色点颜色来自主题变量，亮暗与颜色主题切换时会跟着变；要固定成品牌色就写任意 CSS 颜色。
+- `modified` 只有配 `label` 时才有可见效果（标签从次要色变成前景色）；没有 `label` 时只留下 `data-modified`。
+- 色点数量超过七、八个时一行会挤，考虑换成下拉或分成两行；色点直径不随容器缩放。
+- 受控 / 非受控共用一个 `useControllableState`；`options` 变化后如果当前值已不存在，组件不会自动改选，请在父级同步。
+
+## 源码
+
+<ComponentSource name="tone-picker" />

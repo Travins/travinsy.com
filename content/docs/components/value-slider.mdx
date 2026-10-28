@@ -106,6 +106,36 @@ export function VolumeSlider() {
 />
 ```
 
+### 直接输入
+
+读数平时是文字，`editable` 让它变成入口：点一下读数，或在手柄上按回车，原地换成一个输入框，读数变成可编辑的虚线。回车或失焦提交，`Esc` 放弃；输入里的千分位、单位之类会被忽略，只取数字部分，再夹到 `min`–`max` 之间并对齐到 `step`。回车提交后焦点还给手柄，键盘用户可以接着用方向键微调。
+
+```tsx
+<ValueSlider
+  label="宽度"
+  min={480}
+  max={3840}
+  step={40}
+  editable
+  defaultValue={1920}
+  formatValue={(value) => `${value}px`}
+/>
+```
+
+一次输入当作一次提交（触发 `onValueCommitted`），不放刻度音效，也不经过中间的过渡值。区间模式下不可输入（输入框只有一个，说不清改哪个手柄），`disabled` 时也不可输入。
+
+`modified` 是给控制面板用的标记：传 `true` 时标签与读数从次要色提到前景色，根元素带上 `data-modified`。它不改变值，只是「这一项已改动」的视觉与钩子，通常写成 `modified={value !== defaultValue}`。
+
+```tsx
+<ValueSlider
+  label="高度"
+  editable
+  modified={height !== 1080}
+  value={height}
+  onValueChange={setHeight}
+/>
+```
+
 ### 区间
 
 值传数组即为区间：数组长度决定手柄数量，读数显示为「起点 – 终点」。数组在内部按升序处理，`label` 是字符串时手柄名称自动加上「起点」「终点」。两个手柄相遇时的行为由 Base UI 的 `thumbCollisionBehavior` 决定（默认 `push`），最小间隔由 `minStepsBetweenValues` 控制。
@@ -178,17 +208,23 @@ const [muted, setMuted] = useValueSliderMuted()
 
 <ComponentPreview name="value-slider-mood-demo" />
 
+### 直接输入
+
+导出尺寸卡片，三条滑块都开了 `editable`：点读数就能敲数字，回车确认、`Esc` 放弃。改过的项用 `modified` 把标签挑到前景色，一眼看出哪几项此时不是默认值。
+
+<ComponentPreview name="value-slider-editable-demo" />
+
 ## API
 
 ### ValueSlider
 
 <PropsTable name="value-slider" component="ValueSlider" />
 
-默认 `min={0}`、`max={100}`、`step={1}`、`largeStep={10}`、`minStepsBetweenValues={0}`、`showValue`、`elasticity={12}`、`size="default"`、`variant="bar"`、`labelPlacement="inside"`、`locale="zh-CN"`；`snapToTicks`、`sound`、`disabled` 默认关闭，`tone` 不传时轨道用前景色，`buffer` 不传时不画缓冲段。
+默认 `min={0}`、`max={100}`、`step={1}`、`largeStep={10}`、`minStepsBetweenValues={0}`、`showValue`、`elasticity={12}`、`size="default"`、`variant="bar"`、`labelPlacement="inside"`、`locale="zh-CN"`；`snapToTicks`、`sound`、`editable`、`modified`、`disabled` 默认关闭，`tone` 不传时轨道用前景色，`buffer` 不传时不画缓冲段。
 
 轨道高度由 `size` 与 `variant` 共同决定：`bar` 是 `sm` 28px、`default` 32px、`lg` 36px；`compact` 是 18px、22px、24px；`slim` 是 6px、8px、10px，竖线手柄依次高 14px、16px、18px，命中区至少 20px 高，矮轨也好按。读数小数位由 `step` 推导，`format` / `formatValue` 可以覆盖。
 
-除上表外，其余属性直接交给 Base UI 的 `Slider.Root`：`form`（关联到页面上的某个表单）、`id`、`minStepsBetweenValues`（区间两个手柄之间至少隔几个 `step`）、`thumbCollisionBehavior`（`push` / `swap` / `none`，默认 `push`）。`orientation`、`thumbAlignment` 之类会影响横向布局的属性由组件接管，没有对外暴露。
+除上表外，其余属性直接交给 Base UI 的 `Slider.Root`：`form`（关联到页面上的某个表单）、`id`、`minStepsBetweenValues`（区间两个手柄之间至少隔几个 `step`）、`thumbCollisionBehavior`（`push` / `swap` / `none`，默认 `push`）。`orientation`、`thumbAlignment` 之类会影响横向布局的属性由组件接管，没有对外暴露——组件固定用 `thumbAlignment="edge"`，手柄落在两端时贴着轨道内侧对齐，不会探出边框半截。
 
 ### ValueSliderTuningContext
 
@@ -259,6 +295,8 @@ type ValueSliderProps<Value extends ValueSliderValue = number> = {
   size?: ValueSliderSize
   variant?: ValueSliderVariant
   tone?: FlowTone
+  editable?: boolean
+  modified?: boolean
   sound?: boolean
   className?: string
   style?: React.CSSProperties
@@ -310,11 +348,12 @@ type ValueSliderReport = {
 | 刻度线         | `value-slider-tick`       |
 | 标签           | `value-slider-label`      |
 | 读数           | `value-slider-value`      |
+| 输入框         | `value-slider-input`      |
 | 手柄           | `value-slider-thumb`      |
 | 左端图标       | `value-slider-start-icon` |
 | 右端图标       | `value-slider-end-icon`   |
 
-`value-slider-labels` 只在 `labelPlacement="outside"`（以及 `variant="slim"`）时出现，`label` 与读数都放在它里面；`inside` 时这两个 `data-slot` 落在轨道内。根元素在过冲时带 `data-overshoot`（`start` 往左、`end` 往右），禁用时带 `data-disabled`，拖动中带 `data-dragging`，手柄压住文字时带 `data-near="true"`，并且始终带 `data-variant`（`bar` / `compact` / `slim`）。
+`value-slider-labels` 只在 `labelPlacement="outside"`（以及 `variant="slim"`）时出现，`label` 与读数都放在它里面；`inside` 时这两个 `data-slot` 落在轨道内。`value-slider-input` 只在 `editable` 且正在输入时出现，临时替掉同一位置的读数。根元素在过冲时带 `data-overshoot`（`start` 往左、`end` 往右），禁用时带 `data-disabled`，拖动中带 `data-dragging`，手柄压住文字时带 `data-near="true"`，`modified` 为真时带 `data-modified`，并且始终带 `data-variant`（`bar` / `compact` / `slim`）。
 
 ## 可访问性
 
@@ -323,6 +362,7 @@ type ValueSliderReport = {
 - `aria-valuetext` 是格式化后的读数，所以 `format` / `formatValue` 的写法会直接决定读屏怎么念。
 - 焦点环只在键盘聚焦时出现（`:focus-visible`），鼠标点击轨道不会留下焦点框。Control 上有一圈整体焦点环，聚焦的那个手柄还会自己出环，区间模式下能看出当前在调哪个手柄，并从 4px 加粗到 6px。
 - 系统开启「减少动态效果」时不播放过冲与弹簧回弹，轨道不会被拉伸。
+- `editable` 时读数是一个可点的文字入口：鼠标直接点，键盘在手柄上按 `Enter` 进入输入（回车被拦下，不会提交外层表单）。输入框自带名称（`输入` + 手柄名称），回车提交后焦点回到手柄，`Esc` 放弃并同样还回焦点；失焦提交时不抢焦点。
 - 缓冲填充是 `aria-hidden` 的装饰，读屏只报当前值。
 - 音效默认关闭。打开后请同时提供静音入口（`useValueSliderMuted`），音效只是点缀，不承载信息；静音偏好存在 `localStorage` 的 `travinsy:sound:muted`，与站内其他带音效的组件共用。
 

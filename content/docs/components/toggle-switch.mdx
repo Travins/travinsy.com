@@ -1,0 +1,152 @@
+---
+title: 方条开关
+titleEn: Toggle Switch
+description: 整条可点的开关，打开时铺上淡色、竖线手柄滑到右端，与数值滑块同一套高度。
+group: input
+---
+
+<ComponentPreview name="toggle-switch-demo" />
+
+## 安装
+
+<InstallCommand name="toggle-switch" />
+
+## 用法
+
+```tsx title="components/autosave-switch.tsx"
+import { useState } from "react"
+import { ToggleSwitch } from "@/components/ui/toggle-switch/toggle-switch"
+
+export function AutosaveSwitch() {
+  const [autosave, setAutosave] = useState(true)
+
+  return (
+    <ToggleSwitch
+      label="自动保存"
+      description={autosave ? "已开启" : "已关闭"}
+      tone="blue"
+      checked={autosave}
+      onCheckedChange={setAutosave}
+    />
+  )
+}
+```
+
+整条方条都是开关，不用对准右侧的小轨道。`checked` / `defaultChecked` / `onCheckedChange` 直接来自 Base UI 的 `Switch.Root`，受控与非受控都按这一套写。
+
+### 外观
+
+- 关：`bg-muted/60` 的淡底、细边框，文字是次要色；右侧小轨道里一根 4px 的竖线手柄停在左端。
+- 开：整条从左往右铺上一层淡色（`toggle-switch-fill` 用 `scale-x` 展开，和数值滑块的已选填充同一种淡），手柄滑到右端并变成实色，文字提到前景色。
+
+`tone` 决定铺色与手柄的颜色（`--flow-tone` 的 15%，暗色下 25%）；不传时用前景色，得到最中性的一档。手柄与数值滑块的竖线手柄同形，放在一起高度也对得上。
+
+```tsx
+<ToggleSwitch label="高亮当前行" defaultChecked tone="violet" />
+```
+
+### 高度
+
+`variant` 与 `size` 的对照表和数值滑块一致，同一行放控件时不会参差：
+
+| `variant` | `sm` | `default` | `lg` |
+| --------- | ---- | --------- | ---- |
+| `bar`     | 28px | 32px      | 36px |
+| `compact` | 18px | 22px      | 24px |
+
+`compact` 把字号收到 `text-xs`，几行叠起来也不占地方，适合调整面板与密排的设置页。
+
+### 说明文字
+
+`description` 渲染在标签右侧、字号字重都小一档，通常放**当前状态**或**生效范围**（「已开启」「邮件」「需开启同步」）。它是按钮内容的一部分，所以读屏会把标签与说明连起来念；只想念标签时传 `aria-label`。
+
+```tsx
+<ToggleSwitch label="每周摘要" description="邮件" />
+```
+
+## 示例
+
+### 密排
+
+`variant="compact"` 收成 22px 高，六条加上 `gap-1` 也只占半张卡。密排时不带 `description`，一行只有一个标签，视线不会被切断。
+
+<ComponentPreview name="toggle-switch-compact-demo" />
+
+### 禁用态
+
+总开关关着时，下面三项 `disabled`：整条淡到 50%，不响应点击与键盘。打开总开关，三项立刻可以操作；`description` 在同一个位置换成状态文案，说明为什么点不动。
+
+<ComponentPreview name="toggle-switch-disabled-demo" />
+
+## API
+
+### ToggleSwitch
+
+<PropsTable name="toggle-switch" component="ToggleSwitch" />
+
+除上表外，其余属性直接交给 Base UI 的 `Switch.Root`：`checked`、`defaultChecked`、`onCheckedChange(checked, eventDetails)`、`disabled`、`name`、`required`、`aria-label` 等。`render`、`nativeButton`、`children` 被移除了——组件固定渲染成原生 `<button type="button">`。
+
+### toggleSwitchVariants
+
+`cva` 生成的根元素样式函数，有 `size` 与 `variant` 两个变体，高度通过根元素上的 `--toggle-switch-height` 变量传给内部。
+
+```ts
+const toggleSwitchVariants: (props?: {
+  size?: ToggleSwitchSize
+  variant?: ToggleSwitchVariant
+}) => string
+```
+
+### 类型
+
+```ts
+type ToggleSwitchSize = "sm" | "default" | "lg"
+
+type ToggleSwitchVariant = "bar" | "compact"
+
+type ToggleSwitchProps = Omit<
+  Switch.Root.Props,
+  "render" | "nativeButton" | "children"
+> & {
+  /** 标签，也是开关的可访问名称 */
+  label: React.ReactNode
+  /** 标签右侧的补充说明（如当前状态「已开启」） */
+  description?: React.ReactNode
+  variant?: ToggleSwitchVariant
+  size?: ToggleSwitchSize
+  tone?: FlowTone
+  modified?: boolean
+}
+```
+
+## data-slot
+
+| 元素         | `data-slot`                 |
+| ------------ | --------------------------- |
+| 根元素       | `toggle-switch`             |
+| 打开时的铺色 | `toggle-switch-fill`        |
+| 标签         | `toggle-switch-label`       |
+| 说明文字     | `toggle-switch-description` |
+| 小轨道       | `toggle-switch-track`       |
+| 手柄         | `toggle-switch-thumb`       |
+
+根元素上还有：`data-checked`（Base UI 给的选中状态）、`data-disabled`、`data-modified`，以及始终存在的 `data-variant`（`bar` / `compact`）。
+
+## 可访问性
+
+- 根元素是原生 `<button role="switch">`，开关状态由 `aria-checked` 表达；空格键与回车键都能切换，`Tab` 进入。
+- 整条都是可点区域，命中区就是那个 28 / 32 / 36px 高的方条，比常见的滑块式开关大得多。
+- 关闭时文字是次要色、打开时是前景色，铺色与手柄位置也同时变化——状态不只靠颜色。
+- 可访问名称来自按钮内的文字，`label` 与 `description` 会连起来念。想让读屏只念标签，传 `aria-label`。
+- 禁用时整条淡到 50%、光标变 `not-allowed`，并且从 Tab 顺序里移除（原生 `disabled`）。
+
+## 注意事项
+
+- 手柄的位移是固定的（`translate-x-4.5`），跟着固定的轨道宽度走；RTL 下方向反转。
+- 铺色用 `scale-x` 展开，铺的是整条而不是轨道，视觉上像「点亮」而不是「拨动」。系统开启「减少动态效果」时铺色与手柄都瞬时切换。
+- 组件是全宽元素（`w-full`），放进窄容器时由容器决定宽度；标签与说明都是 `truncate`，过长时截断而不是换行。
+- `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取。
+
+## 源码
+
+<ComponentSource name="toggle-switch" />

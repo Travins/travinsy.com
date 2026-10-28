@@ -3,6 +3,10 @@
   "pages": [
     "grid-layout",
     "value-slider",
+    "control-panel",
+    "segmented-control",
+    "toggle-switch",
+    "tone-picker",
     "local-time",
     "greeting",
     "stat-card",

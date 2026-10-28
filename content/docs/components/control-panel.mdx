@@ -1,0 +1,235 @@
+---
+title: 控制面板
+titleEn: Control Panel
+description: 承载方条控件的面板容器：标题栏、分组网格、恢复按钮，以及把当前参数复制为 JSX 的按钮。
+group: input
+---
+
+<ComponentPreview name="control-panel-demo" />
+
+## 安装
+
+<InstallCommand name="control-panel" />
+
+## 用法
+
+面板只负责摆放，不持有任何状态：值由你管理，`onValueChange` 里改你自己的 state，面板跟着重渲染。
+
+```tsx title="components/card-panel.tsx"
+import { useState } from "react"
+import {
+  ControlPanel,
+  ControlPanelActions,
+  ControlPanelCopy,
+  ControlPanelGroup,
+  ControlPanelHeader,
+  ControlPanelReset,
+  ControlPanelTitle,
+  formatJsx,
+} from "@/components/ui/control-panel/control-panel"
+import { ValueSlider } from "@/components/ui/value-slider/value-slider"
+
+const DEFAULTS = { radius: 12 }
+
+export function CardPanel() {
+  const [radius, setRadius] = useState(DEFAULTS.radius)
+
+  return (
+    <ControlPanel className="max-w-sm">
+      <ControlPanelHeader>
+        <ControlPanelTitle>卡片</ControlPanelTitle>
+        <ControlPanelActions>
+          <ControlPanelCopy
+            code={() =>
+              formatJsx("Card", radius === DEFAULTS.radius ? {} : { radius })
+            }
+          />
+          <ControlPanelReset onClick={() => setRadius(DEFAULTS.radius)} />
+        </ControlPanelActions>
+      </ControlPanelHeader>
+      <ControlPanelGroup>
+        <ValueSlider
+          variant="compact"
+          label="圆角"
+          min={0}
+          max={32}
+          value={radius}
+          onValueChange={setRadius}
+        />
+      </ControlPanelGroup>
+    </ControlPanel>
+  )
+}
+```
+
+### 三个部分
+
+`ControlPanel` 是带细边框的竖向容器（`rounded-lg border border-edge bg-background`）。里面通常放两样东西：
+
+- `ControlPanelHeader`：高 40px 的标题栏，底部一条分隔线。左侧放 `ControlPanelTitle`，右侧用 `ControlPanelActions` 收拢按钮——它有 `ms-auto`，自动推到末端。
+- `ControlPanelGroup`：一组控件。`title` 是小标题，`columns` 决定宽屏下的列数，相邻分组之间由组件自己画一条上边框，不用手写 `<hr>`。
+
+`ControlPanelCopy` 与 `ControlPanelReset` 都是 `icon-sm`（28px）的幽灵按钮，直接塞进 `ControlPanelActions` 即可。前者把 `code` 写进剪贴板，成功后图标换成对勾、`aria-live` 播报「已复制」，1.5 秒后复原；后者只是一个按钮，恢复逻辑由你的 `onClick` 决定。
+
+`ControlPanelActions` 就是普通容器，可以往里放自己的按钮（文字按钮用 `size="sm"`，与图标按钮同一档高度）。
+
+### 复制为代码
+
+`formatJsx` 把组件名与一组属性写成 JSX 字符串，专为「复制当前参数」这一步准备：
+
+```tsx
+import { formatJsx } from "@/components/ui/control-panel/control-panel"
+
+formatJsx("Card", { radius: 12, shadow: "soft" })
+// <Card radius={12} shadow="soft" />
+
+formatJsx("Card", { radius: 12 }, { width: 16 })
+// <Card
+//   radius={12}
+// />
+```
+
+规则：
+
+- `undefined` 与 `null` 的属性直接省略，所以只传「与默认值不同的项」就得到一句干净的标签；
+- `true` 写成裸属性名（`<Card bordered />`），`false` 写成 `{false}`；
+- 字符串优先用双引号，含双引号或换行时改成 `{"..."}`；数字最多保留四位小数（去掉浮点尾差）；
+- 数组与对象用 `JSON.stringify`；
+- 一行放得下（默认不超过 72 个字符）就写一行，否则一个属性一行；能放下的空属性列表输出自闭合标签。
+
+`code` 也可以传函数，点击那一刻才求值——面板上的值变化很频繁，传函数能保证复制到的是最新值，也省掉每次渲染重新拼字符串。
+
+## 示例
+
+### 分组
+
+三个 `ControlPanelGroup`，各自带 `title`，中间的分隔线由组件画。`columns={2}` 让两个窄控件并排；只放一个控件时用 `sm:col-span-2` 跨满整行。文件里的 `SegmentedControl`、`ToggleSwitch`、`ValueSlider` 都是同一套方条的 `compact` 档，排在一起高度一致。
+
+<ComponentPreview name="control-panel-groups-demo" />
+
+### 标题栏操作
+
+`ControlPanelActions` 里除了复制与恢复，还能放自己的按钮：这里是一个「应用」文字按钮，面板改的是草稿，按下才写进左边的预览，没改动时禁用。面板下面把 `formatJsx` 的输出直接摊开，属性多的时候会按 `width` 自动换行。
+
+<ComponentPreview name="control-panel-actions-demo" />
+
+## API
+
+### ControlPanel
+
+<PropsTable name="control-panel" component="ControlPanel" />
+
+### ControlPanelHeader
+
+<PropsTable name="control-panel" component="ControlPanelHeader" />
+
+### ControlPanelTitle
+
+`<span>`，默认 `text-xs` 的次要色文字，过长时省略。需要标题语义时在外层自己加 `<h2>`，或给 `ControlPanel` 加 `aria-label`。
+
+<PropsTable name="control-panel" component="ControlPanelTitle" />
+
+### ControlPanelActions
+
+<PropsTable name="control-panel" component="ControlPanelActions" />
+
+### ControlPanelGroup
+
+<PropsTable name="control-panel" component="ControlPanelGroup" />
+
+`columns` 只在 640px 以上生效，窄屏一律单列；组内的子元素是网格项，用 `sm:col-span-2` / `sm:col-span-3` 跨列。子级容器需要 `min-w-0`，否则里面的 `truncate` 撑不开。
+
+### ControlPanelCopy
+
+<PropsTable name="control-panel" component="ControlPanelCopy" />
+
+### ControlPanelReset
+
+<PropsTable name="control-panel" component="ControlPanelReset" />
+
+### formatJsx
+
+```ts
+function formatJsx(
+  component: string,
+  props: Record<string, unknown>,
+  options?: { width?: number; children?: string },
+): string
+```
+
+`width` 默认 `72`。传 `children` 时输出带子内容的完整标签（内容缩进两格），不传时是自闭合标签。
+
+## 类型
+
+```ts
+type ControlPanelGroupProps = React.ComponentProps<"div"> & {
+  title?: React.ReactNode
+  /** 宽屏下的列数，窄屏一律单列
+   *  @default 1 */
+  columns?: 1 | 2 | 3
+}
+
+type ControlPanelCopyProps = Omit<
+  React.ComponentProps<"button">,
+  "onClick" | "children"
+> & {
+  /** 要复制的文本；传函数时在点击那一刻才求值 */
+  code: string | (() => string)
+  /** 按钮的可访问名称
+   *  @default "复制代码" */
+  label?: string
+  /** 复制成功后的提示，读屏会朗读
+   *  @default "已复制" */
+  copiedLabel?: string
+}
+
+type ControlPanelResetProps = React.ComponentProps<"button"> & {
+  /** 按钮的可访问名称
+   *  @default "恢复默认" */
+  label?: string
+}
+
+type FormatJsxOptions = {
+  /** 单行的最大宽度
+   *  @default 72 */
+  width?: number
+  /** 写在标签里的子内容；不传时输出自闭合标签 */
+  children?: string
+}
+```
+
+## data-slot
+
+| 元素         | `data-slot`                 |
+| ------------ | --------------------------- |
+| 根元素       | `control-panel`             |
+| 标题栏       | `control-panel-header`      |
+| 标题         | `control-panel-title`       |
+| 标题栏操作区 | `control-panel-actions`     |
+| 分组         | `control-panel-group`       |
+| 分组小标题   | `control-panel-group-title` |
+| 分组网格     | `control-panel-grid`        |
+| 复制按钮     | `control-panel-copy`        |
+| 恢复按钮     | `control-panel-reset`       |
+
+复制按钮在复制成功后的 1.5 秒里带 `data-copied`，可以据此加样式。
+
+## 可访问性
+
+- `ControlPanelTitle` 是 `<span>`：它只是视觉上的标题，不进文档大纲。需要让读屏知道这块面板是什么，给 `ControlPanel` 传 `aria-label` 或 `aria-labelledby`。
+- `ControlPanelGroup` 渲染 `role="group"`，有小标题时用 `aria-labelledby` 关联到标题，读屏在组内切换时会念出组名。
+- `ControlPanelCopy` 与 `ControlPanelReset` 是纯图标按钮，必须有名称：`label` 同时写进 `aria-label` 与 `title`（悬停提示）。
+- 复制结果放在 `aria-live="polite"` 的 `sr-only` 元素里播报，视觉上只有图标变化。
+- 两个按钮都是 `icon-sm`（28px），与 `ControlPanelActions` 里自己加的文字按钮保持同一档高度。
+
+## 注意事项
+
+- 面板不持有状态，也不提供 `onReset`。恢复默认由 `ControlPanelReset` 的 `onClick` 交回给你，因为默认值只有你知道。
+- `navigator.clipboard` 只在安全上下文（https 或 localhost）可用，不可用时复制静默失败，不弹错、不改图标。需要兼容时自己判断 `navigator.clipboard` 再决定是否渲染复制按钮。
+- 复制按钮不依赖 `Button` 组件，只用它的 `buttonVariants`；安装本条目时会一并拉取 `button`。
+- 相邻分组之间的分隔线由 `[[data-slot=control-panel-group]+&]` 这条相邻选择器画出。自己往面板里插别的元素时，分隔线不会出现在那个元素与分组之间。
+- 面板本身没有内边距，分组自己带 `p-3`。把面板嵌进别的卡片时，用 `className="rounded-none border-0"` 去掉自身的边框与圆角。
+
+## 源码
+
+<ComponentSource name="control-panel" />

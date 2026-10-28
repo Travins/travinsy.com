@@ -30,6 +30,8 @@ const fitClasses: Record<string, string> = {
   timeline: "max-lg:scale-[0.85]",
   "card-stack": "max-lg:scale-90",
   orbit: "max-lg:scale-[0.85]",
+  // 门面示例窄屏时预览与面板堆成两段，缩到画框里才看得全
+  "control-panel": "max-lg:scale-[0.72]",
 }
 
 /**
