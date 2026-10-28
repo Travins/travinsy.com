@@ -151,4 +151,4 @@ public/r/           构建生成的 registry JSON
 
 ## 许可证
 
-开源协议待定。
+[MIT](./LICENSE) © Travins

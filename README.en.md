@@ -153,4 +153,4 @@ Issues and pull requests are welcome. Before changing a component, read [`AGENTS
 
 ## License
 
-The license has not been decided yet.
+[MIT](./LICENSE) © Travins
