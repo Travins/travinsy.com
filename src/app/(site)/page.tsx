@@ -4,14 +4,16 @@ import type { ComponentType, SVGProps } from "react"
 
 import { PostEntry } from "@/components/blog/post-entry"
 import { GitHubMark, XMark } from "@/components/home/brand-icons"
+import { EntryShowcase } from "@/components/home/entry-showcase"
 import { FeaturedBento } from "@/components/home/featured-bento"
+import { HeroMark } from "@/components/home/hero-mark"
+import { InstallShowcase } from "@/components/home/install-showcase"
 import { RoleRotator } from "@/components/home/role-rotator"
 import { SectionFrame } from "@/components/home/section-frame"
 import FlowDiagramAgentDemo from "@/registry/examples/flow-diagram-agent-demo"
 import FlowDiagramDeployDemo from "@/registry/examples/flow-diagram-deploy-demo"
 import FlowDiagramFullstackDemo from "@/registry/examples/flow-diagram-fullstack-demo"
 import { TechIcon, techBrandStyle } from "@/components/home/tech-icon"
-import { TerminalCard } from "@/components/home/terminal-card"
 import { buttonVariants } from "@/components/ui/button"
 import { profile } from "@/config/profile"
 import { formatBlogDate } from "@/lib/blog"
@@ -109,16 +111,8 @@ export default function HomePage() {
               </ul>
             </div>
           </div>
-          <div className="relative flex items-center justify-center border-t border-dashed border-edge px-4 py-10 sm:px-6 lg:border-t-0 lg:border-l lg:border-solid lg:px-14">
-            {/* 点阵底纹向四周淡出，让终端卡片像摆在图纸上 */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_85%)]"
-            />
-            <TerminalCard
-              title={profile.terminal.title}
-              steps={profile.terminal.steps}
-            />
+          <div className="min-w-0 border-t border-dashed border-edge lg:border-t-0 lg:border-l lg:border-solid">
+            <HeroMark />
           </div>
         </div>
       </GridSection>
@@ -209,9 +203,28 @@ export default function HomePage() {
       >
         <FeaturedBento />
       </SectionFrame>
+      <SectionFrame
+        index="04"
+        name="BLOCKS"
+        title="区块与模板"
+        action={
+          <Link
+            href="/blocks/"
+            className={`${focusClass} font-mono text-xs text-muted-foreground`}
+          >
+            全部区块{" "}
+            <ArrowUpRight aria-hidden="true" className="inline size-3" />
+          </Link>
+        }
+      >
+        <EntryShowcase />
+      </SectionFrame>
+      <SectionFrame index="05" name="INSTALL" title="一行命令安装">
+        <InstallShowcase />
+      </SectionFrame>
       {posts.length > 0 && (
         <SectionFrame
-          index="04"
+          index="06"
           name="NOTES"
           title="最新文章"
           action={
@@ -248,7 +261,7 @@ export default function HomePage() {
         </SectionFrame>
       )}
       <GridSeparator />
-      <SectionFrame index="05" name="ABOUT" title="关于我">
+      <SectionFrame index="07" name="ABOUT" title="关于我">
         <GridColumns>
           {profile.about.map((paragraph) => (
             <p

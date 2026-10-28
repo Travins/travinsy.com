@@ -1,8 +1,8 @@
 "use client"
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
+import { TextFlip } from "@/registry/ui/text-animate/text-animate"
 
 /** 播放 / 暂停按钮的读屏名称 */
 const LABELS = {
@@ -10,19 +10,12 @@ const LABELS = {
   playRoles: "播放职业标签",
 } as const
 
-/** 职业标签轮播：每 3.2 秒切换一次，可暂停；系统开启「减少动态效果」时不自动轮播。 */
+/**
+ * 职业标签轮换：用 TextFlip 每 3.2 秒切换一次，可暂停；系统开启「减少动态效果」时不自动轮换，也不显示暂停按钮。
+ * TextFlip 自带读屏全文与宽度过渡；这里额外用隐形副本把占位宽度撑到最长那项，切换时暂停按钮不会左右跳。
+ */
 function RoleRotator({ roles }: { roles: readonly string[] }) {
-  const reducedMotion = useReducedMotion()
-  const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
-  useEffect(() => {
-    if (reducedMotion || paused || roles.length < 2) return
-    const timer = window.setInterval(
-      () => setIndex((value) => (value + 1) % roles.length),
-      3200,
-    )
-    return () => window.clearInterval(timer)
-  }, [paused, reducedMotion, roles.length])
   if (!roles.length) return null
   return (
     <div
@@ -33,27 +26,25 @@ function RoleRotator({ roles }: { roles: readonly string[] }) {
       <span aria-hidden="true" className="text-primary">
         ↳
       </span>
-      {/* 读屏一次性读出全部标签，视觉上的轮播对读屏隐藏 */}
-      <span className="sr-only">{roles.join("、")}</span>
-      {/* 所有标签叠在同一个 grid 单元里：隐形副本把宽度撑到最长那项，切换时暂停按钮不会左右跳 */}
-      <span aria-hidden="true" className="grid min-w-0">
+      <span className="grid min-w-0">
         {roles.map((role) => (
-          <span key={role} className="invisible col-start-1 row-start-1">
+          <span
+            key={role}
+            aria-hidden="true"
+            className="invisible col-start-1 row-start-1 px-1"
+          >
             {role}
           </span>
         ))}
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.span
-            key={index}
-            className="col-start-1 row-start-1"
-            initial={{ opacity: 0, y: reducedMotion ? 0 : 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: reducedMotion ? 0 : -5 }}
-            transition={{ duration: 0.18 }}
-          >
-            {roles[index]}
-          </motion.span>
-        </AnimatePresence>
+        <TextFlip
+          words={[...roles]}
+          paused={paused}
+          interval={3200}
+          variant="underline"
+          className="col-start-1 row-start-1 justify-self-start"
+        >
+          {roles.join("、")}
+        </TextFlip>
       </span>
       {roles.length > 1 ? (
         <button

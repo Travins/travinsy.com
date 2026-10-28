@@ -1,29 +1,11 @@
-"use client"
-
 import Link from "next/link"
-import {
-  createContext,
-  useContext,
-  useId,
-  useState,
-  type ComponentProps,
-  type ReactNode,
-} from "react"
+import { useId, type ComponentProps, type ReactNode } from "react"
 import { ArrowUpRight } from "lucide-react"
-
-import FlowDiagramShowcaseDemo from "@/registry/examples/flow-diagram-showcase-demo"
-
-/** 悬停时流程图的播放倍率：加快一点，提示这张图是活的。 */
-const HOVER_SPEED = 2
-
-/** 卡片当前是否被悬停或键盘聚焦，供卡片里的预览做出反应。 */
-const BentoActiveContext = createContext(false)
 
 /**
  * Bento 里的一张卡：上面是组件的实时预览，底部是标题行。
  * 预览保持组件自身的交互（悬停、点击都生效），只有标题行是进入文档的链接：
  * 链接铺满标题行，悬停或聚焦它时顶边亮起一条主色细线、箭头抬起。
- * 鼠标停在卡片上（或键盘聚焦到链接）时，预览通过上下文得知，流程图据此加速。
  */
 function BentoCard({
   href,
@@ -35,7 +17,7 @@ function BentoCard({
   ...props
 }: Omit<ComponentProps<typeof Link>, "href" | "children"> & {
   href: string
-  /** 预览区的读屏名称，如「流程图演示」 */
+  /** 预览区的读屏名称，如「地球演示」 */
   label: string
   /** 组件的实时预览 */
   preview: ReactNode
@@ -44,16 +26,11 @@ function BentoCard({
   /** 标题，由服务端渲染后传入 */
   children: ReactNode
 }) {
-  const [active, setActive] = useState(false)
   const titleId = useId()
 
   return (
     <div
       data-slot="bento-card"
-      onPointerEnter={() => setActive(true)}
-      onPointerLeave={() => setActive(false)}
-      onFocus={() => setActive(true)}
-      onBlur={() => setActive(false)}
       className={`group/card relative flex h-full min-w-0 flex-col ${className ?? ""}`}
     >
       <span
@@ -65,7 +42,7 @@ function BentoCard({
         aria-label={label}
         className={`relative min-h-0 flex-auto overflow-hidden lg:flex-1 ${previewClassName ?? ""}`}
       >
-        <BentoActiveContext value={active}>{preview}</BentoActiveContext>
+        {preview}
       </div>
       <div className="group/link relative flex items-start justify-between gap-3 border-t border-edge px-4 py-3 transition-colors has-[a:focus-visible]:bg-muted/30 has-[a:hover]:bg-muted/30 sm:px-5">
         <h3
@@ -90,17 +67,4 @@ function BentoCard({
   )
 }
 
-/** 首位大卡里的流程图：悬停或聚焦所在卡片时加速播放。 */
-function BentoFlowPreview() {
-  const active = useContext(BentoActiveContext)
-  return (
-    <div className="size-full bg-muted/20 p-4 sm:p-6 lg:p-8">
-      <FlowDiagramShowcaseDemo
-        speed={active ? HOVER_SPEED : 1}
-        className="size-full max-w-none"
-      />
-    </div>
-  )
-}
-
-export { BentoCard, BentoFlowPreview }
+export { BentoCard }

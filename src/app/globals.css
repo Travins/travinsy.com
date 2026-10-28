@@ -9,21 +9,6 @@
 /* 支持局部强制亮色：.dark 祖先下的 .light 容器内不触发 dark: 变体（主题预览用） */
 @custom-variant dark (&:where(.dark, .dark *):not(:where(.light, .light *)));
 
-/* 终端卡片的光标闪烁 */
-@theme {
-  --animate-caret: caret-blink 1.1s steps(1, end) infinite;
-  @keyframes caret-blink {
-    0%,
-    50% {
-      opacity: 1;
-    }
-    50.01%,
-    100% {
-      opacity: 0;
-    }
-  }
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
