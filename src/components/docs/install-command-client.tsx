@@ -149,20 +149,31 @@ function CommandFrame({
   )
 }
 
+type EntryRef = { name: string; title: string; href: string }
+
 export function InstallCommandClient({
   name,
   bare,
-  dependencies,
-  children,
+  npm,
+  shadcn,
+  entries,
+  source,
+  css,
 }: {
   name: string
   bare: boolean
-  dependencies: string[]
-  children: ReactNode
+  /** 本条目及依赖条目用到的 npm 包 */
+  npm: string[]
+  /** 本条目及依赖条目用到的 shadcn 官方组件 */
+  shadcn: string[]
+  /** 需要先装好的本站条目，被依赖的排在前面 */
+  entries: EntryRef[]
+  source: ReactNode
+  css: ReactNode
 }) {
-  const [source, setSource] = useSource()
+  const [installSource, setSource] = useSource()
   const target =
-    source === "namespace"
+    installSource === "namespace"
       ? `@travinsy/${name}`
       : `${siteConfig.url}/r/${name}.json`
   const command = (manager: Manager) =>
@@ -170,11 +181,83 @@ export function InstallCommandClient({
   const frame = (
     <CommandFrame
       commandFor={command}
-      source={{ value: source, onChange: setSource }}
+      source={{ value: installSource, onChange: setSource }}
       flat={bare}
     />
   )
   if (bare) return frame
+
+  const hasPrereq = shadcn.length > 0 || entries.length > 0
+  const steps: { title: string; hint?: ReactNode; body: ReactNode }[] = []
+  if (hasPrereq)
+    steps.push({
+      title: "先装依赖条目",
+      hint: "下面这些会被本条目的源码直接引入，需要先装好。",
+      body: (
+        <div className="flex flex-col gap-4">
+          {shadcn.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <div className="text-[13px] leading-6 text-muted-foreground">
+                shadcn 官方组件，用 CLI 安装（会按你的底座与风格生成）：
+              </div>
+              <CommandFrame
+                commandFor={(manager) =>
+                  `${managers[manager].dlx} shadcn@latest add ${shadcn.join(" ")}`
+                }
+              />
+            </div>
+          )}
+          {entries.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <div className="text-[13px] leading-6 text-muted-foreground">
+                本站条目，按顺序打开各自的文档页，用「手动」或「命令」装好（它们的
+                npm 包与样式已汇总在下面两步，不必重复）：
+              </div>
+              <ol className="flex flex-col gap-1 text-[13px] leading-6">
+                {entries.map((entry) => (
+                  <li key={entry.name} className="flex items-baseline gap-2">
+                    <Link
+                      href={entry.href}
+                      className="underline underline-offset-4"
+                    >
+                      {entry.title}
+                    </Link>
+                    <code className="font-mono text-xs text-muted-foreground">
+                      {entry.name}
+                    </code>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </div>
+      ),
+    })
+  if (npm.length > 0)
+    steps.push({
+      title: "安装 npm 依赖",
+      hint: entries.length > 0 ? "已包含上面依赖条目需要的包。" : undefined,
+      body: (
+        <CommandFrame
+          commandFor={(manager) => `${managers[manager].add} ${npm.join(" ")}`}
+        />
+      ),
+    })
+  steps.push({
+    title: "复制源码",
+    hint: "每个文件标题是安装路径：默认在 src/ 下（没有 src 目录则在项目根），以 components.json 的别名为准。源码从 @/lib/utils 引入 cn，shadcn 初始化时已生成。",
+    body: (
+      <div className="flex flex-col gap-4 [&_[data-slot=doc-frame]]:my-0">
+        {source}
+      </div>
+    ),
+  })
+  if (css)
+    steps.push({
+      title: "合并样式",
+      hint: "合并进全局样式（如 app/globals.css）。已有的变量和工具类不用重复添加，CLI 安装会自动完成这一步。",
+      body: <div className="[&_[data-slot=doc-frame]]:my-0">{css}</div>,
+    })
 
   return (
     <div className="not-prose my-6 min-w-0">
@@ -185,7 +268,7 @@ export function InstallCommandClient({
         </DocTabsList>
         <TabsContent value="command" className="flex flex-col gap-3">
           {frame}
-          {source === "namespace" && (
+          {installSource === "namespace" && (
             <div className="text-[13px] leading-6 text-muted-foreground">
               请先按{" "}
               <Link
@@ -197,41 +280,49 @@ export function InstallCommandClient({
               配置 @travinsy 命名空间。
             </div>
           )}
+          {hasPrereq && (
+            <div className="text-[13px] leading-6 text-muted-foreground">
+              会连带安装
+              {shadcn.length > 0 && (
+                <>
+                  {" "}
+                  shadcn 组件{" "}
+                  <span className="font-mono text-xs">{shadcn.join("、")}</span>
+                </>
+              )}
+              {shadcn.length > 0 && entries.length > 0 && "，"}
+              {entries.length > 0 && (
+                <>
+                  {" "}
+                  本站条目{" "}
+                  {entries.map((entry, index) => (
+                    <span key={entry.name}>
+                      {index > 0 && "、"}
+                      <Link
+                        href={entry.href}
+                        className="font-mono text-xs underline underline-offset-4"
+                      >
+                        {entry.name}
+                      </Link>
+                    </span>
+                  ))}
+                </>
+              )}
+              。已存在的文件会询问是否覆盖。
+            </div>
+          )}
         </TabsContent>
         <TabsContent value="manual" className="flex flex-col gap-5">
-          {dependencies.length > 0 && (
-            <ManualStep index={1} title="安装依赖">
-              <CommandFrame
-                commandFor={(manager) =>
-                  `${managers[manager].add} ${dependencies.join(" ")}`
-                }
-              />
-            </ManualStep>
-          )}
-          <ManualStep
-            index={dependencies.length > 0 ? 2 : 1}
-            title="复制源码"
-            hint="将下面的源码复制到项目中，并确认 @/lib/utils 导出 cn。"
-          >
-            <div className="flex flex-col gap-4 [&_[data-slot=doc-frame]]:my-0">
-              {children}
-            </div>
-          </ManualStep>
-          <ManualStep
-            index={dependencies.length > 0 ? 3 : 2}
-            title="合并样式"
-            hint="将 Registry JSON 中的 css 与 cssVars 合并到全局样式；CLI 安装会自动完成这一步。"
-          >
-            <a
-              className="text-[13px] underline underline-offset-4"
-              href={`${siteConfig.url}/r/${name}.json`}
-              target="_blank"
-              rel="noreferrer"
+          {steps.map((step, index) => (
+            <ManualStep
+              key={step.title}
+              index={index + 1}
+              title={step.title}
+              hint={step.hint}
             >
-              查看 CSS 工具类和变量
-              <span className="sr-only">（在新标签页中打开）</span>
-            </a>
-          </ManualStep>
+              {step.body}
+            </ManualStep>
+          ))}
         </TabsContent>
       </Tabs>
     </div>
@@ -246,7 +337,7 @@ function ManualStep({
 }: {
   index: number
   title: string
-  hint?: string
+  hint?: ReactNode
   children: ReactNode
 }) {
   return (

@@ -1,36 +1,149 @@
 ---
 title: 安装
 titleEn: Installation
-description: 初始化 shadcn，用完整 URL 安装第一个组件，了解安装后的文件落在哪里。
+description: 前置条件、用 shadcn 初始化 Base UI 底座、安装第一个组件，以及安装后文件、依赖与样式落在哪里。
 ---
+
+## 前置条件
+
+| 项 | 要求 |
+| --- | --- |
+| React | 19（源码把 `ref` 当普通属性传，并用到 React 19 的 `<style precedence>`） |
+| Tailwind CSS | v4（条目用 `@utility` 与 `@theme inline` 写样式） |
+| shadcn/ui | 已初始化，底座选 **Base UI**（`components.json` 里 `style` 以 `base-` 开头，如 `base-nova`） |
+| Node.js | 20.18 以上（shadcn CLI 的要求） |
+| 框架 | 组件本身不绑框架；区块和模板里的页面文件按 Next.js App Router 写，`app-shell-01` 还引入了 `next/link` 与 `next/navigation` |
+
+为什么要 Base UI：条目里用到 shadcn 原语（`button`、`dropdown-menu`、`tooltip` 等）的地方，用的是 Base UI 的 `render` 属性，不是 Radix 的 `asChild`；`value-slider`、`toggle-switch`、`segmented-control` 等还直接引入 `@base-ui/react`。CLI 会按你项目的底座生成原语，所以在 Radix 项目里装 `app-shell-01` 会类型报错，详见下面的[常见问题](#常见问题)。
+
+以上要求在 Next.js 16、React 19、Tailwind CSS v4 与 shadcn CLI 4.23 下实测通过。
 
 ## 准备项目
 
-组件使用 React、Tailwind CSS v4 和 shadcn/ui。已有项目请先初始化 shadcn，生成 `components.json` 和基础样式。
+没有项目时，让 shadcn 直接建一个 Next.js 项目并选好 Base UI：
 
 ```bash title="终端"
-pnpm dlx shadcn@latest init
+pnpm dlx shadcn@latest init -t next -b base -p nova -n my-app
 ```
 
-没有项目时，可以先用 `pnpm create next-app` 创建 Next.js 应用，再运行上面的命令。
+已有 Next.js 项目，在项目根目录初始化：
+
+```bash title="终端"
+pnpm dlx shadcn@latest init -b base -p nova
+```
+
+`-b base` 选择 Base UI 底座，`-p nova` 选择 Nova 预设，两者合起来就是 `base-nova`。不带参数运行 `init` 也可以，在提示里选 Base UI。完成后确认 `components.json` 的关键字段：
+
+```json title="components.json"
+{
+  "style": "base-nova",
+  "tailwind": { "css": "src/app/globals.css", "cssVariables": true },
+  "aliases": { "components": "@/components", "ui": "@/components/ui", "lib": "@/lib", "hooks": "@/hooks" }
+}
+```
+
+条目源码里的 `@/components/…`、`@/lib/utils`、`@/hooks/…` 会按这里的 `aliases` 改写，不需要手动改 import。
 
 ## 安装第一个组件
 
-默认推荐用完整 URL 安装，无需任何额外配置。
+默认用完整 URL 安装，不需要额外配置。
 
 <InstallCommand name="grid-layout" />
 
-也可以将 `pnpm dlx` 换成 `npx`、`yarn dlx` 或 `bunx`。CLI 会安装组件源码，并将条目依赖的 CSS 工具类和主题变量写入项目样式。
+`pnpm dlx` 可以换成 `npx`、`yarn dlx` 或 `bunx`，命令框顶部的标签可以切换。想用更短的命令，见 [Registry 与命名空间](/docs/registry/)。
 
-想用更短的命令，见 [Registry 与命名空间](/docs/registry/)。
+## 安装后发生了什么
 
-## 源码归属
+CLI 做三件事：写入源码文件、安装 npm 依赖、把样式合并进全局 CSS。
 
-安装后的组件就是你的项目源码，可以直接修改。线条网格条目安装到 `components/ui/grid-layout/grid-layout.tsx`，导入路径以 CLI 的实际输出为准。
+### 文件落在哪里
 
-组件依赖 `@/lib/utils` 导出的 `cn`，shadcn 初始化时已经生成。
+路径按条目类型决定；项目有 `src/` 目录时都会加上 `src/` 前缀（实测 `src/components/ui/…`，不带 `src/` 的项目是 `components/ui/…`）。
+
+| 类型 | 落点 | 例子 |
+| --- | --- | --- |
+| 组件 `registry:ui` | `components/ui/<name>/` | `components/ui/grid-layout/grid-layout.tsx` |
+| 区块、模板的组件 | `components/<name>/` | `components/auth-01/auth-01.tsx` |
+| 区块、模板的页面 | `app/…`，路径由条目指定 | `auth-01` 写入 `app/login/page.tsx`，`app-shell-01` 写入 `app/(app)/dashboard/page.tsx` |
+| 共用 hook 与工具 | `hooks/`、`lib/` | `hooks/use-controllable-state.ts`、`lib/data-display.ts` |
+
+文件装进项目后就是你的源码，可以直接改。每个条目页「手动」标签里的文件标题就是这里的落点。
+
+### 依赖会连带安装
+
+条目通过 `registryDependencies` 声明依赖，CLI 会把它们一起装上：
+
+- **shadcn 官方组件**：例如 `control-panel` 会生成 `components/ui/button.tsx`。已经装过的不会重复写。
+- **本站其他条目**：例如装 `value-slider` 会带上 `flow-diagram`（它再依赖 `grid-layout`）和 `hooks/use-controllable-state.ts`，一次写入十几个文件。
+- **npm 包**：`motion`、`@base-ui/react`、`recharts` 等由 CLI 直接装进 `package.json`，用你项目的包管理器。
+
+多个条目共用的文件（`grid-layout`、`flow-diagram`、`use-controllable-state` 等）只写一份，后装的条目会跳过已存在的同名文件。
+
+### 样式与变量
+
+线条网格依赖几个全局变量和工具类，它们由用到的条目写入你的全局样式（如 `app/globals.css`），不需要手抄：
+
+| 内容 | 由谁写入 | 说明 |
+| --- | --- | --- |
+| `--edge`，以及 `@theme inline` 里的 `--color-edge` | `grid-layout`、`stat-card`、`chart-card`、`control-panel` 等用到线条的条目 | 线条颜色，由 `--foreground` 按比例混合，对应 `border-edge` 等工具类，亮暗各一份 |
+| `--flow-blue` 等 6 个 `--flow-*` | `flow-diagram`、`stat-card`、`mini-chart`、`chart-card`、`greeting` | 流程图与图表的辅助色，亮暗各一份 |
+| `screen-line-top`、`pattern-ruler`、`bg-grid` 等 `@utility` | `grid-layout` | 全宽横线、点阵与刻度尺分隔带 |
+| `html, body { overflow-x: clip }`（`@layer base`） | `grid-layout` | 全宽横线比视口宽，用它避免出现横向滚动条 |
+
+CLI 还会在 `@theme inline` 里多写一行 `--edge: var(--edge)`，这是 CLI 对自定义变量的固定写法，不影响显示。变量的值可以随时改，见[主题定制](/docs/theming/)。
+
+### 已经有同名文件时
+
+- 默认会逐个询问：`... already exists. Would you like to overwrite it?`
+- 加 `-y`（跳过确认）时，已存在的文件会被跳过，输出里是 `Skipped ... files might be identical`。
+- 加 `-o`（`--overwrite`）强制覆盖，会丢掉你对这些文件的修改。
+- 想先看会改什么：`--dry-run` 只预览，`--diff` 看差异，`--view` 看文件内容。
+
+```bash title="终端"
+pnpm dlx shadcn@latest add https://travinsy.com/r/value-slider.json --dry-run
+```
+
+## 手动安装
+
+不想用 CLI 时，条目页的「手动」标签把需要做的事列全了：先装依赖条目与 shadcn 组件、安装 npm 包、复制源码（标题是安装路径）、合并样式（给出要写进全局样式的完整 CSS）。npm 包与样式已经把依赖条目的部分汇总在内，依赖条目只需要复制它们的源码文件。
 
 ## 下一步
 
 - 浏览[组件](/components/)、[区块](/blocks/)与[模板](/templates/)。
-- 阅读[主题定制](/docs/theming/)，了解线条颜色与亮暗模式如何工作。
+- 阅读[主题定制](/docs/theming/)，了解线条颜色、亮暗模式与颜色主题如何安装。
+- 让 AI 编辑器直接检索和安装条目，见 [AI 与 llms.txt](/docs/llms/)。
+
+## 常见问题
+
+### CLI 报 `other side closed`
+
+实测在同时设置了 `HTTP_PROXY`/`HTTPS_PROXY` 与 SOCKS 的 `ALL_PROXY`（`socks5h://…`）时，CLI 请求 `ui.shadcn.com` 会以 `other side closed` 失败；去掉 SOCKS 变量后同一条命令正常：
+
+```bash title="终端"
+env -u ALL_PROXY -u all_proxy pnpm dlx shadcn@latest add https://travinsy.com/r/grid-layout.json
+```
+
+### 项目是 Radix 底座，能用吗
+
+不推荐，但大部分条目能用。CLI 会按项目底座生成 shadcn 原语，所以安装本身不会报错。实测在 `radix-nova` 项目里装全部 30 个条目：
+
+- 只有 `app-shell-01` 的类型检查失败，共 5 处，都是 Base UI 与 Radix 的写法差异：`DialogTrigger`、`PopoverTrigger`、`TooltipTrigger`、`DropdownMenuTrigger` 没有 `render` 属性，`Tooltip` 没有 `disabled` 属性。
+- 其余条目类型检查通过；`auth-01`、`settings-01`、`agent-chat-01` 的页面构建后能正常打开。
+
+要在 Radix 项目里用 `app-shell-01`，需要自己改这 5 处；更省事的做法是换成 Base UI 底座。
+
+### 找不到 `@/components/ui/...` 模块
+
+检查 `tsconfig.json` 的 `paths` 与 `components.json` 的 `aliases` 是否一致。文件写到了 `components.json` 指定的别名目录，而不是固定的 `components/ui`。
+
+### 样式没生效：线条不显示、`border-edge` 无效
+
+打开全局样式，确认有 `--edge`（`:root` 与 `.dark`）和 `@theme inline` 里的 `--color-edge: var(--edge)`。改过全局 CSS 后 Turbopack 不更新时，删掉 `.next` 目录再启动。
+
+### 服务端组件里调用 `flowRoute` 报错
+
+报错形如 `Attempted to call flowRoute() from the server`。`flow-diagram.tsx` 是客户端模块，服务端组件不能直接调用它再导出的函数。在带 `"use client"` 的文件里使用，或在服务端组件里改从 `flow-diagram/route.ts` 引入 `flowRoute`、`flowArrival`。
+
+### CLI 末尾提示给应用包上 `TooltipProvider`
+
+这是 shadcn 安装 `tooltip` 时的通用提示。`app-shell-01` 已经自带 `TooltipProvider`，不用再包。

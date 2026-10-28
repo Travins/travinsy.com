@@ -8,19 +8,25 @@ description: 主题变量如何控制颜色与线条，亮暗模式与颜色主�
 
 所有组件只使用 shadcn 的语义变量：`background`、`foreground`、`muted-foreground`、`primary`、`border` 等，不写死任何颜色。换一套变量，整站颜色就随之改变。
 
-线条网格额外引入一个变量 `--edge`，由前景色按比例混合得到，用于所有线条和分隔带：
+线条网格额外引入一个变量 `--edge`，由前景色按比例混合得到，用于所有线条和分隔带。CLI 安装条目时写入你的 `globals.css` 的是这样的：
 
 ```css title="globals.css"
+@theme inline {
+  --color-edge: var(--edge);
+}
+
 :root {
-  --edge: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --edge: color-mix(in oklch, var(--foreground) 12%, transparent);
 }
 
 .dark {
-  --edge: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --edge: color-mix(in oklch, var(--foreground) 18%, transparent);
 }
 ```
 
-因为 `--edge` 跟随 `foreground` 计算，切换任何颜色主题后线条都会自动适配。安装 `grid-layout` 时 CLI 会一并写入它。
+`@theme inline` 里的 `--color-edge` 让 `border-edge`、`bg-edge` 这些工具类可用。因为 `--edge` 跟随 `foreground` 计算，切换任何颜色主题后线条都会自动适配。`grid-layout` 以及 `stat-card`、`chart-card`、`control-panel` 等用到线条的条目都会写入它，已存在时不会重复添加。
+
+流程图与图表的辅助色 `--flow-blue`、`--flow-green`、`--flow-amber`、`--flow-rose`、`--flow-violet`、`--flow-cyan` 同样以亮、暗各一份写入 `:root` 与 `.dark`，由 `flow-diagram`、`stat-card` 等条目带来，不随颜色主题变化，亮暗模式下都保证看得清。
 
 ## 亮暗模式
 
@@ -30,7 +36,7 @@ description: 主题变量如何控制颜色与线条，亮暗模式与颜色主�
 
 本站提供 14 套颜色主题，色值取自 Tailwind CSS v4 默认调色板（oklch），可以在[颜色主题](/themes/)页面实时预览，切换主题与亮暗模式，并复制 CSS。主题名统一按「中文 · English」显示，英文名就是 Tailwind 的色名，也是安装时用的 id。
 
-颜色主题通过 `html` 上的 `data-theme` 属性启用。
+本站自己用 `html` 上的 `data-theme` 属性切换颜色主题。你的项目里安装主题则是另一回事，见下面的「安装主题」。
 
 ### 中性基底 · Neutrals
 
@@ -58,7 +64,7 @@ description: 主题变量如何控制颜色与线条，亮暗模式与颜色主�
 
 ## 安装主题
 
-每套主题都是一个 `registry:theme` 条目，命名为 `theme-<id>`，只写入 CSS 变量：
+每套主题都是一个 `registry:theme` 条目，命名为 `theme-<id>`，只写入 CSS 变量，不写文件、不装依赖：
 
 ```bash title="终端"
 pnpm dlx shadcn@latest add https://travinsy.com/r/theme-blue.json
@@ -70,7 +76,9 @@ pnpm dlx shadcn@latest add https://travinsy.com/r/theme-blue.json
 pnpm dlx shadcn@latest add @travinsy/theme-blue
 ```
 
-主题不包含 `--radius`，圆角仍由你的 `globals.css` 决定。
+实测（`theme-blue`）：CLI 会直接改写 `globals.css` 里 `:root` 与 `.dark` 中已有的同名变量，共 31 个（`--background`、`--primary`、`--chart-1`~`--chart-5`、`--sidebar-*` 等），**不会**生成 `data-theme` 选择器，所以一个项目同一时间只有一套主题，装另一套就是覆盖。改过这些变量的话，先提交或备份再安装。
+
+主题不包含 `--radius`，圆角仍由你的 `globals.css` 决定；也不包含 `--edge` 与 `--flow-*`，线条随新主题的 `foreground` 自动变色。想像本站一样在运行时切换多套主题，需要自己把各套变量写成 `:root[data-theme="…"]` 选择器，可以参考[颜色主题](/themes/)页面复制的 CSS。
 
 ## 自定义
 

@@ -2,6 +2,8 @@ import { siteConfig } from "@/config/site"
 import registry from "../../../registry.json"
 
 export type RegistryFile = { path: string; type: string; target?: string }
+/** registry-item 的 css 字段：选择器 / at-rule 为键，声明或嵌套规则为值。 */
+export type CssTree = { [key: string]: string | CssTree }
 export type RegistryItem = {
   name: string
   type: string
@@ -10,6 +12,12 @@ export type RegistryItem = {
   dependencies?: string[]
   registryDependencies?: string[]
   files: RegistryFile[]
+  cssVars?: {
+    theme?: Record<string, string>
+    light?: Record<string, string>
+    dark?: Record<string, string>
+  }
+  css?: CssTree
   meta?: { iframeHeight?: string }
 }
 

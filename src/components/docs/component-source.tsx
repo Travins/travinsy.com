@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises"
 import registry from "../../../registry.json"
 import { CodeBlock } from "./code-block"
-import { toInstalledImports } from "./installed-imports"
+import { installedPath, toInstalledImports } from "./installed-imports"
 
 export async function ComponentSource({ name }: { name: string }) {
   const item = registry.items.find((item) => item.name === name)
@@ -13,7 +13,7 @@ export async function ComponentSource({ name }: { name: string }) {
           <CodeBlock
             key={file.path}
             code={toInstalledImports(await readFile(file.path, "utf8"))}
-            title={file.path.split("/").at(-1)}
+            title={installedPath(file)}
           />
         )),
       )}

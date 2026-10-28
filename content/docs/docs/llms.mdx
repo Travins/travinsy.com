@@ -20,8 +20,12 @@ description: 让 AI 编辑器与 Agent 读取本站文档，并通过 shadcn MCP
 向 Agent 提需求时，建议明确写出：
 
 - 使用 travinsy 的哪个条目，例如「用 `@travinsy/grid-layout` 搭页面骨架」。
+- 项目要先按[安装](/docs/installation/)初始化 shadcn，底座选 Base UI；让 Agent 先看 `components.json` 的 `style` 是否以 `base-` 开头。
+- 安装前先加 `--dry-run` 看会写入哪些文件，已有同名文件默认不要覆盖。
 - 颜色只用主题变量，不要硬编码。
 - 安装后源码属于项目，可以按需修改。
+
+如果 Agent 的运行环境设置了 SOCKS 代理（`ALL_PROXY`），shadcn CLI 可能以 `other side closed` 失败，让它用 `env -u ALL_PROXY -u all_proxy` 去掉该变量再运行，详见[安装](/docs/installation/#常见问题)。
 
 ## shadcn MCP
 

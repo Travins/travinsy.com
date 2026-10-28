@@ -1,10 +1,10 @@
 ---
 title: Registry 与命名空间
 titleEn: Registry & Namespaces
-description: 通过 URL 或 @travinsy 命名空间安装条目，了解目录地址与各类条目。
+description: 通过 URL 或 @travinsy 命名空间安装条目，了解目录地址、各类条目与依赖关系。
 ---
 
-本站的所有条目都以 JSON 形式静态发布在 `/r/` 下，格式遵循 shadcn 的 registry-item 规范。
+本站的所有条目都以 JSON 形式静态发布在 `/r/` 下，格式遵循 shadcn 的 registry-item 规范。开始之前请先按[安装](/docs/installation/)初始化 shadcn（Base UI 底座）。
 
 ## URL 安装
 
@@ -32,24 +32,39 @@ CLI 会把条目名代入 `{name}`，于是命令可以缩短为：
 pnpm dlx shadcn@latest add @travinsy/grid-layout
 ```
 
+两种方式装出来的文件和样式完全一样。
+
 ## 条目目录
 
 完整的条目清单位于 [`/r/registry.json`](https://travinsy.com/r/registry.json)，包含每个条目的类型、依赖与文件列表。可以用它做检索，也可以交给脚本或 AI 工具读取。
 
-也可以用 CLI 直接查看：
+也可以用 CLI 直接查看（需要先配置命名空间）：
 
 ```bash title="终端"
 pnpm dlx shadcn@latest search @travinsy
 pnpm dlx shadcn@latest view @travinsy/grid-layout
 ```
 
+`search` 列出全部条目及说明，`view` 输出条目的完整 JSON，包含每个文件的源码。装之前想知道会写入哪些文件，可以给 `add` 加 `--dry-run`。
+
 ## 条目类型
 
 | 类型 | 内容 | 示例 |
 | --- | --- | --- |
-| `registry:ui` | 单个组件，安装到 `components/ui` | `grid-layout` |
-| `registry:block` | 区块，由多个文件和组件组成 | `auth-01` |
-| `registry:page` | 整页模板，会写入 `app/` 下的页面 | `app-shell-01` |
-| `registry:theme` | 颜色主题，只写入 CSS 变量 | `theme-blue` |
+| `registry:ui` | 单个组件，安装到 `components/ui/<name>/` | `grid-layout` |
+| `registry:block` | 区块，由多个文件和组件组成，页面文件写入 `app/` | `auth-01` |
+| `registry:page` | 整页模板，会写入 `app/` 下的页面与布局 | `app-shell-01` |
+| `registry:theme` | 颜色主题，只写入 CSS 变量，会改写已有的同名变量 | `theme-blue` |
 
-条目之间通过 `registryDependencies` 相互依赖。安装区块时，它用到的组件会一并安装，已存在的文件会提示是否覆盖。
+文件的具体落点、样式写入的内容见[安装](/docs/installation/)。
+
+## 依赖关系
+
+条目之间通过 `registryDependencies` 相互依赖，值有两种：
+
+- shadcn 官方组件名，如 `button`、`input`，由 CLI 按你项目的底座生成。
+- 本站其他条目的完整地址，如 `https://travinsy.com/r/flow-diagram.json`。
+
+安装时依赖会递归解析、一起装上，所以即便你用 `@travinsy/...` 命名空间，CLI 取依赖条目时访问的仍是 `https://travinsy.com/r/` 下的地址。已存在的文件默认会提示是否覆盖，处理方式见[安装](/docs/installation/#已经有同名文件时)。
+
+大层级依赖小层级：区块和模板由组件拼成，组件之间也有依赖，例如 `value-slider` 依赖 `flow-diagram`，`flow-diagram` 再依赖 `grid-layout`。每个条目页的「命令」标签会列出会连带安装的内容，「手动」标签给出完整的依赖清单。

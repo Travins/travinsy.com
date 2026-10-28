@@ -12,12 +12,20 @@ const DEFAULT_DIR: Record<string, string> = {
   templates: "components",
 }
 
-function installedModule(file: RegistryFile) {
+/**
+ * 文件安装到用户项目后的相对路径（不含 `src/` 前缀）：
+ * 有 target 用 target，否则保留类型目录之后的相对路径。
+ */
+export function installedPath(file: RegistryFile) {
   const [, segment = "", rest = ""] =
     file.path.match(/^src\/registry\/([^/]+)\/(.+)$/) ?? []
   const target =
     file.target ?? `${DEFAULT_DIR[segment] ?? "components"}/${rest}`
-  return `@/${target.replace(/^src\//, "").replace(/\.(tsx?|jsx?)$/, "")}`
+  return target.replace(/^src\//, "")
+}
+
+function installedModule(file: RegistryFile) {
+  return `@/${installedPath(file).replace(/\.(tsx?|jsx?)$/, "")}`
 }
 
 // 站内源码路径（不含扩展名）→ 安装到用户项目后的模块路径

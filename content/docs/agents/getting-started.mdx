@@ -11,3 +11,15 @@ description: 让智能体理解项目约定，协作构建一致的界面。
 ## 协作原则
 
 组件源码统一放在 `src/registry/`，预览、文档和安装产物共享同一份代码。提交改动前，请运行 `pnpm lint` 和 `pnpm build`。
+
+## 往项目里安装条目
+
+智能体把本站条目装进用户项目时，按这个顺序做，每一步都对应[安装](/docs/installation/)里实测过的行为：
+
+1. **检查前置条件**：React 19、Tailwind CSS v4，`components.json` 存在且 `style` 以 `base-` 开头（Base UI 底座）。缺 `components.json` 就先运行 `shadcn@latest init -b base -p nova`。
+2. **预览改动**：在安装命令后加 `--dry-run`，确认会写入哪些文件、哪些已存在。已有同名文件不要用 `-o` 覆盖，先看 `--diff`。
+3. **安装**：`shadcn@latest add https://travinsy.com/r/<name>.json`，或配置 `@travinsy` 命名空间后用 `add @travinsy/<name>`。依赖条目、shadcn 原语和 npm 包会连带安装。
+4. **检查样式**：全局样式里应出现 `--edge` 与 `--color-edge`（用到 `flow-diagram` 等条目时还有 `--flow-*`）。
+5. **验证**：写一个页面引入入口组件，运行 `tsc --noEmit` 与构建。服务端组件里需要 `flowRoute` 时，从 `flow-diagram/route.ts` 引入。
+
+运行 CLI 的环境设置了 SOCKS 代理时，用 `env -u ALL_PROXY -u all_proxy` 去掉该变量。
