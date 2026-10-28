@@ -138,6 +138,18 @@ type ValueSliderProps<Value extends ValueSliderValue = number> = Omit<
    */
   tone?: FlowTone
   /**
+   * 读数可直接输入：点读数（或在手柄上按回车）换成输入框，回车 / 失焦提交，Esc 放弃。
+   * 输入值会夹在 `min`–`max` 之间并对齐到 `step`；区间模式下不可输入
+   * @default false
+   */
+  editable?: boolean
+  /**
+   * 标记为「已改动」：标签与读数改用前景色，根元素带 `data-modified`。
+   * 控制面板里用来区分改过的参数与默认值
+   * @default false
+   */
+  modified?: boolean
+  /**
    * 拖动时是否有刻度与碰边的音效（尊重本地静音偏好）
    * @default false
    */

@@ -7,6 +7,7 @@ import { defineTuner } from "./types"
 
 export const codeStackTuner = defineTuner<CodeStackTuning, CodeStackReport>({
   hint: "实时调整示例参数",
+  component: "CodeStack",
   context: CodeStackTuningContext,
   frame: { stableFrame: true },
   controls: [

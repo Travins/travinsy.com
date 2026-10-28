@@ -18,6 +18,7 @@ export const flowDiagramTuner = defineTuner<
   FlowDiagramReport
 >({
   hint: "调整速度、色调与底纹",
+  component: "FlowDiagram",
   context: FlowDiagramTuningContext,
   controls: [
     {
@@ -44,9 +45,8 @@ export const flowDiagramTuner = defineTuner<
     },
     {
       key: "tone",
-      type: "segmented",
+      type: "tone",
       label: "默认色调 tone",
-      span: 3,
       options: toneOptions().filter((option) => option.value !== "theme"),
     },
     { key: "fade", type: "switch", label: "底纹渐隐 fade" },

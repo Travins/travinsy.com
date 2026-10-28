@@ -13,7 +13,7 @@ export type TunerValues = Partial<Record<string, TunerValue>>
 type ControlBase = {
   key: string
   label: string
-  /** 在三列网格里占几列，默认 1。开关不受此影响，统一排在最后一行。 */
+  /** 在三列网格里占几列，默认 1 */
   span?: 1 | 2 | 3
 }
 
@@ -40,7 +40,20 @@ export type SegmentedControl = ControlBase & {
 
 export type SwitchControl = ControlBase & { type: "switch" }
 
-export type TunerControl = SliderControl | SegmentedControl | SwitchControl
+export type ToneOption = {
+  value: string
+  label: string
+  /** 色点颜色：内置色调名或 CSS 颜色；`null` 是虚线空心圆（「原样」这类不改动的选项） */
+  tone: string | null
+}
+
+export type ToneControl = ControlBase & {
+  type: "tone"
+  options: ToneOption[]
+}
+
+export type TunerControl =
+  SliderControl | SegmentedControl | SwitchControl | ToneControl
 
 export type TunerConfig<
   Tuning extends { onReport?: (report: Report) => void },
@@ -48,6 +61,8 @@ export type TunerConfig<
 > = {
   /** 开关按钮的悬停提示 */
   hint: string
+  /** 「复制为代码」里的组件名（如 `IsometricMark`）；不传时面板不显示复制按钮 */
+  component?: string
   controls: TunerControl[]
   /** 示例还没回报时的显示值，以及示例不回报的项的默认值 */
   defaults: TunerValues

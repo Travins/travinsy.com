@@ -7,6 +7,7 @@ import { defineTuner } from "./types"
 
 export const cardStackTuner = defineTuner<CardStackTuning, CardStackReport>({
   hint: "实时调整示例参数",
+  component: "CardStack",
   context: CardStackTuningContext,
   frame: { stableFrame: true },
   controls: [

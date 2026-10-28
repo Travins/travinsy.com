@@ -7,6 +7,7 @@ import { defineTuner } from "./types"
 
 export const marqueeTuner = defineTuner<MarqueeTuning, MarqueeReport>({
   hint: "实时调整示例参数",
+  component: "Marquee",
   context: MarqueeTuningContext,
   controls: [
     {

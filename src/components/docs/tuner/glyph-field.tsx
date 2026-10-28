@@ -16,6 +16,7 @@ const PRESETS = ["latin", "binary", "hex", "katakana", "cjk"]
 
 export const glyphFieldTuner = defineTuner<GlyphFieldTuning, GlyphFieldReport>({
   hint: "调整字符集、字号与密度",
+  component: "GlyphField",
   context: GlyphFieldTuningContext,
   controls: [
     {
@@ -68,9 +69,8 @@ export const glyphFieldTuner = defineTuner<GlyphFieldTuning, GlyphFieldReport>({
     },
     {
       key: "tone",
-      type: "segmented",
+      type: "tone",
       label: "色调 tone",
-      span: 3,
       options: toneOptions(own),
     },
     { key: "paused", type: "switch", label: "暂停 paused" },

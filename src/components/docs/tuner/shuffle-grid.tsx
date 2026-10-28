@@ -17,6 +17,7 @@ export const shuffleGridTuner = defineTuner<
   ShuffleGridReport
 >({
   hint: "调整间隔、点亮数与盘面",
+  component: "ShuffleGrid",
   context: ShuffleGridTuningContext,
   frame: { stableFrame: true },
   controls: [

@@ -1,0 +1,218 @@
+"use client"
+
+import * as React from "react"
+import { Radio } from "@base-ui/react/radio"
+import { RadioGroup } from "@base-ui/react/radio-group"
+import { cva } from "class-variance-authority"
+import { motion, useReducedMotion } from "motion/react"
+
+import { cn } from "@/lib/utils"
+import { useControllableState } from "@/registry/hooks/use-controllable-state"
+import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+
+/**
+ * 外框与数值滑块同一套方条：细边框、小圆角、淡底。
+ * 高度表也与数值滑块一致（bar 28 / 32 / 36px，compact 18 / 22 / 24px），放在同一个面板里能对齐。
+ */
+const segmentedControlVariants = cva(
+  "group/segmented-control relative flex h-(--segmented-control-height) w-full min-w-0 items-stretch overflow-hidden rounded-md border border-edge bg-muted/60 select-none",
+  {
+    variants: {
+      size: {
+        sm: "text-xs",
+        default: "text-sm",
+        lg: "text-sm",
+      },
+      variant: {
+        bar: "",
+        compact: "text-xs",
+      },
+    },
+    compoundVariants: [
+      {
+        variant: "bar",
+        size: "sm",
+        class: "[--segmented-control-height:1.75rem]",
+      },
+      {
+        variant: "bar",
+        size: "default",
+        class: "[--segmented-control-height:2rem]",
+      },
+      {
+        variant: "bar",
+        size: "lg",
+        class: "[--segmented-control-height:2.25rem]",
+      },
+      {
+        variant: "compact",
+        size: "sm",
+        class: "[--segmented-control-height:1.125rem]",
+      },
+      {
+        variant: "compact",
+        size: "default",
+        class: "[--segmented-control-height:1.375rem]",
+      },
+      {
+        variant: "compact",
+        size: "lg",
+        class: "[--segmented-control-height:1.5rem]",
+      },
+    ],
+    defaultVariants: {
+      size: "default",
+      variant: "bar",
+    },
+  },
+)
+
+type SegmentedControlSize = "sm" | "default" | "lg"
+type SegmentedControlVariant = "bar" | "compact"
+
+type SegmentedControlOption = {
+  value: string
+  label: React.ReactNode
+  /** 文字前的小样：图标、色点、材质方块 */
+  icon?: React.ReactNode
+  disabled?: boolean
+}
+
+type SegmentedControlProps = Omit<
+  React.ComponentProps<typeof RadioGroup>,
+  "value" | "defaultValue" | "onValueChange" | "children"
+> & {
+  options: readonly SegmentedControlOption[]
+  /** 受控值 */
+  value?: string
+  /** 非受控时的初始值；不传时取第一项 */
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  /** 画在最左侧格子里的标签，同时作为单选组的可访问名称 */
+  label?: React.ReactNode
+  /**
+   * 高度档：`bar` 与数值滑块默认同高，`compact` 是面板里用的中等高度
+   * @default "bar"
+   */
+  variant?: SegmentedControlVariant
+  /**
+   * 尺寸档
+   * @default "default"
+   */
+  size?: SegmentedControlSize
+  /** 色调：选中块染上 `--flow-tone` 的淡色；不传时选中块用背景色加描边 */
+  tone?: FlowTone
+  /**
+   * 标记为「已改动」：标签改用前景色，根元素带 `data-modified`
+   * @default false
+   */
+  modified?: boolean
+}
+
+/**
+ * 分段选择：一排互斥选项，选中块在选项之间滑动。
+ * 语义是单选组（`role="radiogroup"`），方向键在选项间移动并直接选中。
+ */
+function SegmentedControl({
+  options,
+  value: valueProp,
+  defaultValue,
+  onValueChange,
+  label,
+  variant = "bar",
+  size = "default",
+  tone,
+  modified = false,
+  disabled,
+  className,
+  style,
+  ...props
+}: SegmentedControlProps) {
+  const [value, setValue] = useControllableState<string>({
+    prop: valueProp,
+    defaultProp: defaultValue ?? options[0]?.value ?? "",
+    onChange: onValueChange,
+  })
+  const labelId = React.useId()
+  // 同一页里可能有多个分段选择，选中块的共享布局 id 必须各自独立
+  const layoutId = React.useId()
+  const reduced = useReducedMotion()
+  const hasTone = tone !== undefined
+
+  return (
+    <RadioGroup
+      {...props}
+      value={value}
+      onValueChange={(next) => setValue(next as string)}
+      disabled={disabled}
+      aria-labelledby={label !== undefined ? labelId : undefined}
+      data-slot="segmented-control"
+      data-variant={variant}
+      data-modified={modified ? "" : undefined}
+      className={cn(
+        segmentedControlVariants({ size, variant }),
+        "data-[disabled]:opacity-50",
+        className,
+      )}
+      style={{ ...flowToneStyle(tone), ...style }}
+    >
+      {label !== undefined ? (
+        <span
+          id={labelId}
+          data-slot="segmented-control-label"
+          className="flex shrink-0 items-center border-e border-edge px-3 font-medium whitespace-nowrap text-muted-foreground transition-colors group-data-[modified]/segmented-control:text-foreground"
+        >
+          {label}
+        </span>
+      ) : null}
+      {options.map((option) => {
+        const selected = option.value === value
+        return (
+          <Radio.Root
+            key={option.value}
+            value={option.value}
+            disabled={option.disabled}
+            data-slot="segmented-control-item"
+            className="relative flex min-w-0 flex-auto cursor-pointer items-center justify-center gap-1.5 px-2 whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
+          >
+            {selected ? (
+              <motion.span
+                layoutId={layoutId}
+                aria-hidden="true"
+                data-slot="segmented-control-indicator"
+                className={cn(
+                  "absolute inset-0.5 rounded-sm",
+                  hasTone
+                    ? "bg-(--flow-tone)/20 dark:bg-(--flow-tone)/35"
+                    : "bg-background shadow-xs ring-1 ring-edge dark:bg-foreground/10",
+                )}
+                transition={
+                  reduced
+                    ? { duration: 0 }
+                    : { type: "spring", bounce: 0.18, visualDuration: 0.25 }
+                }
+              />
+            ) : null}
+            {option.icon ? (
+              <span
+                aria-hidden="true"
+                className="relative flex shrink-0 items-center [&_svg:not([class*='size-'])]:size-3.5"
+              >
+                {option.icon}
+              </span>
+            ) : null}
+            <span className="relative truncate">{option.label}</span>
+          </Radio.Root>
+        )
+      })}
+    </RadioGroup>
+  )
+}
+
+export { SegmentedControl, segmentedControlVariants }
+export type {
+  SegmentedControlOption,
+  SegmentedControlProps,
+  SegmentedControlSize,
+  SegmentedControlVariant,
+}

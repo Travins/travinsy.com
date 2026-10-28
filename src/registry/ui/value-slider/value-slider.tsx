@@ -18,7 +18,12 @@ import type {
 } from "./types"
 import { useElasticPull } from "./use-elastic-pull"
 import { useHandleDodge } from "./use-handle-dodge"
-import { ValueSliderThumb, ValueSliderTrack } from "./value-slider-parts"
+import {
+  ValueSliderReadout,
+  ValueSliderThumb,
+  ValueSliderTrack,
+  type ValueSliderEditor,
+} from "./value-slider-parts"
 import {
   clamp01,
   crossedTick,
@@ -134,6 +139,8 @@ function ValueSlider<Value extends ValueSliderValue = number>(
     variant: variantProp = "bar",
     tone: toneProp,
     sound: soundProp = false,
+    editable = false,
+    modified = false,
     className,
     style,
     ...props
@@ -302,6 +309,11 @@ function ValueSlider<Value extends ValueSliderValue = number>(
     event: React.KeyboardEvent<HTMLInputElement>,
     index: number,
   ) => {
+    if (event.key === "Enter" && editor) {
+      event.preventDefault()
+      editor.start()
+      return
+    }
     const current = values[index] ?? min
     // RTL 时左右方向键的增减是反的；方向取自 Base UI 的 DirectionProvider，与它自己的按键映射一致
     const rtl = direction === "rtl"
@@ -331,6 +343,63 @@ function ValueSlider<Value extends ValueSliderValue = number>(
   const readout = isRange
     ? `${formatNumber(values[0])} – ${formatNumber(values[values.length - 1])}`
     : formatNumber(values[0] ?? min)
+  /* ---------- 读数手动输入 ---------- */
+
+  const [editing, setEditing] = React.useState(false)
+  const [draft, setDraft] = React.useState("")
+  // 回车提交后输入框卸载，可能紧跟着一次失焦提交；用 ref 保证只提交一次
+  const editingRef = React.useRef(false)
+  const canEdit = editable && !isRange && !disabled
+
+  const focusThumb = (from: HTMLElement) => {
+    const root = from.closest<HTMLElement>('[data-slot="value-slider"]')
+    // 等输入框卸载后再聚焦，否则焦点会落回正在消失的元素
+    requestAnimationFrame(() =>
+      root
+        ?.querySelector<HTMLInputElement>(
+          '[data-slot="value-slider-thumb"] input',
+        )
+        ?.focus(),
+    )
+  }
+
+  const editor: ValueSliderEditor | undefined = canEdit
+    ? {
+        editing,
+        draft,
+        label: `输入${thumbName}`,
+        start: () => {
+          editingRef.current = true
+          setDraft((values[0] ?? min).toFixed(decimals))
+          setEditing(true)
+        },
+        change: setDraft,
+        commit: (from, refocus) => {
+          if (!editingRef.current) return
+          editingRef.current = false
+          setEditing(false)
+          if (refocus) focusThumb(from)
+          // 容忍千分位与单位：只取数字部分；解析不出数字时当作放弃
+          const parsed = Number.parseFloat(draft.replace(/[^\d.+-]/g, ""))
+          if (!Number.isFinite(parsed)) return
+          const stepped = min + Math.round((parsed - min) / step) * step
+          const next = Number(
+            Math.min(max, Math.max(min, stepped)).toFixed(decimals),
+          )
+          if (next === values[0]) return
+          // 手动输入是一次性跳到目标值，不放刻度音效，直接写值并当作一次提交
+          previousValuesRef.current = [next]
+          setValue(next as unknown as Value)
+          onValueCommitted?.(next as unknown as Value)
+        },
+        cancel: (from) => {
+          editingRef.current = false
+          setEditing(false)
+          focusThumb(from)
+        },
+      }
+    : undefined
+
   const bufferPercent =
     buffer === undefined || isRange
       ? undefined
@@ -349,12 +418,15 @@ function ValueSlider<Value extends ValueSliderValue = number>(
       step={step}
       largeStep={largeStep}
       minStepsBetweenValues={minStepsBetweenValues}
+      // 手柄在两端时贴着轨道内侧，不伸出边框（默认的 center 会探出半个手柄）
+      thumbAlignment="edge"
       disabled={disabled}
       name={name}
       format={format}
       locale={locale}
       data-slot="value-slider"
       data-variant={variant}
+      data-modified={modified ? "" : undefined}
       data-overshoot={elastic.side ?? undefined}
       data-disabled={disabled ? "" : undefined}
       className={cn(
@@ -371,17 +443,16 @@ function ValueSlider<Value extends ValueSliderValue = number>(
         >
           <span
             data-slot="value-slider-label"
-            className="truncate font-medium text-muted-foreground"
+            className="truncate font-medium text-muted-foreground transition-colors group-data-[modified]/value-slider:text-foreground"
           >
             {label}
           </span>
           {showValue ? (
-            <span
-              data-slot="value-slider-value"
-              className="font-mono text-muted-foreground tabular-nums"
-            >
-              {readout}
-            </span>
+            <ValueSliderReadout
+              readout={readout}
+              editor={editor}
+              inside={false}
+            />
           ) : null}
         </div>
       ) : null}
@@ -424,6 +495,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
               label={label}
               readout={readout}
               showValue={showValue}
+              editor={editor}
               bufferPercent={bufferPercent}
               hasTone={hasTone}
               ticks={innerTicks}

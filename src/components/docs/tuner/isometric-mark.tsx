@@ -44,6 +44,7 @@ export const isometricMarkTuner = defineTuner<
   IsometricMarkReport
 >({
   hint: "调整角度、高度与材质",
+  component: "IsometricMark",
   context: IsometricMarkTuningContext,
   frame: { stableFrame: true },
   controls: [

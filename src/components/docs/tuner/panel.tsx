@@ -1,19 +1,65 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { RotateCcw, SlidersHorizontal } from "lucide-react"
+import { SlidersHorizontal } from "lucide-react"
 
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { IconTip } from "../icon-tip"
-import { Segmented, Slider, Toggle } from "./controls"
-import type { AnyTunerConfig, TunerValue, TunerValues } from "./types"
+import {
+  ControlPanel,
+  ControlPanelActions,
+  ControlPanelCopy,
+  ControlPanelGroup,
+  ControlPanelHeader,
+  ControlPanelReset,
+  ControlPanelTitle,
+  formatJsx,
+} from "@/registry/ui/control-panel/control-panel"
+import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
+import { TonePicker } from "@/registry/ui/tone-picker/tone-picker"
+import { ToggleSwitch } from "@/registry/ui/toggle-switch/toggle-switch"
+import { ValueSlider } from "@/registry/ui/value-slider/value-slider"
+import type {
+  AnyTunerConfig,
+  TunerControl,
+  TunerValue,
+  TunerValues,
+} from "./types"
 
 const SPAN_CLASS = {
   1: "",
   2: "sm:col-span-2",
   3: "sm:col-span-3",
 } as const
+
+/** 读数：步长小于 1 的保留两位小数，否则一位，再接上单位 */
+function formatReadout(value: number, step: number, unit = "") {
+  const scale = step < 1 ? 100 : 10
+  return `${Math.round(value * scale) / scale}${unit}`
+}
+
+/**
+ * 「复制为代码」：把面板上每一项的当前值（改动过的、示例回报的、默认的）交给 toTuning 换成组件属性，
+ * 再去掉与默认值相同的项，只留下这次真正区别于组件默认的属性。
+ * toTuning 用 `tone: false` 表示「不上色」，对组件来说就是不传 tone，所以也省略。
+ */
+function buildCode(
+  config: AnyTunerConfig,
+  current: (key: string) => TunerValue | undefined,
+) {
+  const all: TunerValues = {}
+  for (const control of config.controls) all[control.key] = current(control.key)
+  const props = config.toTuning(all) as Record<string, unknown>
+  const defaults = config.toTuning(config.defaults) as Record<string, unknown>
+  const kept: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(props)) {
+    if (value === undefined || (key === "tone" && value === false)) continue
+    if (JSON.stringify(value) === JSON.stringify(defaults[key])) continue
+    kept[key] = value
+  }
+  return formatJsx(config.component ?? "Component", kept)
+}
 
 /** 示例标题栏里的开关按钮 */
 export function TunerToggle({
@@ -60,8 +106,8 @@ export function TunerProvider({
 }
 
 /**
- * 按控件描述渲染面板：滑块与分段按钮按声明顺序排进三列网格，开关统一排在最后一行，右侧是恢复按钮。
- * 没改动的项显示示例回报的实际值（灰色），改动后高亮。
+ * 按控件描述渲染面板，控件全部来自 registry 里的方条控件系列（数值滑块、分段选择、色调选择、开关），
+ * 面板本身就是这套控件的现场示例。没改动的项显示示例回报的实际值，改动过的项标成 modified。
  */
 export function TunerPanel({
   config,
@@ -78,65 +124,99 @@ export function TunerPanel({
     values[key] ?? base?.[key] ?? config.defaults[key]
   const set = (key: string, value: TunerValue) =>
     onChange({ ...values, [key]: value })
-  const fields = config.controls.filter((control) => control.type !== "switch")
-  const switches = config.controls.filter(
-    (control) => control.type === "switch",
-  )
+  // 开关排在滑块与选项之后，读起来先是「调多少」，再是「开不开」
+  const controls = [
+    ...config.controls.filter((control) => control.type !== "switch"),
+    ...config.controls.filter((control) => control.type === "switch"),
+  ]
 
-  return (
-    <div className="grid gap-x-6 gap-y-4 px-4 pt-3 pb-4 sm:grid-cols-3">
-      {fields.map((control) => {
-        const span = SPAN_CLASS[control.span ?? 1]
-        const field =
-          control.type === "slider" ? (
-            <Slider
-              label={control.label}
-              value={Number(current(control.key) ?? control.min)}
-              unit={control.unit}
-              min={control.min}
-              max={control.max}
-              step={control.step}
-              changed={values[control.key] !== undefined}
-              onChange={(value) => set(control.key, value)}
-            />
-          ) : control.type === "segmented" ? (
-            <Segmented
-              label={control.label}
-              options={control.options}
-              value={current(control.key) as string | undefined}
-              onChange={(value) => set(control.key, value)}
-            />
-          ) : null
+  const renderControl = (control: TunerControl) => {
+    const modified = values[control.key] !== undefined
+    switch (control.type) {
+      case "slider": {
+        const step = control.step ?? 1
         return (
-          <div key={control.key} className={cn("min-w-0", span)}>
-            {field}
-          </div>
+          <ValueSlider
+            variant="compact"
+            label={control.label}
+            value={Number(current(control.key) ?? control.min)}
+            min={control.min}
+            max={control.max}
+            step={step}
+            elasticity={6}
+            editable
+            modified={modified}
+            formatValue={(value) => formatReadout(value, step, control.unit)}
+            onValueChange={(value) => set(control.key, value)}
+          />
         )
-      })}
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 sm:col-span-3">
-        {switches.map((control) => (
-          <Toggle
-            key={control.key}
+      }
+      case "segmented":
+        return (
+          <SegmentedControl
+            variant="compact"
+            label={control.label}
+            options={control.options.map((option) => ({
+              value: option.value,
+              label: option.label,
+              icon: option.swatch,
+            }))}
+            value={(current(control.key) as string | undefined) ?? ""}
+            modified={modified}
+            onValueChange={(value) => set(control.key, value)}
+          />
+        )
+      case "tone":
+        return (
+          <TonePicker
+            variant="compact"
+            label={control.label}
+            options={control.options}
+            value={(current(control.key) as string | undefined) ?? ""}
+            modified={modified}
+            onValueChange={(value) => set(control.key, value)}
+          />
+        )
+      case "switch":
+        return (
+          <ToggleSwitch
+            variant="compact"
             label={control.label}
             checked={Boolean(current(control.key))}
-            onChange={(checked) => set(control.key, checked)}
+            modified={modified}
+            onCheckedChange={(checked) => set(control.key, checked)}
           />
-        ))}
-        <span className="flex-1" />
-        <IconTip label="恢复示例原值">
-          <button
-            type="button"
-            aria-label="恢复示例原值"
+        )
+    }
+  }
+
+  return (
+    <ControlPanel className="rounded-none border-0 border-t bg-transparent">
+      <ControlPanelHeader className="h-9 border-b-0 pb-0">
+        <ControlPanelTitle>调整参数</ControlPanelTitle>
+        <ControlPanelActions>
+          {config.component ? (
+            <ControlPanelCopy
+              label="复制当前参数为代码"
+              code={() => buildCode(config, current)}
+            />
+          ) : null}
+          <ControlPanelReset
+            label="恢复示例原值"
             onClick={() => onChange({})}
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "icon-sm" }),
-              "text-muted-foreground",
-            )}
+          />
+        </ControlPanelActions>
+      </ControlPanelHeader>
+      <ControlPanelGroup columns={3} className="pt-1">
+        {controls.map((control) => (
+          <div
+            key={control.key}
+            className={cn("min-w-0", SPAN_CLASS[control.span ?? 1])}
           >
-            <RotateCcw className="size-3.5" />
-          </button>
-        </IconTip>
-      </div>
-    </div>
+            {renderControl(control)}
+          </div>
+        ))}
+      </ControlPanelGroup>
+    </ControlPanel>
   )
 }

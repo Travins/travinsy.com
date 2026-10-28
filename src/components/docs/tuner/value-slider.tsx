@@ -31,6 +31,7 @@ export const valueSliderTuner = defineTuner<
   ValueSliderReport
 >({
   hint: "调整过冲强度、尺寸、高度、色调与刻度",
+  component: "ValueSlider",
   context: ValueSliderTuningContext,
   controls: [
     {
@@ -51,9 +52,8 @@ export const valueSliderTuner = defineTuner<
     { key: "ticks", type: "slider", label: "刻度 ticks", min: 0, max: 10 },
     {
       key: "tone",
-      type: "segmented",
+      type: "tone",
       label: "色调 tone",
-      span: 3,
       options: toneOptions(),
     },
     { key: "snapToTicks", type: "switch", label: "磁吸 snapToTicks" },

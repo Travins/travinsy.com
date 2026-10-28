@@ -4,7 +4,7 @@ import {
   type TextAnimateReport,
 } from "@/registry/ui/text-animate/text-animate"
 import { defineTuner } from "./types"
-import { ToneSwatch } from "./swatches"
+import { toneOptions } from "./swatches"
 
 export const textAnimateTuner = defineTuner<
   TextAnimateTuning,
@@ -64,22 +64,9 @@ export const textAnimateTuner = defineTuner<
     },
     {
       key: "tone",
-      type: "segmented",
+      type: "tone",
       label: "高亮色调 tone",
-      span: 3,
-      options: [
-        "primary",
-        "blue",
-        "green",
-        "amber",
-        "rose",
-        "violet",
-        "cyan",
-      ].map((tone) => ({
-        value: tone,
-        label: tone,
-        swatch: <ToneSwatch tone={tone} />,
-      })),
+      options: toneOptions().filter((option) => option.value !== "theme"),
     },
     { key: "paused", type: "switch", label: "暂停轮换 paused" },
   ],

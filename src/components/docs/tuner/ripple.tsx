@@ -13,6 +13,7 @@ import { defineTuner } from "./types"
 
 export const rippleTuner = defineTuner<RippleTuning, RippleReport>({
   hint: "调整模式、环数与色调",
+  component: "Ripple",
   context: RippleTuningContext,
   controls: [
     {
@@ -43,9 +44,8 @@ export const rippleTuner = defineTuner<RippleTuning, RippleReport>({
     },
     {
       key: "tone",
-      type: "segmented",
+      type: "tone",
       label: "色调 tone",
-      span: 2,
       options: toneOptions(),
     },
     { key: "paused", type: "switch", label: "暂停 paused" },

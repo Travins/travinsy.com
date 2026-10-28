@@ -871,6 +871,96 @@
       ]
     },
     {
+      "name": "segmented-control",
+      "type": "registry:ui",
+      "title": "分段选择",
+      "description": "方条样式的互斥选项组，选中块在选项间滑动，可带图标或小样，与数值滑块同一套高度。",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/segmented-control/segmented-control.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "toggle-switch",
+      "type": "registry:ui",
+      "title": "方条开关",
+      "description": "整条可点的开关，打开时铺上淡色、竖线手柄滑到右端，与数值滑块同一套高度。",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/toggle-switch/toggle-switch.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tone-picker",
+      "type": "registry:ui",
+      "title": "色调选择",
+      "description": "方条左侧标签、右侧一排色点的单选组，色点取主题变量，跟随亮暗与颜色主题。",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/tone-picker/tone-picker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "control-panel",
+      "type": "registry:ui",
+      "title": "控制面板",
+      "description": "承载方条控件的面板容器：标题栏、分组网格、恢复按钮，以及把当前参数复制为 JSX 的按钮。",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/control-panel/control-panel.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/control-panel/format-jsx.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "timeline",
       "type": "registry:ui",
       "title": "时间线",

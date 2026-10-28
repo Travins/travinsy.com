@@ -19,6 +19,8 @@ type ValueSliderTrackProps = {
   label: React.ReactNode
   readout: string
   showValue: boolean
+  /** 读数的手动输入；`undefined` 表示不可输入 */
+  editor: ValueSliderEditor | undefined
   /** 缓冲填充的百分比；`undefined` 表示不画 */
   bufferPercent: number | undefined
   hasTone: boolean
@@ -42,6 +44,7 @@ function ValueSliderTrack({
   label,
   readout,
   showValue,
+  editor,
   bufferPercent,
   hasTone,
   ticks,
@@ -105,22 +108,106 @@ function ValueSliderTrack({
           ref={labelRef}
           data-slot="value-slider-label"
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 font-medium whitespace-nowrap text-muted-foreground"
+          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 font-medium whitespace-nowrap text-muted-foreground transition-colors group-data-[modified]/value-slider:text-foreground"
         >
           {label}
         </span>
       ) : null}
       {showValue && !outside ? (
-        <span
-          ref={valueRef}
-          data-slot="value-slider-value"
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-mono whitespace-nowrap text-muted-foreground tabular-nums transition-colors group-hover/value-slider:text-foreground in-data-[dragging]:text-foreground"
-        >
-          {readout}
-        </span>
+        <ValueSliderReadout
+          valueRef={valueRef}
+          readout={readout}
+          editor={editor}
+          inside
+        />
       ) : null}
     </SliderPrimitive.Track>
+  )
+}
+
+/** 读数手动输入的状态与动作，由根组件持有，读数在轨道里或轨道上方都用同一份。 */
+type ValueSliderEditor = {
+  editing: boolean
+  draft: string
+  /** 输入框的可访问名称 */
+  label: string
+  start: () => void
+  change: (draft: string) => void
+  /** 提交草稿；`refocus` 为真时把焦点还给手柄（回车提交），失焦提交时不抢焦点 */
+  commit: (from: HTMLElement, refocus: boolean) => void
+  cancel: (from: HTMLElement) => void
+}
+
+type ValueSliderReadoutProps = {
+  valueRef?: React.RefObject<HTMLSpanElement | null>
+  readout: string
+  editor: ValueSliderEditor | undefined
+  /** 画在轨道里（绝对定位在右端）还是轨道上方的标签行里 */
+  inside: boolean
+}
+
+/**
+ * 读数。可输入时点一下（或在手柄上按回车）换成输入框：回车或失焦提交，Esc 放弃。
+ * 读数和输入框都拦下 `pointerdown`，否则点读数会被 `Slider.Control` 当成点轨道、把值跳过去。
+ * 读数本身对读屏隐藏（数值由手柄的 `aria-valuetext` 朗读），键盘用户从手柄按回车进入输入。
+ */
+function ValueSliderReadout({
+  valueRef,
+  readout,
+  editor,
+  inside,
+}: ValueSliderReadoutProps) {
+  const stop = (event: React.PointerEvent) => event.stopPropagation()
+
+  if (editor?.editing) {
+    return (
+      <input
+        data-slot="value-slider-input"
+        aria-label={editor.label}
+        autoFocus
+        inputMode="decimal"
+        value={editor.draft}
+        onChange={(event) => editor.change(event.target.value)}
+        onPointerDown={stop}
+        onBlur={(event) => editor.commit(event.currentTarget, false)}
+        onKeyDown={(event) => {
+          // 别让方向键、回车冒泡到 Slider 上去改值
+          event.stopPropagation()
+          if (event.key === "Enter") {
+            event.preventDefault()
+            editor.commit(event.currentTarget, true)
+          } else if (event.key === "Escape") {
+            event.preventDefault()
+            editor.cancel(event.currentTarget)
+          }
+        }}
+        className={cn(
+          "w-[8ch] rounded-sm border border-edge bg-background px-1 text-end font-mono text-foreground tabular-nums outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+          inside
+            ? "absolute top-1/2 right-1 h-[max(1rem,calc(100%-0.375rem))] -translate-y-1/2"
+            : "h-5",
+        )}
+      />
+    )
+  }
+
+  return (
+    <span
+      ref={valueRef}
+      data-slot="value-slider-value"
+      aria-hidden="true"
+      onPointerDown={editor ? stop : undefined}
+      onClick={editor?.start}
+      className={cn(
+        "font-mono whitespace-nowrap text-muted-foreground tabular-nums transition-colors group-hover/value-slider:text-foreground group-data-[modified]/value-slider:text-foreground in-data-[dragging]:text-foreground",
+        inside && "absolute top-1/2 right-3 -translate-y-1/2",
+        editor
+          ? "pointer-events-auto cursor-text decoration-dotted underline-offset-2 hover:underline"
+          : inside && "pointer-events-none",
+      )}
+    >
+      {readout}
+    </span>
   )
 }
 
@@ -175,5 +262,10 @@ function ValueSliderThumb({
   )
 }
 
-export { ValueSliderThumb, ValueSliderTrack }
-export type { ValueSliderThumbProps, ValueSliderTrackProps }
+export { ValueSliderReadout, ValueSliderThumb, ValueSliderTrack }
+export type {
+  ValueSliderEditor,
+  ValueSliderReadoutProps,
+  ValueSliderThumbProps,
+  ValueSliderTrackProps,
+}

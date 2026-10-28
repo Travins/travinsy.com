@@ -15,6 +15,7 @@ const own = { value: "own", label: "原样" }
 
 export const orbitTuner = defineTuner<OrbitTuning, OrbitReport>({
   hint: "调整速度、方向与轨道线",
+  component: "Orbit",
   context: OrbitTuningContext,
   controls: [
     {
@@ -50,9 +51,8 @@ export const orbitTuner = defineTuner<OrbitTuning, OrbitReport>({
     },
     {
       key: "tone",
-      type: "segmented",
+      type: "tone",
       label: "轨道色调 tone",
-      span: 3,
       options: toneOptions(own),
     },
     { key: "reverse", type: "switch", label: "整体反向 reverse" },

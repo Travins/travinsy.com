@@ -20,6 +20,7 @@ const themeToForeground = (value: string | undefined) =>
 
 export const globeTuner = defineTuner<GlobeTuning, GlobeReport>({
   hint: "调整转速、点阵与色调",
+  component: "Globe",
   context: GlobeTuningContext,
   controls: [
     {
@@ -49,16 +50,14 @@ export const globeTuner = defineTuner<GlobeTuning, GlobeReport>({
     },
     {
       key: "dotTone",
-      type: "segmented",
+      type: "tone",
       label: "点阵色调 dotTone",
-      span: 3,
       options: toneOptions(),
     },
     {
       key: "markerTone",
-      type: "segmented",
+      type: "tone",
       label: "标记色调 markerTone",
-      span: 3,
       options: toneOptions(),
     },
     { key: "labels", type: "switch", label: "城市标签 labels" },
