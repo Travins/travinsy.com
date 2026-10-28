@@ -49,7 +49,6 @@ export function CardPanel() {
       </ControlPanelHeader>
       <ControlPanelGroup>
         <ValueSlider
-          variant="compact"
           label="圆角"
           min={0}
           max={32}
@@ -103,7 +102,7 @@ formatJsx("Card", { radius: 12 }, { width: 16 })
 
 ### 分组
 
-三个 `ControlPanelGroup`，各自带 `title`，中间的分隔线由组件画。`columns={2}` 让两个窄控件并排；只放一个控件时用 `sm:col-span-2` 跨满整行。文件里的 `SegmentedControl`、`ToggleSwitch`、`ValueSlider` 都是同一套方条的 `compact` 档，排在一起高度一致。
+三个 `ControlPanelGroup`，各自带 `title`，中间的分隔线由组件画。`columns={2}` 让两个窄控件并排；只放一个控件时用 `sm:col-span-2` 跨满整行。文件里的 `SegmentedControl`、`ToggleSwitch`、`ValueSlider` 都是同一套方条的默认 `bar` 档（32px），排在一起高度一致，也足够好点。
 
 <ComponentPreview name="control-panel-groups-demo" />
 

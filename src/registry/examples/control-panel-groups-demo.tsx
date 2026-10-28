@@ -84,7 +84,7 @@ export default function ControlPanelGroupsDemo() {
       </ControlPanelHeader>
       <ControlPanelGroup title="画布" columns={2}>
         <ValueSlider
-          variant="compact"
+          className="text-xs"
           editable
           label="宽"
           min={320}
@@ -97,7 +97,7 @@ export default function ControlPanelGroupsDemo() {
           formatValue={formatPx}
         />
         <ValueSlider
-          variant="compact"
+          className="text-xs"
           editable
           label="高"
           min={320}
@@ -112,8 +112,7 @@ export default function ControlPanelGroupsDemo() {
       </ControlPanelGroup>
       <ControlPanelGroup title="输出" columns={2}>
         <SegmentedControl
-          className="sm:col-span-2"
-          variant="compact"
+          className="text-xs sm:col-span-2"
           label="格式"
           options={FORMAT_OPTIONS}
           value={settings.format}
@@ -121,7 +120,7 @@ export default function ControlPanelGroupsDemo() {
           onValueChange={(format) => set({ format })}
         />
         <ValueSlider
-          variant="compact"
+          className="text-xs"
           editable
           label="质量"
           min={40}
@@ -132,7 +131,7 @@ export default function ControlPanelGroupsDemo() {
           formatValue={formatPercent}
         />
         <ToggleSwitch
-          variant="compact"
+          className="text-xs"
           label="无损"
           checked={settings.lossless}
           modified={isModified("lossless")}
@@ -141,8 +140,7 @@ export default function ControlPanelGroupsDemo() {
       </ControlPanelGroup>
       <ControlPanelGroup title="水印" columns={2}>
         <SegmentedControl
-          className="sm:col-span-2"
-          variant="compact"
+          className="text-xs sm:col-span-2"
           label="位置"
           options={POSITION_OPTIONS}
           value={settings.position}
@@ -150,8 +148,7 @@ export default function ControlPanelGroupsDemo() {
           onValueChange={(position) => set({ position })}
         />
         <ValueSlider
-          className="sm:col-span-2"
-          variant="compact"
+          className="text-xs sm:col-span-2"
           editable
           label="不透明度"
           min={0}

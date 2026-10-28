@@ -100,7 +100,7 @@ function ControlPanelGroup({
       aria-labelledby={title !== undefined ? titleId : undefined}
       data-slot="control-panel-group"
       className={cn(
-        "flex flex-col gap-2 p-3 [[data-slot=control-panel-group]+&]:border-t [[data-slot=control-panel-group]+&]:border-edge",
+        "flex flex-col gap-2.5 px-4 pt-3 pb-4 [[data-slot=control-panel-group]+&]:border-t [[data-slot=control-panel-group]+&]:border-edge",
         className,
       )}
       {...props}
@@ -116,7 +116,7 @@ function ControlPanelGroup({
       ) : null}
       <div
         data-slot="control-panel-grid"
-        className={cn("grid gap-2", COLUMNS[columns])}
+        className={cn("grid gap-x-4 gap-y-3", COLUMNS[columns])}
       >
         {children}
       </div>

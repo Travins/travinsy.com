@@ -137,7 +137,7 @@ export function TunerPanel({
         const step = control.step ?? 1
         return (
           <ValueSlider
-            variant="compact"
+            className="text-xs"
             label={control.label}
             value={Number(current(control.key) ?? control.min)}
             min={control.min}
@@ -154,7 +154,7 @@ export function TunerPanel({
       case "segmented":
         return (
           <SegmentedControl
-            variant="compact"
+            className="text-xs"
             label={control.label}
             options={control.options.map((option) => ({
               value: option.value,
@@ -169,7 +169,7 @@ export function TunerPanel({
       case "tone":
         return (
           <TonePicker
-            variant="compact"
+            className="text-xs"
             label={control.label}
             options={control.options}
             value={(current(control.key) as string | undefined) ?? ""}
@@ -180,7 +180,7 @@ export function TunerPanel({
       case "switch":
         return (
           <ToggleSwitch
-            variant="compact"
+            className="text-xs"
             label={control.label}
             checked={Boolean(current(control.key))}
             modified={modified}
@@ -207,6 +207,7 @@ export function TunerPanel({
           />
         </ControlPanelActions>
       </ControlPanelHeader>
+      {/* 控件取 32px 高方便点按，字号留在 12px */}
       <ControlPanelGroup columns={3} className="pt-1">
         {controls.map((control) => (
           <div

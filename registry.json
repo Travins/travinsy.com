@@ -899,7 +899,7 @@
       "name": "toggle-switch",
       "type": "registry:ui",
       "title": "方条开关",
-      "description": "整条可点的开关，打开时铺上淡色、竖线手柄滑到右端，与数值滑块同一套高度。",
+      "description": "整条可点的开关，打开时铺上淡色、圆形手柄滑到右端，与数值滑块同一套高度。",
       "dependencies": [
         "@base-ui/react",
         "class-variance-authority"

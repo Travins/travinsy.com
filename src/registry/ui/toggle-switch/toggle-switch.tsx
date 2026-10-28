@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils"
 import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
 
 /**
- * 整条方条都是开关：左侧标签，右侧一段小轨道和一根竖线手柄（与数值滑块的手柄同形）。
- * 打开时整条从左往右铺上淡色，手柄滑到右端并变成实色。
+ * 整条方条都是开关：左侧标签，右侧一个胶囊轨道和圆形手柄。
+ * 打开时整条从左往右铺上淡色，轨道变成实色，手柄滑到右端。
  * 高度表与数值滑块一致（bar 28 / 32 / 36px，compact 18 / 22 / 24px）。
  */
 const toggleSwitchVariants = cva(
@@ -27,27 +27,38 @@ const toggleSwitchVariants = cva(
       },
     },
     compoundVariants: [
-      { variant: "bar", size: "sm", class: "[--toggle-switch-height:1.75rem]" },
+      {
+        variant: "bar",
+        size: "sm",
+        class:
+          "[--toggle-switch-height:1.75rem] [--toggle-switch-knob:0.75rem]",
+      },
       {
         variant: "bar",
         size: "default",
-        class: "[--toggle-switch-height:2rem]",
+        class: "[--toggle-switch-height:2rem] [--toggle-switch-knob:0.875rem]",
       },
-      { variant: "bar", size: "lg", class: "[--toggle-switch-height:2.25rem]" },
+      {
+        variant: "bar",
+        size: "lg",
+        class: "[--toggle-switch-height:2.25rem] [--toggle-switch-knob:1rem]",
+      },
       {
         variant: "compact",
         size: "sm",
-        class: "[--toggle-switch-height:1.125rem]",
+        class:
+          "[--toggle-switch-height:1.125rem] [--toggle-switch-knob:0.5rem]",
       },
       {
         variant: "compact",
         size: "default",
-        class: "[--toggle-switch-height:1.375rem]",
+        class:
+          "[--toggle-switch-height:1.375rem] [--toggle-switch-knob:0.625rem]",
       },
       {
         variant: "compact",
         size: "lg",
-        class: "[--toggle-switch-height:1.5rem]",
+        class: "[--toggle-switch-height:1.5rem] [--toggle-switch-knob:0.75rem]",
       },
     ],
     defaultVariants: {
@@ -141,18 +152,20 @@ function ToggleSwitch({
           </span>
         ) : null}
       </span>
-      {/* 小轨道：高度取方条的一半，竖线手柄从左端滑到右端 */}
+      {/* 胶囊轨道 + 圆形手柄：最容易一眼读懂的开关形态；打开时轨道换成实色，手柄滑到另一端 */}
       <span
         aria-hidden="true"
         data-slot="toggle-switch-track"
-        className="relative h-1/2 w-7 shrink-0 rounded-sm border border-edge bg-background/60"
+        className={cn(
+          "relative flex h-[calc(var(--toggle-switch-knob)+4px)] w-[calc(var(--toggle-switch-knob)*2+4px)] shrink-0 items-center rounded-full bg-foreground/15 p-0.5 transition-colors duration-200 motion-reduce:transition-none dark:bg-foreground/20",
+          hasTone
+            ? "group-data-[checked]/toggle-switch:bg-(--flow-tone)"
+            : "group-data-[checked]/toggle-switch:bg-foreground",
+        )}
       >
         <Switch.Thumb
           data-slot="toggle-switch-thumb"
-          className={cn(
-            "absolute inset-y-[-3px] start-0.5 w-1 rounded-full opacity-40 transition-[translate,opacity] duration-200 ease-out data-[checked]:translate-x-4.5 data-[checked]:opacity-100 motion-reduce:transition-none rtl:data-[checked]:-translate-x-4.5",
-            hasTone ? "bg-(--flow-tone)" : "bg-foreground",
-          )}
+          className="size-(--toggle-switch-knob) rounded-full bg-background shadow-sm transition-transform duration-200 ease-out data-[checked]:translate-x-(--toggle-switch-knob) motion-reduce:transition-none rtl:data-[checked]:-translate-x-(--toggle-switch-knob)"
         />
       </span>
     </Switch.Root>

@@ -89,7 +89,7 @@ export default function ControlPanelActionsDemo() {
         </ControlPanelHeader>
         <ControlPanelGroup>
           <ValueSlider
-            variant="compact"
+            className="text-xs"
             editable
             label="宽度"
             min={320}
@@ -102,7 +102,7 @@ export default function ControlPanelActionsDemo() {
             formatValue={formatPx}
           />
           <ValueSlider
-            variant="compact"
+            className="text-xs"
             editable
             label="高度"
             min={240}
@@ -115,7 +115,7 @@ export default function ControlPanelActionsDemo() {
             formatValue={formatPx}
           />
           <ValueSlider
-            variant="compact"
+            className="text-xs"
             editable
             label="圆角"
             min={0}
