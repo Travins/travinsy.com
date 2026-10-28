@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "theme-green",
   "title": "绿色 · Green",
-  "description": "沉稳的森林绿主色，亮色取 700、暗色取 600，配白字。",
+  "description": "沉稳的森林绿主色，亮暗都取 700，配白字。",
   "cssVars": {
     "light": {
       "background": "oklch(1 0 0)",
@@ -44,7 +44,7 @@
       "card-foreground": "oklch(0.985 0.004 149.579)",
       "popover": "oklch(0.2 0.02 149.579)",
       "popover-foreground": "oklch(0.985 0.004 149.579)",
-      "primary": "oklch(0.627 0.194 149.214)",
+      "primary": "oklch(0.527 0.154 150.069)",
       "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.27 0.025 149.579)",
       "secondary-foreground": "oklch(0.985 0.004 149.579)",
@@ -55,7 +55,7 @@
       "destructive": "oklch(0.704 0.191 22.216)",
       "border": "oklch(1 0 0 / 10%)",
       "input": "oklch(1 0 0 / 15%)",
-      "ring": "oklch(0.627 0.194 149.214)",
+      "ring": "oklch(0.527 0.154 150.069)",
       "chart-1": "oklch(0.925 0.084 155.995)",
       "chart-2": "oklch(0.871 0.15 154.449)",
       "chart-3": "oklch(0.792 0.209 151.711)",
@@ -63,12 +63,12 @@
       "chart-5": "oklch(0.627 0.194 149.214)",
       "sidebar": "oklch(0.2 0.02 149.579)",
       "sidebar-foreground": "oklch(0.985 0.004 149.579)",
-      "sidebar-primary": "oklch(0.627 0.194 149.214)",
+      "sidebar-primary": "oklch(0.527 0.154 150.069)",
       "sidebar-primary-foreground": "oklch(1 0 0)",
       "sidebar-accent": "oklch(0.3 0.04 149.579)",
       "sidebar-accent-foreground": "oklch(0.985 0.004 149.579)",
       "sidebar-border": "oklch(1 0 0 / 10%)",
-      "sidebar-ring": "oklch(0.627 0.194 149.214)"
+      "sidebar-ring": "oklch(0.527 0.154 150.069)"
     }
   },
   "type": "registry:theme"

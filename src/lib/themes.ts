@@ -316,7 +316,7 @@ type ColorSpec = {
   /** 亮色 primary 取哪一档（按钮一律白字，取能让白字达标的档位） */
   light: { primary: Shade | Lch }
   /** 暗色 primary 取哪一档（与亮色一样配白字，取能让白字达标的档位） */
-  dark: { primary: Shade }
+  dark: { primary: Shade | Lch }
   /** 主色本身接近危险色时，把危险色拉开（亮色更深、暗色更浅） */
   destructive?: { light: string; dark: string }
 }
@@ -331,7 +331,9 @@ function colorVars(r: ColorRamp, spec: ColorSpec): ThemeVarSets {
   )
   // 彩色主题按钮一律白字：深色字压在饱和色上显得发脏，统一白字观感更协调
   const lightOnPrimary = WHITE
-  const darkPrimary = oklch(r[spec.dark.primary])
+  const darkPrimary = oklch(
+    typeof spec.dark.primary === "number" ? r[spec.dark.primary] : spec.dark.primary
+  )
   const darkOnPrimary = WHITE
 
   const ink = tone(0.15, 0.02, hue)
@@ -498,11 +500,11 @@ export const COLOR_THEMES = [
     name: "红色",
     title: "Red",
     description:
-      "标准红色主色（亮色 600，暗色 500）。危险色同时拉开：亮色改用 800 的深红，暗色改用 300 的浅红，避免与主色混淆。",
+      "标准红色主色（亮暗都取 600，保证白字对比度）。危险色同时拉开：亮色改用 800 的深红，暗色改用 300 的浅红，避免与主色混淆。",
     ramp: COLOR_RAMPS.red,
     spec: {
       light: { primary: 600 },
-      dark: { primary: 500 },
+      dark: { primary: 600 },
       destructive: {
         light: oklch(COLOR_RAMPS.red[800]),
         dark: oklch(COLOR_RAMPS.red[300]),
@@ -515,7 +517,7 @@ export const COLOR_THEMES = [
     title: "Orange",
     description: "明亮的橙色主色，配白字。",
     ramp: COLOR_RAMPS.orange,
-    spec: { light: { primary: 600 }, dark: { primary: 600 } },
+    spec: { light: { primary: 700 }, dark: { primary: 700 } },
   }),
   defineColor({
     id: "amber",
@@ -523,7 +525,7 @@ export const COLOR_THEMES = [
     title: "Amber",
     description: "金黄偏橙的琥珀色主色，配白字。",
     ramp: COLOR_RAMPS.amber,
-    spec: { light: { primary: 600 }, dark: { primary: 600 } },
+    spec: { light: { primary: 700 }, dark: { primary: 700 } },
   }),
   defineColor({
     id: "lime",
@@ -531,15 +533,15 @@ export const COLOR_THEMES = [
     title: "Lime",
     description: "偏黄的亮绿色主色，配白字。",
     ramp: COLOR_RAMPS.lime,
-    spec: { light: { primary: 600 }, dark: { primary: 600 } },
+    spec: { light: { primary: 700 }, dark: { primary: 700 } },
   }),
   defineColor({
     id: "green",
     name: "绿色",
     title: "Green",
-    description: "沉稳的森林绿主色，亮色取 700、暗色取 600，配白字。",
+    description: "沉稳的森林绿主色，亮暗都取 700，配白字。",
     ramp: COLOR_RAMPS.green,
-    spec: { light: { primary: 700 }, dark: { primary: 600 } },
+    spec: { light: { primary: 700 }, dark: { primary: 700 } },
   }),
   defineColor({
     id: "teal",
@@ -547,7 +549,7 @@ export const COLOR_THEMES = [
     title: "Teal",
     description: "介于绿与蓝之间的青绿色主色，配白字。",
     ramp: COLOR_RAMPS.teal,
-    spec: { light: { primary: 600 }, dark: { primary: 600 } },
+    spec: { light: { primary: 700 }, dark: { primary: 700 } },
   }),
   defineColor({
     id: "sky",
@@ -555,7 +557,7 @@ export const COLOR_THEMES = [
     title: "Sky",
     description: "明亮清爽的天蓝色主色，配白字。",
     ramp: COLOR_RAMPS.sky,
-    spec: { light: { primary: 600 }, dark: { primary: 600 } },
+    spec: { light: { primary: 700 }, dark: { primary: 700 } },
   }),
   defineColor({
     id: "blue",
@@ -563,7 +565,7 @@ export const COLOR_THEMES = [
     title: "Blue",
     description: "经典的饱和蓝色主色，亮暗模式都配白字。",
     ramp: COLOR_RAMPS.blue,
-    spec: { light: { primary: 600 }, dark: { primary: 500 } },
+    spec: { light: { primary: 600 }, dark: { primary: 600 } },
   }),
   defineColor({
     id: "violet",
@@ -571,7 +573,7 @@ export const COLOR_THEMES = [
     title: "Violet",
     description: "浓郁的蓝紫色主色，亮暗模式都配白字。",
     ramp: COLOR_RAMPS.violet,
-    spec: { light: { primary: 600 }, dark: { primary: 500 } },
+    spec: { light: { primary: 600 }, dark: { primary: 600 } },
   }),
   defineColor({
     id: "fuchsia",
@@ -579,7 +581,7 @@ export const COLOR_THEMES = [
     title: "Fuchsia",
     description: "高饱和的紫红色主色，亮暗模式都配白字。",
     ramp: COLOR_RAMPS.fuchsia,
-    spec: { light: { primary: 600 }, dark: { primary: 500 } },
+    spec: { light: { primary: 600 }, dark: { primary: 600 } },
   }),
   defineColor({
     id: "pink",
@@ -587,10 +589,10 @@ export const COLOR_THEMES = [
     title: "Pink",
     description: "偏洋红的粉红色主色，亮暗模式都配白字。",
     ramp: COLOR_RAMPS.pink,
-    // 600 档与白字只有 4.5:1，明度下调 0.012 留出余量
+    // 600 档与白字只有 4.5:1，明度下调 0.012 留出余量；暗色同样用这一档
     spec: {
       light: { primary: [0.58, 0.249, 0.584] },
-      dark: { primary: 500 },
+      dark: { primary: [0.58, 0.249, 0.584] },
     },
   }),
 ] as const

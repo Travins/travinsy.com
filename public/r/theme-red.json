@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "theme-red",
   "title": "红色 · Red",
-  "description": "标准红色主色（亮色 600，暗色 500）。危险色同时拉开：亮色改用 800 的深红，暗色改用 300 的浅红，避免与主色混淆。",
+  "description": "标准红色主色（亮暗都取 600，保证白字对比度）。危险色同时拉开：亮色改用 800 的深红，暗色改用 300 的浅红，避免与主色混淆。",
   "cssVars": {
     "light": {
       "background": "oklch(1 0 0)",
@@ -44,7 +44,7 @@
       "card-foreground": "oklch(0.985 0.004 25.331)",
       "popover": "oklch(0.2 0.02 25.331)",
       "popover-foreground": "oklch(0.985 0.004 25.331)",
-      "primary": "oklch(0.637 0.237 25.331)",
+      "primary": "oklch(0.577 0.245 27.325)",
       "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.27 0.025 25.331)",
       "secondary-foreground": "oklch(0.985 0.004 25.331)",
@@ -55,7 +55,7 @@
       "destructive": "oklch(0.808 0.114 19.571)",
       "border": "oklch(1 0 0 / 10%)",
       "input": "oklch(1 0 0 / 15%)",
-      "ring": "oklch(0.637 0.237 25.331)",
+      "ring": "oklch(0.577 0.245 27.325)",
       "chart-1": "oklch(0.885 0.062 18.334)",
       "chart-2": "oklch(0.808 0.114 19.571)",
       "chart-3": "oklch(0.704 0.191 22.216)",
@@ -63,12 +63,12 @@
       "chart-5": "oklch(0.577 0.245 27.325)",
       "sidebar": "oklch(0.2 0.02 25.331)",
       "sidebar-foreground": "oklch(0.985 0.004 25.331)",
-      "sidebar-primary": "oklch(0.637 0.237 25.331)",
+      "sidebar-primary": "oklch(0.577 0.245 27.325)",
       "sidebar-primary-foreground": "oklch(1 0 0)",
       "sidebar-accent": "oklch(0.3 0.04 25.331)",
       "sidebar-accent-foreground": "oklch(0.985 0.004 25.331)",
       "sidebar-border": "oklch(1 0 0 / 10%)",
-      "sidebar-ring": "oklch(0.637 0.237 25.331)"
+      "sidebar-ring": "oklch(0.577 0.245 27.325)"
     }
   },
   "type": "registry:theme"

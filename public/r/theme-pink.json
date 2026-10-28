@@ -44,7 +44,7 @@
       "card-foreground": "oklch(0.985 0.004 354.308)",
       "popover": "oklch(0.2 0.02 354.308)",
       "popover-foreground": "oklch(0.985 0.004 354.308)",
-      "primary": "oklch(0.656 0.241 354.308)",
+      "primary": "oklch(0.58 0.249 0.584)",
       "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.27 0.025 354.308)",
       "secondary-foreground": "oklch(0.985 0.004 354.308)",
@@ -55,7 +55,7 @@
       "destructive": "oklch(0.704 0.191 22.216)",
       "border": "oklch(1 0 0 / 10%)",
       "input": "oklch(1 0 0 / 15%)",
-      "ring": "oklch(0.656 0.241 354.308)",
+      "ring": "oklch(0.58 0.249 0.584)",
       "chart-1": "oklch(0.899 0.061 343.231)",
       "chart-2": "oklch(0.823 0.12 346.018)",
       "chart-3": "oklch(0.718 0.202 349.761)",
@@ -63,12 +63,12 @@
       "chart-5": "oklch(0.592 0.249 0.584)",
       "sidebar": "oklch(0.2 0.02 354.308)",
       "sidebar-foreground": "oklch(0.985 0.004 354.308)",
-      "sidebar-primary": "oklch(0.656 0.241 354.308)",
+      "sidebar-primary": "oklch(0.58 0.249 0.584)",
       "sidebar-primary-foreground": "oklch(1 0 0)",
       "sidebar-accent": "oklch(0.3 0.04 354.308)",
       "sidebar-accent-foreground": "oklch(0.985 0.004 354.308)",
       "sidebar-border": "oklch(1 0 0 / 10%)",
-      "sidebar-ring": "oklch(0.656 0.241 354.308)"
+      "sidebar-ring": "oklch(0.58 0.249 0.584)"
     }
   },
   "type": "registry:theme"

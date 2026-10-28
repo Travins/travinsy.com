@@ -43,7 +43,7 @@
       "group": "color",
       "name": "红色",
       "title": "Red",
-      "description": "标准红色主色（亮色 600，暗色 500）。危险色同时拉开：亮色改用 800 的深红，暗色改用 300 的浅红，避免与主色混淆。",
+      "description": "标准红色主色（亮暗都取 600，保证白字对比度）。危险色同时拉开：亮色改用 800 的深红，暗色改用 300 的浅红，避免与主色混淆。",
       "url": "https://travinsy.com/r/theme-red.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-red.json",
@@ -91,7 +91,7 @@
       "group": "color",
       "name": "绿色",
       "title": "Green",
-      "description": "沉稳的森林绿主色，亮色取 700、暗色取 600，配白字。",
+      "description": "沉稳的森林绿主色，亮暗都取 700，配白字。",
       "url": "https://travinsy.com/r/theme-green.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-green.json",
