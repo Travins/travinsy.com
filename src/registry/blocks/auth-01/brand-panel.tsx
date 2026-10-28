@@ -1,4 +1,7 @@
 import { cn } from "@/lib/utils"
+import { GlyphField } from "@/registry/ui/glyph-field/glyph-field"
+import { Ripple } from "@/registry/ui/ripple/ripple"
+import { TextReveal } from "@/registry/ui/text-animate/text-animate"
 
 import type { BrandConfig } from "./brand"
 import { formatLabel, resolveLabels, type Auth01Labels } from "./config"
@@ -25,7 +28,10 @@ function Logo({
   )
 }
 
-/** 大屏左半边的品牌面板：主色渐变 + 模糊光斑 + 同心圆环。所有颜色都来自 primary。 */
+/**
+ * 大屏左半边的品牌面板：主色渐变 + 模糊光斑 + 向外扩散的波纹 + 四周的字符矩阵。
+ * 所有颜色都来自 primary / primary-foreground，跟随颜色主题与亮暗模式。
+ */
 function BrandPanel({
   brand,
   labels,
@@ -43,8 +49,26 @@ function BrandPanel({
       <div aria-hidden="true" className="absolute inset-0">
         <div className="absolute top-20 left-10 size-72 rounded-full bg-primary-foreground/10 blur-3xl" />
         <div className="absolute right-10 bottom-20 size-96 rounded-full bg-primary-foreground/5 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 size-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary-foreground/10" />
-        <div className="absolute top-1/2 left-1/2 size-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary-foreground/10" />
+        {/* 字符矩阵只铺在四周，中间留白给文字；GlyphField 自带底色，这里改成透明 */}
+        <GlyphField
+          fade="center"
+          glyphs="01"
+          tone="var(--primary-foreground)"
+          density={0.4}
+          fontSize={13}
+          speed={0.02}
+          className="absolute inset-0 min-h-0 bg-transparent opacity-25"
+        />
+        <Ripple
+          size={720}
+          rings={4}
+          ringGap={140}
+          baseSize={200}
+          duration={8}
+          background="none"
+          tone="var(--primary-foreground)"
+          className="absolute inset-0 h-full"
+        />
       </div>
       <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20">
         <div className="mb-8 flex items-center gap-3">
@@ -54,7 +78,9 @@ function BrandPanel({
           </span>
         </div>
         <p className="mb-6 text-2xl leading-tight font-bold text-balance xl:text-3xl">
-          {brand.title}
+          <TextReveal by="word" trigger="mount" stagger={70}>
+            {brand.title}
+          </TextReveal>
         </p>
         <p className="mb-10 max-w-md text-lg leading-8 text-primary-foreground/80">
           {brand.description}

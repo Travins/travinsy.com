@@ -1,6 +1,16 @@
 /** 演示用假数据：替换成你自己的接口数据即可。 */
 
-import { GlobeIcon, LayoutGridIcon } from "lucide-react"
+import {
+  ActivityIcon,
+  BellRingIcon,
+  GlobeIcon,
+  LayoutGridIcon,
+  RadarIcon,
+  TimerIcon,
+  type LucideIcon,
+} from "lucide-react"
+
+import type { StatFormatOptions } from "@/registry/lib/data-display"
 
 type EventStatus = "ok" | "warning" | "error"
 
@@ -28,12 +38,71 @@ const events: EventRow[] = [
   { id: "e-1031", app: "用户中心", target: "GET /api/me", status: "ok", latency: "69 ms", time: "14:15:44" },
 ]
 
-const stats = [
-  { label: "可用率", value: "99.96%", delta: "+0.02%", hint: "近 24 小时" },
-  { label: "拨测次数", value: "128 640", delta: "+4.1%", hint: "较昨日" },
-  { label: "平均响应", value: "132 ms", delta: "-8 ms", hint: "P50" },
-  { label: "未恢复告警", value: "3", delta: "+1", hint: "需要处理" },
-] as const
+type StatItem = {
+  id: string
+  label: string
+  value: number
+  unit?: string
+  /** 大号数字的格式 */
+  format?: StatFormatOptions
+  /** 较上一周期的变化，单位是百分点，或 deltaFormat 指定的其他口径 */
+  delta: number
+  deltaFormat?: StatFormatOptions
+  /** 越低越好的指标（耗时、告警数）：下降用「好」的颜色 */
+  invert?: boolean
+  hint: string
+  /** 近 24 小时每 2 小时一个点，共 12 个，用来画迷你走势 */
+  trend: number[]
+  icon: LucideIcon
+}
+
+const stats: StatItem[] = [
+  {
+    id: "availability",
+    label: "可用率",
+    value: 99.96,
+    unit: "%",
+    format: { compact: false, digits: 2 },
+    delta: 0.02,
+    deltaFormat: { digits: 2 },
+    hint: "近 24 小时",
+    trend: [99.91, 99.93, 99.9, 99.94, 99.95, 99.92, 99.94, 99.96, 99.95, 99.97, 99.96, 99.96],
+    icon: ActivityIcon,
+  },
+  {
+    id: "probes",
+    label: "拨测次数",
+    value: 128640,
+    format: { compact: false },
+    delta: 4.1,
+    hint: "较昨日",
+    trend: [8200, 8900, 9400, 10100, 10800, 11600, 12100, 11800, 12400, 13200, 13900, 14200],
+    icon: RadarIcon,
+  },
+  {
+    id: "latency",
+    label: "平均响应",
+    value: 132,
+    unit: "ms",
+    delta: -8,
+    deltaFormat: { style: "number", digits: 0 },
+    invert: true,
+    hint: "ms · P50",
+    trend: [141, 138, 145, 150, 148, 139, 142, 136, 134, 133, 131, 132],
+    icon: TimerIcon,
+  },
+  {
+    id: "alerts",
+    label: "未恢复告警",
+    value: 3,
+    delta: 1,
+    deltaFormat: { style: "number", digits: 0 },
+    invert: true,
+    hint: "需要处理",
+    trend: [1, 1, 2, 1, 1, 2, 2, 3, 2, 2, 3, 3],
+    icon: BellRingIcon,
+  },
+]
 
 /** 24 个小时的响应耗时（ms），用来画简易柱状图 */
 const latencySeries = [
@@ -65,4 +134,4 @@ export {
   services,
   stats,
 }
-export type { EventRow, EventStatus }
+export type { EventRow, EventStatus, StatItem }

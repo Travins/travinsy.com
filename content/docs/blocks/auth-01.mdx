@@ -1,25 +1,38 @@
 ---
 title: 分屏登录页
 titleEn: Split Sign-in
-description: 左侧品牌面板 + 右侧表单的分屏登录页：登录（密码 / 验证码）、注册（带强度条）、找回密码，zod 校验。
+description: 左侧品牌面板 + 右侧表单的分屏登录页：登录（密码 / 验证码）、注册（带强度条）、找回密码，zod 校验；品牌面板与表单控件直接用本站自己的组件拼成。
 ---
 
 <BlockViewer name="auth-01" />
 
 `Auth01` 提炼自我的一个企业监控平台项目的登录页，在原有「左侧品牌面板 + 右侧表单」结构上，补上了完整的账号流程：
 
-- **登录**：密码登录 / 验证码登录两个标签；账号（用户名或邮箱）、密码显示切换、记住我、忘记密码、第三方登录（GitHub、Google）、跳转注册。
+- **登录**：密码登录 / 验证码登录用方条分段控件切换；账号（用户名或邮箱）、密码显示切换、记住登录状态开关、忘记密码、第三方登录（GitHub、Google）、跳转注册。
 - **注册**：姓名、邮箱、密码（实时强度条）、确认密码、同意服务条款。
-- **找回密码**：邮箱提交后切换为「邮件已发送」的成功状态。
+- **找回密码**：邮箱提交后切换为「邮件已发送」的成功状态，邮件图标向外扩散波纹。
 - 三个视图在同一个组件内切换，带 180ms 的淡入位移过渡，系统开启「减少动态效果」时只保留淡入。
 - 大屏左半屏是品牌面板，窄屏隐藏面板并在表单上方显示 Logo 与名称。
 - 品牌面板的所有颜色都来自 `primary` 与 `primary-foreground`，切换颜色主题和亮暗模式后自动跟随，预览里可以直接试。
+
+### 用到的本站组件
+
+这个区块本身就是自研组件的一组真实用例，除表单输入、按钮、复选框（注册页的条款勾选）仍用 shadcn 原语外，其余都换成了本站组件：
+
+| 位置 | 组件 | 说明 |
+| --- | --- | --- |
+| 品牌面板背景 | [`ripple`](/components/ripple) | 以面板中心向外扩散的同心波纹，替代原来的静态圆环 |
+| 品牌面板四周 | [`glyph-field`](/components/glyph-field) | 淡淡的 `0 / 1` 字符矩阵，`fade="center"` 让中间留白给文字 |
+| 品牌面板标题 | [`text-animate`](/components/text-animate) 的 `TextReveal` | 挂载时按词逐个显现，读屏仍读完整标题 |
+| 登录方式切换 | [`segmented-control`](/components/segmented-control) | 密码登录 / 验证码登录，替代原来的 Tabs |
+| 记住登录状态 | [`toggle-switch`](/components/toggle-switch) | 即时生效的设置项，替代原来的复选框 |
+| 「邮件已发送」 | [`ripple`](/components/ripple) | 邮件图标为圆心，表达「已发出」 |
 
 ## 安装
 
 <InstallCommand name="auth-01" />
 
-会安装 shadcn 的 `button`、`input`、`label`、`checkbox`、`tabs`，以及 npm 包 `motion`、`zod`、`lucide-react`。如果项目里已有同名文件，CLI 会询问是否覆盖。
+会安装 shadcn 的 `button`、`input`、`label`、`checkbox`，本站的 `ripple`、`glyph-field`、`text-animate`、`segmented-control`、`toggle-switch`（及它们依赖的 `flow-diagram` 色调与背景），以及 npm 包 `motion`、`zod`、`lucide-react`。如果项目里已有同名文件，CLI 会询问是否覆盖。
 
 ## 用法
 
@@ -180,15 +193,15 @@ export default function LoginPage() {
 | `brandPanelLabel` | `{name} 品牌介绍` | 品牌面板的 `aria-label` |
 | `signInTitle` | `欢迎回来` | 登录视图标题（`h1`） |
 | `signInDescription` | `输入账号信息即可登录` | 登录视图说明 |
-| `signInMethodLabel` | `登录方式` | 登录方式标签条的 `aria-label` |
-| `signInPasswordTab` | `密码登录` | 密码登录标签 |
-| `signInCodeTab` | `验证码登录` | 验证码登录标签 |
+| `signInMethodLabel` | `登录方式` | 登录方式分段控件的 `aria-label` |
+| `signInPasswordTab` | `密码登录` | 密码登录选项 |
+| `signInCodeTab` | `验证码登录` | 验证码登录选项 |
 | `accountLabel` | `用户名或邮箱` | 账号输入框的标签 |
 | `accountPlaceholder` | `请输入用户名或邮箱` | 账号输入框的占位文字 |
 | `passwordLabel` | `密码` | 密码输入框的标签 |
 | `passwordPlaceholder` | `请输入密码` | 密码输入框的占位文字 |
 | `forgotPassword` | `忘记密码？` | 密码框右侧的链接按钮 |
-| `remember` | `记住登录状态` | 记住我复选框 |
+| `remember` | `记住登录状态` | 记住登录状态开关的标签 |
 | `signInSubmit` | `登录` | 登录按钮与其加载文案 |
 | `signInPending` | `登录中…` | 登录按钮与其加载文案 |
 | `phoneLabel` | `手机号` | 验证码登录的手机号输入框的标签 |
@@ -250,14 +263,14 @@ export default function LoginPage() {
 
 ## 可访问性
 
-- 每个视图只有一个 `h1`（由 `ViewHeading` 渲染），品牌面板是带 `aria-label` 的 `aside`，光斑与圆环等装饰全部 `aria-hidden`。
+- 每个视图只有一个 `h1`（由 `ViewHeading` 渲染），品牌面板是带 `aria-label` 的 `aside`，光斑、波纹与字符矩阵等装饰全部 `aria-hidden`；品牌标题的逐词动画只作用在隐藏层，读屏读到的是完整原文。
 - 输入框与 `Label` 通过 `htmlFor` / `id` 关联；字段错误用 `aria-describedby` 关联到同一个输入框，出错时设置 `aria-invalid`；表单级错误是 `role="alert"`，出现时立即朗读。
 - 密码显示切换按钮带 `aria-pressed` 和随状态变化的中文名称（显示密码 / 隐藏密码）。
-- 登录方式用 Tabs 实现，方向键切换，标签条有 `aria-label`；「或」分隔线是 `role="separator"`。
+- 登录方式是带 `aria-label` 的单选组（`segmented-control`），方向键切换；「记住登录状态」是 `role="switch"` 的开关；「或」分隔线是 `role="separator"`。
 - 密码强度条是装饰（`aria-hidden`），文字结果用 `aria-live="polite"` 播报；强度不只靠颜色区分，同时有文字。
 - 「邮件已发送」视图是 `role="status"`，读屏会读出提交结果。
 - 提交中按钮禁用并显示「登录中…」，避免重复提交；所有图标按钮都有中文 `aria-label`。
-- 视图切换动画遵循 `prefers-reduced-motion`，开启后只保留淡入。
+- 视图切换动画遵循 `prefers-reduced-motion`，开启后只保留淡入；波纹、字符矩阵与标题显现在开启「减少动态效果」时显示静态画面，标题直接显示全文。
 
 ## 注意事项
 
@@ -269,10 +282,10 @@ components/auth-01/
 ├── auth-01.tsx                          # 主组件：分屏布局 + 视图切换
 ├── config.ts                            # ★ 全部用户可见文案 DEFAULT_LABELS
 ├── brand.tsx                            # 品牌配置类型与默认示例品牌
-├── brand-panel.tsx                      # 左侧品牌面板、窄屏顶部品牌
-├── sign-in-form.tsx                     # 登录（密码 / 验证码）+ 第三方登录
+├── brand-panel.tsx                      # 左侧品牌面板（波纹 + 字符矩阵 + 标题显现）、窄屏顶部品牌
+├── sign-in-form.tsx                     # 登录（分段控件切换密码 / 验证码）+ 第三方登录
 ├── sign-up-form.tsx                     # 注册
-├── forgot-password-form.tsx             # 找回密码
+├── forgot-password-form.tsx             # 找回密码（成功态用波纹）
 ├── password-strength.tsx                # 密码强度条与评分
 ├── social-buttons.tsx                   # GitHub / Google 按钮
 ├── form-parts.tsx                       # 输入框、密码框、错误提示等共用件

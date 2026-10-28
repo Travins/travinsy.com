@@ -3,8 +3,10 @@
 import * as React from "react"
 import type { LucideIcon } from "lucide-react"
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
+import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
+
+import { useAppShellLabels, type AppShellLabels } from "./config"
 
 type PageHeaderProps = Omit<React.ComponentProps<"header">, "title"> & {
   title: string
@@ -77,49 +79,48 @@ type PageTabsProps = Omit<React.ComponentProps<"div">, "onChange"> & {
   onValueChange: (value: string) => void
   /** 右侧附加内容，例如时间范围说明 */
   trailing?: React.ReactNode
+  labels?: Partial<AppShellLabels>
 }
 
-/** 范围切换标签条（如「全局总览 / 应用 A / 应用 B」），下划线样式，窄屏可横向滚动。 */
+/**
+ * 范围切换条（如「全局总览 / 应用 A / 应用 B」）：用分段选择实现。
+ * 它切换的是同一页内容的数据范围，没有对应的面板，所以用单选语义而不是 tab；窄屏可横向滚动。
+ */
 function PageTabs({
   className,
   tabs,
   value,
   onValueChange,
   trailing,
+  labels,
   ...props
 }: PageTabsProps) {
+  const text = useAppShellLabels(labels)
   return (
     <div
       data-slot="app-shell-page-tabs"
       className={cn(
-        "flex min-w-0 items-center gap-3 border-b border-border px-4 sm:px-6",
+        "flex min-w-0 items-center gap-3 border-b border-border px-4 py-2 sm:px-6",
         className
       )}
       {...props}
     >
-      <Tabs
-        value={value}
-        onValueChange={(next) => onValueChange(String(next))}
-        className="min-w-0 flex-1"
-      >
-        <TabsList
-          variant="line"
-          className="h-11 w-full min-w-0 justify-start gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {tabs.map(({ value: tab, label, icon: Icon }) => (
-            <TabsTrigger
-              key={tab}
-              value={tab}
-              className="h-9 flex-none px-3 after:bottom-0"
-            >
-              {Icon ? <Icon aria-hidden="true" /> : null}
-              {label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      <div className="min-w-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <SegmentedControl
+          size="sm"
+          aria-label={text.scopeSwitch}
+          className="w-auto"
+          value={value}
+          onValueChange={onValueChange}
+          options={tabs.map(({ value: tab, label, icon: Icon }) => ({
+            value: tab,
+            label,
+            icon: Icon ? <Icon /> : undefined,
+          }))}
+        />
+      </div>
       {trailing ? (
-        <div className="hidden shrink-0 text-[11px] text-muted-foreground lg:block">
+        <div className="ml-auto hidden shrink-0 text-[11px] text-muted-foreground lg:block">
           {trailing}
         </div>
       ) : null}

@@ -4,9 +4,8 @@ import { KeyRound, Lock, Smartphone, User } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
+import { ToggleSwitch } from "@/registry/ui/toggle-switch/toggle-switch"
 
 import { formatLabel, resolveLabels, type Auth01Labels } from "./config"
 import {
@@ -24,6 +23,8 @@ import { useAsyncAction, useAuthForm } from "./use-auth-form"
 type SignInValues =
   | { method: "password"; account: string; password: string; remember: boolean }
   | { method: "code"; phone: string; code: string }
+
+type SignInMethod = SignInValues["method"]
 
 const CODE_COOLDOWN = 60
 
@@ -82,18 +83,13 @@ function PasswordSignIn({
           </LinkButton>
         }
       />
-      <div className="flex items-center gap-2">
-        <Checkbox
-          id="sign-in-remember"
-          checked={form.values.remember}
-          onCheckedChange={(checked) =>
-            form.setValue("remember", checked === true)
-          }
-        />
-        <Label htmlFor="sign-in-remember" className="cursor-pointer font-normal">
-          {text.remember}
-        </Label>
-      </div>
+      {/* 记住登录状态是即时生效的开关，不是需要同意的声明，所以用开关而不是复选框 */}
+      <ToggleSwitch
+        label={text.remember}
+        tone="primary"
+        checked={form.values.remember}
+        onCheckedChange={(checked) => form.setValue("remember", checked)}
+      />
       <SubmitButton pending={form.pending} pendingText={text.signInPending}>
         {text.signInSubmit}
       </SubmitButton>
@@ -121,7 +117,10 @@ function CodeSignIn({
   const [seconds, setSeconds] = useState(0)
   useEffect(() => {
     if (seconds <= 0) return
-    const timer = window.setTimeout(() => setSeconds((value) => value - 1), 1000)
+    const timer = window.setTimeout(
+      () => setSeconds((value) => value - 1),
+      1000,
+    )
     return () => window.clearTimeout(timer)
   }, [seconds])
 
@@ -208,31 +207,40 @@ function SignInForm({
   labels?: Partial<Auth01Labels>
 }) {
   const text = resolveLabels(labels)
-  const [method, setMethod] = useState("password")
+  const [method, setMethod] = useState<SignInMethod>("password")
+  const methodOptions = [
+    { value: "password", label: text.signInPasswordTab },
+    { value: "code", label: text.signInCodeTab },
+  ] as const
   const social = useAsyncAction(text.requestFailed)
   return (
     <div data-slot="auth-01-sign-in" className="flex flex-col gap-5">
-      <ViewHeading title={text.signInTitle} description={text.signInDescription} />
-      <Tabs value={method} onValueChange={(value) => setMethod(String(value))}>
-        <TabsList aria-label={text.signInMethodLabel} className="w-full">
-          <TabsTrigger value="password">{text.signInPasswordTab}</TabsTrigger>
-          <TabsTrigger value="code">{text.signInCodeTab}</TabsTrigger>
-        </TabsList>
-        <TabsContent value="password" className="pt-3">
+      <ViewHeading
+        title={text.signInTitle}
+        description={text.signInDescription}
+      />
+      <div className="flex flex-col gap-3">
+        <SegmentedControl
+          aria-label={text.signInMethodLabel}
+          size="lg"
+          options={methodOptions}
+          value={method}
+          onValueChange={(value) => setMethod(value as SignInMethod)}
+        />
+        {method === "password" ? (
           <PasswordSignIn
             onSignIn={onSignIn}
             onForgotPassword={onForgotPassword}
             labels={labels}
           />
-        </TabsContent>
-        <TabsContent value="code" className="pt-3">
+        ) : (
           <CodeSignIn
             onSignIn={onSignIn}
             onSendCode={onSendCode}
             labels={labels}
           />
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
       {socialProviders.length > 0 && (
         <>
           <div

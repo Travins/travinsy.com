@@ -4,10 +4,13 @@ import { PlusIcon } from "lucide-react"
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import {
+  ChartCard,
+  ChartCardContent,
+} from "@/registry/ui/chart-card/chart-card"
 
 import { formatLabel, useAppShellLabels } from "./config"
-import { StatusBadge } from "./dashboard-overview"
+import { EventsTable } from "./dashboard-overview"
 import { PageFrame } from "./page-header"
 import { PageToolbar } from "./page-toolbar"
 import { events } from "./sample-data"
@@ -65,54 +68,14 @@ function ListPage({
         />
       }
     >
-      <Card>
-        <CardContent className="overflow-x-auto">
-          <table className="w-full min-w-[520px] text-left text-sm">
-            <caption className="sr-only">
-              {formatLabel(text.listCaption, { title })}
-            </caption>
-            <thead className="text-xs text-muted-foreground">
-              <tr className="border-b border-border">
-                <th scope="col" className="py-2 pr-4 font-medium">
-                  {text.columnApp}
-                </th>
-                <th scope="col" className="py-2 pr-4 font-medium">
-                  {text.columnTarget}
-                </th>
-                <th scope="col" className="py-2 pr-4 font-medium">
-                  {text.columnStatus}
-                </th>
-                <th scope="col" className="py-2 text-right font-medium">
-                  {text.columnTime}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.id} className="border-b border-border last:border-0">
-                  <td className="py-2.5 pr-4 font-medium">{row.app}</td>
-                  <td className="py-2.5 pr-4 font-mono text-xs text-muted-foreground">
-                    {row.target}
-                  </td>
-                  <td className="py-2.5 pr-4">
-                    <StatusBadge status={row.status} />
-                  </td>
-                  <td className="py-2.5 text-right text-muted-foreground tabular-nums">
-                    {row.time}
-                  </td>
-                </tr>
-              ))}
-              {rows.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="py-10 text-center text-muted-foreground">
-                    {text.emptyRows}
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
+      <ChartCard>
+        <ChartCardContent>
+          <EventsTable
+            rows={rows}
+            caption={formatLabel(text.listCaption, { title })}
+          />
+        </ChartCardContent>
+      </ChartCard>
     </PageFrame>
   )
 }

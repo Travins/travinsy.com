@@ -1,13 +1,19 @@
 "use client"
 
-import { ArrowUpRight, Bot, Command } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import {
+  ArrowUpRight,
+  Command,
+  PanelRight,
+  SquareMousePointer,
+} from "lucide-react"
+import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
 import {
   AgentChatPanel,
   AgentChatProvider,
   AgentChatTrigger,
   AgentChatSuggestion,
   useAgentChat,
+  type AgentChatMode,
 } from "@/registry/blocks/agent-chat-01/agent-chat"
 import {
   initialMessages,
@@ -83,25 +89,29 @@ function AgentChatWorkspace() {
                 </article>
               ))}
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-              <Bot className="size-4" />
-              <span>
-                {labels.layoutPrefix}
-                {mode === "embedded"
-                  ? labels.embeddedLayout
-                  : labels.floatingLayout}
-              </span>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  setMode(mode === "embedded" ? "floating" : "embedded")
-                  setOpen(true)
-                }}
-              >
-                {labels.switchLayout}
-              </Button>
-            </div>
+            {/* 布局切换用方条：选中哪一项就是当前布局，不用再单独写一行「当前：…」 */}
+            <SegmentedControl
+              label={labels.switchLayout}
+              size="sm"
+              className="max-w-sm"
+              options={[
+                {
+                  value: "embedded",
+                  label: labels.embeddedLayout,
+                  icon: <PanelRight />,
+                },
+                {
+                  value: "floating",
+                  label: labels.floatingLayout,
+                  icon: <SquareMousePointer />,
+                },
+              ]}
+              value={mode}
+              onValueChange={(value) => {
+                setMode(value as AgentChatMode)
+                setOpen(true)
+              }}
+            />
             <p className="text-xs leading-6 text-muted-foreground">
               {labels.demoNote}
             </p>

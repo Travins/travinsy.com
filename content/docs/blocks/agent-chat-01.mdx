@@ -1,7 +1,7 @@
 ---
 title: AI 助手面板
 titleEn: AI Assistant Panel
-description: 从企业监控平台提炼的 AI 助手：嵌入与浮动布局切换，Trace 展示分析摘要、工具调用与来源，内置流式演示。
+description: 从企业监控平台提炼的 AI 助手：嵌入与浮动布局切换，时间线展示分析摘要、工具调用与来源，内置流式演示。
 ---
 
 <BlockViewer name="agent-chat-01" />
@@ -9,16 +9,26 @@ description: 从企业监控平台提炼的 AI 助手：嵌入与浮动布局切
 这个 AI 助手面板提炼自我的一个企业监控平台项目，保留「在工作区旁边排查问题」的交互，去掉认证、业务接口与监控数据依赖。默认使用离线模拟数据，不需要密钥或服务端。
 
 - **两种布局**：右侧嵌入面板、右下角浮动窗口；聊天记录、输入草稿和滚动位置在切换时保留。
-- **可检查的过程**：Trace 展示分析摘要、运行中的工具、成功与失败结果，以及可打开的参考来源。输入与输出可折叠查看。
+- **可检查的过程**：分析摘要、运行中的工具、成功与失败结果，以及可打开的参考来源，按顺序排成一条竖向时间线（本站的 `timeline`）；每一步的输入与输出可折叠查看。
 - **流式演示**：应用监控、vLLM 显存、CI 安装失败三个剧本，其他问题使用通用剧本。所有 reasoning 均为预写的演示摘要，不是真实模型的隐藏思维。
 - **对话操作**：复制、点赞/点踩、重新生成、新建对话、停止生成。反馈仅保存在当前页面，不会上报。
 - **窄屏适配**：小于 768px 时，两种模式都使用底部 Sheet，带焦点管理和 Escape 关闭；嵌入面板支持用鼠标或触摸拖动、用方向键调整宽度。
+
+### 用到的本站组件
+
+除输入框、按钮、气泡、Sheet 等 shadcn 原语外，区块里这几处直接用了本站自己的组件：
+
+| 位置 | 组件 | 说明 |
+| --- | --- | --- |
+| 回复上方的分析过程 | [`timeline`](/components/timeline) | 分析摘要、工具调用、参考来源各占一步；进行中的一步是脉冲光环，失败是红色标记，停止后是虚线 |
+| 空状态的背景与标题 | [`glyph-field`](/components/glyph-field)、[`text-animate`](/components/text-animate) | 四周淡淡的字符矩阵，欢迎语用 `TextReveal` 逐词显现 |
+| 示例工作区的布局切换 | [`segmented-control`](/components/segmented-control) | 嵌入布局 / 浮动窗口，选中项就是当前布局 |
 
 ## 安装
 
 <InstallCommand name="agent-chat-01" />
 
-会安装 `app/agent/page.tsx` 页面，以及 `components/agent-chat/` 下的组件与数据文件。共享 hook 安装到 `hooks/use-controllable-state.ts`。shadcn 依赖来自官方 registry；npm 依赖为 `ai`、`@ai-sdk/react`、`motion`、`lucide-react`、`class-variance-authority`。实现基于 AI SDK 7 与 React SDK 4。
+会安装 `app/agent/page.tsx` 页面，以及 `components/agent-chat/` 下的组件与数据文件。共享 hook 安装到 `hooks/use-controllable-state.ts`。shadcn 依赖来自官方 registry，本站组件 `timeline`、`glyph-field`、`text-animate`、`segmented-control`（及它们依赖的 `flow-diagram` 色调）一并安装；npm 依赖为 `ai`、`@ai-sdk/react`、`motion`、`lucide-react`、`class-variance-authority`。实现基于 AI SDK 7 与 React SDK 4。
 
 ## 用法
 
@@ -139,6 +149,7 @@ export function Workspace() {
 ## 可访问性
 
 - 标题栏与反馈按钮均有中文可访问名称，输入框有标签。
+- 分析过程是带 `aria-label`（`labels.steps`）的有序列表，每一步的状态写在标题文字里（运行中 / 已完成 / 失败 / 已停止），标记图标仅装饰；展开按钮在 `h3` 标题内，暴露 `aria-expanded`。
 - 聊天记录通过 `aria-live="polite"` 播报新增内容；按钮暴露 `aria-expanded`、`aria-pressed`，面板通过 `data-mode`、`data-state` 暴露状态。
 - `Enter` 发送，`Shift + Enter` 换行；输入法组合期间不会误发。调整面板宽度可用左右方向键。
 - 浮动模式下，Tab 聚焦「移动助手窗口」手柄，方向键每次移动 16px，Shift + 方向键移动 64px；Home、Enter 或空格复位到默认右下角。双击标题栏也可复位。移动始终限制在视口内；窄屏或 `draggable={false}` 时不显示手柄。
@@ -155,7 +166,8 @@ components/agent-chat/
 ├── agent-chat-context.tsx    # Provider 与会话状态
 ├── use-agent-chat-position.ts # 指针/键盘移动、视口约束与位置持久化
 ├── agent-chat-body.tsx       # 标题栏、滚动区、输入框
-├── chat-message.tsx          # Trace 与反馈
+├── chat-message.tsx          # 消息气泡、回复正文与反馈
+├── chat-trace.tsx            # 分析过程时间线（摘要、工具调用、来源）
 ├── chat-markdown.tsx         # 安全的简单 Markdown
 ├── config.ts                 # DEFAULT_LABELS 与建议问题
 ├── types.ts                  # 模式类型
@@ -170,7 +182,7 @@ app/agent/page.tsx
 
 `mock-transport.ts` 按最后一条用户消息匹配正则，构造标准 `UIMessageChunk` 队列。每次 `pull` 只输出一个片段：reasoning → 多个 dynamic tool → source-url → text → finish。延迟定时器受 `AbortSignal` 和流取消控制，不会执行真实命令或请求业务服务；`reconnectToStream` 返回 `null`。
 
-`chat-message.tsx` 同时接受动态工具与 `tool-*` 静态工具消息。Markdown 仅支持段落、列表与行内代码，不执行 HTML；来源 URL 仅允许 HTTP(S)。
+`chat-trace.tsx` 同时接受动态工具与 `tool-*` 静态工具消息。Markdown 仅支持段落、列表与行内代码，不执行 HTML；来源 URL 仅允许 HTTP(S)。
 
 ### 接入真实后端
 
@@ -242,4 +254,4 @@ export async function POST(request: Request) {
 
 `sendReasoning` 仅在模型提供可公开的 reasoning 内容时才有数据；不支持时可以省略该部分。工具 `input-streaming / input-available` 映射为运行中，`output-available` 映射为完成，`output-error / output-denied` 映射为失败；停止时未结束的调用显示为已停止。模型或检索工具提供的 `source-url` 映射为来源链接，不会自动生成引用。服务端应只发送适合向用户公开的分析摘要与工具输出。
 
-参考：[shadcn Trace](https://ui.shadcn.com/docs/components/aria/trace)、[AI SDK UI](https://ai-sdk.dev/docs/ai-sdk-ui/chatbot)。
+参考：[AI SDK UI](https://ai-sdk.dev/docs/ai-sdk-ui/chatbot)。

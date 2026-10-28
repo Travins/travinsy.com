@@ -15,6 +15,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import { GlyphField } from "@/registry/ui/glyph-field/glyph-field"
+import { TextReveal } from "@/registry/ui/text-animate/text-animate"
 import { AgentChatMessage } from "./chat-message"
 import { useAgentContext } from "./agent-chat-context"
 
@@ -182,11 +184,22 @@ function AgentChatBody({
             ))}
           </div>
         ) : (
-          <div className="flex h-full flex-col justify-center gap-5 py-6">
+          <div className="relative isolate flex h-full flex-col justify-center gap-5 py-6">
+            {/* 空状态的背景：只铺在四周的字符矩阵，中间留白给文字 */}
+            <GlyphField
+              fade="center"
+              tone="primary"
+              density={0.45}
+              fontSize={12}
+              speed={0.02}
+              className="absolute -inset-4 -z-10 min-h-0 bg-transparent opacity-20"
+            />
             <Bot className="size-8 text-primary" />
             <div>
               <p className="text-lg font-medium tracking-tight">
-                {labels.welcome}
+                <TextReveal by="word" trigger="mount" stagger={60}>
+                  {labels.welcome}
+                </TextReveal>
               </p>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 {labels.welcomeDescription}

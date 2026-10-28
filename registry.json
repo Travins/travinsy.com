@@ -224,7 +224,11 @@
         "input",
         "label",
         "checkbox",
-        "tabs"
+        "https://travinsy.com/r/ripple.json",
+        "https://travinsy.com/r/glyph-field.json",
+        "https://travinsy.com/r/text-animate.json",
+        "https://travinsy.com/r/segmented-control.json",
+        "https://travinsy.com/r/toggle-switch.json"
       ],
       "files": [
         {
@@ -395,7 +399,7 @@
       "name": "agent-chat-01",
       "type": "registry:block",
       "title": "AI 助手面板",
-      "description": "从企业监控平台提炼的 AI 助手：嵌入与浮动布局切换，Trace 展示分析摘要、工具调用与来源，内置流式演示。",
+      "description": "从企业监控平台提炼的 AI 助手：嵌入与浮动布局切换，时间线展示分析摘要、工具调用与来源，内置流式演示。",
       "dependencies": [
         "ai",
         "@ai-sdk/react",
@@ -404,7 +408,6 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "trace",
         "bubble",
         "message",
         "code-block",
@@ -412,7 +415,11 @@
         "button",
         "textarea",
         "avatar",
-        "sheet"
+        "sheet",
+        "https://travinsy.com/r/timeline.json",
+        "https://travinsy.com/r/glyph-field.json",
+        "https://travinsy.com/r/text-animate.json",
+        "https://travinsy.com/r/segmented-control.json"
       ],
       "files": [
         {
@@ -444,6 +451,11 @@
           "path": "src/registry/blocks/agent-chat-01/chat-message.tsx",
           "type": "registry:component",
           "target": "components/agent-chat/chat-message.tsx"
+        },
+        {
+          "path": "src/registry/blocks/agent-chat-01/chat-trace.tsx",
+          "type": "registry:component",
+          "target": "components/agent-chat/chat-trace.tsx"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/chat-markdown.tsx",
@@ -508,15 +520,16 @@
       "registryDependencies": [
         "button",
         "avatar",
-        "badge",
         "breadcrumb",
-        "card",
         "dropdown-menu",
         "input",
         "popover",
         "sheet",
-        "tabs",
-        "tooltip"
+        "tooltip",
+        "https://travinsy.com/r/stat-card.json",
+        "https://travinsy.com/r/mini-chart.json",
+        "https://travinsy.com/r/chart-card.json",
+        "https://travinsy.com/r/segmented-control.json"
       ],
       "files": [
         {

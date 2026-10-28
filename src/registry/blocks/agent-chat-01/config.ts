@@ -31,6 +31,7 @@ const DEFAULT_LABELS = {
   notUseful: "回答无用",
   feedback: "反馈已更新，仅保存在当前页面",
   regenerate: "重新生成回答",
+  steps: "分析过程",
   reasoningSummary: "分析摘要",
   thinkingStopped: "思考已停止",
   preparing: "正在准备分析摘要…",
@@ -52,7 +53,6 @@ const DEFAULT_LABELS = {
   workspaceTitle: "让排查有迹可循。",
   workspaceDescription:
     "把助手放在工作流旁边。查看分析摘要、展开工具结果，再决定下一步。",
-  layoutPrefix: "当前：",
   embeddedLayout: "嵌入布局",
   floatingLayout: "浮动窗口",
   switchLayout: "切换布局",

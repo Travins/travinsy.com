@@ -4,6 +4,7 @@ import { Mail, MailCheck } from "lucide-react"
 import { useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Ripple } from "@/registry/ui/ripple/ripple"
 
 import { resolveLabels, splitLabel, type Auth01Labels } from "./config"
 import { FormError, SubmitButton, TextField, ViewHeading } from "./form-parts"
@@ -37,12 +38,21 @@ function ForgotPasswordForm({
         className="flex flex-col items-center gap-4 text-center"
         role="status"
       >
-        <span
-          aria-hidden="true"
-          className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary [&_svg]:size-7"
+        {/* 以邮件图标为圆心向外扩散的波纹，表达「已发出」；纯装饰，状态由下方文字播报 */}
+        <Ripple
+          size={192}
+          rings={3}
+          ringGap={44}
+          baseSize={56}
+          duration={3.5}
+          background="none"
+          tone="primary"
+          className="h-48 w-48 max-w-full"
         >
-          <MailCheck />
-        </span>
+          <span className="absolute top-1/2 left-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-background text-primary [&_svg]:size-7">
+            <MailCheck />
+          </span>
+        </Ripple>
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold tracking-tight">
             {text.emailSentTitle}
