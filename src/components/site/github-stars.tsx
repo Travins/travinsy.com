@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 
+import { IconTip } from "@/components/docs/icon-tip"
 import { GithubIcon } from "@/components/site/github-icon"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -10,14 +11,12 @@ const CACHE_KEY = "travinsy:github-stars"
 /** 浏览器里缓存 30 分钟：GitHub 匿名接口每个 IP 每小时只有 60 次额度，不必每换一页都请求 */
 const CACHE_TTL = 30 * 60 * 1000
 
-/** 1234 → 1.2k，与 GitHub 的写法一致 */
+/** 1234 → 1.2K；悬停提示里再给完整数字 */
 const formatStars = (count: number) =>
   new Intl.NumberFormat("en", {
     notation: "compact",
     maximumFractionDigits: 1,
-  })
-    .format(count)
-    .toLowerCase()
+  }).format(count)
 
 function readCache(): number | null {
   try {
@@ -80,15 +79,17 @@ export function GithubStars({
     return () => controller.abort()
   }, [repo])
 
-  const label = stars === null ? "GitHub 仓库" : `GitHub 仓库，${stars} 个星标`
+  const label =
+    stars === null
+      ? "GitHub 仓库"
+      : `GitHub 仓库，${stars.toLocaleString("en")} 个星标`
 
-  return (
+  const link = (
     <a
       href={href}
       target="_blank"
       rel="noreferrer"
       aria-label={label}
-      title={label}
       className={cn(
         buttonVariants({
           variant: "ghost",
@@ -108,5 +109,16 @@ export function GithubStars({
         </span>
       ) : null}
     </a>
+  )
+
+  // 悬停 / 聚焦时显示完整星标数，例如「2,407 个星标」
+  return (
+    <IconTip
+      label={
+        stars === null ? "GitHub 仓库" : `${stars.toLocaleString("en")} 个星标`
+      }
+    >
+      {link}
+    </IconTip>
   )
 }
