@@ -160,51 +160,64 @@ function SegmentedControl({
         <span
           id={labelId}
           data-slot="segmented-control-label"
-          className="flex shrink-0 items-center border-e border-edge px-3 font-medium whitespace-nowrap text-muted-foreground transition-colors group-data-[modified]/segmented-control:text-foreground"
+          className="flex shrink-0 items-center ps-3 pe-2.5 font-medium whitespace-nowrap text-muted-foreground transition-colors group-data-[modified]/segmented-control:text-foreground"
         >
           {label}
         </span>
       ) : null}
-      {options.map((option) => {
-        const selected = option.value === value
-        return (
-          <Radio.Root
-            key={option.value}
-            value={option.value}
-            disabled={option.disabled}
-            data-slot="segmented-control-item"
-            className="relative flex min-w-0 flex-auto cursor-pointer items-center justify-center gap-1.5 px-2 whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
-          >
-            {selected ? (
-              <motion.span
-                layoutId={layoutId}
-                aria-hidden="true"
-                data-slot="segmented-control-indicator"
-                className={cn(
-                  "absolute inset-0.5 rounded-sm",
-                  hasTone
-                    ? "bg-(--flow-tone)/20 dark:bg-(--flow-tone)/35"
-                    : "bg-background shadow-xs ring-1 ring-edge dark:bg-foreground/10",
-                )}
-                transition={
-                  reduced
-                    ? { duration: 0 }
-                    : { type: "spring", bounce: 0.18, visualDuration: 0.25 }
-                }
-              />
-            ) : null}
-            {option.icon ? (
-              <span
-                aria-hidden="true"
-                className="relative flex shrink-0 items-center [&_svg:not([class*='size-'])]:size-3.5"
-              >
-                {option.icon}
-              </span>
-            ) : null}
-            <span className="relative truncate">{option.label}</span>
-          </Radio.Root>
-        )
-      })}
+      {/*
+        有标签时，选项收进右侧一道微微下凹的槽里：左边是纯文字的字段名（与数值滑块、开关的标签同一种写法），
+        右边才是可选的东西，标签不会被误认成第一个选项。没有标签时整条都是选项，不需要这道槽。
+      */}
+      <span
+        data-slot="segmented-control-options"
+        className={cn(
+          "relative flex min-w-0 flex-1 items-stretch",
+          label !== undefined &&
+            "my-[3px] me-[3px] rounded-sm bg-foreground/5 ring-1 ring-edge ring-inset dark:bg-foreground/10",
+        )}
+      >
+        {options.map((option) => {
+          const selected = option.value === value
+          return (
+            <Radio.Root
+              key={option.value}
+              value={option.value}
+              disabled={option.disabled}
+              data-slot="segmented-control-item"
+              className="relative flex min-w-0 flex-auto cursor-pointer items-center justify-center gap-1.5 px-2 whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
+            >
+              {selected ? (
+                <motion.span
+                  layoutId={layoutId}
+                  aria-hidden="true"
+                  data-slot="segmented-control-indicator"
+                  className={cn(
+                    "absolute inset-0.5 rounded-sm",
+                    hasTone
+                      ? "bg-(--flow-tone)/20 dark:bg-(--flow-tone)/35"
+                      : "bg-background shadow-xs ring-1 ring-edge dark:bg-foreground/10",
+                  )}
+                  transition={
+                    reduced
+                      ? { duration: 0 }
+                      : { type: "spring", bounce: 0.18, visualDuration: 0.25 }
+                  }
+                />
+              ) : null}
+              {option.icon ? (
+                <span
+                  aria-hidden="true"
+                  className="relative flex shrink-0 items-center [&_svg:not([class*='size-'])]:size-3.5"
+                >
+                  {option.icon}
+                </span>
+              ) : null}
+              <span className="relative truncate">{option.label}</span>
+            </Radio.Root>
+          )
+        })}
+      </span>
     </RadioGroup>
   )
 }

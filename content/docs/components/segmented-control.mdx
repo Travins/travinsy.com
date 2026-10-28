@@ -43,7 +43,7 @@ export function ViewSwitch() {
 
 外框是方条：细边框（`border-edge`）、小圆角、`bg-muted/60` 的淡底，和数值滑块同一副外观。每个选项是一个 `Radio.Root`，整块可点；选中时选项背后滑入一块 `segmented-control-indicator`，用 Motion 的共享布局动画在选项之间滑动，不会闪一下再出现。
 
-`label` 画在最左边单独的格子里，与选项之间隔一条竖线，同时作为整个单选组的可访问名称（`aria-labelledby`）——写了 `label` 就不必再写 `aria-label`。
+`label` 是方条左侧的纯文字（与数值滑块、开关的标签同一种写法），选项则收进右侧一道微微下凹的槽里，选中项是槽里凸起的一块，字段名与可选项一眼分得开。`label` 同时作为整个单选组的可访问名称（`aria-labelledby`），写了它就不必再写 `aria-label`；不写 `label` 时整条都是选项，没有这道槽。
 
 ```tsx
 <SegmentedControl label="对齐" options={ALIGN_OPTIONS} defaultValue="left" />
@@ -92,7 +92,7 @@ const OPTIONS = [
 
 ### 左侧标签
 
-`label` 占最左边一格，与选项之间隔着一条竖线，读起来像「字段名 + 取值」。下面把对齐方式直接套在段落上，看得见这一行确实在起作用。
+`label` 是左侧的字段名，选项在右侧的槽里，读起来像「字段名 + 取值」。下面把对齐方式直接套在段落上，看得见这一行确实在起作用。
 
 <ComponentPreview name="segmented-control-label-demo" />
 
@@ -156,12 +156,13 @@ type SegmentedControlProps = Omit<
 
 ## data-slot
 
-| 元素     | `data-slot`                   |
-| -------- | ----------------------------- |
-| 根元素   | `segmented-control`           |
-| 左侧标签 | `segmented-control-label`     |
-| 选项     | `segmented-control-item`      |
-| 选中块   | `segmented-control-indicator` |
+| 元素                              | `data-slot`                   |
+| --------------------------------- | ----------------------------- |
+| 根元素                            | `segmented-control`           |
+| 左侧标签                          | `segmented-control-label`     |
+| 选项槽（有 `label` 时带凹槽底色） | `segmented-control-options`   |
+| 选项                              | `segmented-control-item`      |
+| 选中块                            | `segmented-control-indicator` |
 
 根元素始终带 `data-variant`（`bar` / `compact`），`modified` 为真时带 `data-modified`，禁用时带 `data-disabled`；选项上是 Base UI 给的 `data-checked`、`data-disabled`。
 
