@@ -144,4 +144,5 @@ export const registryViews: Record<string, LazyExoticComponent<ComponentType>> =
   "agent-chat-01": lazy(() => import("./blocks/agent-chat-01/demo")),
   "app-shell-01": lazy(() => import("./templates/app-shell-01/demo")),
   "auth-01": lazy(() => import("./blocks/auth-01/demo")),
+  "settings-01": lazy(() => import("./blocks/settings-01/demo")),
 }

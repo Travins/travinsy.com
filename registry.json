@@ -298,6 +298,100 @@
       }
     },
     {
+      "name": "settings-01",
+      "type": "registry:block",
+      "title": "设置页",
+      "description": "用方条控件拼成的完整设置页：分区导航、实时预览、已修改计数、恢复默认与异步保存。",
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "https://travinsy.com/r/value-slider.json",
+        "https://travinsy.com/r/segmented-control.json",
+        "https://travinsy.com/r/toggle-switch.json",
+        "https://travinsy.com/r/tone-picker.json",
+        "https://travinsy.com/r/control-panel.json",
+        "https://travinsy.com/r/flow-diagram.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/blocks/settings-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/settings/page.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/settings-01.tsx",
+          "type": "registry:component",
+          "target": "components/settings-01/settings-01.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/config.ts",
+          "type": "registry:component",
+          "target": "components/settings-01/config.ts"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/types.ts",
+          "type": "registry:component",
+          "target": "components/settings-01/types.ts"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/utils.ts",
+          "type": "registry:component",
+          "target": "components/settings-01/utils.ts"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/section-layout.tsx",
+          "type": "registry:component",
+          "target": "components/settings-01/section-layout.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/section-nav.tsx",
+          "type": "registry:component",
+          "target": "components/settings-01/section-nav.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/previews.tsx",
+          "type": "registry:component",
+          "target": "components/settings-01/previews.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/appearance-section.tsx",
+          "type": "registry:component",
+          "target": "components/settings-01/appearance-section.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/notifications-section.tsx",
+          "type": "registry:component",
+          "target": "components/settings-01/notifications-section.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/sound-section.tsx",
+          "type": "registry:component",
+          "target": "components/settings-01/sound-section.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/editor-section.tsx",
+          "type": "registry:component",
+          "target": "components/settings-01/editor-section.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/privacy-section.tsx",
+          "type": "registry:component",
+          "target": "components/settings-01/privacy-section.tsx"
+        },
+        {
+          "path": "src/registry/blocks/settings-01/use-save-action.ts",
+          "type": "registry:component",
+          "target": "components/settings-01/use-save-action.ts"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "860px"
+      }
+    },
+    {
       "name": "agent-chat-01",
       "type": "registry:block",
       "title": "AI 助手面板",

@@ -1,0 +1,251 @@
+---
+title: 设置页
+titleEn: Settings Page
+description: 用方条控件拼成的完整设置页：分区导航、实时预览、已修改计数、恢复默认与异步保存。
+---
+
+<BlockViewer name="settings-01" />
+
+`Settings01` 是「方条控件」系列的落地样板：数值滑块、分段选择、开关、色调选择和控制面板拼在一起，就是一个能直接安装使用的设置页。
+
+- **五个分区**：外观、通知、声音与触感、编辑器、隐私。宽屏是左侧导航，导航项右侧的小圆标显示该分区已修改的项数；窄屏（< 768px）导航变成顶部的分段选择。
+- **外观**：主题模式（浅色 / 深色 / 跟随系统，带图标）、强调色、界面字号（可直接输入）、圆角、信息密度、减少动态效果。右上角的预览卡片随这些设置实时变化。强调色还会染到整页控件的选中态上。
+- **通知**：总开关关闭时其余开关和免打扰时段一起禁用；免打扰是一个区间滑块，读数写成「22:00 – 07:00」。
+- **声音与触感**：主音量滑块拖动时有刻度音效；按键音效关闭时音色选择禁用。
+- **编辑器**：缩进宽度、行高、制表符显示，右侧的代码预览同步变化。
+- **隐私**：资料可见范围、数据收集开关、历史保留天数（刻度吸附 30 / 90 / 180 天）。
+- **已修改**：每个控件的 `modified` 由「当前值 ≠ 默认值」得出，改过的项标签变亮；每个分区的面板头部显示本分区已修改项数，并带「复制设置」和「恢复本分区默认值」两个按钮。
+- **底部保存栏**：显示总的已修改项数与保存状态，右侧是「恢复默认」和「保存」。保存时按钮进入 loading，成功显示「已保存」，失败显示回调抛出的 `Error.message`。
+
+## 安装
+
+<InstallCommand name="settings-01" />
+
+会安装 `app/settings/page.tsx` 页面和 `components/settings-01/` 下的组件，并带上它依赖的本站控件：数值滑块、分段选择、开关、色调选择、控制面板（连同 `flow-diagram` 提供的色调变量）。shadcn 依赖为 `button`，npm 依赖为 `motion`、`lucide-react`。
+
+## 用法
+
+最简单的用法是直接渲染，不传任何属性。此时设置值在组件内部维护，「保存」退回「控制台打印 + 模拟 0.8 秒请求」的示例实现，方便先看效果：
+
+```tsx title="app/settings/page.tsx"
+import { Settings01 } from "@/components/settings-01/settings-01"
+
+export default function SettingsPage() {
+  return <Settings01 />
+}
+```
+
+### 接入保存
+
+`onSave` 返回 `Promise`。**组件负责按钮的 loading 状态；失败时 `throw new Error("中文原因")`，原因会显示在保存栏上。** 已有的设置用 `defaultValue`（或受控的 `value`）传入，没传的项取默认值：
+
+```tsx title="app/settings/page.tsx"
+"use client"
+
+import {
+  Settings01,
+  type Settings01Values,
+} from "@/components/settings-01/settings-01"
+
+export default function SettingsPage({
+  saved,
+}: {
+  saved: Partial<Settings01Values>
+}) {
+  return (
+    <Settings01
+      defaultValue={saved}
+      onSave={async (values) => {
+        const response = await fetch("/api/settings", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(values),
+        })
+        if (!response.ok) throw new Error("保存失败，请稍后重试")
+      }}
+    />
+  )
+}
+```
+
+### 受控用法与实时生效
+
+`value` / `onValueChange` 让你把设置放进自己的状态里，例如切换主题时立刻生效，不必等点「保存」：
+
+```tsx title="app/settings/page.tsx"
+"use client"
+
+import { useState } from "react"
+import { useTheme } from "next-themes"
+import {
+  Settings01,
+  type Settings01Values,
+} from "@/components/settings-01/settings-01"
+import { DEFAULT_VALUES } from "@/components/settings-01/config"
+
+export default function SettingsPage() {
+  const { setTheme } = useTheme()
+  const [values, setValues] = useState<Settings01Values>(DEFAULT_VALUES)
+  return (
+    <Settings01
+      value={values}
+      onValueChange={(next) => {
+        if (next.theme !== values.theme) setTheme(next.theme)
+        setValues(next)
+      }}
+      onSave={async (next) => {
+        await saveToServer(next)
+      }}
+    />
+  )
+}
+```
+
+### 自定义默认值
+
+`defaults` 逐项覆盖出厂默认值。「已修改」「恢复默认」都以它为准，没有传 `defaultValue` 时它也是初始值：
+
+```tsx
+<Settings01 defaults={{ accent: "blue", fontSize: 15, indent: "4" }} />
+```
+
+### 换成英文
+
+`labels` 覆盖任意文案，含 `{count}`、`{value}` 的占位符要保留：
+
+```tsx
+import { Settings01, type Settings01Labels } from "@/components/settings-01/settings-01"
+
+const english: Partial<Settings01Labels> = {
+  title: "Settings",
+  sectionAppearance: "Appearance",
+  navAppearance: "Look",
+  save: "Save",
+  resetAll: "Reset to defaults",
+  modifiedCount: "{count} changed",
+  readoutPx: "{value} px",
+}
+
+export default function SettingsPage() {
+  return <Settings01 labels={english} />
+}
+```
+
+## API
+
+### Settings01
+
+<TypeTable
+  type={{
+    value: { type: "Settings01Values", description: "受控的全部设置值，见下方 Settings01Values" },
+    defaultValue: { type: "Partial<Settings01Values>", description: "非受控时的初始值，没写的项取 `defaults`" },
+    defaults: { type: "Partial<Settings01Values>", description: "出厂默认值，逐项覆盖 `config.ts` 的 `DEFAULT_VALUES`；决定「已修改」的判断和「恢复默认」的目标" },
+    onValueChange: { type: "(value: Settings01Values) => void", description: "任何一项变化时回调，参数是变化后的全部设置（受控与非受控都会触发）" },
+    section: { type: "Settings01SectionId", description: "受控的当前分区" },
+    defaultSection: { type: '"appearance" | "notifications" | "sound" | "editor" | "privacy"', description: "非受控时的初始分区", default: '"appearance"' },
+    onSectionChange: { type: "(section: Settings01SectionId) => void", description: "切换分区时回调" },
+    onSave: { type: "(values: Settings01Values) => Promise<void>", description: "点击「保存」时调用；组件管理 loading，抛出的 `Error.message` 显示在保存栏。未传时只在控制台打印并等待 0.8 秒" },
+    labels: { type: "Partial<Settings01Labels>", description: "覆盖默认文案，键与默认值见下方 [labels](#labels)" },
+    className: { type: "string", description: "追加到最外层容器" },
+  }}
+/>
+
+### Settings01Values
+
+`config.ts` 的 `SECTION_KEYS` 记录了每个分区管哪些键。
+
+<TypeTable
+  type={{
+    theme: { type: '"light" | "dark" | "system"', description: "主题模式", default: '"system"' },
+    accent: { type: "string", description: "强调色，tone-picker 的色调名（`primary`、`blue`……）或任意 CSS 颜色", default: '"primary"' },
+    fontSize: { type: "number", description: "界面字号（px），12–20", default: "14" },
+    radius: { type: "number", description: "圆角（px），0–20", default: "10" },
+    density: { type: '"compact" | "comfortable" | "spacious"', description: "信息密度", default: '"comfortable"' },
+    reduceMotion: { type: "boolean", description: "减少动态效果", default: "false" },
+    notifications: { type: "boolean", description: "通知总开关，关闭后其余通知项与免打扰禁用", default: "true" },
+    notifyMentions: { type: "boolean", description: "提及我时通知", default: "true" },
+    notifyReplies: { type: "boolean", description: "评论回复时通知", default: "true" },
+    notifyEmail: { type: "boolean", description: "每日邮件摘要", default: "false" },
+    notifyUpdates: { type: "boolean", description: "产品动态", default: "false" },
+    quietHours: { type: "[number, number]", description: "免打扰时段 [起点, 终点]（小时），范围 12–36：36 即次日 12:00，读数按 24 小时取模，所以 `[22, 31]` 读作「22:00 – 07:00」", default: "[22, 31]" },
+    volume: { type: "number", description: "主音量，0–100", default: "60" },
+    keySound: { type: "boolean", description: "按键音效", default: "false" },
+    soundTheme: { type: '"soft" | "crisp" | "mechanical"', description: "按键音色，按键音效关闭时禁用", default: '"soft"' },
+    haptics: { type: "boolean", description: "触感反馈", default: "true" },
+    indent: { type: '"2" | "4" | "tab"', description: "编辑器缩进宽度", default: '"2"' },
+    lineHeight: { type: "number", description: "编辑器行高，1.2–2，步长 0.1", default: "1.6" },
+    showTabs: { type: "boolean", description: "显示制表符与缩进标记", default: "false" },
+    visibility: { type: '"public" | "team" | "private"', description: "资料可见范围", default: '"team"' },
+    analytics: { type: "boolean", description: "匿名使用统计", default: "true" },
+    crashReports: { type: "boolean", description: "崩溃报告", default: "true" },
+    retention: { type: "number", description: "历史记录保留天数，7–365", default: "90" },
+  }}
+/>
+
+### labels
+
+所有键都在 `config.ts` 的 `DEFAULT_LABELS` 里，传 `labels={{ save: "Save" }}` 这样覆盖其中任意几项。含 `{count}`、`{value}` 的文案会在渲染时填入实际值。
+
+| 键 | 默认值 | 说明 |
+|---|---|---|
+| `title` / `description` | `设置` / `调整外观、通知、声音与编辑器的偏好` | 页面标题（`h1`）与说明 |
+| `navLabel` | `设置分区` | 导航与顶部分段选择的 `aria-label` |
+| `navSectionModified` | `已修改 {count} 项` | 导航项圆标的提示与读屏文字 |
+| `sectionAppearance` 等 5 个 | `外观` / `通知` / `声音与触感` / `编辑器` / `隐私` | 分区标题（`h2`） |
+| `navAppearance` 等 5 个 | `外观` / `通知` / `声音` / `编辑器` / `隐私` | 窄屏顶部分段选择里的短名 |
+| `descriptionAppearance` 等 5 个 | 见 `config.ts` | 分区说明 |
+| `panelModified` / `panelDefault` | `已修改 {count} 项` / `全部为默认值` | 面板头部的状态 |
+| `copySection` / `copiedSection` / `resetSection` | `复制本分区设置` / `已复制` / `恢复本分区默认值` | 面板头部两个图标按钮的名称 |
+| `group*` | 见 `config.ts` | 各面板里的分组小标题 |
+| `theme`、`themeLight`、`themeDark`、`themeSystem` | `主题模式`、`浅色`、`深色`、`跟随系统` | 主题模式 |
+| `accent`、`fontSize`、`radius`、`density`、`densityCompact`、`densityComfortable`、`densitySpacious`、`reduceMotion`、`reduceMotionHint` | 见 `config.ts` | 外观其余控件 |
+| `readoutPx` / `readoutDays` | `{value} px` / `{value} 天` | 字号、圆角、保留天数的读数 |
+| `preview*` | 见 `config.ts` | 外观预览卡片里的文字 |
+| `notifications`、`notify*`、`quietHours` 及对应 `*Hint` | 见 `config.ts` | 通知控件与它们的补充说明 |
+| `volume`、`keySound`、`soundTheme`、`sound*`、`haptics` 及对应 `*Hint` | 见 `config.ts` | 声音与触感控件 |
+| `indent`、`indentTwo`、`indentFour`、`indentTab`、`lineHeight`、`showTabs`、`showTabsHint`、`editorPreviewTitle` | 见 `config.ts` | 编辑器控件与预览标题 |
+| `visibility`、`visibility*`、`analytics`、`crashReports`、`retention` 及对应 `*Hint` | 见 `config.ts` | 隐私控件 |
+| `footerLabel` | `保存设置` | 底部保存栏的 `aria-label` |
+| `modifiedCount` / `unmodified` | `已修改 {count} 项` / `全部为默认值` | 保存栏左侧的总计 |
+| `unsaved` / `upToDate` / `saving` / `saved` | `有未保存的更改` / `没有未保存的更改` / `保存中…` / `已保存` | 保存栏左侧第二行的保存状态 |
+| `save` / `resetAll` | `保存` / `恢复默认` | 保存栏的两个按钮 |
+| `saveFailed` | `保存失败，请稍后重试` | 回调抛出的错误没有 `message` 时的兜底提示 |
+
+## 可访问性
+
+- 页面只有一个 `h1`，每个分区是带 `aria-labelledby` 的 `section`，标题是 `h2`；控制面板里的分组是带标题的 `role="group"`。
+- 宽屏导航是 `nav`，当前分区带 `aria-current="page"`；圆标除了数字还有读屏文字「已修改 N 项」。窄屏顶部的分段选择是单选组，有 `aria-label`，方向键切换。
+- 所有控件沿用各自的语义：滑块是原生滑块（方向键、Home / End、PageUp / PageDown），区间滑块的两个手柄分别叫「起点」「终点」，读数同时作为 `aria-valuetext`；开关是 `role="switch"`；色调选择与分段选择是单选组。
+- 改过的项不只靠颜色区分：标签变亮之外，面板头部、导航圆标和保存栏都有文字计数。
+- 保存状态是 `role="status"`，保存失败是 `role="alert"`，会立即朗读；保存中按钮禁用并显示「保存中…」，避免重复提交。
+- 预览卡片是纯展示，对读屏隐藏；图标按钮都有中文名称，焦点环可见。
+- 视图切换动画遵循 `prefers-reduced-motion`，开启后只保留淡入；预览里的脉冲点在「减少动态效果」打开时也会静止。
+
+## 注意事项
+
+### 文件结构
+
+```text
+app/settings/page.tsx                    # 页面入口：把 onSave 接到你的后端
+components/settings-01/
+├── settings-01.tsx                      # 入口：状态、已修改计数、分区切换、底部保存栏
+├── config.ts                            # ★ DEFAULT_LABELS 文案、DEFAULT_VALUES 默认值、分区与键的对应
+├── types.ts                             # Settings01Values 等类型
+├── utils.ts                             # 值比较、小时格式化、错误文案
+├── section-layout.tsx                   # 分区外壳：标题、控制面板头部（复制 / 恢复）、右侧预览位
+├── section-nav.tsx                      # 宽屏左侧导航 + 窄屏顶部分段选择
+├── appearance-section.tsx               # 外观
+├── notifications-section.tsx            # 通知
+├── sound-section.tsx                    # 声音与触感
+├── editor-section.tsx                   # 编辑器
+├── privacy-section.tsx                  # 隐私
+├── previews.tsx                         # 外观预览卡片、编辑器代码预览
+└── use-save-action.ts                   # 保存的 loading / 成功 / 错误状态
+```
+
+- **已修改的口径**：「已修改」比的是当前值与默认值（`defaults`），「有未保存的更改」比的是当前值与上次保存（或首次载入）的值；两者独立。恢复默认后，如果和上次保存的值不同，「保存」仍然可点，用来把重置存下来。
+- **免打扰时段**：区间滑块的两个手柄不能交叉，而免打扰通常跨午夜，所以滑块范围取 12:00 到次日 12:00（值域 12–36），读数对 24 取模。需要全天范围时改 `notifications-section.tsx` 里的 `QUIET_MIN` / `QUIET_MAX`。
+- **预览里的深色**：深色靠在卡片上套用 `.dark` 变量实现，站点本身已是深色时，选「浅色」无法在卡片里反向还原，所以预览标题栏另外写出了当前模式。
+- **强调色**：`accent` 同时传给所有控件的 `tone`，并作为 `--flow-tone` 设在最外层，导航选中标记、预览卡片都跟着变；`primary` 跟随当前颜色主题。
+- **增删设置项**：在 `types.ts` 加键、`config.ts` 的 `DEFAULT_VALUES` 和 `SECTION_KEYS` 登记，再到对应分区文件里加控件即可，计数、复制和恢复默认会自动包含它。
+- **静态导出**：组件是纯客户端组件，不使用 Server Actions 或 `cookies()`，可用于 `output: "export"`。
