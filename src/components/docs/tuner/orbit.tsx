@@ -17,6 +17,14 @@ export const orbitTuner = defineTuner<OrbitTuning, OrbitReport>({
   hint: "调整速度、方向与轨道线",
   component: "Orbit",
   context: OrbitTuningContext,
+  examples: {
+    // 三圈轨道各有色调，只有内圈是虚线
+    "orbit-demo": { omit: ["tone", "dashed"] },
+    // 两圈轨道色调不同，只有外圈是虚线
+    "orbit-icons-demo": { omit: ["tone", "dashed"] },
+    // 虚实轨道是示例的层次
+    "orbit-half-demo": { omit: ["dashed"] },
+  },
   controls: [
     {
       key: "speed",

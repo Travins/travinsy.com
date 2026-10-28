@@ -18,6 +18,12 @@ export const glyphFieldTuner = defineTuner<GlyphFieldTuning, GlyphFieldReport>({
   hint: "调整字符集、字号与密度",
   component: "GlyphField",
   context: GlyphFieldTuningContext,
+  examples: {
+    // 示例自带暂停按钮
+    "glyph-field-demo": { omit: ["paused"] },
+    // 示例自带暂停按钮
+    "glyph-field-icon-demo": { omit: ["paused"] },
+  },
   controls: [
     {
       key: "glyphs",

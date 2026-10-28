@@ -61,6 +61,14 @@ export type TunerConfig<
 > = {
   /** 开关按钮的悬停提示 */
   hint: string
+  /**
+   * 按示例收窄面板，键是示例名（ComponentPreview 的 `name`）：
+   * - `false`：这个示例不显示面板（示例自带控件，或整体是参数对比）；
+   * - `{ omit }`：去掉不适合在这个示例里统一调的项。面板的覆盖作用于示例里的所有实例，
+   *   多个实例刻意取了不同值（正反方向、不同色调、不同角度）时，统一调就会把差异抹掉。
+   * 没登记的示例显示全部控件。
+   */
+  examples?: Record<string, false | { omit: readonly string[] }>
   /** 「复制为代码」里的组件名（如 `IsometricMark`）；不传时面板不显示复制按钮 */
   component?: string
   controls: TunerControl[]

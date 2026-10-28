@@ -20,6 +20,16 @@ export const flowDiagramTuner = defineTuner<
   hint: "调整速度、色调与底纹",
   component: "FlowDiagram",
   context: FlowDiagramTuningContext,
+  examples: {
+    // 五张图并排对比五种背景
+    "flow-diagram-background-demo": { omit: ["background"] },
+    // 每个节点演示一种色调
+    "flow-diagram-tones-demo": { omit: ["tone"] },
+    // 示例要演示的就是自定义品牌色
+    "flow-diagram-brand-demo": { omit: ["tone"] },
+    // 示例自带播放、倍速与循环控件
+    "flow-diagram-playback-demo": { omit: ["speed", "loop", "paused"] },
+  },
   controls: [
     {
       key: "speed",

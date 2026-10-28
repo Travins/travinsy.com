@@ -12,6 +12,18 @@ export const textAnimateTuner = defineTuner<
 >({
   hint: "实时调整示例参数",
   context: TextAnimateTuningContext,
+  examples: {
+    // 四种动效各自的色调与参数不同；示例自带暂停按钮
+    "text-animate-demo": { omit: ["tone", "by", "duration", "paused"] },
+    // 两处轮换一处带色调、节奏不同；示例自带暂停按钮
+    "text-animate-flip-demo": { omit: ["tone", "interval", "paused"] },
+    // 三行分别演示三种字符集
+    "text-animate-scramble-demo": { omit: ["charset"] },
+    // 几处高亮各用一种色调
+    "text-animate-highlight-demo": { omit: ["tone"] },
+    // 只有逐词显现一处指定了 by
+    "text-animate-mixed-demo": { omit: ["by"] },
+  },
   controls: [
     {
       key: "interval",

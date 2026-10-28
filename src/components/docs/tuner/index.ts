@@ -31,5 +31,25 @@ export const tuners: Record<string, AnyTunerConfig | undefined> = {
   "value-slider": valueSliderTuner,
 }
 
+/**
+ * 取某个示例实际可用的面板：组件没登记时返回 undefined；示例登记为 `false` 时也返回 undefined（不显示开关）；
+ * 登记了 `omit` 时去掉对应控件。
+ */
+export function resolveTuner(
+  item: string | undefined,
+  example: string,
+): AnyTunerConfig | undefined {
+  const config = item ? tuners[item] : undefined
+  const rule = config?.examples?.[example]
+  if (!config || rule === false) return undefined
+  if (!rule) return config
+  return {
+    ...config,
+    controls: config.controls.filter(
+      (control) => !rule.omit.includes(control.key),
+    ),
+  }
+}
+
 export { TunerPanel, TunerProvider, TunerToggle } from "./panel"
 export { useTuner } from "./use-tuner"

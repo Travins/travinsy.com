@@ -1,5 +1,5 @@
 "use client"
-import { Suspense, useState, type ReactNode } from "react"
+import { Suspense, useMemo, useState, type ReactNode } from "react"
 import { registryExamples } from "@/registry/__index__"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { buttonVariants } from "@/components/ui/button"
@@ -18,7 +18,7 @@ import {
   TunerPanel,
   TunerProvider,
   TunerToggle,
-  tuners,
+  resolveTuner,
   useTuner,
 } from "./tuner"
 import { PreviewBackdrop } from "./preview-backdrop"
@@ -68,7 +68,8 @@ export function ComponentPreviewClient({
   const Preview = registryExamples[name]
   const [view, setView] = useState("preview")
   // 在 tuner/ 里登记过的组件，每个示例都带一个可开关的调整面板
-  const tunerConfig = item ? tuners[item] : undefined
+  // 示例可以在 tuner 配置里单独关闭面板或去掉部分控件；按示例名解析一次，保持引用稳定
+  const tunerConfig = useMemo(() => resolveTuner(item, name), [item, name])
   const tuner = useTuner(tunerConfig)
   return (
     <Tabs

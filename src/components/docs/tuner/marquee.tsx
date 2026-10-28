@@ -9,6 +9,16 @@ export const marqueeTuner = defineTuner<MarqueeTuning, MarqueeReport>({
   hint: "实时调整示例参数",
   component: "Marquee",
   context: MarqueeTuningContext,
+  examples: {
+    // 两条彩带一正一负倾斜、方向相反
+    "marquee-demo": { omit: ["rotate", "reverse"] },
+    // 上下两行方向相反
+    "marquee-type-demo": { omit: ["reverse"] },
+    // 上下两行方向相反
+    "marquee-stack-demo": { omit: ["reverse"] },
+    // 竖向滚动不适合倾斜；示例自带暂停按钮
+    "marquee-vertical-demo": { omit: ["rotate", "paused"] },
+  },
   controls: [
     {
       key: "speed",

@@ -33,6 +33,18 @@ export const valueSliderTuner = defineTuner<
   hint: "调整过冲强度、尺寸、高度、色调与刻度",
   component: "ValueSlider",
   context: ValueSliderTuningContext,
+  examples: {
+    // 三条滑块各有色调，只有色温带刻度
+    "value-slider-demo": { omit: ["tone", "ticks", "snapToTicks"] },
+    // 三条滑块高度档、色调各不相同，只有平滑度带刻度
+    "value-slider-variant-demo": {
+      omit: ["variant", "tone", "ticks", "snapToTicks"],
+    },
+    // 三条滑块各有色调，刻度是「归零」位置
+    "value-slider-photo-demo": { omit: ["tone", "ticks", "snapToTicks"] },
+    // 色调随心情变化，五档刻度就是五种心情
+    "value-slider-mood-demo": { omit: ["tone", "ticks", "snapToTicks"] },
+  },
   controls: [
     {
       key: "elasticity",
