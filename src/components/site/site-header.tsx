@@ -6,6 +6,7 @@ import { GithubIcon } from "@/components/site/github-icon"
 import { ModeToggle } from "@/components/site/mode-toggle"
 import { GITHUB_URL, SITE_NAME } from "@/components/site/site-config"
 import { SiteLogo } from "@/components/site/site-logo"
+import { profile } from "@/config/profile"
 import { MobileNav, SiteNav } from "@/components/site/site-nav"
 import { ThemeSwitcher } from "@/components/site/theme-switcher"
 import { buttonVariants } from "@/components/ui/button"
@@ -19,7 +20,7 @@ export function SiteHeader() {
         {/* 高度取 --header-height（globals.css）；Logo 靠左，菜单与工具区靠右，导航项占满整高 */}
         <GridContainer className="flex h-(--header-height) items-stretch gap-2 px-4">
           {/*
-            标志 + 字标：上行是组件库名 Yi UI，下行小号等宽注明出自 travinsy，
+            标志 + 字标：上行是组件库名 Yi UI，下行小号等宽注明作者 Travins，
             与右侧导航「中文在上、等宽英文在下」的两行写法呼应
           */}
           <Link
@@ -33,7 +34,7 @@ export function SiteHeader() {
                 Yi UI
               </span>
               <span className="mt-1 font-mono text-[9px] tracking-[0.14em] text-muted-foreground uppercase">
-                by {SITE_NAME}
+                by {profile.name}
               </span>
             </span>
           </Link>
