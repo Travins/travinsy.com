@@ -9,7 +9,7 @@ import { toneOptions } from "./swatches"
 import { defineTuner } from "./types"
 
 /**
- * 数值滑块的调整面板：过冲、尺寸、形态、刻度、色调与三个开关。
+ * 数值滑块的调整面板：过冲、尺寸、高度、刻度、色调与三个开关。
  * 示例把每条滑块放在固定高度的插槽里，所以 `size` / `variant` 换档时画框高度不变。
  * 音效开关只打开组件自己的播放，是否真的出声仍受站点静音偏好（`useValueSliderMuted`）控制。
  */
@@ -22,15 +22,15 @@ const SIZES: { value: ValueSliderSize; label: string }[] = [
 
 const VARIANTS: { value: ValueSliderVariant; label: string }[] = [
   { value: "bar", label: "bar" },
-  { value: "pill", label: "pill" },
-  { value: "line", label: "line" },
+  { value: "compact", label: "compact" },
+  { value: "slim", label: "slim" },
 ]
 
 export const valueSliderTuner = defineTuner<
   ValueSliderTuning,
   ValueSliderReport
 >({
-  hint: "调整过冲强度、尺寸、形态、色调与刻度",
+  hint: "调整过冲强度、尺寸、高度、色调与刻度",
   context: ValueSliderTuningContext,
   controls: [
     {
@@ -45,7 +45,7 @@ export const valueSliderTuner = defineTuner<
     {
       key: "variant",
       type: "segmented",
-      label: "形态 variant",
+      label: "高度 variant",
       options: VARIANTS,
     },
     { key: "ticks", type: "slider", label: "刻度 ticks", min: 0, max: 10 },

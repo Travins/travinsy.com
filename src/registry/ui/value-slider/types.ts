@@ -6,7 +6,7 @@ import type { FlowTone } from "@/registry/ui/flow-diagram/tone"
 type ValueSliderValue = number | readonly number[]
 type ValueSliderSize = "sm" | "default" | "lg"
 type ValueSliderLabelPlacement = "inside" | "outside"
-type ValueSliderVariant = "bar" | "pill" | "line"
+type ValueSliderVariant = "bar" | "compact" | "slim"
 
 type ValueSliderProps<Value extends ValueSliderValue = number> = Omit<
   SliderPrimitive.Root.Props<Value>,
@@ -121,21 +121,20 @@ type ValueSliderProps<Value extends ValueSliderValue = number> = Omit<
    */
   elasticity?: number
   /**
-   * 尺寸档：字号与间距不变，轨道高度随 `variant` 取值 ——
-   * `bar` 为 sm 28px / default 32px / lg 36px，`pill` 为 8 / 10 / 12px，`line` 为 2 / 4 / 4px，
-   * `pill` 与 `line` 的手柄直径依次是 14 / 16 / 18px
+   * 尺寸档，与 `variant` 一起决定轨道高度：
+   * `bar` 为 sm 28px / default 32px / lg 36px，`compact` 为 18 / 22 / 24px，`slim` 为 6 / 8 / 10px
    * @default "default"
    */
   size?: ValueSliderSize
   /**
-   * 轨道形态：`bar` 是方条，标签与读数画在轨道里；`pill` 是圆角粗轨、`line` 是细线，
-   * 两者都用圆形手柄，标签与读数一律移到轨道上方（此时忽略 `labelPlacement`）
+   * 轨道高度档，三档都是同一种方条：`bar` 高轨，标签与读数在轨道里；
+   * `compact` 中等高度，文字仍在轨道里、字号收到 xs；
+   * `slim` 矮轨，标签与读数移到轨道上方（此时忽略 `labelPlacement`），竖线手柄比轨道高出一截
    * @default "bar"
    */
   variant?: ValueSliderVariant
   /**
-   * 色调：填充取 `--flow-tone`（`bar` 用淡色分层，`pill` / `line` 用实色），手柄取同色；
-   * 不传时两者都用前景色
+   * 色调：填充取 `--flow-tone` 的淡色（`slim` 加深一档），手柄取实色；不传时用前景色
    */
   tone?: FlowTone
   /**

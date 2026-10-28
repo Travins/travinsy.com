@@ -35,7 +35,7 @@ export function VolumeSlider() {
 />
 ```
 
-`labelPlacement="outside"` 把标签与读数移到轨道上方一行：左侧标签、右侧读数，轨道里不放文字，手柄常驻可见也不再让位。区间这类要同时看清两个手柄的场景用它更合适。`variant="pill"` 与 `variant="line"` 的轨道放不下文字，固定按这一档处理，`labelPlacement` 在这两种形态下不生效。
+`labelPlacement="outside"` 把标签与读数移到轨道上方一行：左侧标签、右侧读数，轨道里不放文字，手柄常驻可见也不再让位。区间这类要同时看清两个手柄的场景用它更合适。`variant="slim"` 的轨道放不下文字，固定按这一档处理，`labelPlacement` 在它下面不生效。
 
 ```tsx
 <ValueSlider
@@ -60,7 +60,7 @@ export function VolumeSlider() {
 
 ### 刻度与磁吸
 
-`ticks` 传数字表示把范围等分成几段，画 n - 1 条内部刻度线；传数组表示在指定值处画线。`pill` / `line` 的轨道放不下刻度线，这两种形态下刻度改画成轨道下方的小圆点。它同时是 `snapToTicks` 的目标：指针松手时（拖动或点击轨道）如果与最近刻度相差不到整个范围的 3%，值会吸过去；键盘逐步移动不吸附，所以方向键可以从刻度上走开，不会被反复拉回同一个点。刻度线用逻辑属性定位，RTL 下跟着手柄与填充一起从右边排布。
+`ticks` 传数字表示把范围等分成几段，画 n - 1 条内部刻度线；传数组表示在指定值处画线。它同时是 `snapToTicks` 的目标：指针松手时（拖动或点击轨道）如果与最近刻度相差不到整个范围的 3%，值会吸过去；键盘逐步移动不吸附，所以方向键可以从刻度上走开，不会被反复拉回同一个点。刻度线用逻辑属性定位，RTL 下跟着手柄与填充一起从右边排布。
 
 刻度建议落在 `step` 上。不在 `step` 上的刻度会被对齐到最近的 `step` 再提交，避免出现 3650 这种步长之外的数值；区间模式吸附后还要保证两个值顺序不变、且至少相隔 `minStepsBetweenValues` 个 `step`，不满足就放弃那次吸附。
 
@@ -140,11 +140,11 @@ const [muted, setMuted] = useValueSliderMuted()
 
 ## 示例
 
-每个示例的标题栏右侧都有「调整」开关：打开后可以实时调整过冲强度、尺寸、形态、色调、刻度和磁吸，并开关读数与音效；未改动的项显示示例自己的取值。换尺寸档只改轨道高度与字号，画框不跳；换成 `pill` / `line` 时标签与读数会从轨道里移到上方、额外占一行，把滑块放进固定高度插槽的示例因此也不会跳动。
+每个示例的标题栏右侧都有「调整」开关：打开后可以实时调整过冲强度、尺寸、高度档、色调、刻度和磁吸，并开关读数与音效；未改动的项显示示例自己的取值。换尺寸档时，把滑块放进固定高度插槽的示例画框不会跳；换成 `slim` 时标签与读数会从轨道里移到上方、额外占一行，画框可能随之变高。
 
-### 轨道形态
+### 轨道高度
 
-`variant` 有三档。默认的 `bar` 是方条，标签与读数画在轨道里；`pill` 是圆角粗轨，`line` 是细线，两者都用圆形手柄，标签与读数一律移到轨道上方。下面这张画笔卡片里，笔刷大小与不透明度用 `variant="pill"`，平滑度用 `variant="line"` 并把刻度画成轨道下方的小点（`ticks={4}`）。
+`variant` 是三档高度，外观都是同一种方条（细边框、淡色分层填充、竖线手柄）。默认的 `bar` 最高，标签与读数画在轨道里；`compact` 是中等高度，文字仍在轨道里、字号收到 xs，适合工具面板里一排排的参数；`slim` 是矮轨，标签与读数移到轨道上方，竖线手柄比轨道高出一截。下面这张画笔卡片里，笔刷大小与不透明度用 `variant="compact"`，平滑度用 `variant="slim"` 并带上刻度（`ticks={4}`）。
 
 <ComponentPreview name="value-slider-variant-demo" />
 
@@ -168,7 +168,7 @@ const [muted, setMuted] = useValueSliderMuted()
 
 ### 播放进度
 
-`variant="line"` + `size="sm"` 收成播放器里的细进度条，没有可见 `label` 时用 `aria-label` 提供名称；读数写成「已播 / 总长」显示在轨道上方，`buffer` 画出比当前进度多 40 秒的已缓冲段。
+`variant="slim"` + `size="sm"` 收成播放器里的细进度条，没有可见 `label` 时用 `aria-label` 提供名称；读数写成「已播 / 总长」显示在轨道上方，`buffer` 画出比当前进度多 40 秒的已缓冲段。
 
 <ComponentPreview name="value-slider-playback-demo" />
 
@@ -186,7 +186,7 @@ const [muted, setMuted] = useValueSliderMuted()
 
 默认 `min={0}`、`max={100}`、`step={1}`、`largeStep={10}`、`minStepsBetweenValues={0}`、`showValue`、`elasticity={12}`、`size="default"`、`variant="bar"`、`labelPlacement="inside"`、`locale="zh-CN"`；`snapToTicks`、`sound`、`disabled` 默认关闭，`tone` 不传时轨道用前景色，`buffer` 不传时不画缓冲段。
 
-尺寸三档只改字号与间距，轨道高度同时取决于 `variant`：`bar` 是 `sm` 28px、`default` 32px、`lg` 36px；`pill` 是 8px、10px、12px；`line` 是 2px、4px、4px。`pill` 与 `line` 的圆形手柄直径依次是 14px、16px、18px，命中区固定 24px 高，细轨道也好按。读数小数位由 `step` 推导，`format` / `formatValue` 可以覆盖。
+轨道高度由 `size` 与 `variant` 共同决定：`bar` 是 `sm` 28px、`default` 32px、`lg` 36px；`compact` 是 18px、22px、24px；`slim` 是 6px、8px、10px，竖线手柄依次高 14px、16px、18px，命中区至少 20px 高，矮轨也好按。读数小数位由 `step` 推导，`format` / `formatValue` 可以覆盖。
 
 除上表外，其余属性直接交给 Base UI 的 `Slider.Root`：`form`（关联到页面上的某个表单）、`id`、`minStepsBetweenValues`（区间两个手柄之间至少隔几个 `step`）、`thumbCollisionBehavior`（`push` / `swap` / `none`，默认 `push`）。`orientation`、`thumbAlignment` 之类会影响横向布局的属性由组件接管，没有对外暴露。
 
@@ -227,7 +227,7 @@ type ValueSliderValue = number | readonly number[]
 
 type ValueSliderSize = "sm" | "default" | "lg"
 
-type ValueSliderVariant = "bar" | "pill" | "line"
+type ValueSliderVariant = "bar" | "compact" | "slim"
 
 type ValueSliderLabelPlacement = "inside" | "outside"
 
@@ -314,14 +314,14 @@ type ValueSliderReport = {
 | 左端图标       | `value-slider-start-icon` |
 | 右端图标       | `value-slider-end-icon`   |
 
-`value-slider-labels` 只在 `labelPlacement="outside"`（以及 `variant="pill"` / `variant="line"`）时出现，`label` 与读数都放在它里面；`inside` 时这两个 `data-slot` 落在轨道内。根元素在过冲时带 `data-overshoot`（`start` 往左、`end` 往右），禁用时带 `data-disabled`，拖动中带 `data-dragging`，手柄压住文字时带 `data-near="true"`，并且始终带 `data-variant`（`bar` / `pill` / `line`）。`pill` 与 `line` 的刻度点也带 `value-slider-tick`，只是画在轨道下方而不是轨道里。
+`value-slider-labels` 只在 `labelPlacement="outside"`（以及 `variant="slim"`）时出现，`label` 与读数都放在它里面；`inside` 时这两个 `data-slot` 落在轨道内。根元素在过冲时带 `data-overshoot`（`start` 往左、`end` 往右），禁用时带 `data-disabled`，拖动中带 `data-dragging`，手柄压住文字时带 `data-near="true"`，并且始终带 `data-variant`（`bar` / `compact` / `slim`）。
 
 ## 可访问性
 
 - 手柄是原生输入元素，键盘操作：`←` `→` `↓` `↑` 加减一个 `step`，`Shift` + 方向键与 `PageUp` / `PageDown` 按 `largeStep`，`Home` / `End` 到两端；区间时 `Home` / `End` 不会越过另一个手柄。RTL 布局下左右方向键的增减是反的（方向取自 Base UI 的 `DirectionProvider`，需要在应用里包一层 `<DirectionProvider direction="rtl">`，同时给页面设 `dir="rtl"`）。
 - 读屏名称优先取 `aria-label`；没有时用字符串 `label`（区间自动补「起点」「终点」）；两者都没有时退回「数值」，所以同一个表单里有多个滑块时务必给 `label` 或 `aria-label`，否则几个手柄会重名。
 - `aria-valuetext` 是格式化后的读数，所以 `format` / `formatValue` 的写法会直接决定读屏怎么念。
-- 焦点环只在键盘聚焦时出现（`:focus-visible`），鼠标点击轨道不会留下焦点框。Control 上有一圈整体焦点环，聚焦的那个手柄还会自己出环，区间模式下能看出当前在调哪个手柄；`bar` 的手柄聚焦时从 4px 加粗到 6px，`pill` / `line` 的圆点手柄常驻不透明，拖动时放大到 1.1 倍（系统开启「减少动态效果」时不放大）。
+- 焦点环只在键盘聚焦时出现（`:focus-visible`），鼠标点击轨道不会留下焦点框。Control 上有一圈整体焦点环，聚焦的那个手柄还会自己出环，区间模式下能看出当前在调哪个手柄，并从 4px 加粗到 6px。
 - 系统开启「减少动态效果」时不播放过冲与弹簧回弹，轨道不会被拉伸。
 - 缓冲填充是 `aria-hidden` 的装饰，读屏只报当前值。
 - 音效默认关闭。打开后请同时提供静音入口（`useValueSliderMuted`），音效只是点缀，不承载信息；静音偏好存在 `localStorage` 的 `travinsy:sound:muted`，与站内其他带音效的组件共用。
@@ -332,7 +332,7 @@ type ValueSliderReport = {
 - 拖动期间的过冲动画由 MotionValue 直接改 `transform`，不触发 React 渲染；数值变化本身仍会渲染读数，所以一次拖动里读数会跟着刷新。
 - 用作表单字段时传 `name`，值会随表单提交；受控模式下记得同时处理 `onValueChange`，否则拖动后值会弹回。需要挂到页面另一处的表单上时再传 `form`。
 - `format` 对象、`formatValue` 函数与 `ticks` 数组建议定义在组件外，避免每次渲染都重建格式化器或刻度表。
-- 组件用一次 `ResizeObserver` 观测轨道与文字宽度，服务端输出的是完整静态结构；首帧还没量到宽度时，落在两端 15% 以内的手柄先按「压在文字上」处理，量到之后按真实文字宽度判断。`pill` / `line` 的文字在轨道外，不做让位。
+- 组件用一次 `ResizeObserver` 观测轨道与文字宽度，服务端输出的是完整静态结构；首帧还没量到宽度时，落在两端 15% 以内的手柄先按「压在文字上」处理，量到之后按真实文字宽度判断。`slim` 的文字在轨道外，不做让位。
 - `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取；手动安装需要自己补上 `--flow-*` 变量。
 
 ## 源码

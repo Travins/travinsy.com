@@ -42,8 +42,8 @@ function brushPath(tension: number) {
 }
 
 /**
- * 轨道形态示例：一张画笔设置卡片，笔刷大小与不透明度用 `pill`（圆角粗轨），
- * 平滑度用 `line`（细线 + 刻度点）。三条滑块都带 `tone`，填充与手柄跟着色调走。
+ * 轨道高度示例：一张画笔设置卡片，笔刷大小与不透明度用 `compact`（中等高度，文字仍在轨道里），
+ * 平滑度用 `slim`（矮轨 + 刻度，文字在上方）。三条滑块都带 `tone`，填充与手柄跟着色调走。
  */
 export default function ValueSliderVariantDemo() {
   const [brush, setBrush] = React.useState(12)
@@ -70,12 +70,12 @@ export default function ValueSliderVariantDemo() {
           />
         </svg>
       </div>
-      {/* 每条滑块占固定高度：调整面板换尺寸、换形态时卡片高度不变 */}
-      <div className="mt-4 flex flex-col gap-3">
-        <div className="flex h-12 items-center">
+      {/* 每条滑块占固定高度：调整面板换尺寸时卡片高度不变（换到 slim 时文字移到上方，会多占一行） */}
+      <div className="mt-4 flex flex-col gap-2">
+        <div className="flex h-8 items-center">
           <ValueSlider
             label="笔刷大小"
-            variant="pill"
+            variant="compact"
             tone="amber"
             min={1}
             max={24}
@@ -85,10 +85,10 @@ export default function ValueSliderVariantDemo() {
             formatValue={formatPixels}
           />
         </div>
-        <div className="flex h-12 items-center">
+        <div className="flex h-8 items-center">
           <ValueSlider
             label="不透明度"
-            variant="pill"
+            variant="compact"
             tone="violet"
             value={opacity}
             onValueChange={setOpacity}
@@ -98,7 +98,7 @@ export default function ValueSliderVariantDemo() {
         <div className="flex h-12 items-center">
           <ValueSlider
             label="平滑度"
-            variant="line"
+            variant="slim"
             tone="cyan"
             value={smoothness}
             onValueChange={setSmoothness}

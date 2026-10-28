@@ -45,48 +45,47 @@ const valueSliderVariants = cva("flex w-full flex-col select-none", {
       lg: "gap-1 text-sm [--value-slider-height:2.25rem]",
     },
     variant: {
-      // 方条沿用尺寸档给的轨道高度；pill / line 的高度同时取决于形态与尺寸，写在 compoundVariants 里
+      // 三种形态都是方条，只是高度不同：bar 沿用尺寸档的高度，compact / slim 在 compoundVariants 里按尺寸细分
       bar: "[--value-slider-track-height:var(--value-slider-height)]",
-      pill: "",
-      line: "",
+      // 中等高度：轨道里仍放标签与读数，字号统一收到 xs
+      compact: "text-xs",
+      // 矮轨：文字移到上方，手柄比轨道高出一截
+      slim: "gap-1.5",
     },
   },
   compoundVariants: [
     {
-      variant: "pill",
+      variant: "compact",
+      size: "sm",
+      class: "[--value-slider-track-height:1.125rem]",
+    },
+    {
+      variant: "compact",
+      size: "default",
+      class: "[--value-slider-track-height:1.375rem]",
+    },
+    {
+      variant: "compact",
+      size: "lg",
+      class: "[--value-slider-track-height:1.5rem]",
+    },
+    {
+      variant: "slim",
       size: "sm",
       class:
-        "[--value-slider-track-height:0.5rem] [--value-slider-thumb-size:0.875rem]",
+        "[--value-slider-track-height:0.375rem] [--value-slider-thumb-height:0.875rem]",
     },
     {
-      variant: "pill",
+      variant: "slim",
       size: "default",
       class:
-        "[--value-slider-track-height:0.625rem] [--value-slider-thumb-size:1rem]",
+        "[--value-slider-track-height:0.5rem] [--value-slider-thumb-height:1rem]",
     },
     {
-      variant: "pill",
+      variant: "slim",
       size: "lg",
       class:
-        "[--value-slider-track-height:0.75rem] [--value-slider-thumb-size:1.125rem]",
-    },
-    {
-      variant: "line",
-      size: "sm",
-      class:
-        "[--value-slider-track-height:0.125rem] [--value-slider-thumb-size:0.875rem]",
-    },
-    {
-      variant: "line",
-      size: "default",
-      class:
-        "[--value-slider-track-height:0.25rem] [--value-slider-thumb-size:1rem]",
-    },
-    {
-      variant: "line",
-      size: "lg",
-      class:
-        "[--value-slider-track-height:0.25rem] [--value-slider-thumb-size:1.125rem]",
+        "[--value-slider-track-height:0.625rem] [--value-slider-thumb-height:1.125rem]",
     },
   ],
   defaultVariants: {
@@ -175,9 +174,9 @@ function ValueSlider<Value extends ValueSliderValue = number>(
   const tone =
     overrides.tone === false ? undefined : (overrides.tone ?? toneProp)
   const hasTone = tone !== undefined
-  // pill / line 的轨道太细，文字放不进轨道里，一律摆到上方，等同 labelPlacement="outside"
-  const thin = variant !== "bar"
-  const outside = thin || labelPlacement === "outside"
+  // slim 的轨道只有几像素高，文字放不进去，一律摆到上方，等同 labelPlacement="outside"
+  const slim = variant === "slim"
+  const outside = slim || labelPlacement === "outside"
 
   // 读数、碰边判断都基于当前值，所以值统一收在这里，再以受控方式交给 Base UI
   const [value, setValue] = useControllableState<Value>({
@@ -379,7 +378,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
           {showValue ? (
             <span
               data-slot="value-slider-value"
-              className="font-mono tabular-nums text-muted-foreground"
+              className="font-mono text-muted-foreground tabular-nums"
             >
               {readout}
             </span>
@@ -398,12 +397,12 @@ function ValueSlider<Value extends ValueSliderValue = number>(
           </motion.span>
         ) : null}
         {/* Control 只负责把指针换算成数值，自己不缩放；缩放在它内部的视觉层上。
-            pill / line 的轨道只有几像素高，给 Control 一个 24px 的命中区，视觉层在其中垂直居中 */}
+            slim 的轨道只有几像素高，给 Control 一个 20px 的命中区，视觉层在其中垂直居中 */}
         <SliderPrimitive.Control
           data-slot="value-slider-control"
           className={cn(
-            "relative w-full min-w-0 cursor-pointer touch-none select-none has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 in-data-[disabled]:cursor-not-allowed",
-            thin && "flex min-h-6 items-center",
+            "relative w-full min-w-0 cursor-pointer touch-none select-none in-data-[disabled]:cursor-not-allowed has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50",
+            slim && "flex min-h-5 items-center",
           )}
           onPointerDown={elastic.onPointerDown}
         >

@@ -77,7 +77,7 @@ export default function ValueSliderPlaybackDemo() {
       <div className="mt-4 flex h-11 items-center">
         <ValueSlider
           aria-label="播放进度"
-          variant="line"
+          variant="slim"
           tone="primary"
           size="sm"
           min={0}
