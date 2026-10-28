@@ -18,6 +18,10 @@ const formatStars = (count: number) =>
     maximumFractionDigits: 1,
   }).format(count)
 
+/** 完整数字加 GitHub 的说法：1 star、2,407 stars */
+const starsText = (count: number) =>
+  `${count.toLocaleString("en")} ${count === 1 ? "star" : "stars"}`
+
 function readCache(): number | null {
   try {
     const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) ?? "null") as {
@@ -80,9 +84,7 @@ export function GithubStars({
   }, [repo])
 
   const label =
-    stars === null
-      ? "GitHub 仓库"
-      : `GitHub 仓库，${stars.toLocaleString("en")} 个星标`
+    stars === null ? "GitHub 仓库" : `GitHub 仓库，${starsText(stars)}`
 
   const link = (
     <a
@@ -111,13 +113,9 @@ export function GithubStars({
     </a>
   )
 
-  // 悬停 / 聚焦时显示完整星标数，例如「2,407 个星标」
+  // 悬停 / 聚焦时显示完整数字，例如「2,407 stars」
   return (
-    <IconTip
-      label={
-        stars === null ? "GitHub 仓库" : `${stars.toLocaleString("en")} 个星标`
-      }
-    >
+    <IconTip label={stars === null ? "GitHub 仓库" : starsText(stars)}>
       {link}
     </IconTip>
   )
