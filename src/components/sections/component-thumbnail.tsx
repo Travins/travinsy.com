@@ -45,9 +45,9 @@ const fillClasses: Record<string, string> = {
     "*:h-full *:min-h-0 *:max-w-none *:rounded-none *:border-0 **:data-[slot=isometric-mark]:mx-auto **:data-[slot=isometric-mark]:w-3/4",
   "glyph-field":
     "*:h-full *:rounded-none **:data-[slot=glyph-field]:h-full",
-  // 窄屏画框只有 20rem 高，地球再往下沉一些，免得压到左上的指标
+  // 窄屏画框只有 20rem 高：地球往右下角挪，露出大半个球面，又不压到左上的指标
   globe:
-    "*:h-full! *:max-w-none *:rounded-none *:border-0 max-lg:**:data-[slot=globe]:translate-y-[62%]",
+    "*:h-full! *:max-w-none *:rounded-none *:border-0 max-lg:**:data-[slot=globe]:left-auto max-lg:**:data-[slot=globe]:-right-[18%] max-lg:**:data-[slot=globe]:w-[95cqh] max-lg:**:data-[slot=globe]:translate-x-0 max-lg:**:data-[slot=globe]:translate-y-[36%]",
   "value-slider": "*:h-full",
 }
 

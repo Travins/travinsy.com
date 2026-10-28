@@ -17,7 +17,13 @@ type NavLinkProps = Omit<React.ComponentProps<typeof Link>, "href"> & {
 }
 
 /** 对 next/link 的薄封装：保留 Cmd/Ctrl 点击等原生行为，只处理普通左键点击。 */
-function NavLink({ href, navigation, onClick, ...props }: NavLinkProps) {
+function NavLink({
+  href,
+  navigation,
+  onClick,
+  prefetch,
+  ...props
+}: NavLinkProps) {
   function handleClick(event: React.MouseEvent<HTMLAnchorElement>) {
     onClick?.(event)
     if (
@@ -38,6 +44,8 @@ function NavLink({ href, navigation, onClick, ...props }: NavLinkProps) {
       data-slot="app-shell-nav-link"
       href={href}
       onClick={handleClick}
+      // 拦截跳转时地址只是标识（预览、单页演示里这些路由并不存在），不要预取，免得请求出一串 404
+      prefetch={navigation?.intercept ? false : prefetch}
       {...props}
     />
   )

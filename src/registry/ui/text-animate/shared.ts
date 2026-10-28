@@ -3,6 +3,10 @@
 import * as React from "react"
 import { useInView } from "motion/react"
 
+import type { FlowToneName } from "@/registry/ui/flow-diagram/tone"
+
+import type { TextScrambleCharset } from "./text-scramble"
+
 /** 各文字原语回报自己负责的属性，同一子树按属性保留第一个示例值。 */
 type TextAnimateReport = Partial<{
   interval: number
@@ -10,8 +14,9 @@ type TextAnimateReport = Partial<{
   by: "char" | "word"
   stagger: number
   duration: number
-  charset: import("./text-scramble").TextScrambleCharset
-  tone: import("@/registry/ui/flow-diagram/tone").FlowToneName
+  // 用顶层 import type：shadcn CLI 安装时只改写静态 import 的路径，内联 import() 类型里的别名不会被改写
+  charset: TextScrambleCharset
+  tone: FlowToneName
 }>
 type TextAnimateTuning = TextAnimateReport & {
   /** 回报覆盖前的示例取值。 */

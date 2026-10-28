@@ -39,7 +39,10 @@ async function main() {
   const grid = registry.items.find(
     (item: { name: string }) => item.name === "grid-layout",
   )
-  grid.css = { ...css, "@layer base": { html: { "overflow-x": "clip" } } }
+  grid.css = { ...css, "@layer base": {
+      // html 与 body 都要裁：只裁 html 时 body 仍是滚动容器，全出血的分隔带会让页面横向可滚
+      "html, body": { "overflow-x": "clip" },
+    } }
   await writeFile("registry.json", JSON.stringify(registry, null, 2) + "\n")
 }
 

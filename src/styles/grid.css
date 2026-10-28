@@ -1,6 +1,6 @@
 /*
  * 线条网格设计系统的底层工具类。
- * 横线通过 200vw 宽的伪元素撑满屏幕，需配合 html { overflow-x: clip }。
+ * 横线通过 200vw 宽的伪元素撑满屏幕，需配合 html, body { overflow-x: clip }。
  * 与 src/registry/ui/grid-layout 一起发布到 registry（css 字段）。
  */
 

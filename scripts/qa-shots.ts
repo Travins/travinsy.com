@@ -92,11 +92,44 @@ async function open(
     )
   }
   await page.waitForTimeout(1200)
-  const overflow = await page.evaluate(
-    () => document.documentElement.scrollWidth - window.innerWidth,
-  )
-  if (overflow > 1)
-    issues.push({ component, where, message: `页面横向溢出 ${overflow}px` })
+  // 站点给 html、body 都设了 overflow-x: clip，页面的 scrollWidth 永远等于视口宽，量不出溢出。
+  // 改为逐个元素检查：超出视口、且没有被任何祖先裁掉的才算溢出；网格分隔带是有意的全出血，排除。
+  const offenders = await page.evaluate(() => {
+    const width = window.innerWidth
+    const found: string[] = []
+    for (const element of document.body.querySelectorAll("*")) {
+      if (element.closest('[data-slot^="grid-"]')) continue
+      const rect = element.getBoundingClientRect()
+      if (rect.width === 0 || rect.height === 0) continue
+      if (rect.right <= width + 1 && rect.left >= -1) continue
+      // 祖先里有任何一层 overflow-x 不是 visible，就已经被裁掉了。
+      // 这里不写成内部函数：tsx 会给具名函数注入 __name，浏览器里没有这个辅助函数
+      let clipped = false
+      for (
+        let parent = element.parentElement;
+        parent && parent !== document.body;
+        parent = parent.parentElement
+      ) {
+        if (getComputedStyle(parent).overflowX !== "visible") {
+          clipped = true
+          break
+        }
+      }
+      if (clipped) continue
+      const slot = element.getAttribute("data-slot")
+      found.push(
+        `${element.tagName.toLowerCase()}${slot ? `[${slot}]` : ""} ${Math.round(rect.left)}→${Math.round(rect.right)}`,
+      )
+      if (found.length >= 3) break
+    }
+    return found
+  })
+  if (offenders.length)
+    issues.push({
+      component,
+      where,
+      message: `元素超出视口：${offenders.join("；")}`,
+    })
   return page
 }
 

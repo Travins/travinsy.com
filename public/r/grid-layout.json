@@ -107,7 +107,7 @@
       "background-size": "16px 16px"
     },
     "@layer base": {
-      "html": {
+      "html, body": {
         "overflow-x": "clip"
       }
     }
