@@ -14,14 +14,15 @@ export type GroupDef = {
  * 没有登记的分区不分组；frontmatter 里写了表里没有的 id 会在构建时报错。
  */
 export const sectionGroups: Partial<Record<NavSectionId, GroupDef[]>> = {
+  // 按「特色程度」排：最有辨识度的图形与动效、自研的方条控件系列在前，通用的数据与内容展示居中，基础布局原语放最后
   components: [
-    { id: "layout", title: "布局", titleEn: "Layout" },
-    { id: "input", title: "表单与输入", titleEn: "Form & Input" },
-    { id: "time", title: "时间", titleEn: "Time" },
-    { id: "data", title: "数据展示", titleEn: "Data Display" },
-    { id: "content", title: "内容展示", titleEn: "Content Display" },
-    { id: "text", title: "文字与滚动", titleEn: "Text & Marquee" },
     { id: "graphics", title: "图形与动效", titleEn: "Graphics & Motion" },
+    { id: "input", title: "表单与输入", titleEn: "Form & Input" },
+    { id: "data", title: "数据展示", titleEn: "Data Display" },
+    { id: "text", title: "文字与滚动", titleEn: "Text & Marquee" },
+    { id: "content", title: "内容展示", titleEn: "Content Display" },
+    { id: "time", title: "时间", titleEn: "Time" },
+    { id: "layout", title: "布局", titleEn: "Layout" },
   ],
 }
 
