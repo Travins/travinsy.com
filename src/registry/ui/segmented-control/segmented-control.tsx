@@ -174,7 +174,7 @@ function SegmentedControl({
         className={cn(
           "relative flex min-w-0 flex-1 items-stretch",
           label !== undefined &&
-            "my-[3px] me-[3px] rounded-sm bg-foreground/5 ring-1 ring-edge ring-inset dark:bg-foreground/10",
+            "my-[3px] me-[3px] rounded-sm bg-foreground/5 dark:bg-foreground/10",
         )}
       >
         {options.map((option) => {
@@ -196,7 +196,7 @@ function SegmentedControl({
                     "absolute inset-0.5 rounded-sm",
                     hasTone
                       ? "bg-(--flow-tone)/20 dark:bg-(--flow-tone)/35"
-                      : "bg-background shadow-xs ring-1 ring-edge dark:bg-foreground/10",
+                      : "bg-background shadow-xs dark:bg-foreground/15",
                   )}
                   transition={
                     reduced
