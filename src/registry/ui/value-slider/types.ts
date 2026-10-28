@@ -6,6 +6,7 @@ import type { FlowTone } from "@/registry/ui/flow-diagram/tone"
 type ValueSliderValue = number | readonly number[]
 type ValueSliderSize = "sm" | "default" | "lg"
 type ValueSliderLabelPlacement = "inside" | "outside"
+type ValueSliderVariant = "bar" | "pill" | "line"
 
 type ValueSliderProps<Value extends ValueSliderValue = number> = Omit<
   SliderPrimitive.Root.Props<Value>,
@@ -120,12 +121,21 @@ type ValueSliderProps<Value extends ValueSliderValue = number> = Omit<
    */
   elasticity?: number
   /**
-   * 轨道高度与字号：sm 28px / default 32px / lg 36px
+   * 尺寸档：字号与间距不变，轨道高度随 `variant` 取值 ——
+   * `bar` 为 sm 28px / default 32px / lg 36px，`pill` 为 8 / 10 / 12px，`line` 为 2 / 4 / 4px，
+   * `pill` 与 `line` 的手柄直径依次是 14 / 16 / 18px
    * @default "default"
    */
   size?: ValueSliderSize
   /**
-   * 色调：填充取 `--flow-tone` 的淡色，手柄取实色；不传时用前景色
+   * 轨道形态：`bar` 是方条，标签与读数画在轨道里；`pill` 是圆角粗轨、`line` 是细线，
+   * 两者都用圆形手柄，标签与读数一律移到轨道上方（此时忽略 `labelPlacement`）
+   * @default "bar"
+   */
+  variant?: ValueSliderVariant
+  /**
+   * 色调：填充取 `--flow-tone`（`bar` 用淡色分层，`pill` / `line` 用实色），手柄取同色；
+   * 不传时两者都用前景色
    */
   tone?: FlowTone
   /**
@@ -138,7 +148,13 @@ type ValueSliderProps<Value extends ValueSliderValue = number> = Omit<
 type ValueSliderTuning = Partial<
   Pick<
     ValueSliderProps,
-    "elasticity" | "size" | "ticks" | "snapToTicks" | "showValue" | "sound"
+    | "elasticity"
+    | "size"
+    | "variant"
+    | "ticks"
+    | "snapToTicks"
+    | "showValue"
+    | "sound"
   >
 > & {
   /** `false` 表示去掉色调 */
@@ -150,6 +166,7 @@ type ValueSliderTuning = Partial<
 type ValueSliderReport = {
   elasticity: number
   size: ValueSliderSize
+  variant: ValueSliderVariant
   tone: FlowTone | undefined
   /** 示例用显式刻度数组时回报 `undefined`，面板显示默认的 0 */
   ticks: number | undefined
@@ -165,4 +182,5 @@ export type {
   ValueSliderSize,
   ValueSliderTuning,
   ValueSliderValue,
+  ValueSliderVariant,
 }

@@ -44,9 +44,54 @@ const valueSliderVariants = cva("flex w-full flex-col select-none", {
       default: "gap-1 text-sm [--value-slider-height:2rem]",
       lg: "gap-1 text-sm [--value-slider-height:2.25rem]",
     },
+    variant: {
+      // 方条沿用尺寸档给的轨道高度；pill / line 的高度同时取决于形态与尺寸，写在 compoundVariants 里
+      bar: "[--value-slider-track-height:var(--value-slider-height)]",
+      pill: "",
+      line: "",
+    },
   },
+  compoundVariants: [
+    {
+      variant: "pill",
+      size: "sm",
+      class:
+        "[--value-slider-track-height:0.5rem] [--value-slider-thumb-size:0.875rem]",
+    },
+    {
+      variant: "pill",
+      size: "default",
+      class:
+        "[--value-slider-track-height:0.625rem] [--value-slider-thumb-size:1rem]",
+    },
+    {
+      variant: "pill",
+      size: "lg",
+      class:
+        "[--value-slider-track-height:0.75rem] [--value-slider-thumb-size:1.125rem]",
+    },
+    {
+      variant: "line",
+      size: "sm",
+      class:
+        "[--value-slider-track-height:0.125rem] [--value-slider-thumb-size:0.875rem]",
+    },
+    {
+      variant: "line",
+      size: "default",
+      class:
+        "[--value-slider-track-height:0.25rem] [--value-slider-thumb-size:1rem]",
+    },
+    {
+      variant: "line",
+      size: "lg",
+      class:
+        "[--value-slider-track-height:0.25rem] [--value-slider-thumb-size:1.125rem]",
+    },
+  ],
   defaultVariants: {
     size: "default",
+    variant: "bar",
   },
 })
 
@@ -87,6 +132,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
     snapToTicks: snapToTicksProp = false,
     elasticity: elasticityProp = 12,
     size: sizeProp = "default",
+    variant: variantProp = "bar",
     tone: toneProp,
     sound: soundProp = false,
     className,
@@ -99,6 +145,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
     onReport?.({
       elasticity: elasticityProp,
       size: sizeProp,
+      variant: variantProp,
       tone: toneProp,
       // 显式刻度数组没有「段数」可言，报 undefined 让面板显示默认值
       ticks: typeof ticksProp === "number" ? ticksProp : undefined,
@@ -110,6 +157,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
     onReport,
     elasticityProp,
     sizeProp,
+    variantProp,
     toneProp,
     ticksProp,
     snapToTicksProp,
@@ -119,6 +167,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
 
   const elasticity = Math.max(0, overrides.elasticity ?? elasticityProp)
   const size = overrides.size ?? sizeProp
+  const variant = overrides.variant ?? variantProp
   const ticks = overrides.ticks ?? ticksProp
   const snapToTicks = overrides.snapToTicks ?? snapToTicksProp
   const showValue = overrides.showValue ?? showValueProp
@@ -126,7 +175,9 @@ function ValueSlider<Value extends ValueSliderValue = number>(
   const tone =
     overrides.tone === false ? undefined : (overrides.tone ?? toneProp)
   const hasTone = tone !== undefined
-  const outside = labelPlacement === "outside"
+  // pill / line 的轨道太细，文字放不进轨道里，一律摆到上方，等同 labelPlacement="outside"
+  const thin = variant !== "bar"
+  const outside = thin || labelPlacement === "outside"
 
   // 读数、碰边判断都基于当前值，所以值统一收在这里，再以受控方式交给 Base UI
   const [value, setValue] = useControllableState<Value>({
@@ -304,10 +355,11 @@ function ValueSlider<Value extends ValueSliderValue = number>(
       format={format}
       locale={locale}
       data-slot="value-slider"
+      data-variant={variant}
       data-overshoot={elastic.side ?? undefined}
       data-disabled={disabled ? "" : undefined}
       className={cn(
-        valueSliderVariants({ size }),
+        valueSliderVariants({ size, variant }),
         "group/value-slider data-[disabled]:opacity-50",
         className,
       )}
@@ -345,10 +397,14 @@ function ValueSlider<Value extends ValueSliderValue = number>(
             {startIcon}
           </motion.span>
         ) : null}
-        {/* Control 只负责把指针换算成数值，自己不缩放；缩放在它内部的视觉层上 */}
+        {/* Control 只负责把指针换算成数值，自己不缩放；缩放在它内部的视觉层上。
+            pill / line 的轨道只有几像素高，给 Control 一个 24px 的命中区，视觉层在其中垂直居中 */}
         <SliderPrimitive.Control
           data-slot="value-slider-control"
-          className="relative w-full min-w-0 cursor-pointer touch-none select-none has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 in-data-[disabled]:cursor-not-allowed"
+          className={cn(
+            "relative w-full min-w-0 cursor-pointer touch-none select-none has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 in-data-[disabled]:cursor-not-allowed",
+            thin && "flex min-h-6 items-center",
+          )}
           onPointerDown={elastic.onPointerDown}
         >
           <motion.div
@@ -364,6 +420,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
               trackRef={trackRef}
               labelRef={labelRef}
               valueRef={valueRef}
+              variant={variant}
               outside={outside}
               label={label}
               readout={readout}
@@ -378,6 +435,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
               <ValueSliderThumb
                 key={index}
                 index={index}
+                variant={variant}
                 near={isNear(valueToPercent(item, min, max))}
                 hasTone={hasTone}
                 outside={outside}
@@ -420,4 +478,5 @@ export type {
   ValueSliderSize,
   ValueSliderTuning,
   ValueSliderValue,
+  ValueSliderVariant,
 } from "./types"

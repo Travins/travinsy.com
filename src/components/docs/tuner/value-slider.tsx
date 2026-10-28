@@ -3,13 +3,14 @@ import {
   type ValueSliderReport,
   type ValueSliderSize,
   type ValueSliderTuning,
+  type ValueSliderVariant,
 } from "@/registry/ui/value-slider/value-slider"
 import { toneOptions } from "./swatches"
 import { defineTuner } from "./types"
 
 /**
- * 数值滑块的调整面板：过冲、尺寸、刻度、色调与三个开关。
- * 示例把每条滑块放在固定高度的插槽里，所以 `size` 换档时画框高度不变。
+ * 数值滑块的调整面板：过冲、尺寸、形态、刻度、色调与三个开关。
+ * 示例把每条滑块放在固定高度的插槽里，所以 `size` / `variant` 换档时画框高度不变。
  * 音效开关只打开组件自己的播放，是否真的出声仍受站点静音偏好（`useValueSliderMuted`）控制。
  */
 
@@ -19,11 +20,17 @@ const SIZES: { value: ValueSliderSize; label: string }[] = [
   { value: "lg", label: "lg" },
 ]
 
+const VARIANTS: { value: ValueSliderVariant; label: string }[] = [
+  { value: "bar", label: "bar" },
+  { value: "pill", label: "pill" },
+  { value: "line", label: "line" },
+]
+
 export const valueSliderTuner = defineTuner<
   ValueSliderTuning,
   ValueSliderReport
 >({
-  hint: "调整过冲强度、尺寸、色调与刻度",
+  hint: "调整过冲强度、尺寸、形态、色调与刻度",
   context: ValueSliderTuningContext,
   controls: [
     {
@@ -35,6 +42,12 @@ export const valueSliderTuner = defineTuner<
       unit: "px",
     },
     { key: "size", type: "segmented", label: "尺寸 size", options: SIZES },
+    {
+      key: "variant",
+      type: "segmented",
+      label: "形态 variant",
+      options: VARIANTS,
+    },
     { key: "ticks", type: "slider", label: "刻度 ticks", min: 0, max: 10 },
     {
       key: "tone",
@@ -50,6 +63,7 @@ export const valueSliderTuner = defineTuner<
   defaults: {
     elasticity: 12,
     size: "default",
+    variant: "bar",
     ticks: 0,
     snapToTicks: false,
     showValue: true,
@@ -65,6 +79,7 @@ export const valueSliderTuner = defineTuner<
   toTuning: (values) => ({
     elasticity: values.elasticity as number | undefined,
     size: values.size as ValueSliderSize | undefined,
+    variant: values.variant as ValueSliderVariant | undefined,
     // 0 表示不画刻度：组件的 resolveTicks 对小于 2 的段数返回空数组，也顺带关掉磁吸目标
     ticks: values.ticks as number | undefined,
     snapToTicks: values.snapToTicks as boolean | undefined,

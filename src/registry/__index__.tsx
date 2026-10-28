@@ -115,6 +115,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "value-slider-photo-demo": lazy(() => import("./examples/value-slider-photo-demo")),
   "value-slider-playback-demo": lazy(() => import("./examples/value-slider-playback-demo")),
   "value-slider-range-demo": lazy(() => import("./examples/value-slider-range-demo")),
+  "value-slider-variant-demo": lazy(() => import("./examples/value-slider-variant-demo")),
   "value-slider-volume-demo": lazy(() => import("./examples/value-slider-volume-demo")),
 }
 
