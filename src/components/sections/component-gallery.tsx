@@ -32,7 +32,7 @@ export function ComponentGallery() {
         label="COMPONENTS"
         count={pages.length}
         title="组件"
-        description="从线条、留白与排版开始，构建属于自己的界面。源码开放，复制即用。"
+        description="Yi UI 的全部组件：从线条、留白与排版开始，构建属于自己的界面。源码开放，复制即用。"
       />
       <GridSeparator />
       {groups.map((group) => (

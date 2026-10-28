@@ -10,7 +10,7 @@ export function GET() {
     [
       `# ${siteConfig.name}`,
       `> ${siteConfig.description}。基于 Next.js 静态导出，提供可复制的 React 组件源码、中文文档与实践文章。`,
-      "组件采用 React、Tailwind CSS v4 与 shadcn/ui（Base UI）。所有链接使用站点正式域名；全文原始 MDX 见下方链接。",
+      "组件库名为 Yi UI，采用 React、Tailwind CSS v4 与 shadcn/ui（Base UI）。所有链接使用站点正式域名；全文原始 MDX 见下方链接。",
       '安装：先在目标项目初始化 shadcn，再运行 `pnpm dlx shadcn@latest add https://travinsy.com/r/<name>.json`。也可在 components.json 的 registries 中配置 `"@travinsy": "https://travinsy.com/r/{name}.json"`，然后运行 `pnpm dlx shadcn@latest add @travinsy/<name>`。',
       "## 组件",
       ...registry.items

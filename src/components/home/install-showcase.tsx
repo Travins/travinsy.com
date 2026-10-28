@@ -47,7 +47,7 @@ function InstallShowcase() {
     <GridColumns className="sm:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
       <div className="flex min-w-0 flex-col gap-5 p-4 sm:p-6 lg:p-8">
         <p className="max-w-[34rem] text-sm leading-7 text-pretty text-muted-foreground">
-          本站所有组件都以 shadcn registry
+          本站的组件库 Yi UI 以 shadcn registry
           发布。一行命令把源码装进你的项目，装完就是你自己的代码，可以直接改。
         </p>
         <div className="flex min-w-0 flex-col gap-4">

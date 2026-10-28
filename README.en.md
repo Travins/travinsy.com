@@ -1,12 +1,12 @@
 <div align="center">
 
 <a href="https://travinsy.com">
-  <img src="src/app/icon.svg" alt="travinsy" width="56" height="56" />
+  <img src="src/app/icon.svg" alt="Yi UI" width="56" height="56" />
 </a>
 
-<h1>travinsy</h1>
+<h1>Yi UI</h1>
 
-<p>A line-grid styled React component library. Components install as source into your project, so the code is yours from day one.</p>
+<p><strong>易</strong> · A line-grid styled React component library. Components install as source into your project, so the code is yours from day one.</p>
 
 <p>
   <a href="https://travinsy.com">Website</a> ·
@@ -23,12 +23,14 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/assets/preview-dark.png" />
-  <img src=".github/assets/preview-light.png" alt="travinsy home page: isometric mark with a tuning panel" />
+  <img src=".github/assets/preview-light.png" alt="travinsy.com home page: isometric mark with a tuning panel" />
 </picture>
 
 ## About
 
-travinsy is a component library distributed as a **shadcn registry**, and also the author's personal site. Nothing ships as an npm package: the shadcn CLI copies the source into your project, where you can change styles, structure and behavior freely.
+Yi UI is a component library distributed as a **shadcn registry**, hosted on the author's personal site [travinsy.com](https://travinsy.com). Nothing ships as an npm package: the shadcn CLI copies the source into your project, where you can change styles, structure and behavior freely.
+
+The name comes from the site's logo, the Chinese character 易 (*yì*), drawn as three thin and three thick slashes. It means both "easy" and "change": easy to pick up, and yours to change.
 
 Everything follows one visual language, the line grid: full-width rules, ruled containers and dotted separators, combined with hairline borders, small radii and restrained motion.
 

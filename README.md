@@ -1,12 +1,12 @@
 <div align="center">
 
 <a href="https://travinsy.com">
-  <img src="src/app/icon.svg" alt="travinsy" width="56" height="56" />
+  <img src="src/app/icon.svg" alt="Yi UI" width="56" height="56" />
 </a>
 
-<h1>travinsy</h1>
+<h1>Yi UI</h1>
 
-<p>线条网格风格的 React 组件库：源码直接装进你的项目，装完就是你自己的代码。</p>
+<p><strong>易</strong> · 线条网格风格的 React 组件库：源码直接装进你的项目，装完就是你自己的代码。</p>
 
 <p>
   <a href="https://travinsy.com">官网</a> ·
@@ -23,12 +23,14 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/assets/preview-dark.png" />
-  <img src=".github/assets/preview-light.png" alt="travinsy 首页：等轴测标志与调整面板" />
+  <img src=".github/assets/preview-light.png" alt="travinsy.com 首页：等轴测标志与调整面板" />
 </picture>
 
 ## 简介
 
-travinsy 是一个以 **shadcn registry** 形式发布的组件库，同时也是作者的个人站点。组件不打成 npm 包，而是用 shadcn CLI 把源码复制进你的项目，样式、结构、交互都可以直接改。
+Yi UI 是一个以 **shadcn registry** 形式发布的组件库，托管在作者的个人站点 [travinsy.com](https://travinsy.com) 上。组件不打成 npm 包，而是用 shadcn CLI 把源码复制进你的项目，样式、结构、交互都可以直接改。
+
+名字取自站点标志「易」（三道细斜杠是「日」，三道粗斜杠是「勿」）：既是「容易上手」，也是「随你改动」。
 
 视觉上统一使用「线条网格」语言：全宽横线、竖线容器、点阵分隔带，配合细边框、小圆角与克制的动效。
 

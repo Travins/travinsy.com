@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 const ogImages = [
   { url: ogImageUrl(DEFAULT_OG_KEY), ...OG_IMAGE_SIZE, alt: "travinsy" },
 ]
-const description = "travinsy 的个人作品集，以及一套线条网格风格的 shadcn 组件库。"
+const description = "travinsy 的个人作品集，以及开源组件库 Yi UI：一套线条网格风格的 shadcn 组件库。"
 
 export const metadata: Metadata = {
   // 让 openGraph / twitter 的相对地址（含 opengraph-image）解析成绝对地址

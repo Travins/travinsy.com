@@ -4,7 +4,7 @@ import { blogPosts, source } from "@/lib/source"
 
 const kinds: Record<string, string> = {
   docs: "DOCS · 文档",
-  components: "COMPONENTS · 组件",
+  components: "YI UI · 组件",
   blocks: "BLOCKS · 区块",
   templates: "TEMPLATES · 模板",
 }
@@ -23,7 +23,7 @@ export function ogCards(): (OgCardProps & { key: string })[] {
       kind: "PORTFOLIO · 作品集",
       title: "个人作品集与组件库",
       titleEn: "Portfolio & Component Registry",
-      description: "travinsy 的个人作品集，以及一套线条网格风格的 shadcn 组件库。",
+      description: "travinsy 的个人作品集，以及开源组件库 Yi UI：一套线条网格风格的 shadcn 组件库。",
       path: "/",
     },
     {
