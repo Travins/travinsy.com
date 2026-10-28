@@ -32,6 +32,9 @@ const fitClasses: Record<string, string> = {
   orbit: "max-lg:scale-[0.85]",
   // 门面示例窄屏时预览与面板堆成两段，缩到画框里才看得全
   "control-panel": "max-lg:scale-[0.72]",
+  // 照片卡与拖拽板门面示例都是竖向堆叠的卡片，窄屏画框只有 20rem 高
+  "angle-dial": "max-lg:scale-[0.82]",
+  "xy-pad": "max-lg:scale-[0.7]",
 }
 
 /**

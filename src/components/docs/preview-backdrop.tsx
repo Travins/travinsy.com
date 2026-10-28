@@ -20,6 +20,8 @@ const BACKDROPS: Record<string, "dots" | "grid"> = {
   "segmented-control": "dots",
   "toggle-switch": "dots",
   "tone-picker": "dots",
+  "angle-dial": "dots",
+  "xy-pad": "dots",
 }
 
 export function PreviewBackdrop({ name }: { name?: string }) {

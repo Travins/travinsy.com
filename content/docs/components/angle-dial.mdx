@@ -1,0 +1,187 @@
+---
+title: 角度刻度尺
+titleEn: Angle Dial
+description: 方条样式的角度输入：左右拖动刻度、中间竖线指针读数，满一圈首尾相接，与数值滑块同一套高度。
+group: input
+---
+
+<ComponentPreview name="angle-dial-demo" />
+
+## 安装
+
+<InstallCommand name="angle-dial" />
+
+## 用法
+
+```tsx title="components/straighten-dial.tsx"
+import { useState } from "react"
+import { AngleDial } from "@/components/ui/angle-dial/angle-dial"
+
+export function StraightenDial() {
+  const [angle, setAngle] = useState(0)
+
+  return (
+    <AngleDial
+      label="拉直"
+      min={-45}
+      max={45}
+      value={angle}
+      onValueChange={setAngle}
+    />
+  )
+}
+```
+
+`value` / `defaultValue` / `onValueChange` 与站内其他方条控件同一套约定：给 `value` 就是受控，不给就由组件自己管，`defaultValue` 只决定起点与复位目标。外框、圆角与高度跟数值滑块完全一致，同一个面板里并排摆不会错位。
+
+### 拖动刻度，读正中指针
+
+刻度尺里躺着的是一段转盘，固定在正中的竖线是读数指针。按住刻度往左拖，刻度跟着手走，指针就读到更大的角度——每移动 `pixelsPerDegree` 像素走一度，默认是 `3`；调大更细，调小更灵敏。刻度每 5° 一根短线、每 15° 一根长线，两端渐隐，像从窗口里露出的一段转盘。
+
+右侧是格式化后的读数，以及一个跟着转的小表盘，扫一眼就知道现在偏向哪边。
+
+### 键盘与复位
+
+刻度尺自己可以聚焦，键盘操作与数值滑块一致：
+
+| 按键                  | 变化                      |
+| --------------------- | ------------------------- |
+| `←` `↓`               | 减一个 `step`             |
+| `→` `↑`               | 加一个 `step`             |
+| `Shift` + 方向键      | 按 `largeStep`（默认 15） |
+| `PageUp` / `PageDown` | 按 `largeStep`            |
+| `Home` / `End`        | 到两端                    |
+
+双击刻度尺回到 `defaultValue`；不传 `defaultValue` 时回到 0，0 不在范围内时取 `min`。拖动松手、每次键盘变更、双击复位之后都会触发 `onValueCommitted`，需要「松手才算一次」时用它。
+
+### 首尾相接
+
+`max - min` 正好是 360 时自动首尾相接：范围是一整圈，越过 `max` 会从 `min` 接着走，360° 与 0° 是同一个角度，所以读数显示成 `min`。首尾相接时按 `End` 会停在 `max - step`（即离一圈终点最近的那一档），不会停在和起点重合的位置。
+
+给别的范围也可以手动打开：传 `wrap` 即可，`wrap={false}` 则关掉自动判断。
+
+```tsx
+<AngleDial label="朝向" min={0} max={360} defaultValue={90} />
+```
+
+### 高度、色调与「已改动」
+
+`variant` 与 `size` 的组合高度和数值滑块同一张表：
+
+| `variant` | `sm` | `default` | `lg` |
+| --------- | ---- | --------- | ---- |
+| `bar`     | 28px | 32px      | 36px |
+| `compact` | 18px | 22px      | 24px |
+
+`tone` 只给指针与小表盘上色，取 `--flow-tone`；不传时用前景色。`modified` 把标签与读数从次要色提到前景色，并在根元素上留一个 `data-modified`，通常写成 `modified={value !== defaultValue}`，让控制面板里改过的项一眼可辨。
+
+```tsx
+<AngleDial
+  label="旋转"
+  variant="compact"
+  tone="amber"
+  modified={rotation !== 0}
+  value={rotation}
+  onValueChange={setRotation}
+/>
+```
+
+## 示例
+
+### 罗盘方位
+
+范围 0–360 正好一圈，`wrap` 自动打开：拖过 360° 会从 0° 接着走。罗盘指针与刻度尺右侧的小表盘同步转动，读数旁标出八方位名。`largeStep={45}` 让 `Shift` + 方向键一次跳一个方位。
+
+<ComponentPreview name="angle-dial-compass-demo" />
+
+### 渐变角度
+
+色块的 `linear-gradient` 角度直接来自刻度，下面一行是这段 CSS 的简写。渐变色只用主题提供的 `--flow-*` 变量，亮暗与颜色主题切换时一起变。
+
+<ComponentPreview name="angle-dial-gradient-demo" />
+
+## API
+
+### AngleDial
+
+<PropsTable name="angle-dial" component="AngleDial" />
+
+默认 `min={-180}`、`max={180}`、`step={1}`、`largeStep={15}`、`pixelsPerDegree={3}`、`variant="bar"`、`size="default"`；`wrap` 不传时按「范围是否正好 360°」自动决定，`formatValue` 默认是 `数值°`，`modified`、`disabled` 默认关闭，`tone` 不传时用前景色。除上表外，其余属性直接落在根元素 `<div>` 上。
+
+### angleDialVariants
+
+`cva` 生成的根元素样式函数，有 `size` 与 `variant` 两个变体。高度通过根元素的 `--angle-dial-height` 变量传给内部，自己写包装层时可以复用它保持同一套高度。
+
+```ts
+const angleDialVariants: (props?: {
+  size?: AngleDialSize
+  variant?: AngleDialVariant
+}) => string
+```
+
+### 类型
+
+```ts
+type AngleDialSize = "sm" | "default" | "lg"
+
+type AngleDialVariant = "bar" | "compact"
+
+type AngleDialProps = Omit<
+  React.ComponentProps<"div">,
+  "defaultValue" | "onChange" | "children"
+> & {
+  value?: number
+  defaultValue?: number
+  onValueChange?: (value: number) => void
+  onValueCommitted?: (value: number) => void
+  min?: number
+  max?: number
+  step?: number
+  largeStep?: number
+  wrap?: boolean
+  pixelsPerDegree?: number
+  label?: React.ReactNode
+  formatValue?: (value: number) => string
+  variant?: AngleDialVariant
+  size?: AngleDialSize
+  tone?: FlowTone
+  modified?: boolean
+  disabled?: boolean
+}
+```
+
+## data-slot
+
+| 元素       | `data-slot`         |
+| ---------- | ------------------- |
+| 根元素     | `angle-dial`        |
+| 左侧标签   | `angle-dial-label`  |
+| 刻度尺     | `angle-dial-ruler`  |
+| 刻度       | `angle-dial-ticks`  |
+| 指针       | `angle-dial-needle` |
+| 读数与表盘 | `angle-dial-value`  |
+| 小表盘     | `angle-dial-glyph`  |
+
+根元素始终带 `data-variant`（`bar` / `compact`）；拖动中带 `data-dragging`，`modified` 为真时带 `data-modified`，禁用时带 `data-disabled`。
+
+## 可访问性
+
+- 刻度尺是 `role="slider"`，带 `aria-valuemin` / `aria-valuemax` / `aria-valuenow` 与 `aria-valuetext`。`aria-valuetext` 用的就是 `formatValue` 的结果，所以把读数换成「东北」「+12°」这类写法后，读屏念的也是它。
+- 名称优先取 `label`（`aria-labelledby`），没有 `label` 时用 `aria-label`，两者都没有就退回「角度」——同一个表单里有多个刻度尺时务必给名称。
+- 刻度、指针、读数与表盘都是 `aria-hidden` 的装饰，读屏只念上面那几个值。
+- 焦点环只在键盘聚焦时出现（`focus-visible`）。鼠标按下刻度尺不会留下焦点框，但焦点会落到刻度尺上，可以用方向键接着微调。
+- `disabled` 时去掉 Tab 可达性（`tabIndex={-1}`）、指针交互与键盘响应，并降到半透明。
+- 系统开启「减少动态效果」时指针不再在拖动中轻微放大。
+
+## 注意事项
+
+- 组件在服务端就输出完整结构（刻度按当前值平移、表盘指针带着 `rotate()`），不需要预水合脚本，禁用 JS 时也能看到当前值。
+- `formatValue`、`defaultValue` 建议定义在组件外，避免每次渲染都换一个新函数或新对象。
+- 拖动期间的读数变化会正常触发 React 渲染；一次拖动里读数会连续刷新，这是有意的。
+- 用作表单字段时外面自己套 `input type="hidden"`，组件只提交到 `onValueChange` / `onValueCommitted`。
+- 受控模式下记得同时处理 `onValueChange`，否则拖动后值会弹回。
+- `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取；手动安装需要自己补上 `--flow-*` 变量。
+
+## 源码
+
+<ComponentSource name="angle-dial" />

@@ -1,0 +1,190 @@
+---
+title: 二维拖拽板
+titleEn: XY Pad
+description: 一块带网格的区域，拖动手柄同时调两个值，十字线与淡色填充标出位置，键盘左右 / 上下分别调两条轴。
+group: input
+---
+
+<ComponentPreview name="xy-pad-demo" />
+
+## 安装
+
+<InstallCommand name="xy-pad" />
+
+## 用法
+
+```tsx title="components/light-pad.tsx"
+import { useState } from "react"
+import { XyPad } from "@/components/ui/xy-pad/xy-pad"
+
+export function LightPad() {
+  const [light, setLight] = useState({ x: 30, y: 70 })
+
+  return (
+    <XyPad
+      label="光源"
+      value={light}
+      onValueChange={setLight}
+      x={{ min: 0, max: 100, step: 1, label: "水平" }}
+      y={{ min: 0, max: 100, step: 1, label: "高度" }}
+    />
+  )
+}
+```
+
+值是一个 `{ x, y }` 对象。`value` / `defaultValue` / `onValueChange` 与其他方条控件同一套约定：给 `value` 就是受控，不给时由组件自己管，`defaultValue` 不传就落在两轴的中点。
+
+### 拖动与十字线
+
+按住任意位置或手柄拖动，两条轴一起变；十字线标出当前位置，一块淡色填充从左下角铺到手柄，与数值滑块的已选填充是同一种做法。松手时触发一次 `onValueCommitted`，拖动过程中只走 `onValueChange`。
+
+指针按下时组件会把焦点交给横轴的隐藏滑块，所以拖完可以直接按方向键微调，不用再点一次。
+
+### 两条轴
+
+`x` 与 `y` 各是一个轴对象，字段都一样：
+
+| 字段     | 默认    | 说明                                                  |
+| -------- | ------- | ----------------------------------------------------- |
+| `min`    | `0`     | 最小值                                                |
+| `max`    | `100`   | 最大值                                                |
+| `step`   | `1`     | 步长，落点按它对齐                                    |
+| `label`  | `X`/`Y` | 轴名，读屏朗读与读数的名称                            |
+| `format` | 无      | 读数格式，返回的字符串同时用于读数与 `aria-valuetext` |
+
+横轴往右变大，纵轴**往上**变大——与屏幕坐标相反，符合「抬高」的直觉。角度这类有正负的轴直接写 `min={-60}`、`max={60}`，负数就在轴线左侧 / 下方。
+
+```tsx
+<XyPad
+  label="视角"
+  x={{ min: -60, max: 60, step: 1, label: "朝向", format: (v) => `${v}°` }}
+  y={{ min: -45, max: 45, step: 1, label: "俯仰", format: (v) => `${v}°` }}
+/>
+```
+
+`grid` 只改背景网格的疏密（默认每个方向 4 格），不影响取值与步长。
+
+### 键盘
+
+板子里有两个视觉隐藏的原生滑块，横轴一个、纵轴一个。聚焦其中任何一个时：
+
+| 按键                  | 变化                         |
+| --------------------- | ---------------------------- |
+| `←` / `→`             | 横轴减 / 加一个 `step`       |
+| `↑` / `↓`             | 纵轴加 / 减一个 `step`       |
+| `Shift` + 方向键      | 步长放大十倍                 |
+| `Home` / `End`        | 交给当前那条轴，跳到两端     |
+| `PageUp` / `PageDown` | 交给当前那条轴，按原生序列走 |
+
+上下键被接管成纵轴，所以两条轴都能用同一组方向键调，不必先在两个滑块之间 Tab 切换。
+
+### 尺寸与色调
+
+默认是正方形（`aspect-square`），用 `className` 改比例或高度：`className="aspect-[4/3]"`、`className="aspect-auto h-40"`。面板里需要跟着行高撑满时，用容器查询给不同断点分别设值。
+
+`tone` 给十字线、手柄与填充上色，取 `--flow-tone`；不传时用前景色。`modified` 把标签与读数从次要色提到前景色，并在根元素上留一个 `data-modified`，写法通常是 `modified={value.x !== 50 || value.y !== 50}`。
+
+```tsx
+<XyPad
+  className="aspect-[4/3]"
+  label="白平衡"
+  tone="cyan"
+  x={{ label: "绿", min: -50, max: 50 }}
+  y={{ label: "红", min: -50, max: 50 }}
+/>
+```
+
+## 示例
+
+### 情绪坐标
+
+两条轴各带自己的中文轴名与取值范围，纵轴往上变大；板子外面标出「积极 / 消极」「平静 / 激动」，右上角的象限名随位置变化，`tone` 按积极 / 消极换成绿 / 玫红，颜色只是加强，名称本身已经把状态说清楚。
+
+<ComponentPreview name="xy-pad-mood-demo" />
+
+### 视角面板
+
+二维拖拽板放进控制面板当「视角」：横轴转朝向、纵轴转俯仰，一次拖出任意机位；下面一条数值滑块单独控制透视距离。板子保持默认的正方形，两条轴的 `format` 补上度数，`modified` 标出改过的项，标题栏的复制按钮把当前视角写成 JSX。
+
+<ComponentPreview name="xy-pad-view-demo" />
+
+## API
+
+### XyPad
+
+<PropsTable name="xy-pad" component="XyPad" />
+
+默认两条轴都是 `min={0}`、`max={100}`、`step={1}`，名称分别是 `X` 与 `Y`；`grid={4}`、`modified` 与 `disabled` 默认关闭，`tone` 不传时用前景色。除上表外，其余属性直接落在根元素 `<div>` 上（`role="group"` 与 `aria-label` 已经在组件里处理）。
+
+### 类型
+
+```ts
+type XyPadValue = { x: number; y: number }
+
+type XyPadAxis = {
+  min?: number
+  max?: number
+  step?: number
+  /** 轴名：读屏朗读与读数里用，如「朝向」；不传时是 X / Y */
+  label?: string
+  /** 读数格式；不传时直接显示数字 */
+  format?: (value: number) => string
+}
+
+type XyPadProps = Omit<
+  React.ComponentProps<"div">,
+  "defaultValue" | "onChange" | "children"
+> & {
+  value?: XyPadValue
+  defaultValue?: XyPadValue
+  onValueChange?: (value: XyPadValue) => void
+  onValueCommitted?: (value: XyPadValue) => void
+  x?: XyPadAxis
+  y?: XyPadAxis
+  label?: React.ReactNode
+  grid?: number
+  tone?: FlowTone
+  modified?: boolean
+  disabled?: boolean
+}
+```
+
+## data-slot
+
+| 元素     | `data-slot`        |
+| -------- | ------------------ |
+| 根元素   | `xy-pad`           |
+| 交互区   | `xy-pad-area`      |
+| 背景网格 | `xy-pad-grid`      |
+| 淡色填充 | `xy-pad-fill`      |
+| 竖十字线 | `xy-pad-crosshair` |
+| 手柄     | `xy-pad-thumb`     |
+| 横轴滑块 | `xy-pad-input-x`   |
+| 纵轴滑块 | `xy-pad-input-y`   |
+| 标签     | `xy-pad-label`     |
+| 读数     | `xy-pad-value`     |
+
+根元素在拖动中带 `data-dragging`，`modified` 为真时带 `data-modified`，禁用时带 `data-disabled`。
+
+## 可访问性
+
+- 根元素是 `role="group"`，名称取 `label`（`aria-labelledby`），没有 `label` 时用 `aria-label`；两者都没有时这组滑块就没有名字，务必给一个。
+- 语义落在两个视觉隐藏的原生 `input[type=range]` 上：各自带轴名与 `aria-valuetext`（`format` 的结果），读屏能分别念出「朝向 -32°」「俯仰 18°」这样的值。读数是 `aria-hidden` 的装饰，不重复朗读。
+- 方向键的左右 / 上下分别对应横轴与纵轴，`Shift` 加大十倍；`Home` / `End` / `PageUp` / `PageDown` 交给原生滑块，只改当前聚焦的那条轴。
+- 焦点环画在整块板子外面（`:has(:focus-visible)`），键盘进入时能看出是这一组在响应。
+- `disabled` 时两个滑块一起禁用、去掉指针交互，并降到半透明。
+- 十字线与填充只是加强，位置信息同时存在于手柄与两个滑块的数值里，颜色不是唯一载体。
+
+## 注意事项
+
+- 组件在服务端就输出完整结构（手柄按百分比定位、填充有宽高），禁用 JS 时也能看到当前值。
+- 拖动用 `setPointerCapture`，指针移出板子也还能继续拖；鼠标按下时会阻止默认行为，不会选中旁边的文字。
+- 落点会先夹进 `min`–`max`，再对齐到 `step`，所以读数不会出现步长之外的数值。
+- 小数的位数按 `step` 的写法推导：`step={0.5}` 保留一位，`step={0.01}` 保留两位。
+- 受控模式下记得同时处理 `onValueChange`，否则拖动后手柄会弹回。
+- 用作表单字段时外面自己套两个 `input type="hidden"`，组件只提交到回调。
+- `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取；手动安装需要自己补上 `--flow-*` 变量。
+
+## 源码
+
+<ComponentSource name="xy-pad" />

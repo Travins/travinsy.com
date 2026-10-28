@@ -3,6 +3,9 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from "react"
 
 export const registryExamples: Record<string, LazyExoticComponent<ComponentType>> = {
+  "angle-dial-compass-demo": lazy(() => import("./examples/angle-dial-compass-demo")),
+  "angle-dial-demo": lazy(() => import("./examples/angle-dial-demo")),
+  "angle-dial-gradient-demo": lazy(() => import("./examples/angle-dial-gradient-demo")),
   "card-stack-demo": lazy(() => import("./examples/card-stack-demo")),
   "card-stack-drag-demo": lazy(() => import("./examples/card-stack-drag-demo")),
   "card-stack-quotes-demo": lazy(() => import("./examples/card-stack-quotes-demo")),
@@ -131,6 +134,9 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "value-slider-range-demo": lazy(() => import("./examples/value-slider-range-demo")),
   "value-slider-variant-demo": lazy(() => import("./examples/value-slider-variant-demo")),
   "value-slider-volume-demo": lazy(() => import("./examples/value-slider-volume-demo")),
+  "xy-pad-demo": lazy(() => import("./examples/xy-pad-demo")),
+  "xy-pad-mood-demo": lazy(() => import("./examples/xy-pad-mood-demo")),
+  "xy-pad-view-demo": lazy(() => import("./examples/xy-pad-view-demo")),
 }
 
 // 区块 / 页面模板的整页预览，键为 registry 条目名
