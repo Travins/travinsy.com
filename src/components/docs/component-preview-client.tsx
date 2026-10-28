@@ -1,5 +1,6 @@
 "use client"
 import { Suspense, useMemo, useState, type ReactNode } from "react"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { registryExamples } from "@/registry/__index__"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { buttonVariants } from "@/components/ui/button"
@@ -71,6 +72,7 @@ export function ComponentPreviewClient({
   // 示例可以在 tuner 配置里单独关闭面板或去掉部分控件；按示例名解析一次，保持引用稳定
   const tunerConfig = useMemo(() => resolveTuner(item, name), [item, name])
   const tuner = useTuner(tunerConfig)
+  const reduced = useReducedMotion()
   return (
     <Tabs
       value={view}
@@ -127,14 +129,30 @@ export function ComponentPreviewClient({
           </Suspense>
         </TunerProvider>
       </TabsContent>
-      {tunerConfig && tuner.open && view === "preview" ? (
-        <TunerPanel
-          config={tunerConfig}
-          values={tuner.values}
-          base={tuner.base}
-          onChange={tuner.setValues}
-        />
-      ) : null}
+      {/* 面板从预览下方展开：高度从 0 过渡到内容高度，同时淡入；收起时反向。减少动态效果时直接出现 / 消失 */}
+      <AnimatePresence initial={false}>
+        {tunerConfig && tuner.open && view === "preview" ? (
+          <motion.div
+            key="tuner"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={
+              reduced
+                ? { duration: 0 }
+                : { duration: 0.24, ease: [0.25, 0.1, 0.25, 1] }
+            }
+            className="overflow-hidden"
+          >
+            <TunerPanel
+              config={tunerConfig}
+              values={tuner.values}
+              base={tuner.base}
+              onChange={tuner.setValues}
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
       <TabsContent value="code" keepMounted className={docFramePanelClass}>
         {code}
       </TabsContent>

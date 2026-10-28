@@ -191,7 +191,8 @@ export function TunerPanel({
   }
 
   return (
-    <ControlPanel className="rounded-none border-0 border-t bg-transparent">
+    // 面板挂在预览框下方、外层画框里面，预览框自带边框，这里不再画线
+    <ControlPanel className="rounded-none border-0 bg-transparent">
       <ControlPanelHeader className="h-9 border-b-0 pb-0">
         <ControlPanelTitle>调整参数</ControlPanelTitle>
         <ControlPanelActions>
