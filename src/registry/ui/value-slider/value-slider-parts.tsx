@@ -169,6 +169,8 @@ function ValueSliderReadout({
         value={editor.draft}
         onChange={(event) => editor.change(event.target.value)}
         onPointerDown={stop}
+        // 进入编辑时整段选中，直接敲数字就是替换
+        onFocus={(event) => event.currentTarget.select()}
         onBlur={(event) => editor.commit(event.currentTarget, false)}
         onKeyDown={(event) => {
           // 别让方向键、回车冒泡到 Slider 上去改值
@@ -182,7 +184,8 @@ function ValueSliderReadout({
           }
         }}
         className={cn(
-          "w-[8ch] rounded-sm border border-edge bg-background px-1 text-end font-mono text-foreground tabular-nums outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+          // 嵌在读数原位的一小块：背景色底 + 色调细描边表示「正在编辑」，不再叠加粗焦点环
+          "w-[8ch] rounded-sm bg-background px-1.5 text-end font-mono text-foreground tabular-nums shadow-xs ring-1 ring-[color-mix(in_oklab,var(--flow-tone,var(--foreground))_55%,transparent)] outline-none",
           inside
             ? "absolute top-1/2 right-1 h-[max(1rem,calc(100%-0.375rem))] -translate-y-1/2"
             : "h-5",

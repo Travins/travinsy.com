@@ -472,7 +472,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
         <SliderPrimitive.Control
           data-slot="value-slider-control"
           className={cn(
-            "relative w-full min-w-0 cursor-pointer touch-none select-none in-data-[disabled]:cursor-not-allowed has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50",
+            "relative w-full min-w-0 cursor-pointer touch-none select-none in-data-[disabled]:cursor-not-allowed has-[[data-slot=value-slider-thumb]_input:focus-visible]:ring-3 has-[[data-slot=value-slider-thumb]_input:focus-visible]:ring-ring/50",
             slim && "flex min-h-5 items-center",
           )}
           onPointerDown={elastic.onPointerDown}
