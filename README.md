@@ -149,7 +149,7 @@ public/r/           构建生成的 registry JSON
 
 ## 参与贡献
 
-欢迎提交 Issue 与 Pull Request。修改组件前请先阅读 [`AGENTS.md`](./AGENTS.md) 与 `.agents/skills/` 下的组件规范，并确保 `pnpm lint`、`pnpm registry:lint`、`pnpm build` 通过。
+欢迎提交 Issue 与 Pull Request，流程与规范见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
 
 ## 许可证
 

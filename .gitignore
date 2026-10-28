@@ -51,3 +51,6 @@ next-env.d.ts
 
 # 组件验收截图（pnpm qa:shots）
 /.qa
+
+# 维护者本机的 AI 调度配置（见 AGENTS.md 第 6 节）
+AGENTS.local.md

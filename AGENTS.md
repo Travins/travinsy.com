@@ -121,27 +121,13 @@ scripts/                     构建辅助脚本
 
 查第三方库文档优先用 context7 MCP；Next.js 以 `node_modules/next/dist/docs/` 为准。
 
-## 6. 多 Agent 协作与模型调度
+## 6. AI 协作约定
 
-本项目由 **主控 Agent（Claude Opus 5.5，主线程）** 统一掌控，通过 T3 Code 的 `delegate_task` 派发子任务。
+用 AI 工具（单个或多个 Agent）在本仓库工作时遵守下面的约定。维护者本机的模型分工与调度规则写在 `AGENTS.local.md`（已 gitignore，不入库）；存在时一并读取。
 
-### 分工
-
-| 角色 | 模型（T3 provider / model / 选项） | 负责 |
-|---|---|---|
-| 主控 | `claudeAgent` / `claude-opus-5-5` | 架构与目录规划、任务拆分、接口约定、代码审查、集成、最终验收 |
-| 重要代码 A | `claudeAgent` / `claude-sonnet-5-5`，`effort: high` | 核心架构代码：布局原语、主题系统、文档渲染管道、复杂交互组件 |
-| 重要代码 B | `codex_gg`（GG）或 `codex`（KLX）/ `gpt-6.1-sol`，`reasoningEffort: medium` | 同上，与 A 互为替补 |
-| 简单/重复/等待 | `pi` / `travins_newapi/deepseek-flash`，`thinking: max` | 批量写 MDX 文档和 demo、文案、照着现成模式新增组件、修 lint/类型错误、跑构建和检查、生成 registry、截图验收等 |
-
-**调度规则**
-1. A 和 B 按 T3 中的剩余额度选择：额度多的优先；一方受限或报错时切换到另一方（Codex 两个实例 GG/KLX 也互为替补）。
-2. 能用 Pi DeepSeek Flash 完成的任务一律交给它，不要占用高端模型。判断标准：已有可照抄的模式、验收标准明确、出错代价低。
-3. 主控只在任务需要跨模块判断，或子任务两次失败后才亲自写代码。
-
-### 派发任务的要求
+### 拆分与派发任务
 - 任务说明必须**自包含**：目标、要读的文件和技能、允许修改的文件范围、验收标准（如 `pnpm build` 通过）
-- 共享工作区里并行的子任务，**修改的文件范围不能重叠**；有重叠就串行，或者用 `isolation: "worktree"`
+- 共享工作区里并行的子任务，**修改的文件范围不能重叠**；有重叠就串行，或者各自用独立的 git worktree
 - 子 Agent **不要 git commit**，完成后汇报：修改了哪些文件、做了哪些取舍、还有什么遗留问题
 - 子 Agent 改完都必须运行 `pnpm lint` 和 `pnpm build`（或者说明为什么没跑）
 - 主控审查后统一提交

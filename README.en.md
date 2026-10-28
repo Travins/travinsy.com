@@ -151,7 +151,7 @@ Doc previews, code views and `public/r/*.json` all read the same source in `src/
 
 ## Contributing
 
-Issues and pull requests are welcome. Before changing a component, read [`AGENTS.md`](./AGENTS.md) and the component conventions under `.agents/skills/`, and make sure `pnpm lint`, `pnpm registry:lint` and `pnpm build` pass.
+Issues and pull requests are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the workflow and conventions (written in Simplified Chinese).
 
 ## License
 
