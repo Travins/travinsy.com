@@ -32,7 +32,7 @@ import { V0Icon } from "./v0-icon"
 type NavLink = { title: string; url: string }
 
 const actionBase =
-  "inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg text-[13px] font-medium whitespace-nowrap text-foreground transition-colors outline-none select-none hover:bg-[color-mix(in_oklch,var(--muted),var(--foreground)_6%)] aria-expanded:bg-[color-mix(in_oklch,var(--muted),var(--foreground)_6%)] focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-4 [&_svg]:shrink-0"
+  "inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg text-[13px] font-medium whitespace-nowrap text-foreground transition-colors outline-none select-none hover:bg-[color-mix(in_oklab,var(--muted),var(--foreground)_6%)] aria-expanded:bg-[color-mix(in_oklab,var(--muted),var(--foreground)_6%)] focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-4 [&_svg]:shrink-0"
 const squareAction = cn(actionBase, "w-8 bg-muted")
 const menuItem = "h-9 gap-2.5 rounded-lg px-2.5 text-[13px]"
 const external = { target: "_blank", rel: "noreferrer" } as const
