@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils"
 function useIsActive() {
   const pathname = usePathname()
   return (href: string) => {
+    // 首页只在根路径高亮，否则所有页面都以 "/" 开头
+    if (href === "/") return pathname === "/"
     const base = href.replace(/\/$/, "")
     return pathname === base || pathname.startsWith(`${base}/`)
   }

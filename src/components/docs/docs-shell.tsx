@@ -41,7 +41,6 @@ const sectionNoun: Record<NavSectionId, string> = {
   components: "组件",
   blocks: "区块",
   templates: "模板",
-  agents: "文档",
 }
 
 /** 所有文档类页面共用的外壳：统一侧栏、页头动作条、上一页 / 下一页、右侧目录。 */

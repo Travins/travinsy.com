@@ -7,7 +7,6 @@ const kinds: Record<string, string> = {
   components: "COMPONENTS · 组件",
   blocks: "BLOCKS · 区块",
   templates: "TEMPLATES · 模板",
-  agents: "AGENTS · 智能体",
 }
 
 /** 没有专属卡片的页面（首页、404 等）使用的默认卡片 key */

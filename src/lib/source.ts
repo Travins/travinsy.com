@@ -36,7 +36,7 @@ export function blogPosts() {
     )
 }
 
-export type DocsSection = "docs" | "components" | "agents"
+export type DocsSection = "docs" | "components"
 
 /** 某个内容分区下的全部文档页，顺序与 meta.json 一致。 */
 export function sectionPages(section: string) {

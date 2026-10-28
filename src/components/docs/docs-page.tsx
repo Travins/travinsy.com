@@ -9,7 +9,6 @@ import { pageMarkdown } from "./page-markdown"
 import { hasRegistryItem } from "./registry-items"
 
 import { ComponentGallery } from "@/components/sections/component-gallery"
-import { AgentsLanding } from "@/components/sections/agents-landing"
 
 export type DocsRouteProps = { params: Promise<{ slug?: string[] }> }
 function getPage(section: DocsSection, slug: string[] = []) {
@@ -45,7 +44,6 @@ export async function DocsPage({
   const page = getPage(section, slug)
   const Body = page.data.body
   if (slug.length === 0 && section === "components") return <ComponentGallery />
-  if (slug.length === 0 && section === "agents") return <AgentsLanding />
   return (
     <DocsShell
       section={section}

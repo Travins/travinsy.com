@@ -10,7 +10,7 @@ export type NavItem = {
   titleEn?: string
 }
 export type NavSectionId =
-  "docs" | "components" | "blocks" | "templates" | "agents"
+  "docs" | "components" | "blocks" | "templates"
 /** 分区内的一组条目（小标题可选）；编号在整个分区内连续，不按组重置。 */
 export type NavGroup = EntryGroup<NavItem>
 export type NavSection = {
@@ -32,7 +32,6 @@ export const sectionHome: Record<
   components: { title: "组件", titleEn: "Components", url: "/components/" },
   blocks: { title: "区块", titleEn: "Blocks", url: "/blocks/" },
   templates: { title: "模板", titleEn: "Templates", url: "/templates/" },
-  agents: { title: "智能体", titleEn: "Agents", url: "/agents/" },
 }
 
 /** fumadocs 生成的 page.url 没有末尾斜杠，而站点路由（trailingSlash）统一带斜杠。 */

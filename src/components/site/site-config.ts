@@ -3,12 +3,12 @@ export const GITHUB_URL = "https://github.com/Travins"
 
 /** 主导航：中文为主，labelEn 是小号等宽的英文副标。 */
 export const SITE_NAV = [
+  { label: "首页", labelEn: "Home", href: "/" },
   { label: "文档", labelEn: "Docs", href: "/docs/" },
   { label: "组件", labelEn: "Components", href: "/components/" },
   { label: "区块", labelEn: "Blocks", href: "/blocks/" },
   { label: "模板", labelEn: "Templates", href: "/templates/" },
   { label: "主题", labelEn: "Themes", href: "/themes/" },
-  { label: "智能体", labelEn: "Agents", href: "/agents/" },
   { label: "博客", labelEn: "Blog", href: "/blog/" },
 ] as const
 
