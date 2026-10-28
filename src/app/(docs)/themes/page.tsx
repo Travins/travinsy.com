@@ -6,7 +6,7 @@ import { COLOR_THEMES } from "@/lib/themes"
 import { GridSection } from "@/registry/ui/grid-layout/grid-layout"
 
 const description =
-  "在页面里预览每套颜色主题在登录表单、统计、任务和图表上的表现，一键应用到整站，或复制 CSS 变量与 shadcn 安装命令。中性基底负责灰阶色偏，彩色主题按色相环排列。"
+  "在页面里预览每套颜色主题在统计卡、图表、清单、设置控件与表单上的表现，一键应用到整站，或复制 CSS 变量与 shadcn 安装命令。中性基底负责灰阶色偏，彩色主题按色相环排列。"
 
 export const metadata: Metadata = pageMetadata({
   title: "主题",

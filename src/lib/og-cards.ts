@@ -39,7 +39,7 @@ export function ogCards(): (OgCardProps & { key: string })[] {
       kind: "THEMES · 主题",
       title: "主题",
       titleEn: "Themes",
-      description: "每套颜色主题在登录表单、统计、任务和图表上的表现，一键应用到整站。",
+      description: "每套颜色主题在统计卡、图表、清单、设置控件与表单上的表现，一键应用到整站。",
       path: "/themes/",
     },
     ...source.getPages(siteConfig.defaultLanguage).map((page) => ({
