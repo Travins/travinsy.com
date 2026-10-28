@@ -540,3 +540,45 @@ a.docs-nav-head[aria-current="page"]::after {
 .docs-layout button {
   touch-action: manipulation;
 }
+
+/* 占位动画使用全局类，避免构建管道对 CSS module 导出的干扰。 */
+.preview-skeleton {
+  opacity: 0;
+  animation:
+    preview-skeleton-appear 1ms 150ms forwards,
+    preview-skeleton-pulse 2s 151ms infinite;
+}
+@keyframes preview-skeleton-appear {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes preview-skeleton-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .preview-skeleton {
+    animation: preview-skeleton-appear 1ms 150ms forwards;
+  }
+}
+
+[data-slot="navigation-progress"][data-pending="true"] {
+  transform-origin: left;
+  animation: navigation-progress-flow 1.6s ease-in-out infinite;
+}
+@keyframes navigation-progress-flow {
+  0%,
+  100% {
+    transform: scaleX(0.65);
+  }
+  50% {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="navigation-progress"][data-pending="true"] {
+    animation: none;
+  }
+}

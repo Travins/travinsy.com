@@ -1,5 +1,7 @@
 "use client"
 
+import { PreviewSkeleton } from "@/components/docs/preview-skeleton"
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -46,8 +48,7 @@ const fillClasses: Record<string, string> = {
   "text-animate": "*:h-full *:min-h-0",
   "isometric-mark":
     "*:h-full *:min-h-0 *:max-w-none *:rounded-none *:border-0 **:data-[slot=isometric-mark]:mx-auto **:data-[slot=isometric-mark]:w-3/4",
-  "glyph-field":
-    "*:h-full *:rounded-none **:data-[slot=glyph-field]:h-full",
+  "glyph-field": "*:h-full *:rounded-none **:data-[slot=glyph-field]:h-full",
   // 窄屏画框只有 20rem 高：地球往右下角挪，露出大半个球面，又不压到左上的指标
   globe:
     "*:h-full! *:max-w-none *:rounded-none *:border-0 max-lg:**:data-[slot=globe]:left-auto max-lg:**:data-[slot=globe]:-right-[18%] max-lg:**:data-[slot=globe]:w-[95cqh] max-lg:**:data-[slot=globe]:translate-x-0 max-lg:**:data-[slot=globe]:translate-y-[36%]",
@@ -75,20 +76,20 @@ export function ComponentThumbnail({
       )}
     >
       <PreviewBackdrop name={name} />
-      <div
-        className={cn(
-          fill
-            ? cn("absolute inset-0 flex", fill)
-            : "flex w-full shrink-0 items-center justify-center",
-          fitClasses[name],
-        )}
+      <React.Suspense
+        fallback={<PreviewSkeleton className="absolute inset-0" />}
       >
-        <React.Suspense
-          fallback={<div className="h-48 w-96 rounded-md bg-muted" />}
+        <div
+          className={cn(
+            fill
+              ? cn("absolute inset-0 flex", fill)
+              : "flex w-full shrink-0 items-center justify-center",
+            fitClasses[name],
+          )}
         >
           {Preview ? <Preview /> : null}
-        </React.Suspense>
-      </div>
+        </div>
+      </React.Suspense>
     </div>
   )
 }

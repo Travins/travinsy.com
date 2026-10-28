@@ -119,6 +119,11 @@ function ChartSeries({
   label,
   ...props
 }: ChartSeriesProps) {
+  const ready = React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  )
   const animation = useChartAnimation()
   const gradientBase = React.useId().replaceAll(":", "")
   const resolved = series.map((item, index) => ({
@@ -206,9 +211,10 @@ function ChartSeries({
   return (
     <div
       data-slot="chart-series"
+      data-ready={ready}
       data-type={type}
       className={cn(
-        "flex h-64 min-w-0 flex-col gap-3",
+        "relative flex h-64 min-w-0 flex-col gap-3",
         conventionClass(convention),
         className,
       )}
@@ -224,11 +230,13 @@ function ChartSeries({
         />
       ) : null}
       <ChartContainer
+        data-slot="chart-series-plot"
+        data-ready={ready}
         config={config}
         role="img"
         aria-label={label}
         initialDimension={{ width: 320, height: 200 }}
-        className="aspect-auto min-h-0 w-full flex-1 justify-start"
+        className="aspect-auto min-h-0 w-full flex-1 justify-start opacity-0 transition-opacity duration-200 data-[ready=true]:opacity-100 motion-reduce:transition-none"
       >
         {type === "bar" ? (
           <BarChart
@@ -326,9 +334,32 @@ function ChartSeries({
           </LineChart>
         )}
       </ChartContainer>
+      <div
+        data-slot="chart-series-placeholder"
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute inset-0 z-10 min-h-0 bg-muted/30 transition-opacity duration-200 motion-reduce:transition-none",
+          ready && "opacity-0",
+        )}
+      >
+        <svg
+          className="absolute inset-0 size-full text-muted-foreground/20"
+          preserveAspectRatio="none"
+          viewBox="0 0 100 100"
+        >
+          <path
+            d="M0 25H100 M0 50H100 M0 75H100"
+            fill="none"
+            stroke="currentColor"
+            strokeDasharray="3 3"
+          />
+        </svg>
+      </div>
     </div>
   )
 }
+
+const subscribe = () => () => {}
 
 export { ChartSeries }
 export type { ChartSeriesItem, ChartSeriesProps }

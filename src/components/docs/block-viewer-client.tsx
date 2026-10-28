@@ -19,6 +19,7 @@ import {
 import { buttonVariants, Button } from "@/components/ui/button"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
+import { PreviewSkeleton } from "./preview-skeleton"
 import { CopyButton } from "./copy-button"
 import {
   DocFrameBar,
@@ -130,7 +131,25 @@ export function BlockViewerClient({
   const [installOpen, setInstallOpen] = useState(false)
   const [active, setActive] = useState(files[0]?.path ?? "")
   const tree = useMemo(() => buildTree(files), [files])
+  const [near, setNear] = useState(false)
+  const [loadedName, setLoadedName] = useState<string | null>(null)
   const stageRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const stage = stageRef.current
+    if (!stage) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNear(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: "200px" },
+    )
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [])
+
   const drag = useRef<{ x: number; width: number } | null>(null)
 
   useEffect(() => {
@@ -271,13 +290,25 @@ export function BlockViewerClient({
             style={{ width: frameWidth, height: frameHeight }}
           >
             {/* iframe 以布局宽度渲染，再用 transform 缩放到容器里 */}
-            <div className="size-full overflow-hidden">
+            <div className="relative size-full overflow-hidden">
+              {loadedName !== name && (
+                <PreviewSkeleton className="absolute inset-0" />
+              )}
               <iframe
-                src={`/view/${name}/`}
+                src={near ? `/view/${name}/` : undefined}
+                onLoad={(event) => {
+                  if (
+                    near &&
+                    event.currentTarget.contentWindow?.location.pathname ===
+                      `/view/${name}/`
+                  )
+                    setLoadedName(name)
+                }}
+                data-ready={loadedName === name}
                 title={`${title} 预览`}
-                loading="lazy"
+                loading="eager"
                 className={cn(
-                  "block origin-top-left border-0",
+                  "block origin-top-left border-0 opacity-0 transition-opacity duration-200 data-[ready=true]:opacity-100 motion-reduce:transition-none",
                   dragging && "pointer-events-none",
                 )}
                 style={{

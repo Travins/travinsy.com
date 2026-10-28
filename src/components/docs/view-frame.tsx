@@ -1,4 +1,6 @@
 "use client"
+
+import { PreviewSkeleton } from "@/components/docs/preview-skeleton"
 import { Suspense } from "react"
 import { registryViews } from "@/registry/__index__"
 
@@ -7,7 +9,7 @@ export function ViewFrame({ name }: { name: string }) {
   const View = registryViews[name]
   if (!View) return <p>找不到预览：{name}</p>
   return (
-    <Suspense fallback={<p role="status">正在加载预览…</p>}>
+    <Suspense fallback={<PreviewSkeleton className="min-h-80" />}>
       <View />
     </Suspense>
   )

@@ -1,0 +1,350 @@
+/** 静态导出加载验收：阻塞外部脚本，保留 React 流式 HTML 的内联替换。 */
+import { chromium } from "playwright-core"
+import { createServer } from "node:http"
+import { readFile, stat, readdir, mkdir, writeFile } from "node:fs/promises"
+import { extname, join } from "node:path"
+
+async function main() {
+  const types: Record<string, string> = {
+    ".html": "text/html; charset=utf-8",
+    ".js": "text/javascript",
+    ".css": "text/css",
+    ".txt": "text/plain",
+    ".svg": "image/svg+xml",
+    ".woff2": "font/woff2",
+    ".png": "image/png",
+  }
+  const directory = `.qa/loading-${Date.now()}`
+  await mkdir(directory, { recursive: true })
+  const server = createServer(async (req, res) => {
+    let file = join("out", decodeURIComponent((req.url ?? "/").split("?")[0]))
+    try {
+      if ((await stat(file)).isDirectory()) file = join(file, "index.html")
+      const body = await readFile(file)
+      res.writeHead(200, {
+        "content-type": types[extname(file)] ?? "application/octet-stream",
+      })
+      res.end(body)
+    } catch {
+      res.writeHead(404)
+      res.end()
+    }
+  })
+  await new Promise<void>((resolve) => server.listen(0, resolve))
+  const address = server.address()
+  if (!address || typeof address === "string")
+    throw new Error("静态服务启动失败")
+  const base = `http://localhost:${address.port}`
+  const browser = await chromium.launch({
+    executablePath:
+      process.env.CHROME_PATH ??
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  })
+  const issues: string[] = []
+  const measurements: unknown[] = []
+  try {
+    const names = (await readdir("out/components", { withFileTypes: true }))
+      .filter((f) => f.isDirectory())
+      .map((f) => f.name)
+    for (const url of [
+      ...names.map((n) => `/components/${n}/`),
+      "/",
+      "/themes/",
+      "/blocks/",
+      "/templates/",
+      "/components/",
+      "/view/app-shell-01/",
+    ]) {
+      const page = await browser.newPage({
+        viewport: { width: 1280, height: 900 },
+      })
+      // 路由保持挂起，不返回脚本内容；关闭页面时由浏览器取消请求。
+      let hold = true
+      const release: (() => void)[] = []
+      await page.route(/\.js(?:\?|$)/, async (route) => {
+        if (hold) await new Promise<void>((resolve) => release.push(resolve))
+        await route.continue().catch(() => {})
+      })
+      await page.goto(base + url, { waitUntil: "commit" })
+      await page.waitForTimeout(700)
+      const blanks = await page.evaluate(() => {
+        const result: string[] = []
+        for (const el of document.querySelectorAll<HTMLElement>(
+          '[data-slot="chart-series"], [data-slot="mini-chart"], [data-slot="mini-donut"], [data-slot="chart-ranking"], [data-slot="chart-gauge"], [data-slot="mini-ring"], [data-slot="globe"], [data-slot="glyph-field"]',
+        )) {
+          const box = el.getBoundingClientRect()
+          if (box.width < 20 || box.height < 20) continue
+          const scope = el.closest('[data-slot$="-frame"]') ?? el
+          if (
+            !scope.querySelector(
+              'svg path, svg circle, svg line, canvas, [data-slot$="-placeholder"]',
+            )
+          )
+            result.push(el.dataset.slot ?? "未知区域")
+        }
+        return result
+      })
+      issues.push(...blanks.map((b) => `${url}: ${b} 无内容或占位`))
+      await page.screenshot({
+        path: `${directory}/${url.replaceAll("/", "_")}.png`,
+        fullPage: true,
+      })
+      if (
+        [
+          "/components/mini-chart/",
+          "/components/chart-card/",
+          "/components/",
+          "/view/app-shell-01/",
+        ].includes(url)
+      )
+        await page.screenshot({
+          path: `${directory}/${url.replaceAll("/", "_")}-blocked-viewport.png`,
+        })
+      const before = await page.evaluate(() => {
+        return [
+          ...document.querySelectorAll<HTMLElement>(
+            '[data-slot="chart-series"], [data-slot="chart-ranking"], [data-slot="mini-chart"], [data-slot="mini-donut"]',
+          ),
+        ]
+          .map((el, index) => {
+            const rect = el.getBoundingClientRect()
+            const placeholder = el.querySelector<HTMLElement>(
+              '[data-slot$="-placeholder"]',
+            )
+            const box = placeholder?.getBoundingClientRect()
+            const next = placeholder?.nextSibling
+            placeholder?.remove()
+            const without = el.getBoundingClientRect().height
+            if (placeholder) el.insertBefore(placeholder, next ?? null)
+            return {
+              index,
+              slot: el.dataset.slot,
+              width: rect.width,
+              height: rect.height,
+              without,
+              placeholder: box
+                ? { width: box.width, height: box.height }
+                : null,
+            }
+          })
+          .filter((item) => item.width > 20 && item.height > 20)
+      })
+      for (const item of before) {
+        if (Math.abs(item.height - item.without) > 0)
+          issues.push(
+            `${url} ${item.slot}[${item.index}]: 移除占位造成高度变化 ${item.height - item.without}px`,
+          )
+        if (
+          !item.placeholder ||
+          item.placeholder.width <= 0 ||
+          item.placeholder.height <= 0
+        )
+          issues.push(`${url} ${item.slot}[${item.index}]: 占位无尺寸`)
+      }
+      hold = false
+      release.forEach((resolve) => resolve())
+      await page.waitForFunction(() =>
+        [
+          ...document.querySelectorAll<HTMLElement>(
+            '[data-slot="chart-series"], [data-slot="chart-ranking"], [data-slot="mini-chart"], [data-slot="mini-donut"]',
+          ),
+        ].every(
+          (el) =>
+            el.getBoundingClientRect().width < 20 ||
+            el.getBoundingClientRect().height < 20 ||
+            el.dataset.ready === "true",
+        ),
+      )
+      await page.waitForTimeout(800)
+      const after = await page.evaluate(() =>
+        [
+          ...document.querySelectorAll<HTMLElement>(
+            '[data-slot="chart-series"], [data-slot="chart-ranking"], [data-slot="mini-chart"], [data-slot="mini-donut"]',
+          ),
+        ].map((el) => {
+          const box = el.getBoundingClientRect()
+          return { width: box.width, height: box.height }
+        }),
+      )
+      for (const item of before) {
+        const actual = after[item.index]
+        if (
+          !actual ||
+          !item.placeholder ||
+          Math.abs(item.placeholder.width - actual.width) > 2 ||
+          Math.abs(item.placeholder.height - actual.height) > 2
+        )
+          issues.push(
+            `${url} ${item.slot}[${item.index}]: 拦 JS 占位与正常图表尺寸不一致`,
+          )
+      }
+      measurements.push({ url, before, after })
+      if (
+        [
+          "/components/mini-chart/",
+          "/components/chart-card/",
+          "/components/",
+          "/view/app-shell-01/",
+        ].includes(url)
+      )
+        await page.screenshot({
+          path: `${directory}/${url.replaceAll("/", "_")}-ready.png`,
+          fullPage: true,
+        })
+      if (
+        [
+          "/components/mini-chart/",
+          "/components/chart-card/",
+          "/components/",
+          "/view/app-shell-01/",
+        ].includes(url)
+      )
+        await page.screenshot({
+          path: `${directory}/${url.replaceAll("/", "_")}-ready-viewport.png`,
+        })
+      await page.close()
+    }
+    const thumbnails = await browser.newPage({
+      viewport: { width: 1280, height: 900 },
+    })
+    await thumbnails.goto(base + "/themes/", { waitUntil: "networkidle" })
+    await thumbnails.route(/\.js(?:\?|$)/, async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await route.continue().catch(() => {})
+    })
+    await thumbnails.locator('a[href="/components/"]').first().click()
+    await thumbnails.waitForURL("**/components/")
+    const skeleton = thumbnails
+      .locator('[data-slot="preview-skeleton"]')
+      .first()
+    await skeleton.waitFor({ state: "attached" })
+    const animation = await skeleton.evaluate((el) => {
+      const clone = el.cloneNode(true) as HTMLElement
+      const frame = document.createElement("div")
+      frame.style.cssText =
+        "position:fixed;width:320px;height:200px;top:100px;left:0"
+      frame.append(clone)
+      document.body.append(frame)
+      const style = getComputedStyle(clone)
+      const result = { name: style.animationName, opacity: style.opacity }
+      frame.remove()
+      return result
+    })
+    if (animation.name === "none" || animation.opacity !== "0")
+      issues.push(`骨架动画或延迟失效：${JSON.stringify(animation)}`)
+    await thumbnails.waitForTimeout(180)
+    const empty = await thumbnails
+      .locator('[role="group"] [data-slot="preview-skeleton"]')
+      .evaluateAll(
+        (elements) =>
+          elements.filter((el) => {
+            const b = el.getBoundingClientRect()
+            const frame = el.closest('[role="group"]')!.getBoundingClientRect()
+            return (
+              b.width <= 0 ||
+              b.height <= 0 ||
+              Math.abs(b.width - frame.width) > 2 ||
+              Math.abs(b.height - frame.height) > 2
+            )
+          }).length,
+      )
+    if (empty) issues.push(`缩略图 ${empty} 个骨架未铺满画框`)
+    await thumbnails.screenshot({
+      path: `${directory}/thumbnails-loading.png`,
+      fullPage: true,
+    })
+    await thumbnails.close()
+    // 列表会加载所有缩略图示例，因此选不在列表中展示的第二示例页面，延迟尚未加载的 chunk。
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 900 },
+    })
+    await page.goto(base + "/components/", { waitUntil: "networkidle" })
+    await page.route(/\.js(?:\?|$)/, async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await route.continue().catch(() => {})
+    })
+    await page.locator('a[href="/components/mini-chart/"]').first().click()
+    for (const [delay, label] of [
+      [300, "300ms"],
+      [700, "1s"],
+    ] as const) {
+      await page.waitForTimeout(delay)
+      await page.screenshot({
+        path: `${directory}/navigation-${label}.png`,
+        fullPage: true,
+      })
+      if (await page.getByText(/正在加载示例|正在加载预览/).count())
+        issues.push(`导航 ${label}: 存在文字 fallback`)
+    }
+    const feedback = await page
+      .locator(
+        '[data-slot="preview-skeleton"], [data-slot="navigation-progress"][data-pending="true"]',
+      )
+      .evaluateAll((elements) =>
+        elements.some((el) => {
+          const box = el.getBoundingClientRect()
+          return (
+            box.width > 0 &&
+            box.height > 0 &&
+            getComputedStyle(el).opacity !== "0"
+          )
+        }),
+      )
+    if (!feedback) issues.push("导航延迟用例未观察到骨架或进度线")
+    await page.close()
+    const slow = await browser.newPage({
+      viewport: { width: 1280, height: 900 },
+    })
+    let holdData = true
+    const releaseData: (() => void)[] = []
+    await slow.route(/\/themes\/.*\.txt(?:\?|$)/, async (route) => {
+      if (holdData)
+        await new Promise<void>((resolve) => releaseData.push(resolve))
+      await route.continue().catch(() => {})
+    })
+    await slow.goto(base + "/components/", { waitUntil: "domcontentloaded" })
+    await slow.waitForTimeout(700)
+    await slow.locator('a[href="/themes/"]').first().click()
+    await slow.waitForTimeout(300)
+    if (
+      (await slow
+        .locator('[data-slot="navigation-progress"][data-pending="true"]')
+        .count()) !== 1
+    )
+      issues.push("未预取导航缺少进度线")
+    await slow.screenshot({ path: `${directory}/navigation-progress.png` })
+    holdData = false
+    releaseData.forEach((resolve) => resolve())
+    await slow.waitForTimeout(2500)
+    if (
+      await slow
+        .locator('[data-slot="navigation-progress"][data-pending="true"]')
+        .count()
+    )
+      issues.push("导航完成后进度线未结束")
+    await slow.close()
+    await writeFile(
+      `${directory}/report.json`,
+      JSON.stringify(
+        { pages: names.length + 6, issues, animation, measurements },
+        null,
+        2,
+      ),
+    )
+    console.log(
+      `检查 ${names.length + 6} 页，${issues.length} 个问题；截图：${directory}`,
+    )
+    if (issues.length) {
+      console.error(issues.join("\n"))
+      process.exitCode = 1
+    }
+  } finally {
+    await browser.close()
+    server.closeAllConnections()
+    server.close()
+  }
+}
+main().catch((error) => {
+  console.error(error)
+  process.exitCode = 1
+})

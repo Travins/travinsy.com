@@ -60,6 +60,11 @@ function MiniDonut({
   style,
   ...props
 }: MiniDonutProps) {
+  const ready = React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  )
   const reduced = useReducedMotion()
   const config: ChartConfig = {}
   const data = segments.map((segment, index) => {
@@ -72,6 +77,7 @@ function MiniDonut({
   return (
     <div
       data-slot="mini-donut"
+      data-ready={ready}
       role="img"
       aria-label={label}
       className={cn("relative shrink-0", className)}
@@ -81,7 +87,10 @@ function MiniDonut({
       <ChartContainer
         config={config}
         initialDimension={{ width: size, height: size }}
-        className="aspect-auto size-full"
+        className={cn(
+          "aspect-auto size-full transition-opacity duration-200 motion-reduce:transition-none",
+          !ready && "opacity-0",
+        )}
       >
         <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
           <ChartTooltip
@@ -121,6 +130,15 @@ function MiniDonut({
           />
         </PieChart>
       </ChartContainer>
+      <div
+        data-slot="mini-donut-placeholder"
+        style={{ borderWidth: (size * thickness) / 200 }}
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute inset-0 rounded-full border-muted/50 transition-opacity duration-200 motion-reduce:transition-none",
+          ready && "opacity-0",
+        )}
+      />
       {children ? (
         <div
           data-slot="mini-donut-content"
@@ -132,6 +150,8 @@ function MiniDonut({
     </div>
   )
 }
+
+const subscribe = () => () => {}
 
 export { MiniDonut }
 export type { MiniDonutProps, MiniDonutSegment }

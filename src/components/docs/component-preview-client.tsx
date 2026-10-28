@@ -1,4 +1,6 @@
 "use client"
+
+import { PreviewSkeleton } from "@/components/docs/preview-skeleton"
 import { Suspense, useMemo, useState, type ReactNode } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { registryExamples } from "@/registry/__index__"
@@ -124,7 +126,7 @@ export function ComponentPreviewClient({
       >
         <PreviewBackdrop name={item} />
         <TunerProvider config={tunerConfig} tuning={tuner.tuning}>
-          <Suspense fallback={<p role="status">正在加载示例…</p>}>
+          <Suspense fallback={<PreviewSkeleton className="absolute inset-0" />}>
             {Preview ? <Preview /> : <p>找不到示例：{name}</p>}
           </Suspense>
         </TunerProvider>

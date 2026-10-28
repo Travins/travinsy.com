@@ -61,6 +61,11 @@ function ChartRanking({
   label,
   ...props
 }: ChartRankingProps) {
+  const ready = React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  )
   const animation = useChartAnimation()
   const data = items.map((item, index) => ({
     rank: String(index + 1),
@@ -74,19 +79,22 @@ function ChartRanking({
   return (
     <div
       data-slot="chart-ranking"
+      data-ready={ready}
       className={cn(
-        "grid min-w-0 items-center gap-6",
+        "relative grid min-w-0 items-center gap-6",
         showLegend && "lg:grid-cols-2",
         className,
       )}
       {...props}
     >
       <ChartContainer
+        data-slot="chart-ranking-plot"
+        data-ready={ready}
         config={config}
         role="img"
         aria-label={label}
         initialDimension={{ width: 320, height: items.length * ROW_HEIGHT }}
-        className="aspect-auto w-full justify-start"
+        className="aspect-auto w-full justify-start opacity-0 transition-opacity duration-200 data-[ready=true]:opacity-100 motion-reduce:transition-none"
         style={{ height: items.length * ROW_HEIGHT + 24 }}
       >
         <BarChart
@@ -132,9 +140,31 @@ function ChartRanking({
           }))}
         />
       ) : null}
+      <div
+        data-slot="chart-ranking-placeholder"
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute inset-0 z-10 min-h-0 bg-muted/30 transition-opacity duration-200 motion-reduce:transition-none",
+          ready && "opacity-0",
+        )}
+      >
+        <div className="absolute inset-0 flex flex-col justify-around gap-2 p-3">
+          {items.map((item, index) => (
+            <div
+              key={index}
+              className="h-3 shrink rounded-sm bg-muted-foreground/15"
+              style={{
+                width: `${Math.max(12, Math.min(90, (item.value / ceiling) * 90))}%`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
+
+const subscribe = () => () => {}
 
 export { ChartRanking }
 export type { ChartRankingItem, ChartRankingProps }

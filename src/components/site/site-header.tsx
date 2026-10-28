@@ -1,3 +1,4 @@
+import { NavigationProgress } from "./navigation-progress"
 import Link from "next/link"
 
 import { SearchButton } from "@/components/search/search-button"
@@ -51,6 +52,7 @@ export function SiteHeader() {
           </div>
         </GridContainer>
       </div>
+      <NavigationProgress />
     </header>
   )
 }

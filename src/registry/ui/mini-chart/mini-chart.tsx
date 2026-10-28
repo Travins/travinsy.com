@@ -113,6 +113,11 @@ function MiniChart({
   label,
   ...props
 }: MiniChartProps) {
+  const ready = React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  )
   const reduced = useReducedMotion()
   const gradientId = React.useId().replaceAll(":", "")
   const points = data.map((datum, index) =>
@@ -182,85 +187,119 @@ function MiniChart({
   const color = "var(--color-value)"
 
   return (
-    <ChartContainer
+    <div
       data-slot="mini-chart"
+      data-ready={ready}
       data-type={type}
       role="img"
       aria-label={label}
-      config={config}
-      initialDimension={{ width: 160, height: 64 }}
       className={cn(
-        "aspect-auto h-16 w-full justify-start",
+        "relative flex h-16 w-full min-w-0 text-xs",
         conventionClass(convention),
         className,
       )}
       {...props}
     >
-      {type === "bar" ? (
-        <BarChart data={points} margin={margin} barCategoryGap="22%">
-          {axis}
-          <YAxis hide domain={[0, "dataMax"]} />
-          {tooltip}
-          <Bar
-            dataKey="value"
-            fill={color}
-            radius={[3, 3, 0, 0]}
-            maxBarSize={14}
-            background={track ? { fill: "var(--muted)", radius: 3 } : undefined}
-            isAnimationActive={active}
-            animationDuration={600}
-          >
-            {points.map((point, index) => (
-              <Cell
-                key={index}
-                fill={color}
-                fillOpacity={focus === undefined || focus === index ? 1 : 0.28}
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      ) : type === "area" ? (
-        <AreaChart data={points} margin={margin}>
-          <defs>
-            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={color} stopOpacity={0.28} />
-              <stop offset="100%" stopColor={color} stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          {axis}
-          <YAxis hide domain={["dataMin", "dataMax"]} />
-          {tooltip}
-          <Area
-            dataKey="value"
-            type="monotone"
-            stroke={color}
-            strokeWidth={strokeWidth}
-            fill={`url(#${gradientId})`}
-            activeDot={{ r: 3, strokeWidth: 0 }}
-            isAnimationActive={active}
-            animationDuration={700}
+      <ChartContainer
+        data-slot="mini-chart-plot"
+        data-ready={ready}
+        config={config}
+        initialDimension={{ width: 160, height: 64 }}
+        className="aspect-auto size-full justify-start opacity-0 transition-opacity duration-200 data-[ready=true]:opacity-100 motion-reduce:transition-none"
+      >
+        {type === "bar" ? (
+          <BarChart data={points} margin={margin} barCategoryGap="22%">
+            {axis}
+            <YAxis hide domain={[0, "dataMax"]} />
+            {tooltip}
+            <Bar
+              dataKey="value"
+              fill={color}
+              radius={[3, 3, 0, 0]}
+              maxBarSize={14}
+              background={
+                track ? { fill: "var(--muted)", radius: 3 } : undefined
+              }
+              isAnimationActive={active}
+              animationDuration={600}
+            >
+              {points.map((point, index) => (
+                <Cell
+                  key={index}
+                  fill={color}
+                  fillOpacity={
+                    focus === undefined || focus === index ? 1 : 0.28
+                  }
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        ) : type === "area" ? (
+          <AreaChart data={points} margin={margin}>
+            <defs>
+              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={color} stopOpacity={0.28} />
+                <stop offset="100%" stopColor={color} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            {axis}
+            <YAxis hide domain={["dataMin", "dataMax"]} />
+            {tooltip}
+            <Area
+              dataKey="value"
+              type="monotone"
+              stroke={color}
+              strokeWidth={strokeWidth}
+              fill={`url(#${gradientId})`}
+              activeDot={{ r: 3, strokeWidth: 0 }}
+              isAnimationActive={active}
+              animationDuration={700}
+            />
+          </AreaChart>
+        ) : (
+          <LineChart data={points} margin={margin}>
+            {axis}
+            <YAxis hide domain={["dataMin", "dataMax"]} />
+            {tooltip}
+            <Line
+              dataKey="value"
+              type={type === "step" ? "stepAfter" : "monotone"}
+              stroke={color}
+              strokeWidth={strokeWidth}
+              dot={false}
+              activeDot={{ r: 3, strokeWidth: 0 }}
+              isAnimationActive={active}
+              animationDuration={700}
+            />
+          </LineChart>
+        )}
+      </ChartContainer>
+      <div
+        data-slot="mini-chart-placeholder"
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute inset-0 z-10 min-h-0 bg-muted/30 transition-opacity duration-200 motion-reduce:transition-none",
+          ready && "opacity-0",
+        )}
+      >
+        <svg
+          className="absolute inset-0 size-full text-muted-foreground/20"
+          preserveAspectRatio="none"
+          viewBox="0 0 100 100"
+        >
+          <path
+            d="M0 25H100 M0 50H100 M0 75H100"
+            fill="none"
+            stroke="currentColor"
+            strokeDasharray="3 3"
           />
-        </AreaChart>
-      ) : (
-        <LineChart data={points} margin={margin}>
-          {axis}
-          <YAxis hide domain={["dataMin", "dataMax"]} />
-          {tooltip}
-          <Line
-            dataKey="value"
-            type={type === "step" ? "stepAfter" : "monotone"}
-            stroke={color}
-            strokeWidth={strokeWidth}
-            dot={false}
-            activeDot={{ r: 3, strokeWidth: 0 }}
-            isAnimationActive={active}
-            animationDuration={700}
-          />
-        </LineChart>
-      )}
-    </ChartContainer>
+        </svg>
+      </div>
+    </div>
   )
 }
+
+const subscribe = () => () => {}
 
 export { MiniChart, MiniDonut, MiniRing }
 export type {

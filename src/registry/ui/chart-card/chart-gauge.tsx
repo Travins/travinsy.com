@@ -121,6 +121,19 @@ function ChartGauge({
         aria-hidden="true"
         className="absolute inset-0 size-full"
       >
+        {/* 稳定的淡色底环不依赖入场动画，慢网与无脚本时仍有完整轮廓。 */}
+        <circle
+          data-slot="chart-gauge-placeholder"
+          cx={CENTER}
+          cy={CENTER}
+          r={OUTER - TICK / 2}
+          fill="none"
+          stroke="var(--muted)"
+          strokeWidth={TICK}
+          pathLength={1}
+          strokeDasharray={`${sweep / 360} 1`}
+          transform={`rotate(${start - 90} 100 100)`}
+        />
         {marks.map((mark) =>
           mark.on ? (
             <line
