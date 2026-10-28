@@ -8,14 +8,16 @@ export const profile = {
   eyebrow: "PORTFOLIO",
   location: "",
   timeZone: "",
-  email: "",
+  email: "travinsy@gmail.com",
   phone: "",
   website: "https://travinsy.com",
   websiteLabel: "travinsy.com",
   githubUsername: "Travins",
   socials: [
     { name: "X", icon: "x", href: "https://x.com/TravinsE" },
-    { name: "GitHub", icon: "github", href: "https://github.com/Travins" },
+    // 指向组件库仓库 Yi UI，而不是个人主页
+    { name: "GitHub", icon: "github", href: "https://github.com/Travins/yi-ui" },
+    { name: "邮箱", icon: "mail", href: "mailto:travinsy@gmail.com" },
   ],
   focusAreas: [
     {

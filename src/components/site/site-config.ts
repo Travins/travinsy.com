@@ -1,5 +1,5 @@
 export const SITE_NAME = "travinsy"
-export const GITHUB_URL = "https://github.com/Travins"
+export const GITHUB_URL = "https://github.com/Travins/yi-ui"
 
 /** 主导航：中文为主，labelEn 是小号等宽的英文副标。 */
 export const SITE_NAV = [

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowUpRight, Globe } from "lucide-react"
+import { ArrowUpRight, Globe, Mail } from "lucide-react"
 import type { ComponentType, SVGProps } from "react"
 
 import { PostEntry } from "@/components/blog/post-entry"
@@ -28,6 +28,7 @@ import {
 const socialIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   x: XMark,
   github: GitHubMark,
+  mail: Mail,
 }
 // 「我在做什么」每格顶部的动画插画，按 focusAreas 的 illustration 字段选取
 const focusIllustrations: Record<
@@ -85,17 +86,28 @@ export default function HomePage() {
                 aria-hidden="true"
                 className="mx-1 w-px self-stretch bg-edge"
               />
-              <ul aria-label="社交账号" className="flex items-center gap-1">
+              <ul aria-label="联系方式" className="flex items-center gap-1">
                 {profile.socials.map((social) => {
                   const Icon = socialIcons[social.icon] ?? Globe
+                  // 邮箱用 mailto 交给邮件客户端，不开新窗口；其余外链在新窗口打开
+                  const external = !social.href.startsWith("mailto:")
                   return (
                     <li key={social.name}>
                       <a
                         href={social.href}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={`${social.name}（在新窗口打开）`}
-                        title={social.name}
+                        {...(external
+                          ? { target: "_blank", rel: "noreferrer noopener" }
+                          : {})}
+                        aria-label={
+                          external
+                            ? `${social.name}（在新窗口打开）`
+                            : `发邮件到 ${social.href.slice("mailto:".length)}`
+                        }
+                        title={
+                          external
+                            ? social.name
+                            : social.href.slice("mailto:".length)
+                        }
                         className={buttonVariants({
                           variant: "ghost",
                           size: "icon-lg",
