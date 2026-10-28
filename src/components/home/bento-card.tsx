@@ -40,7 +40,7 @@ function BentoCard({
       <div
         role="group"
         aria-label={label}
-        className={`relative min-h-0 flex-auto overflow-hidden lg:flex-1 ${previewClassName ?? ""}`}
+        className={`relative min-h-0 flex-auto overflow-clip lg:flex-1 ${previewClassName ?? ""}`}
       >
         {preview}
       </div>

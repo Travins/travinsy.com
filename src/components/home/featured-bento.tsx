@@ -75,7 +75,7 @@ function FeaturedBento() {
   })
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-clip">
       <ul className="-mr-px -mb-px grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 lg:grid-rows-[30rem_23rem] lg:max-[1099px]:grid-rows-[30rem_32rem]">
         {items.map(({ item, size }) => (
           <li

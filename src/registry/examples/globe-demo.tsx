@@ -14,8 +14,9 @@ const NODES: GlobeMarker[] = [
 
 export default function GlobeDemo() {
   return (
-    <div className="[container-type:size] relative h-[26rem] w-full max-w-4xl overflow-hidden rounded-lg border border-edge bg-card sm:h-[23rem]">
-      <div className="relative z-10 flex flex-col gap-4 p-5 sm:p-6">
+    <div className="[container-type:size] relative h-[26rem] w-full max-w-4xl overflow-clip rounded-lg border border-edge bg-card sm:h-[23rem]">
+      {/* 文字层不接收指针，地球被压住的部分也能拖 */}
+      <div className="pointer-events-none relative z-10 flex flex-col gap-4 p-5 sm:p-6">
         <span className="flex items-center gap-2 font-mono text-xs tracking-wider text-muted-foreground uppercase">
           <span
             aria-hidden="true"
@@ -49,6 +50,7 @@ export default function GlobeDemo() {
         label="亚洲、欧洲和北美分布着 128 个边缘节点，其中上海、杭州、北京、深圳、新加坡、东京、旧金山和法兰克福为主要城市"
         markers={NODES}
         markerTone="amber"
+        draggable
         className="absolute bottom-0 left-1/2 w-[min(140cqw,115cqh)] -translate-x-1/2 translate-y-[40%] @lg:right-[-16cqh] @lg:bottom-[-44cqh] @lg:left-auto @lg:w-[124cqh] @lg:translate-x-0 @lg:translate-y-0"
       />
     </div>

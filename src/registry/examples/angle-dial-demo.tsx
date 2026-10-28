@@ -18,7 +18,8 @@ function coverScale(angle: number) {
 }
 
 /** 带符号的读数：正数补 `+`，0 就是水平 */
-const signedDegrees = (value: number) => (value > 0 ? `+${value}°` : `${value}°`)
+const signedDegrees = (value: number) =>
+  value > 0 ? `+${value}°` : `${value}°`
 
 /**
  * 默认示例：把一张歪掉的风景照拉直。照片按当前角度旋转并自动放大到刚好盖住画框，
@@ -42,37 +43,100 @@ export default function AngleDialDemo() {
             transform: `rotate(${angle}deg) scale(${coverScale(angle).toFixed(4)})`,
           }}
         >
+          {/* 线稿风景：点阵天空、描边山脊、横线水面，只有太阳与倒影用色调，和站内其他示例同一种单色 + 一个强调色 */}
           <svg viewBox="0 0 400 250" aria-hidden="true" className="size-full">
             <defs>
-              <linearGradient id="angle-dial-demo-sky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--flow-blue)" stopOpacity="0.7" />
-                <stop offset="58%" stopColor="var(--flow-cyan)" stopOpacity="0.46" />
-                <stop offset="100%" stopColor="var(--flow-amber)" stopOpacity="0.6" />
-              </linearGradient>
-              <linearGradient id="angle-dial-demo-water" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--flow-cyan)" stopOpacity="0.58" />
-                <stop offset="100%" stopColor="var(--flow-blue)" stopOpacity="0.4" />
-              </linearGradient>
-              <radialGradient id="angle-dial-demo-sun">
-                <stop offset="28%" stopColor="var(--flow-amber)" stopOpacity="0.55" />
-                <stop offset="100%" stopColor="var(--flow-amber)" stopOpacity="0" />
-              </radialGradient>
+              <pattern
+                id="angle-dial-demo-sky"
+                width="10"
+                height="10"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle
+                  cx="5"
+                  cy="5"
+                  r="0.8"
+                  fill="var(--foreground)"
+                  opacity="0.16"
+                />
+              </pattern>
+              <pattern
+                id="angle-dial-demo-water"
+                width="400"
+                height="9"
+                patternUnits="userSpaceOnUse"
+              >
+                <rect
+                  y="4"
+                  width="400"
+                  height="1"
+                  fill="var(--foreground)"
+                  opacity="0.12"
+                />
+              </pattern>
             </defs>
             <rect width="400" height="250" fill="var(--muted)" />
-            <rect width="400" height="250" fill="url(#angle-dial-demo-sky)" />
-            {/* 太阳与它周围的光晕 */}
-            <circle cx="296" cy="74" r="46" fill="url(#angle-dial-demo-sun)" />
-            <circle cx="296" cy="74" r="15" fill="var(--flow-amber)" opacity="0.9" />
-            {/* 两道远山 */}
+            <rect width="400" height="125" fill="url(#angle-dial-demo-sky)" />
+            {/* 太阳：实心圆 + 一圈细环 */}
+            <circle
+              cx="296"
+              cy="70"
+              r="19"
+              fill="none"
+              stroke="var(--flow-amber)"
+              strokeOpacity="0.45"
+            />
+            <circle cx="296" cy="70" r="11" fill="var(--flow-amber)" />
+            {/* 远山淡、近山深，都只用前景色的透明度 */}
             <path
               d="M0 125 L52 82 L96 112 L148 72 L204 125 Z"
-              fill="var(--flow-violet)"
-              opacity="0.5"
+              fill="var(--foreground)"
+              fillOpacity="0.06"
+              stroke="var(--foreground)"
+              strokeOpacity="0.3"
+              strokeLinejoin="round"
             />
             <path
-              d="M132 125 L188 86 L232 114 L286 90 L400 126 Z"
-              fill="var(--flow-blue)"
-              opacity="0.58"
+              d="M132 125 L188 92 L232 114 L286 96 L340 110 L400 100 L400 125 Z"
+              fill="var(--foreground)"
+              fillOpacity="0.12"
+              stroke="var(--foreground)"
+              strokeOpacity="0.45"
+              strokeLinejoin="round"
+            />
+            <rect
+              y="125"
+              width="400"
+              height="125"
+              fill="url(#angle-dial-demo-water)"
+            />
+            {/* 太阳在水里的倒影：几段越来越短的色调横线 */}
+            <rect
+              x="272"
+              y="140"
+              width="48"
+              height="2"
+              rx="1"
+              fill="var(--flow-amber)"
+              opacity="0.7"
+            />
+            <rect
+              x="280"
+              y="158"
+              width="32"
+              height="2"
+              rx="1"
+              fill="var(--flow-amber)"
+              opacity="0.5"
+            />
+            <rect
+              x="288"
+              y="176"
+              width="16"
+              height="2"
+              rx="1"
+              fill="var(--flow-amber)"
+              opacity="0.35"
             />
             {/* 地平线：拉直时对照它看是否水平 */}
             <rect
@@ -80,12 +144,8 @@ export default function AngleDialDemo() {
               width="400"
               height="1.5"
               fill="var(--foreground)"
-              opacity="0.45"
+              opacity="0.7"
             />
-            <rect y="125" width="400" height="125" fill="url(#angle-dial-demo-water)" />
-            <rect y="166" width="400" height="1" fill="var(--background)" opacity="0.45" />
-            <rect y="196" width="400" height="1" fill="var(--background)" opacity="0.3" />
-            <rect y="228" width="400" height="1" fill="var(--background)" opacity="0.2" />
           </svg>
         </div>
         {/* 裁切框与三分线不跟着转，用来判断地平线 */}

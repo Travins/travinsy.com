@@ -21,6 +21,7 @@ export default function GlobeLegendDemo() {
         markers={CITIES}
         markerTone="amber"
         labels
+        draggable
       />
       {/* 文字版本：不依赖颜色与动画，读屏也能获取 */}
       <GlobeLegend markers={CITIES} markerTone="amber" coordinates />

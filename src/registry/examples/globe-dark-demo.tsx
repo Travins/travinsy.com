@@ -33,6 +33,7 @@ export default function GlobeDarkDemo() {
         speed={0.1}
         phi={5.3}
         theta={0.35}
+        draggable
       />
     </div>
   )

@@ -70,7 +70,7 @@ export function ComponentThumbnail({
       role="group"
       aria-label={label}
       className={cn(
-        "relative isolate flex h-80 min-w-0 items-center justify-center overflow-hidden bg-muted/20 lg:aspect-[16/10] lg:h-auto",
+        "relative isolate flex h-80 min-w-0 items-center justify-center overflow-clip bg-muted/20 lg:aspect-[16/10] lg:h-auto",
         !fill && "px-6",
       )}
     >
