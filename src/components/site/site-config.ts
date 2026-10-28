@@ -25,4 +25,4 @@ export const ICP = {
 } as const
 
 /** 仓库地址：文档页「在 GitHub 中打开」拼接源文件链接时使用 */
-export const REPO_URL = "https://github.com/Travins/travinsy.com"
+export const REPO_URL = "https://github.com/Travins/yi-ui"

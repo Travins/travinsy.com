@@ -111,8 +111,8 @@ pnpm dlx shadcn@latest add https://travinsy.com/r/theme-blue.json
 ## Local development
 
 ```bash
-git clone https://github.com/Travins/travinsy.com.git
-cd travinsy.com
+git clone https://github.com/Travins/yi-ui.git
+cd yi-ui
 nvm use          # Node 24 (see .nvmrc)
 pnpm install
 pnpm dev
