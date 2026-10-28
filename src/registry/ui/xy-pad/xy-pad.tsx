@@ -211,11 +211,14 @@ function XyPad({
         onPointerCancel={endDrag}
         className="absolute inset-0 cursor-crosshair touch-none in-data-[disabled]:cursor-not-allowed"
       >
-        {/* 背景网格：等分的细线，与站点的线条网格同一种颜色 */}
+        {/*
+          背景网格：等分的细线，与站点的线条网格同一种颜色。
+          平铺时最右一列、最下一行的线正好压在外框上，会让这两条边看起来粗一倍，用 clip-path 裁掉。
+        */}
         <span
           aria-hidden="true"
           data-slot="xy-pad-grid"
-          className="pointer-events-none absolute inset-0"
+          className="pointer-events-none absolute inset-0 [clip-path:inset(0_1px_1px_0)]"
           style={{
             backgroundImage:
               "linear-gradient(to right, var(--edge) 1px, transparent 1px), linear-gradient(to top, var(--edge) 1px, transparent 1px)",

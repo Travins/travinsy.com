@@ -124,6 +124,13 @@ const DEFAULTS = {
 const degrees = (value: number) => `${value}°`
 
 /**
+ * 首屏面板里的控件底色：默认的 `bg-muted/60` 叠在半透明面板上整体偏灰，
+ * 这里减淡一半，分段选择里收放选项的浅槽也同步减淡，让首屏更通透；选中块、开关轨道等前景层次不变。
+ */
+const CONTROL_SURFACE =
+  "bg-muted/30 dark:bg-muted/40 **:data-[slot=segmented-control-options]:bg-foreground/3 dark:**:data-[slot=segmented-control-options]:bg-foreground/7"
+
+/**
  * 首屏右栏：本站标志加一个小控制面板，访客直接在首页调视角、材质、地面与音效。
  * 面板的值用普通 props 受控传给标志；音效开关与全站共用同一个静音偏好。
  * 宽屏面板固定在栏底；窄屏收起，点「调一调」展开。
@@ -203,7 +210,10 @@ function HeroMark() {
         <ControlPanelGroup className="pt-1">
           <div className="grid gap-x-4 gap-y-2 sm:grid-cols-[minmax(0,8rem)_minmax(0,1fr)] lg:grid-cols-[minmax(0,7rem)_minmax(0,1fr)] xl:grid-cols-[minmax(0,9.5rem)_minmax(0,1fr)]">
             <XyPad
-              className="aspect-[2/1] sm:aspect-auto sm:h-full sm:min-h-28"
+              className={cn(
+                "aspect-[2/1] sm:aspect-auto sm:h-full sm:min-h-28",
+                CONTROL_SURFACE,
+              )}
               label="视角"
               x={{
                 min: -180,
@@ -220,7 +230,7 @@ function HeroMark() {
             />
             <div className="flex min-w-0 flex-col gap-2">
               <SegmentedControl
-                className="text-xs"
+                className={cn("text-xs", CONTROL_SURFACE)}
                 label="材质"
                 options={MATERIAL_OPTIONS}
                 value={material}
@@ -228,7 +238,7 @@ function HeroMark() {
                 onValueChange={(value) => setMaterial(value as Material)}
               />
               <SegmentedControl
-                className="text-xs"
+                className={cn("text-xs", CONTROL_SURFACE)}
                 label="地面"
                 options={FLOORS}
                 value={floor}
@@ -238,14 +248,17 @@ function HeroMark() {
               {/* 色调与音效并成一行，面板少一行高，首屏高度不被右栏撑大 */}
               <div className="flex min-w-0 gap-2">
                 <TonePicker
-                  className="min-w-0 flex-1 text-xs"
+                  className={cn("min-w-0 flex-1 text-xs", CONTROL_SURFACE)}
                   label="色调"
                   value={tone}
                   modified={tone !== DEFAULTS.tone}
                   onValueChange={(value) => setTone(value as Tone)}
                 />
                 <ToggleSwitch
-                  className="w-auto shrink-0 gap-3 text-xs"
+                  className={cn(
+                    "w-auto shrink-0 gap-3 text-xs",
+                    CONTROL_SURFACE,
+                  )}
                   label="音效"
                   checked={!muted}
                   modified={muted}

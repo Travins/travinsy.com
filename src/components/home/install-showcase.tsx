@@ -7,8 +7,9 @@ import { buttonVariants } from "@/components/ui/button"
 import { GridColumns } from "@/registry/ui/grid-layout/grid-layout"
 import { CodeFile, CodeStack } from "@/registry/ui/code-stack/code-stack"
 
-const URL_COMMAND =
-  "pnpm dlx shadcn@latest add https://travinsy.com/r/value-slider.json"
+// 首页栏宽放不下一整行，用续行符把地址放到第二行；复制到终端照样能执行
+const URL_COMMAND = `pnpm dlx shadcn@latest add \\
+  https://travinsy.com/r/value-slider.json`
 const NAMESPACE_COMMAND = "pnpm dlx shadcn@latest add @travinsy/value-slider"
 const COMPONENTS_JSON = `{
   "registries": {
@@ -25,10 +26,13 @@ const FILES = [
   { lang: "ts", name: "use-elastic-pull.ts", seed: 5 },
 ] as const
 
-/** 代码块外框默认带上下外边距，这里在卡片里自己控制间距。 */
+/**
+ * 代码块外框默认带上下外边距，这里在卡片里自己控制间距。
+ * 首页栏宽有限，长命令按空格折行（实在放不下再断词），不出现横向滚动条。
+ */
 function Snippet(props: ComponentProps<typeof CodeBlock>) {
   return (
-    <div className="min-w-0 *:my-0">
+    <div className="min-w-0 *:my-0 [&_pre]:overflow-x-visible! [&_pre]:[overflow-wrap:anywhere]! [&_pre]:whitespace-pre-wrap!">
       <CodeBlock {...props} />
     </div>
   )
@@ -43,7 +47,8 @@ function InstallShowcase() {
     <GridColumns className="sm:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
       <div className="flex min-w-0 flex-col gap-5 p-4 sm:p-6 lg:p-8">
         <p className="max-w-[34rem] text-sm leading-7 text-pretty text-muted-foreground">
-          本站所有组件都以 shadcn registry 发布。一行命令把源码装进你的项目，装完就是你自己的代码，可以直接改。
+          本站所有组件都以 shadcn registry
+          发布。一行命令把源码装进你的项目，装完就是你自己的代码，可以直接改。
         </p>
         <div className="flex min-w-0 flex-col gap-4">
           <Snippet code={URL_COMMAND} lang="bash" title="终端 · 完整 URL" />
