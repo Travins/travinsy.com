@@ -16,6 +16,7 @@ const BACKDROPS: Record<string, "dots" | "grid"> = {
   checklist: "grid",
   "code-stack": "dots",
   "value-slider": "dots",
+  "amount-input": "dots",
   "control-panel": "dots",
   "segmented-control": "dots",
   "toggle-switch": "dots",

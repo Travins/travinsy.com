@@ -280,7 +280,8 @@ async function main() {
       }
       row.install = "通过"
       try {
-        if (item.type !== "registry:ui") {
+        // 区块、模板自带页面，直接访问；组件与工具库（registry:lib）用文档示例生成页面
+        if (item.type === "registry:block" || item.type === "registry:page") {
           row.routes = item.files
             .filter(
               (f) =>
@@ -332,6 +333,21 @@ async function main() {
                   .replace("@/registry/ui/", "@/components/ui/")
                   .replace("@/registry/", "@/")
                 const path = join(app, appRoot, candidate.slice(2))
+                // 示例可能用到条目本身不依赖的 shadcn 官方组件（如工具库示例里的 input），缺了就先装上
+                const official = /^@\/components\/ui\/([a-z-]+)$/.exec(candidate)
+                if (
+                  official &&
+                  ![path + ".tsx", path + ".ts"].some(existsSync)
+                ) {
+                  const added = await run(
+                    `${item.name}-demo-${official[1]}`,
+                    [...cli, "add", official[1], "--yes"],
+                    app,
+                  )
+                  if (added.code) throw Error(`示例依赖的官方组件安装失败：${official[1]}`)
+                  // 只是补齐示例环境，不算失败（备注列只记录问题）
+                  console.log(`  示例额外安装官方组件 ${official[1]}`)
+                }
                 if (
                   ![
                     path + ".tsx",
