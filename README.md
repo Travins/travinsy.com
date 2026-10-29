@@ -61,13 +61,13 @@ pnpm dlx shadcn@latest add https://yiui.dev/r/value-slider.json
 ```json
 {
   "registries": {
-    "@travinsy": "https://yiui.dev/r/{name}.json"
+    "@yiui": "https://yiui.dev/r/{name}.json"
   }
 }
 ```
 
 ```bash
-pnpm dlx shadcn@latest add @travinsy/value-slider
+pnpm dlx shadcn@latest add @yiui/value-slider
 ```
 
 完整说明（文件落点、依赖、样式写入与常见问题）见[安装文档](https://yiui.dev/docs/installation/)。

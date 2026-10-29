@@ -437,7 +437,7 @@ function packageName(spec: string) {
     : spec.split("/")[0].split("@")[0]
 }
 function siteDependency(spec: string, homepage: string): string | undefined {
-  if (spec.startsWith("@travinsy/")) return spec.slice(10)
+  if (spec.startsWith("@yiui/")) return spec.slice("@yiui/".length)
   if (!spec.includes(":")) return spec
   try {
     const url = new URL(spec)

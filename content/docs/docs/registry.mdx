@@ -1,7 +1,7 @@
 ---
 title: Registry 与命名空间
 titleEn: Registry & Namespaces
-description: 通过 URL 或 @travinsy 命名空间安装条目，了解目录地址、各类条目与依赖关系。
+description: 通过 URL 或 @yiui 命名空间安装条目，了解目录地址、各类条目与依赖关系。
 ---
 
 本站的所有条目都以 JSON 形式静态发布在 `/r/` 下，格式遵循 shadcn 的 registry-item 规范。开始之前请先按[安装](/docs/installation/)初始化 shadcn（Base UI 底座）。
@@ -21,7 +21,7 @@ pnpm dlx shadcn@latest add https://yiui.dev/r/grid-layout.json
 ```json title="components.json"
 {
   "registries": {
-    "@travinsy": "https://yiui.dev/r/{name}.json"
+    "@yiui": "https://yiui.dev/r/{name}.json"
   }
 }
 ```
@@ -29,7 +29,7 @@ pnpm dlx shadcn@latest add https://yiui.dev/r/grid-layout.json
 CLI 会把条目名代入 `{name}`，于是命令可以缩短为：
 
 ```bash title="终端"
-pnpm dlx shadcn@latest add @travinsy/grid-layout
+pnpm dlx shadcn@latest add @yiui/grid-layout
 ```
 
 两种方式装出来的文件和样式完全一样。
@@ -41,8 +41,8 @@ pnpm dlx shadcn@latest add @travinsy/grid-layout
 也可以用 CLI 直接查看（需要先配置命名空间）：
 
 ```bash title="终端"
-pnpm dlx shadcn@latest search @travinsy
-pnpm dlx shadcn@latest view @travinsy/grid-layout
+pnpm dlx shadcn@latest search @yiui
+pnpm dlx shadcn@latest view @yiui/grid-layout
 ```
 
 `search` 列出全部条目及说明，`view` 输出条目的完整 JSON，包含每个文件的源码。装之前想知道会写入哪些文件，可以给 `add` 加 `--dry-run`。
@@ -65,6 +65,6 @@ pnpm dlx shadcn@latest view @travinsy/grid-layout
 - shadcn 官方组件名，如 `button`、`input`，由 CLI 按你项目的底座生成。
 - 本站其他条目的完整地址，如 `https://yiui.dev/r/flow-diagram.json`。
 
-安装时依赖会递归解析、一起装上，所以即便你用 `@travinsy/...` 命名空间，CLI 取依赖条目时访问的仍是 `https://yiui.dev/r/` 下的地址。已存在的文件默认会提示是否覆盖，处理方式见[安装](/docs/installation/#已经有同名文件时)。
+安装时依赖会递归解析、一起装上，所以即便你用 `@yiui/...` 命名空间，CLI 取依赖条目时访问的仍是 `https://yiui.dev/r/` 下的地址。已存在的文件默认会提示是否覆盖，处理方式见[安装](/docs/installation/#已经有同名文件时)。
 
 大层级依赖小层级：区块和模板由组件拼成，组件之间也有依赖，例如 `value-slider` 依赖 `flow-diagram`，`flow-diagram` 再依赖 `grid-layout`。每个条目页的「命令」标签会列出会连带安装的内容，「手动」标签给出完整的依赖清单。

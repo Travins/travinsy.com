@@ -101,14 +101,14 @@ async function main() {
       url: `${homepage}/r/${file}`,
       install: {
         url: `pnpm dlx shadcn@latest add ${homepage}/r/${file}`,
-        namespaced: `pnpm dlx shadcn@latest add @travinsy/${itemName}`,
+        namespaced: `pnpm dlx shadcn@latest add @yiui/${itemName}`,
       },
     })
   }
 
   await writeFile(
     path.join(OUT_DIR, "themes.json"),
-    JSON.stringify({ name: "travinsy-themes", homepage, themes: catalog }, null, 2) + "\n"
+    JSON.stringify({ name: "yiui-themes", homepage, themes: catalog }, null, 2) + "\n"
   )
 
   // 清理已经不存在的主题产物，只动 theme-*.json，不碰 shadcn build 生成的其他文件

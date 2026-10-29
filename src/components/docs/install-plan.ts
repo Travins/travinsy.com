@@ -8,7 +8,7 @@ import {
 const SELF_URL = new RegExp(
   `^${siteConfig.url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}/r/([^/]+)\\.json$`,
 )
-const NAMESPACE = /^@travinsy\/(.+)$/
+const NAMESPACE = /^@yiui\/(.+)$/
 
 /** registryDependencies 里的一项：本站条目名，或 shadcn 官方组件名。 */
 function parseDependency(ref: string): { entry: string } | { shadcn: string } {

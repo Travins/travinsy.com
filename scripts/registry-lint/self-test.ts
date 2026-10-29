@@ -218,7 +218,7 @@ export function runSelfTests(api: Api) {
   assert.equal(api.packageName("@scope/pkg@^1.0"), "@scope/pkg")
   assert.equal(api.packageName("motion@^1"), "motion")
   assert.equal(
-    api.siteDependency("@travinsy/button", "https://yiui.dev"),
+    api.siteDependency("@yiui/button", "https://yiui.dev"),
     "button",
   )
   assert.equal(

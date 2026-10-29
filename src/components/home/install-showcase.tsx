@@ -9,10 +9,10 @@ import { CodeFile, CodeStack } from "@/registry/ui/code-stack/code-stack"
 
 const URL_COMMAND =
   "pnpm dlx shadcn@latest add https://yiui.dev/r/value-slider.json"
-const NAMESPACE_COMMAND = "pnpm dlx shadcn@latest add @travinsy/value-slider"
+const NAMESPACE_COMMAND = "pnpm dlx shadcn@latest add @yiui/value-slider"
 const COMPONENTS_JSON = `{
   "registries": {
-    "@travinsy": "https://yiui.dev/r/{name}.json"
+    "@yiui": "https://yiui.dev/r/{name}.json"
   }
 }`
 
@@ -39,7 +39,7 @@ function Snippet(props: ComponentProps<typeof CodeBlock>) {
 }
 
 /**
- * 首页「一行命令安装」：左边是 shadcn CLI 的两种装法（完整 URL / @travinsy 命名空间）和对应的 components.json，
+ * 首页「一行命令安装」：左边是 shadcn CLI 的两种装法（完整 URL / @yiui 命名空间）和对应的 components.json，
  * 右边用代码文件堆叠示意命令执行后落进项目的文件。内容与文档里的「安装」「Registry 与命名空间」一致。
  */
 function InstallShowcase() {

@@ -63,13 +63,13 @@ For shorter commands, register the namespace in `components.json`:
 ```json
 {
   "registries": {
-    "@travinsy": "https://yiui.dev/r/{name}.json"
+    "@yiui": "https://yiui.dev/r/{name}.json"
   }
 }
 ```
 
 ```bash
-pnpm dlx shadcn@latest add @travinsy/value-slider
+pnpm dlx shadcn@latest add @yiui/value-slider
 ```
 
 See the [installation guide](https://yiui.dev/docs/installation/) for where files land, how dependencies and styles are written, and common issues.

@@ -11,7 +11,7 @@ export function GET() {
       `# ${siteConfig.name}`,
       `> ${siteConfig.description}。基于 Next.js 静态导出，提供可复制的 React 组件源码、中文文档与实践文章。`,
       "组件库名为 Yi UI，采用 React、Tailwind CSS v4 与 shadcn/ui（Base UI）。所有链接使用站点正式域名；全文原始 MDX 见下方链接。",
-      '安装：先在目标项目初始化 shadcn，再运行 `pnpm dlx shadcn@latest add https://yiui.dev/r/<name>.json`。也可在 components.json 的 registries 中配置 `"@travinsy": "https://yiui.dev/r/{name}.json"`，然后运行 `pnpm dlx shadcn@latest add @travinsy/<name>`。',
+      '安装：先在目标项目初始化 shadcn，再运行 `pnpm dlx shadcn@latest add https://yiui.dev/r/<name>.json`。也可在 components.json 的 registries 中配置 `"@yiui": "https://yiui.dev/r/{name}.json"`，然后运行 `pnpm dlx shadcn@latest add @yiui/<name>`。',
       "## 组件",
       ...registry.items
         .filter((item) => item.type === "registry:ui")
@@ -32,7 +32,7 @@ export function GET() {
       "## 其他资源",
       `- [全部文档与博客原文](${absoluteUrl("/llms-full.txt")}): 去除 frontmatter 的 MDX 全文。`,
       `- [安装](${absoluteUrl("/docs/installation/")}): 初始化 shadcn 并安装第一个组件。`,
-      `- [Registry 与命名空间](${absoluteUrl("/docs/registry/")}): 用 URL 或 @travinsy 命名空间安装组件。`,
+      `- [Registry 与命名空间](${absoluteUrl("/docs/registry/")}): 用 URL 或 @yiui 命名空间安装组件。`,
       `- [主题](${absoluteUrl("/themes/")}): 颜色主题。`,
       `- [RSS](${absoluteUrl("/rss.xml")}): 博客订阅。`,
     ].join("\n\n") + "\n"

@@ -73,7 +73,7 @@ pnpm dlx shadcn@latest add https://yiui.dev/r/theme-blue.json
 配置了命名空间时（见 [Registry 与命名空间](/docs/registry/)）：
 
 ```bash title="终端"
-pnpm dlx shadcn@latest add @travinsy/theme-blue
+pnpm dlx shadcn@latest add @yiui/theme-blue
 ```
 
 实测（`theme-blue`）：CLI 会直接改写 `globals.css` 里 `:root` 与 `.dark` 中已有的同名变量，共 31 个（`--background`、`--primary`、`--chart-1`~`--chart-5`、`--sidebar-*` 等），**不会**生成 `data-theme` 选择器，所以一个项目同一时间只有一套主题，装另一套就是覆盖。改过这些变量的话，先提交或备份再安装。

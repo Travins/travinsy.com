@@ -34,7 +34,7 @@ const managerNames = Object.keys(managers) as Manager[]
 
 const sources = {
   url: "URL",
-  namespace: "@travinsy",
+  namespace: "@yiui",
 } as const
 type Source = keyof typeof sources
 const sourceNames = Object.keys(sources) as Source[]
@@ -77,7 +77,7 @@ function SourceMenu({
             URL
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="namespace" closeOnClick>
-            @travinsy 命名空间
+            @yiui 命名空间
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
@@ -174,7 +174,7 @@ export function InstallCommandClient({
   const [installSource, setSource] = useSource()
   const target =
     installSource === "namespace"
-      ? `@travinsy/${name}`
+      ? `@yiui/${name}`
       : `${siteConfig.url}/r/${name}.json`
   const command = (manager: Manager) =>
     `${managers[manager].dlx} shadcn@latest add ${target}`
@@ -277,7 +277,7 @@ export function InstallCommandClient({
               >
                 Registry 与命名空间
               </Link>{" "}
-              配置 @travinsy 命名空间。
+              配置 @yiui 命名空间。
             </div>
           )}
           {hasPrereq && (

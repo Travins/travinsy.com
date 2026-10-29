@@ -73,7 +73,7 @@ export function Panel() { return <div /> }
   依赖层级同时检查 `@/` 别名与相对路径；不解析其他 tsconfig 自定义别名或计算式模块路径。
 - registry-deps 对每个条目 files 汇总 import；npm 按顶层包名归一化（包含 scope、子路径和声明版本），
   跳过 react/react-dom/next 与 Node 内建模块；未使用的 npm 声明为 warn。
-- registryDependencies 接受裸条目名、`@travinsy/name`、homepage 同域 `/r/name.json` URL；外站同名 URL
+- registryDependencies 接受裸条目名、`@yiui/name`、homepage 同域 `/r/name.json` URL；外站同名 URL
   不满足本站依赖。跨条目与相对引用按文件归属校验，覆盖无扩展名和 index.ts/tsx 及 .js 到 .ts/.tsx 映射；
   不递归允许间接依赖，也不推断 re-export 所需的额外 npm 包。
 - labels 仅查 JSX 文本节点，每文件最多三处；`DEFAULT_LABELS`、`config.ts`、`demo.tsx`、`page.tsx` 豁免；

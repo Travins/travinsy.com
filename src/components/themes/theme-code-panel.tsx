@@ -21,7 +21,7 @@ export function ThemeCodePanel({ theme }: { theme: ColorTheme }) {
   const css = formatThemeCss(theme)
   const itemName = `theme-${theme.id}`
   const urlCommand = `pnpm dlx shadcn@latest add ${siteConfig.url}/r/${itemName}.json`
-  const namedCommand = `pnpm dlx shadcn@latest add @travinsy/${itemName}`
+  const namedCommand = `pnpm dlx shadcn@latest add @yiui/${itemName}`
 
   return (
     <Tabs defaultValue="css" className="gap-4">
@@ -60,7 +60,7 @@ export function ThemeCodePanel({ theme }: { theme: ColorTheme }) {
           或先在{" "}
           <code className="font-mono text-xs">components.json</code> 中添加{" "}
           <code className="font-mono text-xs">
-            &quot;registries&quot;: &#123; &quot;@travinsy&quot;:
+            &quot;registries&quot;: &#123; &quot;@yiui&quot;:
             &quot;{siteConfig.url}/r/&#123;name&#125;.json&quot; &#125;
           </code>
           ，再用命名空间安装：

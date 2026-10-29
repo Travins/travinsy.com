@@ -272,22 +272,6 @@ export default function HomePage() {
           </div>
         </SectionFrame>
       )}
-      <GridSeparator />
-      <SectionFrame index="07" name="ABOUT" title="关于我">
-        <GridColumns>
-          {profile.about.map((paragraph) => (
-            <p
-              key={paragraph}
-              className="p-4 text-sm leading-7 text-pretty text-muted-foreground sm:p-6"
-            >
-              {paragraph}
-            </p>
-          ))}
-        </GridColumns>
-        <p className="border-t border-edge px-4 py-4 font-mono text-xs text-muted-foreground sm:px-6">
-          持续学习，慢慢构建。<span className="ml-2 text-primary">_</span>
-        </p>
-      </SectionFrame>
     </GridContainer>
   )
 }

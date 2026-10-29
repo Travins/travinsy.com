@@ -19,7 +19,7 @@ description: 让 AI 编辑器与 Agent 读取本站文档，并通过 shadcn MCP
 
 向 Agent 提需求时，建议明确写出：
 
-- 使用 travinsy 的哪个条目，例如「用 `@travinsy/grid-layout` 搭页面骨架」。
+- 使用 Yi UI 的哪个条目，例如「用 `@yiui/grid-layout` 搭页面骨架」。
 - 项目要先按[安装](/docs/installation/)初始化 shadcn，底座选 Base UI；让 Agent 先看 `components.json` 的 `style` 是否以 `base-` 开头。
 - 安装前先加 `--dry-run` 看会写入哪些文件，已有同名文件默认不要覆盖。
 - 颜色只用主题变量，不要硬编码。
@@ -29,7 +29,7 @@ description: 让 AI 编辑器与 Agent 读取本站文档，并通过 shadcn MCP
 
 ## shadcn MCP
 
-shadcn 官方提供 MCP 服务，可以让 AI 编辑器直接检索和安装 Registry 里的条目。先在 `components.json` 里配置好 `@travinsy` 命名空间（见 [Registry 与命名空间](/docs/registry/)），然后初始化 MCP：
+shadcn 官方提供 MCP 服务，可以让 AI 编辑器直接检索和安装 Registry 里的条目。先在 `components.json` 里配置好 `@yiui` 命名空间（见 [Registry 与命名空间](/docs/registry/)），然后初始化 MCP：
 
 ```bash title="终端"
 pnpm dlx shadcn@latest mcp init --client claude
@@ -50,5 +50,5 @@ pnpm dlx shadcn@latest mcp init --client claude
 
 配置完成后，可以直接这样对 Agent 说：
 
-- 「列出 @travinsy 里所有组件」
-- 「把 @travinsy/auth-01 加到项目里」
+- 「列出 @yiui 里所有组件」
+- 「把 @yiui/auth-01 加到项目里」

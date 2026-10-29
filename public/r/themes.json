@@ -1,5 +1,5 @@
 {
-  "name": "travinsy-themes",
+  "name": "yiui-themes",
   "homepage": "https://yiui.dev",
   "themes": [
     {
@@ -11,7 +11,7 @@
       "url": "https://yiui.dev/r/theme-neutral.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-neutral.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-neutral"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-neutral"
       }
     },
     {
@@ -23,7 +23,7 @@
       "url": "https://yiui.dev/r/theme-stone.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-stone.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-stone"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-stone"
       }
     },
     {
@@ -35,7 +35,7 @@
       "url": "https://yiui.dev/r/theme-slate.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-slate.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-slate"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-slate"
       }
     },
     {
@@ -47,7 +47,7 @@
       "url": "https://yiui.dev/r/theme-red.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-red.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-red"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-red"
       }
     },
     {
@@ -59,7 +59,7 @@
       "url": "https://yiui.dev/r/theme-orange.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-orange.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-orange"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-orange"
       }
     },
     {
@@ -71,7 +71,7 @@
       "url": "https://yiui.dev/r/theme-amber.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-amber.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-amber"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-amber"
       }
     },
     {
@@ -83,7 +83,7 @@
       "url": "https://yiui.dev/r/theme-lime.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-lime.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-lime"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-lime"
       }
     },
     {
@@ -95,7 +95,7 @@
       "url": "https://yiui.dev/r/theme-green.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-green.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-green"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-green"
       }
     },
     {
@@ -107,7 +107,7 @@
       "url": "https://yiui.dev/r/theme-teal.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-teal.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-teal"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-teal"
       }
     },
     {
@@ -119,7 +119,7 @@
       "url": "https://yiui.dev/r/theme-sky.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-sky.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-sky"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-sky"
       }
     },
     {
@@ -131,7 +131,7 @@
       "url": "https://yiui.dev/r/theme-blue.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-blue.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-blue"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-blue"
       }
     },
     {
@@ -143,7 +143,7 @@
       "url": "https://yiui.dev/r/theme-violet.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-violet.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-violet"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-violet"
       }
     },
     {
@@ -155,7 +155,7 @@
       "url": "https://yiui.dev/r/theme-fuchsia.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-fuchsia.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-fuchsia"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-fuchsia"
       }
     },
     {
@@ -167,7 +167,7 @@
       "url": "https://yiui.dev/r/theme-pink.json",
       "install": {
         "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-pink.json",
-        "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-pink"
+        "namespaced": "pnpm dlx shadcn@latest add @yiui/theme-pink"
       }
     }
   ]

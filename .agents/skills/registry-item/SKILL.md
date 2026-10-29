@@ -19,7 +19,7 @@ description: 在 yiui.dev 新增或修改一个 shadcn registry 条目（组件 
    - 文件里的说明注释用中文
 2. **登记到 `registry.json`**（根目录）
    - `name`（kebab-case）、`type`、`title`、`description`（中文）
-   - `dependencies`：npm 包；`registryDependencies`：shadcn 组件名，或本站的完整 URL / `@travinsy/<name>`
+   - `dependencies`：npm 包；`registryDependencies`：shadcn 组件名，或本站的完整 URL / `@yiui/<name>`
    - `files[].path`；页面模板文件必须写 `target`（如 `app/page.tsx`）
    - 用到 `src/styles/grid.css` 工具类或新的 CSS 变量时，写进 `css` / `cssVars`
 3. **写演示**：`src/registry/examples/<name>-demo.tsx`（默认导出一个组件），多个变体用 `<name>-<variant>-demo.tsx`
@@ -58,4 +58,4 @@ MDX 内置组件由 `src/components/docs/mdx-components.tsx` 注册，无需在�
 
 安装验收需要通过静态 HTTP 服务访问 `out/r/<name>.json`，在临时项目执行 CLI 后检查组件源码、三个工具类、`--edge` 以及 `@theme inline` 中的 `--color-edge`，结束后删除临时项目。布局源码使用 `@/lib/utils` 的 cn；手动安装需要接收项目已有该工具函数。
 
-命名空间为 `@travinsy`；`InstallCommand` 默认 URL 安装，可切换命名空间安装。配置教程位于 `content/docs/docs/registry.mdx`，安装入口位于 `content/docs/docs/installation.mdx`（入门分区），components.json 中使用 `"registries": { "@travinsy": "https://yiui.dev/r/{name}.json" }`。
+命名空间为 `@yiui`；`InstallCommand` 默认 URL 安装，可切换命名空间安装。配置教程位于 `content/docs/docs/registry.mdx`，安装入口位于 `content/docs/docs/installation.mdx`（入门分区），components.json 中使用 `"registries": { "@yiui": "https://yiui.dev/r/{name}.json" }`。

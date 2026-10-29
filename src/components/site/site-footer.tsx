@@ -1,4 +1,4 @@
-import { FOOTER_LINKS, SITE_NAME } from "@/components/site/site-config"
+import { FOOTER_LINKS } from "@/components/site/site-config"
 import { GridContainer } from "@/registry/ui/grid-layout/grid-layout"
 
 export function SiteFooter() {
@@ -7,7 +7,7 @@ export function SiteFooter() {
     <footer className="screen-line-top -mt-px">
       <GridContainer className="flex flex-col gap-3 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-5">
-          © {new Date().getFullYear()} {SITE_NAME}. 保留所有权利。
+          © {new Date().getFullYear()} Yi UI. 保留所有权利。
         </p>
         <nav aria-label="页脚链接" className="flex items-center gap-4 font-mono text-xs">
           {FOOTER_LINKS.map((link) => (
