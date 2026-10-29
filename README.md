@@ -28,7 +28,7 @@
 
 ## 简介
 
-Yi UI 是一个以 **shadcn registry** 形式发布的组件库，托管在作者的个人站点 [yiui.dev](https://yiui.dev) 上。组件不打成 npm 包，而是用 shadcn CLI 把源码复制进你的项目，样式、结构、交互都可以直接改。
+Yi UI 是一个以 **shadcn registry** 形式发布的组件库，由 Travins 个人维护，官网是 [yiui.dev](https://yiui.dev)。组件不打成 npm 包，而是用 shadcn CLI 把源码复制进你的项目，样式、结构、交互都可以直接改。
 
 名字取自站点标志「易」（三道细斜杠是「日」，三道粗斜杠是「勿」）：既是「容易上手」，也是「随你改动」。
 

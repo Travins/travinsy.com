@@ -28,7 +28,7 @@
 
 ## About
 
-Yi UI is a component library distributed as a **shadcn registry**, hosted on the author's personal site [yiui.dev](https://yiui.dev). Nothing ships as an npm package: the shadcn CLI copies the source into your project, where you can change styles, structure and behavior freely.
+Yi UI is a component library distributed as a **shadcn registry**, maintained by Travins as a personal project, with docs at [yiui.dev](https://yiui.dev). Nothing ships as an npm package: the shadcn CLI copies the source into your project, where you can change styles, structure and behavior freely.
 
 The name comes from the site's logo, the Chinese character 易 (*yì*), drawn as three thin and three thick slashes. It means both "easy" and "change": easy to pick up, and yours to change.
 

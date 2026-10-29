@@ -21,29 +21,29 @@ const geistMono = Geist_Mono({
 })
 
 const ogImages = [
-  { url: ogImageUrl(DEFAULT_OG_KEY), ...OG_IMAGE_SIZE, alt: "travinsy" },
+  { url: ogImageUrl(DEFAULT_OG_KEY), ...OG_IMAGE_SIZE, alt: "Yi UI" },
 ]
-const description = "travinsy 的个人作品集，以及开源组件库 Yi UI：一套线条网格风格的 shadcn 组件库。"
+const description = "Yi UI（易）：线条网格风格的 React 组件库，以 shadcn registry 分发，由 Travins 个人维护。"
 
 export const metadata: Metadata = {
   // 让 openGraph / twitter 的相对地址（含 opengraph-image）解析成绝对地址
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "travinsy",
-    template: "%s · travinsy",
+    default: "Yi UI",
+    template: "%s · Yi UI",
   },
   description,
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
     locale: "zh_CN",
-    title: "travinsy",
+    title: "Yi UI",
     description,
     images: ogImages,
   },
   twitter: {
     card: "summary_large_image",
-    title: "travinsy",
+    title: "Yi UI",
     description,
     images: ogImages,
   },

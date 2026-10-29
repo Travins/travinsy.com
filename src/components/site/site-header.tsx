@@ -27,7 +27,7 @@ export async function SiteHeader() {
           */}
           <Link
             href="/"
-            aria-label={`Yi UI，${SITE_NAME} 首页`}
+            aria-label={`${SITE_NAME} 首页`}
             className="group/logo flex shrink-0 items-center gap-2.5 rounded-md pr-3 text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             <SiteLogo className="transition-transform duration-200 motion-safe:group-hover/logo:-rotate-3" />

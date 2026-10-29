@@ -20,10 +20,10 @@ export function ogCards(): (OgCardProps & { key: string })[] {
   return [
     {
       key: DEFAULT_OG_KEY,
-      kind: "PORTFOLIO · 作品集",
-      title: "个人作品集与组件库",
-      titleEn: "Portfolio & Component Registry",
-      description: "travinsy 的个人作品集，以及开源组件库 Yi UI：一套线条网格风格的 shadcn 组件库。",
+      kind: "YI UI · 组件库",
+      title: "线条网格组件库",
+      titleEn: "Line-grid Component Library",
+      description: "Yi UI（易）：线条网格风格的 React 组件库，以 shadcn registry 分发，由 Travins 个人维护。",
       path: "/",
     },
     {

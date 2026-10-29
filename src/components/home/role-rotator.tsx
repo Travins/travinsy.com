@@ -6,12 +6,12 @@ import { TextFlip } from "@/registry/ui/text-animate/text-animate"
 
 /** 播放 / 暂停按钮的读屏名称 */
 const LABELS = {
-  pauseRoles: "暂停职业标签",
-  playRoles: "播放职业标签",
+  pauseRoles: "暂停特性标签",
+  playRoles: "播放特性标签",
 } as const
 
 /**
- * 职业标签轮换：用 TextFlip 每 3.2 秒切换一次，可暂停；系统开启「减少动态效果」时不自动轮换，也不显示暂停按钮。
+ * 特性标签轮换：用 TextFlip 每 3.2 秒切换一次，可暂停；系统开启「减少动态效果」时不自动轮换，也不显示暂停按钮。
  * TextFlip 自带读屏全文与宽度过渡；这里额外用隐形副本把占位宽度撑到最长那项，切换时暂停按钮不会左右跳。
  */
 function RoleRotator({ roles }: { roles: readonly string[] }) {

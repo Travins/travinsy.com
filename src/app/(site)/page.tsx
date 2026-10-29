@@ -49,7 +49,7 @@ export default function HomePage() {
   const posts = blogPosts().slice(0, 2)
   return (
     <GridContainer id="main-content">
-      <GridSection aria-labelledby="profile-name">
+      <GridSection aria-labelledby="hero-title">
         <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <div className="flex flex-col items-start gap-6 px-4 py-10 sm:px-6 sm:py-14 lg:justify-center lg:px-14 lg:py-20">
             <p className="flex items-center gap-2 font-mono text-xs tracking-[0.12em] text-muted-foreground">
@@ -57,11 +57,11 @@ export default function HomePage() {
               {profile.eyebrow}
             </p>
             <h1
-              id="profile-name"
+              id="hero-title"
               className="text-5xl font-semibold tracking-tight sm:text-6xl xl:text-7xl"
               translate="no"
             >
-              {profile.name}
+              {profile.brand}
               <span className="text-primary">.</span>
             </h1>
             <p className="max-w-[36rem] text-base leading-7 text-pretty text-muted-foreground lg:text-[17px] lg:leading-8">
@@ -73,14 +73,14 @@ export default function HomePage() {
                 href="/components/"
                 className={buttonVariants({ size: "lg" })}
               >
-                浏览组件库
+                浏览组件
                 <ArrowUpRight aria-hidden="true" />
               </Link>
               <Link
-                href="/blog/"
+                href="/docs/installation/"
                 className={buttonVariants({ variant: "outline", size: "lg" })}
               >
-                阅读笔记
+                快速开始
               </Link>
               <span
                 aria-hidden="true"

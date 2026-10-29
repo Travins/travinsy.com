@@ -1,11 +1,14 @@
-/** 个人信息统一配置；私密联系信息默认留空，精选组件按 Registry 条目挑选。 */
+/** 首页与站点外壳用到的配置：首屏介绍 Yi UI 本身（个人维护的开源项目），维护者信息与联系方式也在这里；精选组件按 Registry 条目挑选。 */
 export const profile = {
+  /** 维护者，页头「BY …」署名用 */
   name: "Travins",
-  brand: "travinsy",
-  bio: "全栈开发者，专注 AI 应用与大模型落地。从界面到推理服务，把想法做成可用的产品。",
-  roles: ["全栈开发", "AI Agent", "大模型部署", "组件设计"],
+  brand: "Yi UI",
+  /** 首屏介绍：组件库是什么、怎么用、谁在维护 */
+  bio: "线条网格风格的 React 组件库。用 shadcn CLI 把源码装进项目，从方条控件、图形动效到 AI 助手区块，装完就是你自己的代码。由 Travins 个人维护，持续更新。",
+  /** 首屏轮换的特性标签 */
+  roles: ["方条控件", "图形与动效", "数据图表", "AI 助手区块", "页面模板"],
   /** 封面左上角的等宽小标题 */
-  eyebrow: "PORTFOLIO",
+  eyebrow: "OPEN SOURCE · MIT",
   location: "",
   timeZone: "",
   email: "travinsy@gmail.com",

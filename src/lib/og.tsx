@@ -173,7 +173,7 @@ export async function ogImage({
             <div
               style={{ marginLeft: 16, fontSize: 28, letterSpacing: "-0.01em" }}
             >
-              yiui.dev
+              Yi UI
             </div>
           </div>
           <div
