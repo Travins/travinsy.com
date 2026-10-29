@@ -30,7 +30,7 @@ pnpm dev
 
 ## 提交 Pull Request
 
-1. 从 `master` 新建分支，一个 PR 只做一件事。
+1. 从 `dev` 新建分支，PR 也提到 `dev`，一个 PR 只做一件事。`master` 只用于发布，合并进去就会自动部署到 yiui.dev。
 2. 以下检查需要全部通过：
 
    ```bash
