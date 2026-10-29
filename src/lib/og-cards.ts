@@ -23,7 +23,7 @@ export function ogCards(): (OgCardProps & { key: string })[] {
       kind: "YI UI · 组件库",
       title: "线条网格组件库",
       titleEn: "Line-grid Component Library",
-      description: "Yi UI（易）：线条网格风格的 React 组件库，以 shadcn registry 分发，由 Travins 个人维护。",
+      description: "Yi UI（易）：为中文界面打磨的线条网格 React 组件库，以 shadcn registry 分发，由 Travins 个人维护。",
       path: "/",
     },
     {

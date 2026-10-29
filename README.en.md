@@ -34,7 +34,7 @@ The name comes from the site's logo, the Chinese character 易 (*yì*), drawn as
 
 Everything follows one visual language, the line grid: full-width rules, ruled containers and dotted separators, combined with hairline borders, small radii and restrained motion.
 
-The documentation is written in Simplified Chinese; an English version is planned.
+Yi UI is **Chinese-first**: the docs are in Simplified Chinese, default component labels (buttons, hints, screen-reader text) are Chinese, and typography is tuned for Chinese system fonts. User-facing text is collected into a `labels` prop you can override, so the components can still be used in other languages; there are no plans for an English edition of the docs.
 
 ## Features
 

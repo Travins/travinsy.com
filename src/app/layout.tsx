@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 const ogImages = [
   { url: ogImageUrl(DEFAULT_OG_KEY), ...OG_IMAGE_SIZE, alt: "Yi UI" },
 ]
-const description = "Yi UI（易）：线条网格风格的 React 组件库，以 shadcn registry 分发，由 Travins 个人维护。"
+const description = "Yi UI（易）：为中文界面打磨的线条网格 React 组件库，以 shadcn registry 分发，由 Travins 个人维护。"
 
 export const metadata: Metadata = {
   // 让 openGraph / twitter 的相对地址（含 opengraph-image）解析成绝对地址

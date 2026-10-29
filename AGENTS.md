@@ -96,7 +96,7 @@ scripts/                     构建辅助脚本
 ### 语言
 - 博客（`content/blog/`）用 `humanizer-zh` 技能润色
 - 界面文案、文档、注释的默认语言为简体中文；代码标识符用英文
-- `<html lang="zh-CN">`；英文版以后放在 `/en`，现在不做，但不要写死无法扩展的结构
+- `<html lang="zh-CN">`；组件库定位为**中文优先**，不做英文站，英文读者只提供 `README.en.md`；组件对外文案仍通过 `labels` 可覆盖
 
 ### Registry
 - 对外发布的代码只放在 `src/registry/`，文档预览、代码展示、`public/r/*.json` 都从同一份源码读取，**禁止复制粘贴副本**
