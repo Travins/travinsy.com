@@ -521,7 +521,7 @@ function lintRegistry(root: string): Diagnostic[] {
     const deps = new Set(
       (item.registryDependencies ?? [])
         .map((d) =>
-          siteDependency(d, registry.homepage ?? "https://travinsy.com"),
+          siteDependency(d, registry.homepage ?? "https://yiui.dev"),
         )
         .filter((d): d is string => !!d),
     )

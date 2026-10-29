@@ -9,12 +9,12 @@
   ],
   "registryDependencies": [
     "button",
-    "https://travinsy.com/r/value-slider.json",
-    "https://travinsy.com/r/segmented-control.json",
-    "https://travinsy.com/r/toggle-switch.json",
-    "https://travinsy.com/r/tone-picker.json",
-    "https://travinsy.com/r/control-panel.json",
-    "https://travinsy.com/r/flow-diagram.json"
+    "https://yiui.dev/r/value-slider.json",
+    "https://yiui.dev/r/segmented-control.json",
+    "https://yiui.dev/r/toggle-switch.json",
+    "https://yiui.dev/r/tone-picker.json",
+    "https://yiui.dev/r/control-panel.json",
+    "https://yiui.dev/r/flow-diagram.json"
   ],
   "files": [
     {

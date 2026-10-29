@@ -100,7 +100,7 @@ CLI 还会在 `@theme inline` 里多写一行 `--edge: var(--edge)`，这是 CLI
 - 想先看会改什么：`--dry-run` 只预览，`--diff` 看差异，`--view` 看文件内容。
 
 ```bash title="终端"
-pnpm dlx shadcn@latest add https://travinsy.com/r/value-slider.json --dry-run
+pnpm dlx shadcn@latest add https://yiui.dev/r/value-slider.json --dry-run
 ```
 
 ## 手动安装
@@ -120,7 +120,7 @@ pnpm dlx shadcn@latest add https://travinsy.com/r/value-slider.json --dry-run
 实测在同时设置了 `HTTP_PROXY`/`HTTPS_PROXY` 与 SOCKS 的 `ALL_PROXY`（`socks5h://…`）时，CLI 请求 `ui.shadcn.com` 会以 `other side closed` 失败；去掉 SOCKS 变量后同一条命令正常：
 
 ```bash title="终端"
-env -u ALL_PROXY -u all_proxy pnpm dlx shadcn@latest add https://travinsy.com/r/grid-layout.json
+env -u ALL_PROXY -u all_proxy pnpm dlx shadcn@latest add https://yiui.dev/r/grid-layout.json
 ```
 
 ### 项目是 Radix 底座，能用吗

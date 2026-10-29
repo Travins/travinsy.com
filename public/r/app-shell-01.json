@@ -16,10 +16,10 @@
     "popover",
     "sheet",
     "tooltip",
-    "https://travinsy.com/r/stat-card.json",
-    "https://travinsy.com/r/mini-chart.json",
-    "https://travinsy.com/r/chart-card.json",
-    "https://travinsy.com/r/segmented-control.json"
+    "https://yiui.dev/r/stat-card.json",
+    "https://yiui.dev/r/mini-chart.json",
+    "https://yiui.dev/r/chart-card.json",
+    "https://yiui.dev/r/segmented-control.json"
   ],
   "files": [
     {

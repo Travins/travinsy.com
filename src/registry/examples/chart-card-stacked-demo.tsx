@@ -21,7 +21,7 @@ export default function ChartCardStackedDemo() {
     <ChartCard className="w-full max-w-3xl">
       <ChartCardHeader className="sm:items-center">
         <div className="flex flex-col gap-1">
-          <ChartCardTitle>api.travinsy.com</ChartCardTitle>
+          <ChartCardTitle>api.yiui.dev</ChartCardTitle>
           <ChartCardDescription>实例 ID：edge-hk-01</ChartCardDescription>
         </div>
         <ChartMetrics>

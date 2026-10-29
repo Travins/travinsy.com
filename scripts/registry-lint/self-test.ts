@@ -218,20 +218,20 @@ export function runSelfTests(api: Api) {
   assert.equal(api.packageName("@scope/pkg@^1.0"), "@scope/pkg")
   assert.equal(api.packageName("motion@^1"), "motion")
   assert.equal(
-    api.siteDependency("@travinsy/button", "https://travinsy.com"),
+    api.siteDependency("@travinsy/button", "https://yiui.dev"),
     "button",
   )
   assert.equal(
     api.siteDependency(
-      "https://travinsy.com/r/button.json",
-      "https://travinsy.com",
+      "https://yiui.dev/r/button.json",
+      "https://yiui.dev",
     ),
     "button",
   )
   assert.equal(
     api.siteDependency(
       "https://other.com/r/button.json",
-      "https://travinsy.com",
+      "https://yiui.dev",
     ),
     undefined,
   )
@@ -255,7 +255,7 @@ export function runSelfTests(api: Api) {
           { path: "src/registry/ui/a/local.ts" },
         ],
         dependencies: ["@scope/pkg@^1"],
-        registryDependencies: ["button", "https://travinsy.com/r/b.json"],
+        registryDependencies: ["button", "https://yiui.dev/r/b.json"],
       },
       { name: "b", files: [{ path: "src/registry/ui/b/index.ts" }] },
     ]

@@ -10,8 +10,8 @@ export const profile = {
   timeZone: "",
   email: "travinsy@gmail.com",
   phone: "",
-  website: "https://travinsy.com",
-  websiteLabel: "travinsy.com",
+  website: "https://yiui.dev",
+  websiteLabel: "yiui.dev",
   githubUsername: "Travins",
   socials: [
     { name: "X", icon: "x", href: "https://x.com/TravinsE" },
@@ -75,7 +75,7 @@ export const profile = {
     { name: "glyph-field", size: "half" },
   ],
   about: [
-    "你好，我是 Travins，travinsy.com 是我的个人站。我关注全栈开发、AI 应用与大模型部署，也喜欢把反复用到的界面细节整理成组件。",
+    "你好，我是 Travins，yiui.dev 是我的个人站。我关注全栈开发、AI 应用与大模型部署，也喜欢把反复用到的界面细节整理成组件。",
     "相信好用的工具来自清晰的结构和耐心的打磨。在这里分享自己的实践，也把用得顺手的组件开源出来。",
   ],
 } as const

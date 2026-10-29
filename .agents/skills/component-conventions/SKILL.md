@@ -1,6 +1,6 @@
 ---
 name: component-conventions
-description: travinsy.com 组件书写规范（强制）。编写或修改 src/registry 下任何组件、区块、模板、演示时必读：分层与依赖规则、文件与命名、代码结构（data-slot、导出、Props、变体、受控/非受控）、文案与 i18n、样式 token、客户端/静态导出、可访问性、文档结构与自查清单。
+description: yiui.dev 组件书写规范（强制）。编写或修改 src/registry 下任何组件、区块、模板、演示时必读：分层与依赖规则、文件与命名、代码结构（data-slot、导出、Props、变体、受控/非受控）、文案与 i18n、样式 token、客户端/静态导出、可访问性、文档结构与自查清单。
 ---
 
 # 组件书写规范
@@ -20,7 +20,7 @@ description: travinsy.com 组件书写规范（强制）。编写或修改 src/r
 | Hook / lib | `src/registry/hooks/`、`src/registry/lib/` | `registry:hook` / `registry:lib` | 跨条目复用的逻辑 | `@/lib/utils`、npm 包 |
 
 **禁止**：registry 代码 import `src/config/**`、`src/components/site|home|docs/**`、`src/lib/source.ts` 等站点私有代码；下层依赖上层（ui 不能依赖 block）。
-跨条目依赖在 registry.json 的 `registryDependencies` 中用完整 URL：`https://travinsy.com/r/<name>.json`。
+跨条目依赖在 registry.json 的 `registryDependencies` 中用完整 URL：`https://yiui.dev/r/<name>.json`。
 
 ## 2. 文件与命名
 

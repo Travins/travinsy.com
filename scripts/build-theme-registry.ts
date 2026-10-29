@@ -64,7 +64,7 @@ async function readHomepage() {
   const registry = JSON.parse(await readFile("registry.json", "utf8")) as {
     homepage?: string
   }
-  return (registry.homepage ?? "https://travinsy.com").replace(/\/$/, "")
+  return (registry.homepage ?? "https://yiui.dev").replace(/\/$/, "")
 }
 
 async function main() {

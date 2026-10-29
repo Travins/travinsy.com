@@ -8,11 +8,11 @@ import { GridColumns } from "@/registry/ui/grid-layout/grid-layout"
 import { CodeFile, CodeStack } from "@/registry/ui/code-stack/code-stack"
 
 const URL_COMMAND =
-  "pnpm dlx shadcn@latest add https://travinsy.com/r/value-slider.json"
+  "pnpm dlx shadcn@latest add https://yiui.dev/r/value-slider.json"
 const NAMESPACE_COMMAND = "pnpm dlx shadcn@latest add @travinsy/value-slider"
 const COMPONENTS_JSON = `{
   "registries": {
-    "@travinsy": "https://travinsy.com/r/{name}.json"
+    "@travinsy": "https://yiui.dev/r/{name}.json"
   }
 }`
 

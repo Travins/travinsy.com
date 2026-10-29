@@ -1,6 +1,6 @@
 {
   "name": "travinsy-themes",
-  "homepage": "https://travinsy.com",
+  "homepage": "https://yiui.dev",
   "themes": [
     {
       "id": "neutral",
@@ -8,9 +8,9 @@
       "name": "中性",
       "title": "Neutral",
       "description": "没有色相的纯灰，shadcn 的默认外观。",
-      "url": "https://travinsy.com/r/theme-neutral.json",
+      "url": "https://yiui.dev/r/theme-neutral.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-neutral.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-neutral.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-neutral"
       }
     },
@@ -20,9 +20,9 @@
       "name": "石色",
       "title": "Stone",
       "description": "偏暖的灰，带一点米褐调，比纯灰更柔和。",
-      "url": "https://travinsy.com/r/theme-stone.json",
+      "url": "https://yiui.dev/r/theme-stone.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-stone.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-stone.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-stone"
       }
     },
@@ -32,9 +32,9 @@
       "name": "板岩",
       "title": "Slate",
       "description": "偏冷的蓝灰，背景、边框和文字都带蓝调，适合技术站和文档站。",
-      "url": "https://travinsy.com/r/theme-slate.json",
+      "url": "https://yiui.dev/r/theme-slate.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-slate.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-slate.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-slate"
       }
     },
@@ -44,9 +44,9 @@
       "name": "红色",
       "title": "Red",
       "description": "标准红色主色（亮暗都取 600，保证白字对比度）。危险色同时拉开：亮色改用 800 的深红，暗色改用 300 的浅红，避免与主色混淆。",
-      "url": "https://travinsy.com/r/theme-red.json",
+      "url": "https://yiui.dev/r/theme-red.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-red.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-red.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-red"
       }
     },
@@ -56,9 +56,9 @@
       "name": "橙色",
       "title": "Orange",
       "description": "明亮的橙色主色，配白字。",
-      "url": "https://travinsy.com/r/theme-orange.json",
+      "url": "https://yiui.dev/r/theme-orange.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-orange.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-orange.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-orange"
       }
     },
@@ -68,9 +68,9 @@
       "name": "琥珀",
       "title": "Amber",
       "description": "金黄偏橙的琥珀色主色，配白字。",
-      "url": "https://travinsy.com/r/theme-amber.json",
+      "url": "https://yiui.dev/r/theme-amber.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-amber.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-amber.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-amber"
       }
     },
@@ -80,9 +80,9 @@
       "name": "青柠",
       "title": "Lime",
       "description": "偏黄的亮绿色主色，配白字。",
-      "url": "https://travinsy.com/r/theme-lime.json",
+      "url": "https://yiui.dev/r/theme-lime.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-lime.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-lime.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-lime"
       }
     },
@@ -92,9 +92,9 @@
       "name": "绿色",
       "title": "Green",
       "description": "沉稳的森林绿主色，亮暗都取 700，配白字。",
-      "url": "https://travinsy.com/r/theme-green.json",
+      "url": "https://yiui.dev/r/theme-green.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-green.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-green.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-green"
       }
     },
@@ -104,9 +104,9 @@
       "name": "青绿",
       "title": "Teal",
       "description": "介于绿与蓝之间的青绿色主色，配白字。",
-      "url": "https://travinsy.com/r/theme-teal.json",
+      "url": "https://yiui.dev/r/theme-teal.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-teal.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-teal.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-teal"
       }
     },
@@ -116,9 +116,9 @@
       "name": "天蓝",
       "title": "Sky",
       "description": "明亮清爽的天蓝色主色，配白字。",
-      "url": "https://travinsy.com/r/theme-sky.json",
+      "url": "https://yiui.dev/r/theme-sky.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-sky.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-sky.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-sky"
       }
     },
@@ -128,9 +128,9 @@
       "name": "蓝色",
       "title": "Blue",
       "description": "经典的饱和蓝色主色，亮暗模式都配白字。",
-      "url": "https://travinsy.com/r/theme-blue.json",
+      "url": "https://yiui.dev/r/theme-blue.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-blue.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-blue.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-blue"
       }
     },
@@ -140,9 +140,9 @@
       "name": "紫罗兰",
       "title": "Violet",
       "description": "浓郁的蓝紫色主色，亮暗模式都配白字。",
-      "url": "https://travinsy.com/r/theme-violet.json",
+      "url": "https://yiui.dev/r/theme-violet.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-violet.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-violet.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-violet"
       }
     },
@@ -152,9 +152,9 @@
       "name": "紫红",
       "title": "Fuchsia",
       "description": "高饱和的紫红色主色，亮暗模式都配白字。",
-      "url": "https://travinsy.com/r/theme-fuchsia.json",
+      "url": "https://yiui.dev/r/theme-fuchsia.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-fuchsia.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-fuchsia.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-fuchsia"
       }
     },
@@ -164,9 +164,9 @@
       "name": "粉红",
       "title": "Pink",
       "description": "偏洋红的粉红色主色，亮暗模式都配白字。",
-      "url": "https://travinsy.com/r/theme-pink.json",
+      "url": "https://yiui.dev/r/theme-pink.json",
       "install": {
-        "url": "pnpm dlx shadcn@latest add https://travinsy.com/r/theme-pink.json",
+        "url": "pnpm dlx shadcn@latest add https://yiui.dev/r/theme-pink.json",
         "namespaced": "pnpm dlx shadcn@latest add @travinsy/theme-pink"
       }
     }

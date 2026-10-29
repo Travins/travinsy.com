@@ -9,8 +9,8 @@
   ],
   "registryDependencies": [
     "button",
-    "https://travinsy.com/r/grid-layout.json",
-    "https://travinsy.com/r/stat-card.json"
+    "https://yiui.dev/r/grid-layout.json",
+    "https://yiui.dev/r/stat-card.json"
   ],
   "files": [
     {

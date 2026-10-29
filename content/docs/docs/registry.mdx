@@ -8,10 +8,10 @@ description: 通过 URL 或 @travinsy 命名空间安装条目，了解目录地
 
 ## URL 安装
 
-每个条目都有固定地址 `https://travinsy.com/r/<name>.json`，直接交给 CLI 即可，不需要配置：
+每个条目都有固定地址 `https://yiui.dev/r/<name>.json`，直接交给 CLI 即可，不需要配置：
 
 ```bash title="终端"
-pnpm dlx shadcn@latest add https://travinsy.com/r/grid-layout.json
+pnpm dlx shadcn@latest add https://yiui.dev/r/grid-layout.json
 ```
 
 ## 配置命名空间
@@ -21,7 +21,7 @@ pnpm dlx shadcn@latest add https://travinsy.com/r/grid-layout.json
 ```json title="components.json"
 {
   "registries": {
-    "@travinsy": "https://travinsy.com/r/{name}.json"
+    "@travinsy": "https://yiui.dev/r/{name}.json"
   }
 }
 ```
@@ -36,7 +36,7 @@ pnpm dlx shadcn@latest add @travinsy/grid-layout
 
 ## 条目目录
 
-完整的条目清单位于 [`/r/registry.json`](https://travinsy.com/r/registry.json)，包含每个条目的类型、依赖与文件列表。可以用它做检索，也可以交给脚本或 AI 工具读取。
+完整的条目清单位于 [`/r/registry.json`](https://yiui.dev/r/registry.json)，包含每个条目的类型、依赖与文件列表。可以用它做检索，也可以交给脚本或 AI 工具读取。
 
 也可以用 CLI 直接查看（需要先配置命名空间）：
 
@@ -63,8 +63,8 @@ pnpm dlx shadcn@latest view @travinsy/grid-layout
 条目之间通过 `registryDependencies` 相互依赖，值有两种：
 
 - shadcn 官方组件名，如 `button`、`input`，由 CLI 按你项目的底座生成。
-- 本站其他条目的完整地址，如 `https://travinsy.com/r/flow-diagram.json`。
+- 本站其他条目的完整地址，如 `https://yiui.dev/r/flow-diagram.json`。
 
-安装时依赖会递归解析、一起装上，所以即便你用 `@travinsy/...` 命名空间，CLI 取依赖条目时访问的仍是 `https://travinsy.com/r/` 下的地址。已存在的文件默认会提示是否覆盖，处理方式见[安装](/docs/installation/#已经有同名文件时)。
+安装时依赖会递归解析、一起装上，所以即便你用 `@travinsy/...` 命名空间，CLI 取依赖条目时访问的仍是 `https://yiui.dev/r/` 下的地址。已存在的文件默认会提示是否覆盖，处理方式见[安装](/docs/installation/#已经有同名文件时)。
 
 大层级依赖小层级：区块和模板由组件拼成，组件之间也有依赖，例如 `value-slider` 依赖 `flow-diagram`，`flow-diagram` 再依赖 `grid-layout`。每个条目页的「命令」标签会列出会连带安装的内容，「手动」标签给出完整的依赖清单。

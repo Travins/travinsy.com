@@ -2,7 +2,7 @@ import { createMDX } from "fumadocs-mdx/next"
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  // 纯静态导出，部署到阿里云 OSS
+  // 纯静态导出，部署到 Vercel
   output: "export",
   trailingSlash: true,
   images: { unoptimized: true },

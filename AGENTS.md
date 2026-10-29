@@ -8,7 +8,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# travinsy.com — 项目 Agent 指南
+# Yi UI（yiui.dev）— 项目 Agent 指南
 
 个人作品集 + shadcn 风格组件库（Registry）。默认语言 **简体中文**。
 所有在本仓库工作的 Agent（Claude / Codex / Pi）都必须先读完本文件。
@@ -24,7 +24,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 | 动画 | `motion` |
 | 高亮 | `shiki` |
 | 主题 | `next-themes`（亮/暗）+ 自定义颜色主题（`data-theme`） |
-| 部署 | **纯静态导出** `output: "export"` → 阿里云 OSS（部署后期再做） |
+| 部署 | **纯静态导出** `output: "export"` → Vercel（自定义域名 yiui.dev） |
 
 ## 2. 常用命令
 
@@ -82,7 +82,7 @@ scripts/                     构建辅助脚本
 - 禁止：Server Actions、`cookies()`/`headers()`、依赖 Request 的 Route Handler、`proxy`/middleware、rewrites/redirects/headers 配置、ISR、默认 loader 的图片优化
 - 动态路由必须有 `generateStaticParams()` 且 `dynamicParams = false`
 - 生成文本文件的 Route Handler（如 `llms.txt`、`rss.xml`）必须 `export const dynamic = "force-static"`
-- `trailingSlash: true`（OSS 用 `xxx/index.html` 路由）
+- `trailingSlash: true`（产物按 `xxx/index.html` 组织）
 - 外部动态数据（如 GitHub 的公开统计）只在**构建时**获取，失败时要有兜底数据，不能让构建挂掉
 
 ### 设计系统

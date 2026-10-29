@@ -173,7 +173,7 @@ export async function ogImage({
             <div
               style={{ marginLeft: 16, fontSize: 28, letterSpacing: "-0.01em" }}
             >
-              travinsy.com
+              yiui.dev
             </div>
           </div>
           <div
@@ -252,7 +252,7 @@ export async function ogImage({
             color: color.muted,
           }}
         >
-          {`travinsy.com${path === "/" ? "" : path}`}
+          {`yiui.dev${path === "/" ? "" : path}`}
         </div>
       </div>
     ),

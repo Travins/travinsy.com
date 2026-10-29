@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "travinsy",
-  "homepage": "https://travinsy.com",
+  "homepage": "https://yiui.dev",
   "items": [
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
@@ -256,11 +256,11 @@
         "input",
         "label",
         "checkbox",
-        "https://travinsy.com/r/ripple.json",
-        "https://travinsy.com/r/glyph-field.json",
-        "https://travinsy.com/r/text-animate.json",
-        "https://travinsy.com/r/segmented-control.json",
-        "https://travinsy.com/r/toggle-switch.json"
+        "https://yiui.dev/r/ripple.json",
+        "https://yiui.dev/r/glyph-field.json",
+        "https://yiui.dev/r/text-animate.json",
+        "https://yiui.dev/r/segmented-control.json",
+        "https://yiui.dev/r/toggle-switch.json"
       ],
       "files": [
         {
@@ -358,12 +358,12 @@
       ],
       "registryDependencies": [
         "button",
-        "https://travinsy.com/r/value-slider.json",
-        "https://travinsy.com/r/segmented-control.json",
-        "https://travinsy.com/r/toggle-switch.json",
-        "https://travinsy.com/r/tone-picker.json",
-        "https://travinsy.com/r/control-panel.json",
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/value-slider.json",
+        "https://yiui.dev/r/segmented-control.json",
+        "https://yiui.dev/r/toggle-switch.json",
+        "https://yiui.dev/r/tone-picker.json",
+        "https://yiui.dev/r/control-panel.json",
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -477,12 +477,12 @@
         "textarea",
         "avatar",
         "sheet",
-        "https://travinsy.com/r/glyph-field.json",
-        "https://travinsy.com/r/text-animate.json",
-        "https://travinsy.com/r/segmented-control.json",
+        "https://yiui.dev/r/glyph-field.json",
+        "https://yiui.dev/r/text-animate.json",
+        "https://yiui.dev/r/segmented-control.json",
         "trace",
-        "https://travinsy.com/r/chart-card.json",
-        "https://travinsy.com/r/mini-chart.json"
+        "https://yiui.dev/r/chart-card.json",
+        "https://yiui.dev/r/mini-chart.json"
       ],
       "files": [
         {
@@ -604,10 +604,10 @@
         "popover",
         "sheet",
         "tooltip",
-        "https://travinsy.com/r/stat-card.json",
-        "https://travinsy.com/r/mini-chart.json",
-        "https://travinsy.com/r/chart-card.json",
-        "https://travinsy.com/r/segmented-control.json"
+        "https://yiui.dev/r/stat-card.json",
+        "https://yiui.dev/r/mini-chart.json",
+        "https://yiui.dev/r/chart-card.json",
+        "https://yiui.dev/r/segmented-control.json"
       ],
       "files": [
         {
@@ -796,7 +796,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/grid-layout.json"
+        "https://yiui.dev/r/grid-layout.json"
       ],
       "files": [
         {
@@ -1066,7 +1066,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1086,7 +1086,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1108,7 +1108,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1166,7 +1166,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1193,7 +1193,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1214,7 +1214,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1240,7 +1240,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1264,7 +1264,7 @@
       "description": "一块带网格的区域，拖动手柄同时调两个值，十字线与淡色填充标出位置，键盘左右 / 上下分别调两条轴。",
       "dependencies": [],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1326,7 +1326,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1353,8 +1353,8 @@
       ],
       "registryDependencies": [
         "button",
-        "https://travinsy.com/r/grid-layout.json",
-        "https://travinsy.com/r/stat-card.json"
+        "https://yiui.dev/r/grid-layout.json",
+        "https://yiui.dev/r/stat-card.json"
       ],
       "files": [
         {
@@ -1396,7 +1396,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1437,7 +1437,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1474,7 +1474,7 @@
       ],
       "registryDependencies": [
         "button",
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1525,7 +1525,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1555,7 +1555,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {
@@ -1575,7 +1575,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://travinsy.com/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json"
       ],
       "files": [
         {

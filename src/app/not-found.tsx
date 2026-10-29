@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 }
 
 // 根级 not-found 只会套上根布局（没有站点页头页脚），所以这里自己包一层 SiteShell；
-// 静态导出时它会生成 out/404.html，OSS 把它配成错误页
+// 静态导出时它会生成 out/404.html，托管平台把它作为错误页
 export default function NotFound() {
   return (
     <SiteShell>

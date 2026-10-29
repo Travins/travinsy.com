@@ -13,11 +13,11 @@
     "input",
     "label",
     "checkbox",
-    "https://travinsy.com/r/ripple.json",
-    "https://travinsy.com/r/glyph-field.json",
-    "https://travinsy.com/r/text-animate.json",
-    "https://travinsy.com/r/segmented-control.json",
-    "https://travinsy.com/r/toggle-switch.json"
+    "https://yiui.dev/r/ripple.json",
+    "https://yiui.dev/r/glyph-field.json",
+    "https://yiui.dev/r/text-animate.json",
+    "https://yiui.dev/r/segmented-control.json",
+    "https://yiui.dev/r/toggle-switch.json"
   ],
   "files": [
     {

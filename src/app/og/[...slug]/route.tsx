@@ -4,7 +4,7 @@ import { ogCards } from "@/lib/og-cards"
 export const dynamic = "force-static"
 export const dynamicParams = false
 
-// 最后一段带 .png 后缀（与 /md/ 同样的做法），静态导出后 OSS 能按扩展名给出 image/png
+// 最后一段带 .png 后缀（与 /md/ 同样的做法），静态导出后托管平台能按扩展名给出 image/png
 const split = (key: string) => {
   const parts = key.split("/")
   return [...parts.slice(0, -1), `${parts.at(-1)}.png`]
