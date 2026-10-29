@@ -37,12 +37,12 @@ pnpm dlx shadcn@latest init -b base -p nova
 ```json title="components.json"
 {
   "style": "base-nova",
-  "tailwind": { "css": "src/app/globals.css", "cssVariables": true },
+  "tailwind": { "css": "app/globals.css", "cssVariables": true },
   "aliases": { "components": "@/components", "ui": "@/components/ui", "lib": "@/lib", "hooks": "@/hooks" }
 }
 ```
 
-条目源码里的 `@/components/…`、`@/lib/utils`、`@/hooks/…` 会按这里的 `aliases` 改写，不需要手动改 import。
+项目有 `src/` 目录时 `css` 是 `src/app/globals.css`。条目源码里的 `@/components/…`、`@/lib/utils`、`@/hooks/…` 会按这里的 `aliases` 改写，不需要手动改 import。
 
 ## 安装第一个组件
 
@@ -64,7 +64,7 @@ CLI 做三件事：写入源码文件、安装 npm 依赖、把样式合并进�
 | --- | --- | --- |
 | 组件 `registry:ui` | `components/ui/<name>/` | `components/ui/grid-layout/grid-layout.tsx` |
 | 区块、模板的组件 | `components/<name>/` | `components/auth-01/auth-01.tsx` |
-| 区块、模板的页面 | `app/…`，路径由条目指定 | `auth-01` 写入 `app/login/page.tsx`，`app-shell-01` 写入 `app/(app)/dashboard/page.tsx` |
+| 区块、模板的页面 | `app/…`，路径由条目指定 | `auth-01` 写入 `app/login/page.tsx`；`app-shell-01` 写入 `app/(app)/layout.tsx`、`app/(app)/dashboard/page.tsx` 与 `app/(app)/dashboard/[...slug]/page.tsx` |
 | 共用 hook 与工具 | `hooks/`、`lib/` | `hooks/use-controllable-state.ts`、`lib/data-display.ts` |
 
 文件装进项目后就是你的源码，可以直接改。每个条目页「手动」标签里的文件标题就是这里的落点。
@@ -94,8 +94,9 @@ CLI 还会在 `@theme inline` 里多写一行 `--edge: var(--edge)`，这是 CLI
 
 ### 已经有同名文件时
 
-- 默认会逐个询问：`... already exists. Would you like to overwrite it?`
-- 加 `-y`（跳过确认）时，已存在的文件会被跳过，输出里是 `Skipped ... files might be identical`。
+- 内容完全相同的文件自动跳过，输出里是 `Skipped ... files (files might be identical, use --overwrite to overwrite)`。
+- 内容不同的文件会逐个询问：`The file button.tsx already exists. Would you like to overwrite? (y/N)`，默认是 N（保留你的文件）。
+- `-y` 只跳过其他确认，**不会**替你回答覆盖提示。在 CI、脚本等非交互环境里遇到内容不同的同名文件时，CLI 停在这个提示后直接结束，一个文件都不写，退出码仍是 0；这类场景请先用 `--dry-run` 确认，或者显式加 `-o`。
 - 加 `-o`（`--overwrite`）强制覆盖，会丢掉你对这些文件的修改。
 - 想先看会改什么：`--dry-run` 只预览，`--diff` 看差异，`--view` 看文件内容。
 

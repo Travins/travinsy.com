@@ -561,6 +561,11 @@
           "target": "app/(app)/dashboard/page.tsx"
         },
         {
+          "path": "src/registry/templates/app-shell-01/sections/page.tsx",
+          "type": "registry:page",
+          "target": "app/(app)/dashboard/[...slug]/page.tsx"
+        },
+        {
           "path": "src/registry/templates/app-shell-01/app-shell.tsx",
           "type": "registry:component",
           "target": "components/app-shell/app-shell.tsx"

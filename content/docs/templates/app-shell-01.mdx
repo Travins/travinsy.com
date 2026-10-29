@@ -38,7 +38,9 @@ description: 提炼自企业监控平台的控制台外壳：固定顶栏、可�
 ```text
 app/(app)/
 ├── layout.tsx                 # 控制台布局：把导航数据交给 AppShell
-└── dashboard/page.tsx         # 示例页面：概览仪表盘
+└── dashboard/
+    ├── page.tsx               # 示例页面：概览仪表盘
+    └── [...slug]/page.tsx     # 导航中其余页面的占位：通用列表页 + 该页数据摘要
 hooks/use-controllable-state.ts  # 受控 / 非受控状态 hook
 components/app-shell/
 ├── app-shell.tsx              # ★ 入口：组合顶栏、导航、主区域、aside 插槽
@@ -92,7 +94,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 }
 ```
 
-> 导航数据里的图标是 React 组件（函数），无法从服务端组件传给客户端组件，所以这个布局需要 `"use client"`。页面本身仍然可以是服务端组件。模板只带了 `/dashboard` 一个页面，其余导航链接是示例，请换成你自己的路由。
+> 导航数据里的图标是 React 组件（函数），无法从服务端组件传给客户端组件，所以这个布局需要 `"use client"`。页面本身仍然可以是服务端组件。导航里的其余链接由 `dashboard/[...slug]/page.tsx` 兜底，显示通用列表页；在 `app/(app)/dashboard/` 下新建同名路由（例如下文的 `system/users/page.tsx`）就会替换掉对应的占位页。导航项改了地址或删掉后，兜底页会跟着导航数据走，不需要另外维护。
 
 ### 配置导航
 

@@ -76,7 +76,7 @@ pnpm dlx shadcn@latest add https://yiui.dev/r/theme-blue.json
 pnpm dlx shadcn@latest add @yiui/theme-blue
 ```
 
-实测（`theme-blue`）：CLI 会直接改写 `globals.css` 里 `:root` 与 `.dark` 中已有的同名变量，共 31 个（`--background`、`--primary`、`--chart-1`~`--chart-5`、`--sidebar-*` 等），**不会**生成 `data-theme` 选择器，所以一个项目同一时间只有一套主题，装另一套就是覆盖。改过这些变量的话，先提交或备份再安装。
+实测（`theme-blue`）：CLI 会直接改写 `globals.css` 里 `:root` 与 `.dark` 中已有的同名变量，共 30 个（`--background`、`--primary`、`--chart-1`~`--chart-5`、`--sidebar-*` 等），**不会**生成 `data-theme` 选择器，所以一个项目同一时间只有一套主题，装另一套就是覆盖。改过这些变量的话，先提交或备份再安装。
 
 主题不包含 `--radius`，圆角仍由你的 `globals.css` 决定；也不包含 `--edge` 与 `--flow-*`，线条随新主题的 `foreground` 自动变色。想像本站一样在运行时切换多套主题，需要自己把各套变量写成 `:root[data-theme="…"]` 选择器，可以参考[颜色主题](/themes/)页面复制的 CSS。
 
