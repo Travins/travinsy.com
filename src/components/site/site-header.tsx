@@ -9,7 +9,7 @@ import { SiteLogo } from "@/components/site/site-logo"
 import { profile } from "@/config/profile"
 import { MobileNav, SiteNav } from "@/components/site/site-nav"
 import { ThemeSwitcher } from "@/components/site/theme-switcher"
-import { GITHUB_REPO, getRepoStars } from "@/lib/github"
+import { getRepoStars } from "@/lib/github"
 import { GridContainer } from "@/registry/ui/grid-layout/grid-layout"
 
 export async function SiteHeader() {
@@ -55,7 +55,7 @@ export async function SiteHeader() {
             <SearchButton />
             <ThemeSwitcher />
             <ModeToggle />
-            <GithubStars href={GITHUB_URL} repo={GITHUB_REPO} initial={stars} />
+            <GithubStars href={GITHUB_URL} initial={stars} />
             <MobileNav />
           </div>
         </GridContainer>

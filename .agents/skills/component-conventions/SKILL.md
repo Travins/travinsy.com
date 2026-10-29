@@ -171,7 +171,7 @@ description: 一句话说明（同 registry.json 的 description）
 
 ## 12. 加载与占位
 
-- 静态导出时，依赖尺寸测量、canvas、WebGL 或当前时间的内容必须提供水合前占位。
+- 页面是预渲染的 HTML：依赖尺寸测量、canvas、WebGL 或当前时间的内容必须提供水合前占位。
 - 占位必须与真实内容同尺寸，不能使布局跳动；颜色跟随主题变量。
 - 占位使用 `data-slot="<组件>-placeholder"` 和 `aria-hidden`，容器用 `data-ready` 控制真实内容淡入；减少动态效果时关闭过渡。
 - 文本类组件的 SSR 内容必须可见，不得为了等待挂载隐藏整块文字。

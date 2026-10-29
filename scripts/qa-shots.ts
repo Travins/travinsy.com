@@ -1,5 +1,5 @@
 /**
- * 组件验收截图：对 `out/`（先 `pnpm build`）起临时静态服务，按 component-acceptance 技能第 5 节的组合截图，
+ * 组件验收截图：对构建产物（先 `pnpm build`）起临时的 next start，按 component-acceptance 技能第 5 节的组合截图，
  * 并检查 hydration / 运行时报错与横向溢出，最后生成一页对比报告。
  *
  *   pnpm qa:shots isometric-mark            # 一个组件
@@ -8,62 +8,20 @@
  *
  * 输出：.qa/<时间戳>/index.html（含所有截图与检查结果）。Chrome 路径可用 CHROME_PATH 覆盖。
  */
-import {
-  createReadStream,
-  existsSync,
-  mkdirSync,
-  statSync,
-  writeFileSync,
-} from "node:fs"
-import { createServer, type Server } from "node:http"
+import { mkdirSync, writeFileSync } from "node:fs"
 import { exec } from "node:child_process"
-import { extname, join, resolve } from "node:path"
+import { join, resolve } from "node:path"
 import { chromium, type Browser, type Page } from "playwright-core"
 
-const ROOT = resolve("out")
+import { startNextServer } from "./lib/next-server"
+
 const CHROME =
   process.env.CHROME_PATH ??
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 const THEMES = ["blue", "orange", "violet"]
-const TYPES: Record<string, string> = {
-  ".html": "text/html; charset=utf-8",
-  ".js": "text/javascript",
-  ".css": "text/css",
-  ".json": "application/json",
-  ".txt": "text/plain",
-  ".svg": "image/svg+xml",
-  ".png": "image/png",
-  ".woff2": "font/woff2",
-}
-
 type Shot = { group: string; label: string; file: string }
 type Issue = { component: string; where: string; message: string }
 
-function serve(): Promise<{ server: Server; port: number }> {
-  const server = createServer((req, res) => {
-    let file = join(ROOT, decodeURIComponent((req.url ?? "/").split("?")[0]))
-    if (existsSync(file) && statSync(file).isDirectory())
-      file = join(file, "index.html")
-    if (!existsSync(file)) {
-      res.writeHead(404)
-      res.end()
-      return
-    }
-    res.writeHead(200, {
-      "content-type": TYPES[extname(file)] ?? "application/octet-stream",
-    })
-    createReadStream(file).pipe(res)
-  })
-  return new Promise((done) =>
-    server.listen(0, () => {
-      const address = server.address()
-      done({
-        server,
-        port: typeof address === "object" && address ? address.port : 0,
-      })
-    }),
-  )
-}
 
 async function open(
   browser: Browser,
@@ -154,16 +112,10 @@ async function main() {
     console.error("用法：pnpm qa:shots <组件名> [更多组件名] [--open]")
     process.exit(1)
   }
-  if (!existsSync(join(ROOT, "index.html"))) {
-    console.error("没有找到 out/，先运行 pnpm build")
-    process.exit(1)
-  }
-
   const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)
   const dir = resolve(".qa", stamp)
   mkdirSync(dir, { recursive: true })
-  const { server, port } = await serve()
-  const base = `http://localhost:${port}`
+  const { base, close } = await startNextServer()
   const browser = await chromium.launch({
     executablePath: CHROME,
     args: ["--enable-unsafe-swiftshader"],
@@ -281,7 +233,7 @@ async function main() {
   }
 
   await browser.close()
-  server.close()
+  close()
 
   const groups = [...new Set(shots.map((shot) => shot.group))]
   const html = `<!doctype html><meta charset="utf-8"><title>QA · ${names.join(", ")}</title>

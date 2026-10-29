@@ -1,40 +1,13 @@
-/** 静态导出加载验收：阻塞外部脚本，保留 React 流式 HTML 的内联替换。 */
+/** 加载验收：对构建产物起 next start，阻塞外部脚本，保留 React 流式 HTML 的内联替换。 */
 import { chromium } from "playwright-core"
-import { createServer } from "node:http"
-import { readFile, stat, readdir, mkdir, writeFile } from "node:fs/promises"
-import { extname, join } from "node:path"
+import { readdir, mkdir, writeFile } from "node:fs/promises"
+
+import { startNextServer } from "./lib/next-server"
 
 async function main() {
-  const types: Record<string, string> = {
-    ".html": "text/html; charset=utf-8",
-    ".js": "text/javascript",
-    ".css": "text/css",
-    ".txt": "text/plain",
-    ".svg": "image/svg+xml",
-    ".woff2": "font/woff2",
-    ".png": "image/png",
-  }
   const directory = `.qa/loading-${Date.now()}`
   await mkdir(directory, { recursive: true })
-  const server = createServer(async (req, res) => {
-    let file = join("out", decodeURIComponent((req.url ?? "/").split("?")[0]))
-    try {
-      if ((await stat(file)).isDirectory()) file = join(file, "index.html")
-      const body = await readFile(file)
-      res.writeHead(200, {
-        "content-type": types[extname(file)] ?? "application/octet-stream",
-      })
-      res.end(body)
-    } catch {
-      res.writeHead(404)
-      res.end()
-    }
-  })
-  await new Promise<void>((resolve) => server.listen(0, resolve))
-  const address = server.address()
-  if (!address || typeof address === "string")
-    throw new Error("静态服务启动失败")
-  const base = `http://localhost:${address.port}`
+  const { base, close } = await startNextServer()
   const browser = await chromium.launch({
     executablePath:
       process.env.CHROME_PATH ??
@@ -43,9 +16,10 @@ async function main() {
   const issues: string[] = []
   const measurements: unknown[] = []
   try {
-    const names = (await readdir("out/components", { withFileTypes: true }))
-      .filter((f) => f.isDirectory())
-      .map((f) => f.name)
+    // 组件清单取自文档目录：content/docs/components/<name>.mdx（index 是列表页）
+    const names = (await readdir("content/docs/components"))
+      .filter((f) => f.endsWith(".mdx") && f !== "index.mdx")
+      .map((f) => f.replace(/\.mdx$/, ""))
     for (const url of [
       ...names.map((n) => `/components/${n}/`),
       "/",
@@ -297,7 +271,11 @@ async function main() {
     })
     let holdData = true
     const releaseData: (() => void)[] = []
-    await slow.route(/\/themes\/.*\.txt(?:\?|$)/, async (route) => {
+    // 拦住 /themes/ 的导航数据（RSC 请求带 _rsc 参数；静态导出时是 .txt 文件），模拟未预取的慢请求
+    const isThemesData = (url: URL) =>
+      url.pathname.startsWith("/themes/") &&
+      (url.searchParams.has("_rsc") || url.pathname.endsWith(".txt"))
+    await slow.route(isThemesData, async (route) => {
       if (holdData)
         await new Promise<void>((resolve) => releaseData.push(resolve))
       await route.continue().catch(() => {})
@@ -340,8 +318,7 @@ async function main() {
     }
   } finally {
     await browser.close()
-    server.closeAllConnections()
-    server.close()
+    close()
   }
 }
 main().catch((error) => {

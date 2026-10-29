@@ -21,7 +21,7 @@ pnpm dev
 
 所有对外发布的代码都在 `src/registry/` 里，文档预览、代码展示与 `public/r/*.json` 读取的都是同一份源码。动手前请先读：
 
-- [`AGENTS.md`](./AGENTS.md)：技术栈、目录约定与硬性规则（静态导出、只用主题变量、按钮高度三档等）；
+- [`AGENTS.md`](./AGENTS.md)：技术栈、目录约定与硬性规则（页面全部预渲染、只用主题变量、按钮高度三档等）；
 - [`.agents/skills/component-conventions`](./.agents/skills/component-conventions/SKILL.md)：组件书写规范（分层、命名、data-slot、Props、可访问性、加载与占位）；
 - [`.agents/skills/registry-item`](./.agents/skills/registry-item/SKILL.md)：新增或修改 registry 条目的完整流程；
 - [`.agents/skills/grid-design`](./.agents/skills/grid-design/SKILL.md)：线条网格的页面布局规范。

@@ -24,14 +24,14 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 | 动画 | `motion` |
 | 高亮 | `shiki` |
 | 主题 | `next-themes`（亮/暗）+ 自定义颜色主题（`data-theme`） |
-| 部署 | **纯静态导出** `output: "export"` → Vercel（自定义域名 yiui.dev） |
+| 部署 | Vercel 的 Next.js 运行时（自定义域名 yiui.dev）：页面全部构建时预渲染，少量接口按 `revalidate` 定时刷新 |
 
 ## 2. 常用命令
 
 ```bash
 source ~/.nvm/nvm.sh && nvm use      # 每个新 shell 都要先切到 Node 24
 pnpm dev                              # 开发
-pnpm build                            # 静态构建，产物在 out/
+pnpm build                            # 生产构建，产物在 .next/（pnpm start 可本地预览）
 pnpm lint
 pnpm registry:build                   # 生成 public/r/*.json（registry 管道建好后可用）
 python3 scripts/build-og-font.py      # 分享卡片（out/og/*.png）出现方块字时，重新生成中文字体子集并提交
@@ -54,7 +54,7 @@ content/                     MDX 内容（Fumadocs 读取）
   docs/agents/*.mdx          智能体开发引导
   blog/*.mdx                 博客
 src/
-  app/                       路由（全部可静态生成）
+  app/                       路由（页面全部可预渲染）
   components/
     ui/                      shadcn 官方原语（CLI 安装，尽量不手改）
     site/                    站点外壳：Header、Footer、主题切换、导航
@@ -78,12 +78,13 @@ scripts/                     构建辅助脚本
 - 设计来源只描述做法本身（如“线条网格”“等轴测挤出”），不写出处
 - 禁提词清单在仓库根目录的 `.forbidden-terms`（已 gitignore，只存在于维护者本机）。提交前用 `grep -rIil -f .forbidden-terms --exclude-dir={node_modules,.next,.source,.git} --exclude=.forbidden-terms .` 自查，结果必须为空（包括构建产物 `out/`）；本机没有该文件时跳过此项
 
-### 静态导出（任何代码都必须满足）
-- 禁止：Server Actions、`cookies()`/`headers()`、依赖 Request 的 Route Handler、`proxy`/middleware、rewrites/redirects/headers 配置、ISR、默认 loader 的图片优化
+### 预渲染优先（任何代码都必须满足）
+站点跑在 Vercel 的 Next.js 运行时上，但**页面必须全部在构建时预渲染**（`pnpm build` 输出里页面只能是 ○ 或 ●），这样访问只走 CDN、不消耗函数调用：
+- 页面和布局里禁止：`cookies()`/`headers()`/`searchParams` 等请求期 API、`cache: "no-store"` 的 fetch、Server Actions、`proxy`/middleware
 - 动态路由必须有 `generateStaticParams()` 且 `dynamicParams = false`
 - 生成文本文件的 Route Handler（如 `llms.txt`、`rss.xml`）必须 `export const dynamic = "force-static"`
-- `trailingSlash: true`（产物按 `xxx/index.html` 组织）
-- 外部动态数据（如 GitHub 的公开统计）只在**构建时**获取，失败时要有兜底数据，不能让构建挂掉
+- 需要实时数据时，单独写一个带 `export const revalidate = <秒>` 的 Route Handler（参考 `src/app/api/github-stars/route.ts`），由客户端组件在挂载后请求；页面首屏用构建时的值，失败时要有兜底，不能让构建挂掉
+- `trailingSlash: true`；图片不走优化（`images.unoptimized`）
 
 ### 设计系统
 - 视觉语言：**线条网格**。内容区左右竖线、全宽横线分隔、斜纹分隔带。只用 `@/registry/ui/grid-layout` 里的原语和 `src/styles/grid.css` 里的工具类实现，不要每个页面手写边框

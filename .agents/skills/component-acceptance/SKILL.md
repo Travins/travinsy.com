@@ -67,7 +67,7 @@ description: yiui.dev 组件从开发到验收的整体流程与验收标准（�
 pnpm qa:shots <组件名> [更多组件名] [--open]
 ```
 
-脚本（`scripts/qa-shots.ts`）对 `out/` 起临时静态服务，用系统 Chrome（`CHROME_PATH` 可覆盖）按下表截图，同时检查运行时报错（含 hydration）与横向溢出，生成 `.qa/<时间戳>/index.html` 报告；有问题时退出码为 1。每张截图都要看：
+脚本（`scripts/qa-shots.ts`）对构建产物起临时的 `next start`（先 `pnpm build`），用系统 Chrome（`CHROME_PATH` 可覆盖）按下表截图，同时检查运行时报错（含 hydration）与横向溢出，生成 `.qa/<时间戳>/index.html` 报告；有问题时退出码为 1。每张截图都要看：
 
 | 场景 | 宽度 | 检查 |
 | --- | --- | --- |
