@@ -15,6 +15,7 @@
     "prebuild": "pnpm registry:lint --max-warnings 0 && pnpm registry:build",
     "postinstall": "fumadocs-mdx",
     "registry:lint": "tsx scripts/registry-lint.ts",
+    "qa:install": "tsx scripts/qa-install.ts",
     "qa:loading": "tsx scripts/qa-loading.ts",
     "qa:shots": "tsx scripts/qa-shots.ts"
   },

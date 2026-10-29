@@ -126,6 +126,7 @@ pnpm dev
 | `pnpm registry:build` | 生成 `public/r/*.json` 等 registry 产物 |
 | `pnpm registry:lint` | 检查 registry 条目的依赖、文件与书写规范 |
 | `pnpm qa:shots <组件名>` | 对构建产物截图验收（亮暗、颜色主题、窄屏、报错与溢出） |
+| `pnpm qa:install [条目名…]` | 本地安装、类型、构建与浏览器验收；支持 `--fresh`、`--keep`、`--namespace` |
 | `pnpm qa:loading` | 拦截脚本检查加载前的占位与空白 |
 
 ## 目录结构

@@ -30,8 +30,7 @@ description: 在 yiui.dev 新增或修改一个 shadcn registry 条目（组件 
    pnpm registry:build && pnpm lint && pnpm build
    ```
    检查 `public/r/<name>.json` 已生成，内容包含源码。
-   重要条目还要在临时项目里实际安装一次：
-   `env -u ALL_PROXY -u all_proxy pnpm dlx shadcn@latest add http://localhost:3000/r/<name>.json`
+   运行 `pnpm qa:install <name>` 实测安装；发布前不传条目名验收全部条目。
 
 ## 已实现的文档 API
 
@@ -56,6 +55,6 @@ MDX 内置组件由 `src/components/docs/mdx-components.tsx` 注册，无需在�
 
 `prebuild` 自动调用上述流程；Fumadocs 由 `createMDX` 集成，在 `.source/` 生成内容索引。新增演示后运行 `pnpm registry:index`，再刷新开发页面。
 
-安装验收先 `pnpm build && pnpm start`，再让 CLI 访问 `http://localhost:3000/r/<name>.json`，在临时项目执行 CLI 后检查组件源码、三个工具类、`--edge` 以及 `@theme inline` 中的 `--color-edge`，结束后删除临时项目。布局源码使用 `@/lib/utils` 的 cn；手动安装需要接收项目已有该工具函数。
+安装验收先运行 `pnpm registry:build`，再运行 `pnpm qa:install`。脚本提供本地 registry、创建干净 Base UI 项目并检查类型、构建与页面运行错误，报告放 `.qa/install-*/`。可用 `pnpm qa:install value-slider auth-01` 抽测，`--namespace` 验证命名空间，`--fresh` 跳过初始化缓存，`--keep` 保留项目排查。
 
 命名空间为 `@yiui`；`InstallCommand` 默认 URL 安装，可切换命名空间安装。配置教程位于 `content/docs/docs/registry.mdx`，安装入口位于 `content/docs/docs/installation.mdx`（入门分区），components.json 中使用 `"registries": { "@yiui": "https://yiui.dev/r/{name}.json" }`。

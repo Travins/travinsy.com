@@ -126,6 +126,7 @@ pnpm dev
 | `pnpm registry:build` | Generate `public/r/*.json` and other registry output |
 | `pnpm registry:lint` | Check registry items for dependencies, files and conventions |
 | `pnpm qa:shots <name>` | Screenshot QA on the build (light / dark, color themes, narrow widths, errors, overflow) |
+| `pnpm qa:install [name…]` | Local install, type, build and browser QA; `--fresh`, `--keep`, `--namespace` |
 | `pnpm qa:loading` | Block scripts and check pre-hydration placeholders and blank areas |
 
 ## Project structure

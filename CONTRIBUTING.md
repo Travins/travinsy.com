@@ -39,6 +39,8 @@ pnpm dev
    pnpm build
    ```
 
+   发布前运行 `pnpm qa:install` 验收全部条目；抽测用 `pnpm qa:install value-slider`，命名空间用 `pnpm qa:install --namespace value-slider`。先运行 `pnpm registry:build`；`--fresh` 跳过初始化缓存，`--keep` 保留临时项目，报告在 `.qa/`。
+
    改了组件外观时，再跑一次截图验收并看一遍报告：`pnpm qa:shots <组件名>`。
 3. 提交信息使用 [Conventional Commits](https://www.conventionalcommits.org/) 格式，正文用简体中文，例如 `fix(registry): 数值滑块键盘调节越界`。
 4. 在 PR 描述里写清改了什么、为什么改，界面改动附截图（亮色与暗色）。
