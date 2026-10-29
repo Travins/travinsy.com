@@ -37,6 +37,8 @@ const fitClasses: Record<string, string> = {
   // 照片卡与拖拽板门面示例都是竖向堆叠的卡片，窄屏画框只有 20rem 高
   "angle-dial": "max-lg:scale-[0.82]",
   "xy-pad": "max-lg:scale-[0.7]",
+  // 三行读数的转换器卡片，窄屏画框只有 20rem 高
+  "chinese-number": "max-lg:scale-[0.85]",
 }
 
 /**

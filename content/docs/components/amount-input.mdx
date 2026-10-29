@@ -1,0 +1,225 @@
+---
+title: 金额输入
+titleEn: Amount Input
+description: 付款、报销、订单金额用的输入框：实时千分位且光标不乱跳，限制小数位与范围，粘贴自动规范化，下方同步显示人民币大写与「约 1.2亿」估读。
+group: input
+---
+
+<ComponentPreview name="amount-input-demo" />
+
+## 安装
+
+<InstallCommand name="amount-input" />
+
+## 用法
+
+```tsx title="components/pay-form.tsx"
+import { AmountInput } from "@/components/ui/amount-input/amount-input"
+
+export function PayForm() {
+  return <AmountInput name="amount" label="付款金额" defaultValue="1280" />
+}
+```
+
+不带状态时用 `defaultValue` 给初始值，组件自己管；需要读值就加 `value` 与 `onValueChange` 走受控。设了 `name`，表单提交的是**不带千分位的原始数值**（`"1234.50"`），不是输入框里看到的 `1,234.50`。
+
+### 值是字符串
+
+`value`、`defaultValue`、`onValueChange` 的参数都是十进制字符串，空串表示没填，没有 `null`。原因有三：
+
+- 金额算到万亿级、两位小数共 18 位有效数字，超出 `number` 的安全范围；
+- `0.1 + 0.2` 这类浮点误差不会混进来；
+- 保留用户敲的形态，`"1234.50"` 与 `"1234.5"` 是两个不同的字符串，同一个数值。
+
+需要算数时在你自己的代码里转：`Number(value)`，或用 decimal.js 之类的库。两个字符串是否相等不要用 `===`，数值相同的 `"1234.50"` 和 `"1234.5"` 会被组件判为同一个金额，受控时不会因此改写显示。
+
+### 输入整理
+
+敲进去的任何文本都先过一遍整理，再显示：
+
+- 加千分位，小数位超过 `decimals`（默认 2）的数字直接舍去；
+- 全角数字 `１２３`、全角小数点 `．` `。` 换成半角；
+- `¥`、空格、字母、逗号这些非法字符丢掉，只保留第一个小数点；
+- 前导零只留一个，直接敲 `.5` 补成 `0.5`；
+- 整数部分最多 16 位。
+
+所以粘贴 `¥1,234.5`、`１２３４．５６`、`1 234.56元` 都能得到合理的结果。粘贴进来的小数超出 `decimals` 时是**舍去**而不是四舍五入：输入阶段静悄悄地改变数值比少一位更让人意外。
+
+### 大写与估读
+
+输入框下方的读数行有两部分：
+
+- **人民币大写**：`壹万贰仟叁佰肆拾伍元陆角柒分`，用 [`chinese-number`](/components/chinese-number/) 的 `toRmbUppercase`；还没有输入时显示提示，行高不会跳；
+- **估读**：绝对值达到 `approximateFrom`（默认 10000）后显示 `约 12.3万`、`约 1.2亿`，用 `data-display` 的 `formatStat` 压缩。
+
+`showUppercase`、`showApproximate` 各自可以关；两个都关，整行读数不渲染。`readoutPlacement="above"` 把读数行放到输入框上方。
+
+大写按**分**四舍五入，所以 `decimals` 设得比 2 大时，大写只反映到分；非人民币场景请关掉 `showUppercase`。
+
+### 光标
+
+在千分位文本中间插入、删除、粘贴时，光标留在用户眼里「同一个位置」：
+
+- 在 `1,2|34` 中间敲 `5`，原始文本是 `1,25|34`，整理成 `12,534`，光标仍在 `5` 之后（`12,5|34`）；
+- 退格时光标紧贴逗号（`1,|234`），会越过逗号删掉前面的数字 `1`，而不是只删逗号再被整理回来、看起来按键没反应；`Delete` 同理；
+- 输入非法字符、超出的小数位时，光标不会被甩到末尾。
+
+算法见下方「原理」。
+
+### 校验
+
+`min` / `max` 不拦截输入——敲 `5` 时不能因为 `min={100}` 就报错。规则是：
+
+- 超过 `max`：立刻显示 `aboveMax` 提示（再敲只会更大）；
+- 低于 `min`：失焦后才显示 `belowMin`，避免敲第一位数字就报错；
+- 无论是否显示，越界的值都会通过 `setCustomValidity` 拦住表单提交，浏览器提示同一句话；
+- `required` 照常工作，空值被原生校验拦住。
+
+业务规则（余额、日限额）组件不知道，你自己判断，把提示作为 `error` 传入：有值就进入错误态并显示这句话，优先于越界提示。只想要红框不要文字时传 `aria-invalid`。
+
+`min` 为负数时才允许输入负号，比如冲账、退款的场景写 `min={-100000}`。
+
+### 静默补零
+
+默认失焦时把小数位补齐到 `decimals`（`1,234.5` → `1,234.50`），`onValueChange` 会随之收到 `"1234.50"`。不想要就传 `padDecimals={false}`。聚焦期间不补，敲字时不会冒出零。
+
+## 示例
+
+### 受控与表单提交
+
+受控的 `value` 配 `onValueChange`；设了 `name`，`FormData` 里拿到的是原始数值。`min` / `max` / `required` 越界或留空时表单提交会被拦住。
+
+<ComponentPreview name="amount-input-form-demo" />
+
+### 自定义
+
+`symbol` 换货币符号（传 `null` 隐藏），`decimals={0}` 只收整数，`showUppercase={false}` 关掉大写。汇率这类不是金额的数值，把大写、估读、补零都关掉，只用它的千分位与光标处理。
+
+<ComponentPreview name="amount-input-custom-demo" />
+
+### 校验与错误态
+
+第一个输入框用 `min` / `max`，初始值 60000 已经越界，红框与提示直接显示；第二个用 `error` 接入自己的业务判断，余额不足时显示提示。
+
+<ComponentPreview name="amount-input-validation-demo" />
+
+### 尺寸与状态
+
+`size` 三档高度对应按钮的 `sm` / `default` / `lg`（28 / 32 / 36px），同一行并排的控件用同一档。禁用时灰显且不随表单提交，只读可以聚焦、选中、复制，但不能改。
+
+<ComponentPreview name="amount-input-states-demo" />
+
+## 原理
+
+### 光标
+
+React 受控输入每次渲染都会把光标甩到末尾，千分位逗号的增减又会让「字符位置」失真，所以组件不按字符下标记位置，而是按**有效字符的个数**：
+
+1. 事件里拿到用户敲完之后的原始文本与光标下标 `caret`；
+2. 数出 `caret` 左边有几个有效字符（数字、小数点、负号，逗号不算），记为 `n`；整理时被丢掉的字符（非法字符、超出的小数位、被顶替的前导零）不计入；
+3. 整理出新文本后，找到其中第 `n` 个有效字符，光标放它后面；
+4. 在 `useLayoutEffect` 里 `setSelectionRange`，每次提交都用新对象触发，所以即使文本没变（敲了字母被丢掉）光标也会被拉回原位。
+
+输入法组词期间（`compositionstart` 到 `compositionend`）不整理，否则会打断候选词，组词结束时统一处理一次。
+
+### 读屏
+
+读数行做了两件事，取舍是不让读屏在敲字时被反复打断：
+
+- 大写行的 `id` 挂在输入框的 `aria-describedby` 上，聚焦时随字段名一起朗读，想再听一遍重新聚焦即可；
+- 敲字时不逐字播报。停手 800ms 后，一个 `role="status"`（隐式 polite）的隐藏区域播报一次最新的大写；还在敲就重新计时。
+
+估读行是纯视觉辅助，不进入描述。
+
+## API
+
+<PropsTable name="amount-input" component="AmountInput" />
+
+`className` 作用于根元素，其余未列出的属性（`id`、`name`、`required`、`placeholder`、`autoFocus`、`onFocus`、`onBlur`……）都交给 `<input>`；`ref` 指向 `<input>`。`name` 例外：它加在一个隐藏的 `<input type="hidden">` 上，提交原始数值，可见输入框本身不带 `name`。
+
+不依赖 Base UI 的 `Field`：组件自带 `label`、错误提示和描述，放进 `Field.Root` 里不会自动联动。
+
+### labels
+
+```ts
+type AmountInputLabels = {
+  uppercase: string // "大写"，也是读屏播报的前缀
+  uppercasePlaceholder: string // "填写金额后自动生成大写"
+  approximate: string // "约"
+  belowMin: string // "金额不能低于 {min}"
+  aboveMax: string // "金额不能超过 {max}"
+}
+```
+
+`{min}` / `{max}` 会替换成带货币符号（`symbol` 是字符串时）的千分位金额，如 `¥100.00`。
+
+### amountInputControlVariants
+
+输入框外框的 `cva` 样式，有 `size` 一个变体；做自己的金额控件（带按钮、下拉单位）时可以复用它保持高度一致。
+
+### 类型
+
+```ts
+type AmountInputSize = "sm" | "default" | "lg"
+
+type AmountInputProps = {
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  min?: number | string
+  max?: number | string
+  decimals?: number
+  symbol?: React.ReactNode
+  label?: React.ReactNode
+  size?: AmountInputSize
+  showUppercase?: boolean
+  showApproximate?: boolean
+  approximateFrom?: number
+  readoutPlacement?: "above" | "below"
+  error?: React.ReactNode
+  padDecimals?: boolean
+  labels?: Partial<AmountInputLabels>
+} & Omit<
+  React.ComponentProps<"input">,
+  /* 以上已定义的属性 */ "value" | "defaultValue"
+>
+```
+
+### data-slot
+
+| 元素             | `data-slot`                |
+| ---------------- | -------------------------- |
+| 根元素           | `amount-input`             |
+| 标签             | `amount-input-label`       |
+| 输入框外框       | `amount-input-control`     |
+| 货币符号         | `amount-input-symbol`      |
+| 输入框           | `amount-input-input`       |
+| 读数行           | `amount-input-readout`     |
+| 人民币大写       | `amount-input-uppercase`   |
+| 估读             | `amount-input-approximate` |
+| 错误提示         | `amount-input-error`       |
+| 提交用的隐藏输入 | `amount-input-value`       |
+| 读屏播报区       | `amount-input-status`      |
+
+根元素带 `data-size`，错误态带 `data-invalid`，禁用带 `data-disabled`，只读带 `data-readonly`。
+
+## 可访问性
+
+- 输入框是 `type="text"` 加 `inputMode`（有小数位用 `decimal`，整数用 `numeric`，允许负数时用 `text`，因为移动端数字键盘没有减号），不用 `type="number"`：后者不能带千分位，滚轮和方向键还会误改金额。
+- `label` 通过 `htmlFor` 与输入框关联；没有可见标签时传 `aria-label`。
+- 货币符号是装饰，`aria-hidden`；金额的单位由标签或大写读数传达，所以标签最好写明，如「付款金额（元）」。
+- 错误提示通过 `aria-describedby` 与输入框关联，输入框同时有 `aria-invalid`；错误态不只靠红色，还有文字。
+- 读屏策略见「原理」：描述在聚焦时朗读，敲字停顿后 polite 播报一次，不逐字打断。
+- 焦点环加在外框上（`focus-within`），键盘和鼠标聚焦都可见。
+
+## 注意事项
+
+- 组件在服务端输出完整结构与初始文本（含千分位与补零），禁用 JS 时能看到初始值；整理与光标逻辑需要客户端。
+- 受控模式下记得同时处理 `onValueChange`，否则敲字后显示文本与外部值会出现分歧；外部把 `value` 改成数值不同的字符串时，显示会同步，数值相同（`"1234.5"` → `"1234.50"`）则不改写。
+- 非受控的表单 `reset` 会回到 `defaultValue`；受控的由外部自己重置。
+- `min`、`max` 建议定义在组件外或用字符串，避免对象字面量每次渲染重建（数字不存在这个问题）。
+- 撤销（`⌘Z`）：整理会重写输入框内容，浏览器的撤销栈不再可靠，这是用受控输入实现实时千分位的通病。
+
+## 源码
+
+<ComponentSource name="amount-input" />

@@ -1047,6 +1047,65 @@
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "chinese-number",
+      "title": "中文数字",
+      "description": "人民币大写（按财务规范，万亿级、零的省略、分以下四舍五入）与整数中文读法的纯函数工具，无依赖，服务端可用。",
+      "files": [
+        {
+          "path": "src/registry/lib/chinese-number.ts",
+          "type": "registry:lib",
+          "target": "lib/chinese-number.ts"
+        }
+      ],
+      "type": "registry:lib"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "amount-input",
+      "title": "金额输入",
+      "description": "付款、报销、订单金额用的输入框：实时千分位且光标不乱跳，限制小数位与范围，粘贴自动规范化，下方同步显示人民币大写与「约 1.2亿」估读。",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "https://yiui.dev/r/chinese-number.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/amount-input/amount-input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/amount-input/amount-input-parts.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/amount-input/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/amount-input/utils.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/amount-input/config.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        },
+        {
+          "path": "src/registry/lib/data-display.ts",
+          "type": "registry:lib",
+          "target": "lib/data-display.ts"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
       "name": "segmented-control",
       "title": "分段选择",
       "description": "方条样式的互斥选项组，选中块在选项间滑动，可带图标或小样，与数值滑块同一套高度。",

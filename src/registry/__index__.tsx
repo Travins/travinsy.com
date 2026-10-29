@@ -3,6 +3,11 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from "react"
 
 export const registryExamples: Record<string, LazyExoticComponent<ComponentType>> = {
+  "amount-input-custom-demo": lazy(() => import("./examples/amount-input-custom-demo")),
+  "amount-input-demo": lazy(() => import("./examples/amount-input-demo")),
+  "amount-input-form-demo": lazy(() => import("./examples/amount-input-form-demo")),
+  "amount-input-states-demo": lazy(() => import("./examples/amount-input-states-demo")),
+  "amount-input-validation-demo": lazy(() => import("./examples/amount-input-validation-demo")),
   "angle-dial-compass-demo": lazy(() => import("./examples/angle-dial-compass-demo")),
   "angle-dial-demo": lazy(() => import("./examples/angle-dial-demo")),
   "angle-dial-gradient-demo": lazy(() => import("./examples/angle-dial-gradient-demo")),
@@ -19,6 +24,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "checklist-compact-demo": lazy(() => import("./examples/checklist-compact-demo")),
   "checklist-demo": lazy(() => import("./examples/checklist-demo")),
   "checklist-interactive-demo": lazy(() => import("./examples/checklist-interactive-demo")),
+  "chinese-number-demo": lazy(() => import("./examples/chinese-number-demo")),
   "code-stack-cascade-demo": lazy(() => import("./examples/code-stack-cascade-demo")),
   "code-stack-demo": lazy(() => import("./examples/code-stack-demo")),
   "code-stack-grid-demo": lazy(() => import("./examples/code-stack-grid-demo")),

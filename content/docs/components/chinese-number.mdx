@@ -1,0 +1,90 @@
+---
+title: 中文数字
+titleEn: Chinese Number
+description: 人民币大写（按财务规范，万亿级、零的省略、分以下四舍五入）与整数中文读法的纯函数工具，无依赖，服务端可用。
+group: text
+---
+
+<ComponentPreview name="chinese-number-demo" />
+
+## 安装
+
+<InstallCommand name="chinese-number" />
+
+安装 [`amount-input`](/components/amount-input/) 时会自动带上，也可以单独装。
+
+## 用法
+
+```ts
+import { toChineseNumerals, toRmbUppercase } from "@/lib/chinese-number"
+
+toRmbUppercase(1234.56) // "壹仟贰佰叁拾肆元伍角陆分"
+toRmbUppercase("100000") // "壹拾万元整"
+toChineseNumerals(10010) // "一万零一十"
+toChineseNumerals(10010, { financial: true }) // "壹万零壹拾"
+```
+
+两个函数都是纯函数，没有 `"use client"`，在服务端组件、Route Handler 里直接调用；输入框里边敲边显示也不用包 try/catch——非法输入返回空串，不抛错。
+
+## API
+
+### toRmbUppercase(value, options?)
+
+按财务规范书写人民币大写：
+
+- **拾位保留「壹」**：`100000` → `壹拾万元整`，不写成 `拾万`。财务大写的目的是防篡改，前面留空位就能被人添一个「壹」；
+- 到元为止在「元」后加「整」，有角无分时「角」后不加（`0.5` → `伍角`），有分时不加；
+- 元位有数、角位为零、分位有数时补「零」（`10.05` → `壹拾元零伍分`），整数部分为零时不写「零元」（`0.05` → `伍分`）；
+- 整数里连续的零只读一个「零」，末尾的零不读，整节（万、亿）为零就省略这一节的单位，后面还有数字再补一个「零」：`100100` → `壹拾万零壹佰元整`，`1000001` → `壹佰万零壹元整`，`10000000.01` → `壹仟万元零壹分`；
+- 负数前加「负」；舍入后为零（`-0.001`）写 `零元整`，不带「负」；
+- 支持到整数部分 16 位，最大是九千九百九十九万亿。
+
+`value` 是 `number` 或十进制字符串。传字符串时按十进制处理，不经过浮点；传 `number` 时用 `String(value)` 取最短表示再解析，`0.1 + 0.2` 得到 `叁角`。超过 `Number.MAX_SAFE_INTEGER` 的 `number` 本身已经丢了精度，视为非法，大数请传字符串。字符串允许首尾空格、正负号和千分位逗号。
+
+分以下的小数用 `options.rounding` 控制，默认 `"round"` 四舍五入到分（`1.005` → `壹元零壹分`，按十进制看待，不受浮点影响），`"truncate"` 直接舍去。
+
+**非法输入返回空串，不抛错**：`NaN`、`Infinity`、空串、无法解析的字符串（`"abc"`、`"1.2.3"`、全角数字）、整数超过 16 位，以及舍入后进位超出范围的值（`"9999999999999999.995"`）。这样在输入框里边敲边显示不用到处 try/catch；需要报错的场景判断 `=== ""` 即可。
+
+### toChineseNumerals(value, options?)
+
+整数的中文读法，同样接受 `number` 或字符串，非法输入返回空串：
+
+- `123` → `一百二十三`，`10010` → `一万零一十`，`1000001` → `一百万零一`；
+- 整个数以 10–19 开头时读「十」不读「一十」（`10` → `十`，`110000` → `十一万`），数中间的「一十」保留（`110` → `一百一十`，`10010` → `一万零一十`）；
+- 「二」一律写「二」，不写「两」（`2000` → `二千`）；
+- 小数点后逐位读：`3.14` → `三点一四`；负数前加「负」；
+- `financial: true` 换成大写数字（壹贰叁…拾佰仟），此时不省略「壹拾」，规则与 `toRmbUppercase` 一致，只是没有「元」「角」「分」。
+
+### 类型
+
+```ts
+type RmbUppercaseOptions = {
+  /** 分以下的小数：四舍五入到分，或直接舍去，默认 "round" */
+  rounding?: "round" | "truncate"
+}
+
+type ChineseNumeralsOptions = {
+  /** 用大写数字，默认 false */
+  financial?: boolean
+}
+
+function toRmbUppercase(
+  value: number | string,
+  options?: RmbUppercaseOptions,
+): string
+function toChineseNumerals(
+  value: number | string,
+  options?: ChineseNumeralsOptions,
+): string
+```
+
+## 注意事项
+
+- 自测：`pnpm test:chinese-number`，覆盖上面所有例子和零的省略、跨「万 / 亿」节的边界、非法输入。
+- 全部运算按十进制字符串和整数串进行，不用浮点，也不依赖 `BigInt`，所以在低目标版本的项目里也能直接编译。
+- 全角数字（`１２３`）不是合法输入，返回空串；需要兼容全角的场景（如输入框）先自行规范化，`amount-input` 已经做了这件事。
+- 繁体、日文大写、英文金额读法不在范围内。
+
+## 源码
+
+<ComponentSource name="chinese-number" />
