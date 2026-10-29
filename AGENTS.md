@@ -34,7 +34,7 @@ pnpm dev                              # 开发
 pnpm build                            # 生产构建，产物在 .next/（pnpm start 可本地预览）
 pnpm lint
 pnpm registry:build                   # 生成 public/r/*.json（registry 管道建好后可用）
-python3 scripts/build-og-font.py      # 分享卡片（out/og/*.png）出现方块字时，重新生成中文字体子集并提交
+python3 scripts/build-og-font.py      # 分享卡片（/og/*.png）出现方块字时，重新生成中文字体子集并提交
 ```
 
 **环境注意**：本机 `ALL_PROXY` 是 SOCKS 代理，会导致 `shadcn` CLI 请求失败（`other side closed`）。
@@ -76,7 +76,7 @@ scripts/                     构建辅助脚本
 ### 禁止提及参考站点（任何文件都必须满足）
 - 网站和仓库的任何地方（页面文案、博客、文档、代码注释、registry、技能文件、提交信息）都**不得提及设计参考站点的名字**，也不写“参考/借鉴某个人网站”之类的说法
 - 设计来源只描述做法本身（如“线条网格”“等轴测挤出”），不写出处
-- 禁提词清单在仓库根目录的 `.forbidden-terms`（已 gitignore，只存在于维护者本机）。提交前用 `grep -rIil -f .forbidden-terms --exclude-dir={node_modules,.next,.source,.git} --exclude=.forbidden-terms .` 自查，结果必须为空（包括构建产物 `out/`）；本机没有该文件时跳过此项
+- 禁提词清单在仓库根目录的 `.forbidden-terms`（已 gitignore，只存在于维护者本机）。提交前用 `grep -rIil -f .forbidden-terms --exclude-dir={node_modules,.next,.source,.git} --exclude=.forbidden-terms .` 自查，结果必须为空；本机没有该文件时跳过此项
 
 ### 预渲染优先（任何代码都必须满足）
 站点跑在 Vercel 的 Next.js 运行时上，但**页面必须全部在构建时预渲染**（`pnpm build` 输出里页面只能是 ○ 或 ●），这样访问只走 CDN、不消耗函数调用：
