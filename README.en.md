@@ -43,7 +43,7 @@ Yi UI is **Chinese-first**: the docs are in Simplified Chinese, default componen
 - **Theme-aware** — Every color comes from theme variables: light / dark plus 14 color themes, and components recolor as you switch.
 - **A family of bar controls** — Value slider, segmented control, switch, tone picker, angle dial and XY pad share one height scale and look. Combine them into a parameter panel and copy the current values as JSX in one click.
 - **Thoughtful motion** — Animations start when scrolled into view, pause off-screen and respect "reduce motion".
-- **Static-first** — The site is a pure static export. Components that measure layout or draw on a canvas render a same-size placeholder before scripts load, so there are no blank areas or layout shifts.
+- **Prerender-friendly** — Every page is prerendered at build time. Components that measure layout or draw on a canvas render a same-size placeholder before scripts load, so there are no blank areas or layout shifts.
 - **AI-friendly** — Every doc page has a Markdown version, plus [`llms.txt`](https://yiui.dev/llms.txt) and [`llms-full.txt`](https://yiui.dev/llms-full.txt).
 
 ## Quick start
@@ -121,7 +121,7 @@ pnpm dev
 | Command | What it does |
 | --- | --- |
 | `pnpm dev` | Start the dev server |
-| `pnpm build` | Static build into `out/` |
+| `pnpm build` | Production build (preview with `pnpm start`) |
 | `pnpm lint` | Lint |
 | `pnpm registry:build` | Generate `public/r/*.json` and other registry output |
 | `pnpm registry:lint` | Check registry items for dependencies, files and conventions |
@@ -147,7 +147,7 @@ Doc previews, code views and `public/r/*.json` all read the same source in `src/
 
 ## Tech stack
 
-[Next.js](https://nextjs.org) 16 (App Router, static export) · [React](https://react.dev) 19 · [Tailwind CSS](https://tailwindcss.com) v4 · [shadcn/ui](https://ui.shadcn.com) · [Base UI](https://base-ui.com) · [Motion](https://motion.dev) · [Fumadocs](https://fumadocs.dev) (content layer) · [Shiki](https://shiki.style) · [Recharts](https://recharts.org)
+[Next.js](https://nextjs.org) 16 (App Router, deployed on Vercel) · [React](https://react.dev) 19 · [Tailwind CSS](https://tailwindcss.com) v4 · [shadcn/ui](https://ui.shadcn.com) · [Base UI](https://base-ui.com) · [Motion](https://motion.dev) · [Fumadocs](https://fumadocs.dev) (content layer) · [Shiki](https://shiki.style) · [Recharts](https://recharts.org)
 
 ## Contributing
 

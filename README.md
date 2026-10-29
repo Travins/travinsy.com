@@ -43,7 +43,7 @@ Yi UI 面向**中文产品**：文档用简体中文写，组件的默认文案�
 - **跟随主题** —— 所有颜色都取自主题变量：亮 / 暗模式加 14 套颜色主题，切换时组件自动变色。
 - **方条控件系列** —— 数值滑块、分段选择、开关、色调、角度、二维拖拽板共用一套高度与外观，可以拼成参数面板，并一键把当前参数复制为 JSX。
 - **动效有分寸** —— 进入视口才播放、离屏自动暂停、尊重「减少动态效果」。
-- **静态友好** —— 全站纯静态导出；依赖测量或画布的组件在脚本加载前渲染同尺寸占位，不会出现空白或布局跳动。
+- **预渲染友好** —— 页面在构建时全部预渲染；依赖测量或画布的组件在脚本加载前渲染同尺寸占位，不会出现空白或布局跳动。
 - **对 AI 友好** —— 每篇文档都有 Markdown 版本，并提供 [`llms.txt`](https://yiui.dev/llms.txt) 与 [`llms-full.txt`](https://yiui.dev/llms-full.txt)。
 
 ## 快速开始
@@ -121,7 +121,7 @@ pnpm dev
 | 命令 | 作用 |
 | --- | --- |
 | `pnpm dev` | 启动开发服务器 |
-| `pnpm build` | 静态构建，产物在 `out/` |
+| `pnpm build` | 生产构建（`pnpm start` 本地预览） |
 | `pnpm lint` | 代码检查 |
 | `pnpm registry:build` | 生成 `public/r/*.json` 等 registry 产物 |
 | `pnpm registry:lint` | 检查 registry 条目的依赖、文件与书写规范 |
@@ -147,7 +147,7 @@ public/r/           构建生成的 registry JSON
 
 ## 技术栈
 
-[Next.js](https://nextjs.org) 16（App Router，纯静态导出）· [React](https://react.dev) 19 · [Tailwind CSS](https://tailwindcss.com) v4 · [shadcn/ui](https://ui.shadcn.com) · [Base UI](https://base-ui.com) · [Motion](https://motion.dev) · [Fumadocs](https://fumadocs.dev)（内容层）· [Shiki](https://shiki.style) · [Recharts](https://recharts.org)
+[Next.js](https://nextjs.org) 16（App Router，部署在 Vercel）· [React](https://react.dev) 19 · [Tailwind CSS](https://tailwindcss.com) v4 · [shadcn/ui](https://ui.shadcn.com) · [Base UI](https://base-ui.com) · [Motion](https://motion.dev) · [Fumadocs](https://fumadocs.dev)（内容层）· [Shiki](https://shiki.style) · [Recharts](https://recharts.org)
 
 ## 参与贡献
 
