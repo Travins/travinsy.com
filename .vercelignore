@@ -1,0 +1,11 @@
+# vercel CLI 直接上传本地目录时排除的文件（与 .gitignore 中的本机专用项保持一致）
+node_modules
+.next
+out
+.source
+design
+.qa
+.forbidden-terms
+AGENTS.local.md
+.env*
+*.tsbuildinfo
