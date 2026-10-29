@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { Analytics } from "@vercel/analytics/next"
 
 import { SiteFooter } from "@/components/site/site-footer"
 import { SiteHeader } from "@/components/site/site-header"
@@ -7,6 +8,7 @@ import { SiteHeader } from "@/components/site/site-header"
  * 站点外壳：页头 + 页脚 + 跳转链接，并统一全站内容区宽度。
  * `--grid-width` 只在这里设置一次（80rem），所有栏目共用，切换页面时竖线位置不会跳动；
  * registry 组件自身的默认值（48rem）不受影响，站点通过变量覆盖。
+ * 访问统计（Vercel Web Analytics）也挂在这里而不是根布局：/view/ 预览页会被 iframe 嵌入，不计入访问量。
  */
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
@@ -21,6 +23,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <SiteHeader />
       {children}
       <SiteFooter />
+      <Analytics />
     </div>
   )
 }
