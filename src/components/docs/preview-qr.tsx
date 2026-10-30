@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import Link from "next/link"
 import { Smartphone } from "lucide-react"
 import { encode } from "uqr"
 
@@ -54,45 +55,59 @@ function QrCode({ value, className }: { value: string; className?: string }) {
 }
 
 /**
- * 预览框工具栏上的「手机扫码体验」：二维码指向这个示例的全屏页（/demo/<示例名>/），
- * 扫开后只有这一个示例。只在桌面宽度显示，手机上本来就在手机里
+ * 预览框工具栏上的「手机体验」：指向这个示例的全屏页（/demo/<示例名>/），打开后只有这一个示例。
+ * 桌面上点开是二维码，用手机扫；手机上已经在手机里了，点一下直接进全屏页
  */
 export function PreviewQrButton({ name }: { name: string }) {
   // 打开时才读地址：服务端没有 window，也免得在 effect 里同步状态
   const [url, setUrl] = useState("")
   const local = url.includes("localhost") || url.includes("127.0.0.1")
   return (
-    <Popover
-      onOpenChange={(open) => open && setUrl(phoneUrl(`/demo/${name}/`))}
-    >
-      <IconTip label="手机扫码体验">
-        <PopoverTrigger
-          aria-label="手机扫码体验这个示例"
+    <>
+      <IconTip label="全屏体验">
+        <Link
+          href={`/demo/${name}/`}
+          aria-label="全屏体验这个示例"
           className={cn(
             buttonVariants({ variant: "ghost", size: "icon-sm" }),
-            "text-muted-foreground hover:text-foreground max-md:hidden",
+            "text-muted-foreground hover:text-foreground md:hidden",
           )}
         >
           <Smartphone className="size-4" />
-        </PopoverTrigger>
+        </Link>
       </IconTip>
-      <PopoverContent align="end" className="w-60 items-center gap-2 p-4">
-        {url ? <QrCode value={url} className="size-44" /> : null}
-        <p className="text-sm font-medium">手机扫码体验这个示例</p>
-        <p className="text-center text-xs text-muted-foreground">
-          {local
-            ? "没有取到局域网地址，手机打不开 localhost"
-            : "在真机上试触摸、软键盘与底部面板"}
-        </p>
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="w-full truncate text-center font-mono text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-        >
-          {url}
-        </a>
-      </PopoverContent>
-    </Popover>
+      <Popover
+        onOpenChange={(open) => open && setUrl(phoneUrl(`/demo/${name}/`))}
+      >
+        <IconTip label="手机扫码体验">
+          <PopoverTrigger
+            aria-label="手机扫码体验这个示例"
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon-sm" }),
+              "text-muted-foreground hover:text-foreground max-md:hidden",
+            )}
+          >
+            <Smartphone className="size-4" />
+          </PopoverTrigger>
+        </IconTip>
+        <PopoverContent align="end" className="w-60 items-center gap-2 p-4">
+          {url ? <QrCode value={url} className="size-44" /> : null}
+          <p className="text-sm font-medium">手机扫码体验这个示例</p>
+          <p className="text-center text-xs text-muted-foreground">
+            {local
+              ? "没有取到局域网地址，手机打不开 localhost"
+              : "在真机上试触摸、软键盘与底部面板"}
+          </p>
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full truncate text-center font-mono text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+          >
+            {url}
+          </a>
+        </PopoverContent>
+      </Popover>
+    </>
   )
 }
