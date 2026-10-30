@@ -20,10 +20,10 @@ export default function RegionPickerMobileDemo() {
 
   return (
     <div className="rounded-[2.5rem] border border-edge bg-muted p-2 shadow-lg">
-      {/* 屏幕：relative + overflow-hidden，让底部面板和遮罩只盖住它 */}
+      {/* 屏幕：relative + overflow-clip，让底部面板和遮罩只盖住它；clip 不像 hidden 那样能被滚动 */}
       <div
         ref={screenRef}
-        className="relative flex h-[600px] w-[300px] flex-col overflow-hidden rounded-[2rem] bg-background"
+        className="relative flex h-[600px] w-[300px] flex-col overflow-clip rounded-[2rem] bg-background"
       >
         <div className="flex h-9 shrink-0 items-center justify-between px-6 font-mono text-[11px] font-medium">
           <span>9:41</span>
@@ -46,7 +46,11 @@ export default function RegionPickerMobileDemo() {
             <label htmlFor="mobile-consignee" className="text-xs font-medium">
               收货人
             </label>
-            <Input id="mobile-consignee" defaultValue="王小明" className="h-9" />
+            <Input
+              id="mobile-consignee"
+              defaultValue="王小明"
+              className="h-9"
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label htmlFor="mobile-region" className="text-xs font-medium">

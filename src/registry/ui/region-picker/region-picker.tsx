@@ -21,6 +21,11 @@ import { createRegionIndex, formatRegionPath } from "./utils"
 
 const EMPTY_PATH: RegionOption[] = []
 
+// 底部面板的遮罩：把后面的页面压暗，亮暗模式下都该是黑色半透明，不跟随主题色。
+// 不加背景模糊：模糊淡入时 Chrome 会逐帧突变，看起来像一层东西从上往下闪过
+// registry-lint-disable-next-line no-hardcoded-color
+const SCRIM = "bg-black/40"
+
 /** 订阅媒体查询；服务端与首帧按桌面渲染，只影响打开后的容器，触发器两边一致 */
 function useMediaQuery(query: string) {
   return React.useSyncExternalStore(
@@ -256,14 +261,19 @@ function RegionPicker({
             <Dialog.Backdrop
               data-slot="region-picker-backdrop"
               className={cn(
-                "inset-0 z-50 bg-background/70 backdrop-blur-xs transition-opacity duration-[320ms] data-ending-style:opacity-0 data-starting-style:opacity-0",
+                `inset-0 z-50 ${SCRIM} transition-opacity duration-[320ms] data-ending-style:opacity-0 data-starting-style:opacity-0`,
                 contained ? "absolute" : "fixed",
               )}
             />
             <Dialog.Popup
               data-slot="region-picker-sheet"
               // 不自动聚焦搜索框，免得软键盘弹出来盖住列表；焦点先落在关闭按钮上
-              initialFocus={closeRef}
+              // 聚焦时 preventScroll：面板起点在容器下方之外，默认的 focus 会把带
+              // overflow 的容器整体滚上去，再随面板上滑滚回来，看起来像遮罩从上面落下
+              initialFocus={() => {
+                closeRef.current?.focus({ preventScroll: true })
+                return false
+              }}
               className={cn(
                 "inset-x-0 bottom-0 z-50 mx-auto flex w-full max-w-xl flex-col rounded-t-xl border-t bg-popover text-sm text-popover-foreground shadow-lg transition-transform duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)] outline-none data-ending-style:translate-y-full data-ending-style:duration-200 data-ending-style:ease-in data-starting-style:translate-y-full motion-reduce:transition-none sm:border-x",
                 contained ? "absolute h-[85%]" : "fixed h-[85dvh]",

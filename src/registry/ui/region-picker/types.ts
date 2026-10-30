@@ -82,7 +82,7 @@ type RegionPickerProps = Omit<
   presentation?: "auto" | "sheet" | "popover"
   /**
    * 底部面板挂载到哪个元素里，默认 `document.body`。
-   * 传入后面板只盖住这个元素（元素需要 `position: relative` 与 `overflow: hidden`），也不锁定整页滚动；
+   * 传入后面板只盖住这个元素（元素需要 `position: relative` 与 `overflow: clip`，用 clip 而不是 hidden，元素就不会被滚动），也不锁定整页滚动；
    * 用于把选择器放进手机外框、预览窗格这类局部区域
    */
   container?: HTMLElement | React.RefObject<HTMLElement | null> | null
