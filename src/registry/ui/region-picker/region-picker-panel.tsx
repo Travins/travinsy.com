@@ -305,9 +305,15 @@ function RegionPickerPanel({
   // 浮层高度一旦随每一步的选项数变化，定位就会在输入框上方、下方之间来回翻，看起来像在抖
   const bodyClass = sheet ? "flex-1" : "h-64"
 
-  const renderOption = (row: Row, i: number, layout: "row" | "chip") => (
+  const renderOption = (
+    row: Row,
+    i: number,
+    layout: "row" | "chip",
+    className?: string,
+  ) => (
     <RegionPickerOption
       key={row.path.map((node) => node.code).join("/")}
+      className={className}
       id={optionId(i)}
       title={formatRegionPath(row.path)}
       variant={variant}
@@ -367,6 +373,7 @@ function RegionPickerPanel({
             role="group"
             aria-labelledby={groupId}
             data-slot="region-picker-group"
+            data-group-letter={group.letter}
             className={cn(
               sheet
                 ? ""
@@ -379,7 +386,7 @@ function RegionPickerPanel({
               className={cn(
                 "font-mono text-xs font-medium text-muted-foreground",
                 sheet
-                  ? "sticky top-0 z-10 bg-muted/80 px-4 py-1 backdrop-blur-sm"
+                  ? "sticky top-0 z-10 bg-muted px-4 py-1"
                   : "flex h-8 items-center justify-center",
               )}
             >
@@ -391,6 +398,8 @@ function RegionPickerPanel({
                   rows[start + i],
                   start + i,
                   sheet ? "row" : "chip",
+                  // 右侧给字母索引条留出位置，箭头和对勾不被它压住
+                  sheet ? "pr-9" : undefined,
                 ),
               )}
             </div>
@@ -408,10 +417,35 @@ function RegionPickerPanel({
     </div>
   )
 
+  const groupElement = (letter: string) =>
+    scrollRef.current?.querySelector<HTMLElement>(
+      `[data-group-letter="${letter}"]`,
+    )
+
   const jumpTo = (letter: string) => {
-    const group = document.getElementById(`${baseId}-group-${letter}`)
+    const group = groupElement(letter)
     if (group && scrollRef.current)
       scrollWithin(scrollRef.current, group, "start")
+  }
+
+  // 字母栏跟着列表滚动高亮当前所在的字母，让两者连成一体；换一步时回到第一组
+  const [spy, setSpy] = React.useState<{ key: string; letter: string } | null>(
+    null,
+  )
+  const spyGroups = sheet && !searching ? groups : null
+  const currentLetter =
+    spy?.key === listKey ? spy.letter : (spyGroups?.[0]?.letter ?? null)
+  const onListScroll = () => {
+    const list = scrollRef.current
+    if (!list || !spyGroups) return
+    const top = list.getBoundingClientRect().top
+    let letter = spyGroups[0].letter
+    for (const group of spyGroups) {
+      const element = groupElement(group.letter)
+      if (!element || element.getBoundingClientRect().top - top > 1) break
+      letter = group.letter
+    }
+    if (letter !== currentLetter) setSpy({ key: listKey, letter })
   }
 
   return (
@@ -491,12 +525,12 @@ function RegionPickerPanel({
             role="listbox"
             aria-label={searching ? labels.searchLabel : stepLabel(level)}
             data-slot="region-picker-list"
+            onScroll={onListScroll}
             className={cn(
               "overflow-y-auto overscroll-contain",
               sheet
                 ? "h-full pb-[env(safe-area-inset-bottom)]"
                 : "h-full px-2.5",
-              sheet && groups && !searching && "pr-6",
             )}
           >
             <div
@@ -537,18 +571,31 @@ function RegionPickerPanel({
             <nav
               aria-label={labels.letterIndex}
               data-slot="region-picker-index"
-              className="absolute inset-y-0 right-0 flex w-6 flex-col items-center justify-center"
+              className="absolute top-8 right-1 bottom-2 z-20 flex w-6 flex-col items-center justify-center"
             >
-              {groups.map((group) => (
-                <button
-                  key={group.letter}
-                  type="button"
-                  className="flex h-5 w-6 items-center justify-center font-mono text-[11px] text-muted-foreground active:text-primary"
-                  onClick={() => jumpTo(group.letter)}
-                >
-                  {group.letter}
-                </button>
-              ))}
+              {groups.map((group) => {
+                const current = group.letter === currentLetter
+                return (
+                  <button
+                    key={group.letter}
+                    type="button"
+                    aria-current={current ? "location" : undefined}
+                    className="group/letter flex h-5 w-6 items-center justify-center"
+                    onClick={() => jumpTo(group.letter)}
+                  >
+                    <span
+                      className={cn(
+                        "flex size-4 items-center justify-center rounded-full font-mono text-[10px] leading-none",
+                        current
+                          ? "bg-primary font-semibold text-primary-foreground"
+                          : "text-muted-foreground group-active/letter:text-primary",
+                      )}
+                    >
+                      {group.letter}
+                    </span>
+                  </button>
+                )
+              })}
             </nav>
           )}
         </div>

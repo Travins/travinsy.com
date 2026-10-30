@@ -21,10 +21,8 @@ import { createRegionIndex, formatRegionPath } from "./utils"
 
 const EMPTY_PATH: RegionOption[] = []
 
-// 底部面板的遮罩：把后面的页面压暗，亮暗模式下都该是黑色半透明，不跟随主题色。
-// 不加背景模糊：模糊淡入时 Chrome 会逐帧突变，看起来像一层东西从上往下闪过
-// registry-lint-disable-next-line no-hardcoded-color
-const SCRIM = "bg-black/40"
+// 底部面板的遮罩：用半透明的背景色把后面的页面淡化，亮色下是白雾、暗色下是暗层，随主题走
+const SCRIM = "bg-background/70 backdrop-blur-xs"
 
 /** 订阅媒体查询；服务端与首帧按桌面渲染，只影响打开后的容器，触发器两边一致 */
 function useMediaQuery(query: string) {

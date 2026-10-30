@@ -211,7 +211,7 @@ function RegionPickerOption({
         layout === "chip"
           ? "h-8 rounded-md border border-border px-2.5 text-sm transition-colors hover:border-foreground/25 hover:bg-muted data-selected:border-primary data-selected:bg-primary/10 data-selected:font-medium data-selected:text-primary data-active:border-ring data-active:ring-2 data-active:ring-ring/30"
           : sheet
-            ? "h-11 px-4 text-base active:bg-muted data-selected:font-medium data-selected:text-primary"
+            ? "h-11 px-4 text-sm active:bg-muted data-selected:font-medium data-selected:text-primary"
             : "h-8 rounded-md px-2.5 text-sm data-selected:font-medium data-selected:text-primary data-active:bg-muted",
         className,
       )}
