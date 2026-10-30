@@ -100,6 +100,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "region-picker-demo": lazy(() => import("./examples/region-picker-demo")),
   "region-picker-depth-demo": lazy(() => import("./examples/region-picker-depth-demo")),
   "region-picker-form-demo": lazy(() => import("./examples/region-picker-form-demo")),
+  "region-picker-mobile-demo": lazy(() => import("./examples/region-picker-mobile-demo")),
   "ripple-demo": lazy(() => import("./examples/ripple-demo")),
   "ripple-online-demo": lazy(() => import("./examples/ripple-online-demo")),
   "ripple-pulse-demo": lazy(() => import("./examples/ripple-pulse-demo")),

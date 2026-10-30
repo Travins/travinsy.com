@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Dialog } from "@base-ui/react/dialog"
 import { ChevronDown, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -9,12 +10,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
@@ -59,6 +54,8 @@ function RegionPicker({
   fallbackLabel,
   title: titleProp,
   size = "default",
+  presentation = "auto",
+  container,
   open: openProp,
   defaultOpen = false,
   onOpenChange,
@@ -75,7 +72,10 @@ function RegionPicker({
   React.useImperativeHandle(ref, () => triggerRef.current as HTMLButtonElement)
   const searchRef = React.useRef<HTMLInputElement>(null)
   const closeRef = React.useRef<HTMLButtonElement>(null)
-  const sheet = useMediaQuery(SHEET_QUERY)
+  const narrow = useMediaQuery(SHEET_QUERY)
+  const sheet = presentation === "sheet" || (presentation === "auto" && narrow)
+  // 挂进指定容器时（如文档里的手机外框），面板只盖住容器、不锁整页滚动
+  const contained = container !== undefined
   const proxyRef = React.useRef<HTMLInputElement>(null)
 
   const [open, setOpen] = useControllableState({
@@ -246,43 +246,59 @@ function RegionPicker({
       className={cn("relative w-full", className)}
     >
       {sheet ? (
-        <Sheet open={open} onOpenChange={(next) => setOpen(next)}>
-          <SheetTrigger {...triggerProps} />
-          <SheetContent
-            side="bottom"
-            showCloseButton={false}
-            // 不自动聚焦搜索框，免得软键盘弹出来盖住列表；焦点先落在关闭按钮上
-            initialFocus={closeRef}
-            className="mx-auto w-full max-w-xl gap-0 rounded-t-xl data-[side=bottom]:h-[85dvh] sm:border-x"
-          >
-            <div className="flex h-12 shrink-0 items-center justify-between gap-1 pr-2 pl-4">
-              <SheetTitle>{labels.title}</SheetTitle>
-              {/* 标题栏里的按钮同一档 lg：清除与关闭并排 */}
-              {code !== null && !required && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="lg"
-                  className="ml-auto text-muted-foreground"
-                  onClick={() => commit(EMPTY_PATH)}
-                >
-                  {labels.clear}
-                </Button>
+        <Dialog.Root
+          open={open}
+          onOpenChange={(next) => setOpen(next)}
+          modal={contained ? "trap-focus" : true}
+        >
+          <Dialog.Trigger {...triggerProps} />
+          <Dialog.Portal container={container}>
+            <Dialog.Backdrop
+              data-slot="region-picker-backdrop"
+              className={cn(
+                "inset-0 z-50 bg-background/70 backdrop-blur-xs transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0",
+                contained ? "absolute" : "fixed",
               )}
-              <Button
-                ref={closeRef}
-                type="button"
-                variant="ghost"
-                size="icon-lg"
-                aria-label={labels.close}
-                onClick={() => setOpen(false)}
-              >
-                <X aria-hidden="true" />
-              </Button>
-            </div>
-            {panel("sheet")}
-          </SheetContent>
-        </Sheet>
+            />
+            <Dialog.Popup
+              data-slot="region-picker-sheet"
+              // 不自动聚焦搜索框，免得软键盘弹出来盖住列表；焦点先落在关闭按钮上
+              initialFocus={closeRef}
+              className={cn(
+                "inset-x-0 bottom-0 z-50 mx-auto flex w-full max-w-xl flex-col rounded-t-xl border-t bg-popover text-sm text-popover-foreground shadow-lg transition-transform duration-200 ease-out outline-none data-ending-style:translate-y-full data-starting-style:translate-y-full motion-reduce:transition-none sm:border-x",
+                contained ? "absolute h-[85%]" : "fixed h-[85dvh]",
+              )}
+            >
+              <div className="flex h-12 shrink-0 items-center justify-between gap-1 pr-2 pl-4">
+                <Dialog.Title className="text-base font-medium">
+                  {labels.title}
+                </Dialog.Title>
+                {/* 标题栏里的按钮同一档 lg：清除与关闭并排 */}
+                {code !== null && !required && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="lg"
+                    className="ml-auto text-muted-foreground"
+                    onClick={() => commit(EMPTY_PATH)}
+                  >
+                    {labels.clear}
+                  </Button>
+                )}
+                <Dialog.Close
+                  ref={closeRef}
+                  aria-label={labels.close}
+                  render={
+                    <Button type="button" variant="ghost" size="icon-lg" />
+                  }
+                >
+                  <X aria-hidden="true" />
+                </Dialog.Close>
+              </div>
+              {panel("sheet")}
+            </Dialog.Popup>
+          </Dialog.Portal>
+        </Dialog.Root>
       ) : (
         <Popover open={open} onOpenChange={(next) => setOpen(next)}>
           <PopoverTrigger {...triggerProps} />

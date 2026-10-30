@@ -74,6 +74,18 @@ type RegionPickerProps = Omit<
    * @default "default"
    */
   size?: RegionPickerSize
+  /**
+   * 选择面板的形态：`auto` 在手机与触屏设备上用底部面板、桌面用下拉浮层；
+   * `sheet` / `popover` 固定其中一种
+   * @default "auto"
+   */
+  presentation?: "auto" | "sheet" | "popover"
+  /**
+   * 底部面板挂载到哪个元素里，默认 `document.body`。
+   * 传入后面板只盖住这个元素（元素需要 `position: relative` 与 `overflow: hidden`），也不锁定整页滚动；
+   * 用于把选择器放进手机外框、预览窗格这类局部区域
+   */
+  container?: HTMLElement | React.RefObject<HTMLElement | null> | null
   /** 浮层是否打开，受控时传入 */
   open?: boolean
   /**

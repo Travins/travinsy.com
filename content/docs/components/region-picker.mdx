@@ -150,6 +150,12 @@ findRegionPath(chinaRegions, "999999") // []，找不到返回空数组
 
 ## 示例
 
+### 手机上的体验
+
+手机与触屏设备上，选择器从底部弹出面板。这个示例把一台「手机」放在页面里：`presentation="sheet"` 固定用底部面板，`container` 让面板挂进手机屏幕、只盖住屏幕，在桌面上也能试分步选择、字母索引和点步骤回退。
+
+<ComponentPreview name="region-picker-mobile-demo" />
+
 ### 表单提交
 
 设了 `name`，表单提交的是最末一级的代码，未选时是空串；`required` 未选时拦住提交，浏览器提示「请选择地区」。非受控的表单 `reset` 会回到 `defaultValue`。
@@ -180,6 +186,7 @@ findRegionPath(chinaRegions, "999999") // []，找不到返回空数组
 - **桌面**：输入框下方弹出浮层，宽 30rem（不小于触发器、不超出视口）。
   - 步骤条横排在顶部，搜索框打开即聚焦。
   - 选项是带边框的紧凑按钮；分组时按字母两栏排布，最高约 18rem，超出滚动。
+- 用 `presentation` 固定形态（`"sheet"` / `"popover"`），默认 `"auto"` 按上面的规则自动切换；`container` 把底部面板挂进指定元素，只盖住它、不锁整页滚动，适合预览窗格、手机外框这类局部区域。
 - **步骤数一开始就显示**：数据最深三级就显示三步；选了直辖市后剩两步，第二步名称自动对齐为「区县」（`labels.levels` 从最深一级往上对齐）。
 - 选完一步自动进入下一步，最后一步选完即确认并关闭；换步骤时列表向前或向后滑入，系统开启「减弱动态效果」时不播放。
 - 搜索时步骤条暂时隐藏，结果单列显示完整路径与代码。
@@ -289,6 +296,7 @@ type RegionPickerProps = {
 | 触发器文字 | `region-picker-value-text` |
 | 提交与校验用的隐藏输入 | `region-picker-value` |
 | 面板内容（带 `data-variant="sheet"` 或 `"popover"`） | `region-picker-panel` |
+| 手机底部面板 / 遮罩 | `region-picker-sheet` / `region-picker-backdrop` |
 | 搜索框 | `region-picker-search` |
 | 步骤条 / 单个步骤（带 `data-state`：`done` / `current` / `todo`） | `region-picker-steps` / `region-picker-step` |
 | 拼音首字母分组 / 手机字母索引条 | `region-picker-group` / `region-picker-index` |
