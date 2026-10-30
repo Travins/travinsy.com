@@ -41,7 +41,8 @@ Yi UI is **Chinese-first**: the docs are in Simplified Chinese, default componen
 - **You own the code** — Install with the shadcn CLI; the component, the registry items it depends on and the CSS variables it needs are written into your project together.
 - **Built on Base UI** — Interactive primitives use [Base UI](https://base-ui.com), so keyboard support, focus management and screen-reader semantics come built in.
 - **Theme-aware** — Every color comes from theme variables: light / dark plus 14 color themes, and components recolor as you switch.
-- **A family of bar controls** — Value slider, segmented control, switch, tone picker, angle dial and XY pad share one height scale and look. Combine them into a parameter panel and copy the current values as JSX in one click.
+- **A family of bar controls** — Value slider, segmented control, switch, tone picker, angle dial and XY pad share one height scale and look. Combine them into a parameter panel and copy the current values as JSX in one click. The Chinese form controls — amount, phone number, ID number, quantity and region — share the same look.
+- **Works on phones** — On touch devices buttons and inputs grow one step (36 / 40 / 44px), drag controls tell scrolling from dragging, numeric inputs bring up the number keyboard, and every example can be opened on a phone by scanning a QR code.
 - **Thoughtful motion** — Animations start when scrolled into view, pause off-screen and respect "reduce motion".
 - **Prerender-friendly** — Every page is prerendered at build time. Components that measure layout or draw on a canvas render a same-size placeholder before scripts load, so there are no blank areas or layout shifts.
 - **AI-friendly** — Every doc page has a Markdown version, plus [`llms.txt`](https://yiui.dev/llms.txt) and [`llms-full.txt`](https://yiui.dev/llms-full.txt).
@@ -84,19 +85,20 @@ See the [installation guide](https://yiui.dev/docs/installation/) for where file
 | Group | Components |
 | --- | --- |
 | Graphics & Motion | [Isometric Mark](https://yiui.dev/components/isometric-mark/) · [Flow Diagram](https://yiui.dev/components/flow-diagram/) · [Dotted Globe](https://yiui.dev/components/globe/) · [Glyph Field](https://yiui.dev/components/glyph-field/) · [Shuffle Grid](https://yiui.dev/components/shuffle-grid/) · [Orbit](https://yiui.dev/components/orbit/) · [Ripple](https://yiui.dev/components/ripple/) · [Code Stack](https://yiui.dev/components/code-stack/) |
-| Form & Input | [Value Slider](https://yiui.dev/components/value-slider/) · [Control Panel](https://yiui.dev/components/control-panel/) · [XY Pad](https://yiui.dev/components/xy-pad/) · [Angle Dial](https://yiui.dev/components/angle-dial/) · [Segmented Control](https://yiui.dev/components/segmented-control/) · [Toggle Switch](https://yiui.dev/components/toggle-switch/) · [Tone Picker](https://yiui.dev/components/tone-picker/) |
+| Form & Input | [Value Slider](https://yiui.dev/components/value-slider/) · [Control Panel](https://yiui.dev/components/control-panel/) · [XY Pad](https://yiui.dev/components/xy-pad/) · [Angle Dial](https://yiui.dev/components/angle-dial/) · [Segmented Control](https://yiui.dev/components/segmented-control/) · [Toggle Switch](https://yiui.dev/components/toggle-switch/) · [Tone Picker](https://yiui.dev/components/tone-picker/) · [Amount Input](https://yiui.dev/components/amount-input/) · [Phone Input](https://yiui.dev/components/phone-input/) · [ID Number Input](https://yiui.dev/components/id-number-input/) · [Number Stepper](https://yiui.dev/components/number-stepper/) · [Steps](https://yiui.dev/components/steps/) · [Region Picker](https://yiui.dev/components/region-picker/) |
 | Data Display | [Chart Card](https://yiui.dev/components/chart-card/) · [Stat Card](https://yiui.dev/components/stat-card/) · [Mini Chart](https://yiui.dev/components/mini-chart/) |
 | Text & Marquee | [Text Animate](https://yiui.dev/components/text-animate/) · [Marquee](https://yiui.dev/components/marquee/) |
 | Content Display | [Timeline](https://yiui.dev/components/timeline/) · [Card Stack](https://yiui.dev/components/card-stack/) · [Checklist](https://yiui.dev/components/checklist/) |
 | Time | [Local Time](https://yiui.dev/components/local-time/) · [Greeting](https://yiui.dev/components/greeting/) |
 | Layout | [Grid Layout](https://yiui.dev/components/grid-layout/) |
+| Utilities | [Chinese Number](https://yiui.dev/components/chinese-number/) · [China Regions](https://yiui.dev/components/china-regions/) · [Flow Tone](https://yiui.dev/components/flow-tone/) |
 
 ## Blocks & templates
 
 | Name | Description |
 | --- | --- |
 | [Settings `settings-01`](https://yiui.dev/blocks/settings-01/) | A full settings page built from the bar controls: section nav, live preview, modified count, reset and async save. |
-| [Split sign-in `auth-01`](https://yiui.dev/blocks/auth-01/) | Brand panel plus forms: password / one-time-code sign-in, sign-up with a strength meter, password recovery. |
+| [Split sign-in `auth-01`](https://yiui.dev/blocks/auth-01/) | Brand panel plus forms: password / one-time-code sign-in (auto-formatted phone number, inline send-code button with countdown), sign-up with a strength meter, password recovery. |
 | [AI assistant `agent-chat-01`](https://yiui.dev/blocks/agent-chat-01/) | Embedded and floating layouts showing reasoning summaries, tool calls, sources and charts, with a built-in streaming demo. |
 | [Console shell `app-shell-01`](https://yiui.dev/templates/app-shell-01/) | Fixed header, collapsible nav, workspace sidebar and AI assistant, with example pages full of stat cards and charts. |
 
@@ -126,7 +128,8 @@ pnpm dev
 | `pnpm registry:build` | Generate `public/r/*.json` and other registry output |
 | `pnpm registry:lint` | Check registry items for dependencies, files and conventions |
 | `pnpm qa:shots <name>` | Screenshot QA on the build (light / dark, color themes, narrow widths, errors, overflow) |
-| `pnpm qa:install [name…]` | Local install, type, build and browser QA; `--fresh`, `--keep`, `--namespace` |
+| `pnpm qa:install [name…]` | Local install, type, build and browser QA; `--fresh`, `--keep`, `--namespace`, `--monorepo` |
+| `pnpm qa:interaction` | Interaction QA: touch heights, focus styles, keyboard use, whether errors clear once fixed; `--build` checks the production build |
 | `pnpm qa:loading` | Block scripts and check pre-hydration placeholders and blank areas |
 
 ## Project structure
