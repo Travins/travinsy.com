@@ -131,7 +131,7 @@ async function main() {
     )
     const names = args.filter((a) => !a.startsWith("--"))
     for (const arg of args.filter((a) => a.startsWith("--")))
-      if (!["--keep", "--fresh", "--namespace"].includes(arg))
+      if (!["--keep", "--fresh", "--namespace", "--monorepo"].includes(arg))
         throw Error(`未知选项 ${arg}`)
     for (const name of names)
       if (!catalog.items.some((i) => i.name === name))
@@ -212,6 +212,75 @@ async function main() {
       )
     }
     const appRoot = existsSync(join(app, "src/app")) ? "src" : ""
+    if (args.includes("--monorepo")) {
+      const configPath = join(app, "components.json")
+      const config = JSON.parse(await readFile(configPath, "utf8"))
+      config.aliases = {
+        components: "@acme/ui/components",
+        ui: "@acme/ui/components",
+        lib: "@acme/ui/lib",
+        hooks: "@acme/ui/hooks",
+        utils: "@acme/ui/lib/utils",
+      }
+      await writeFile(configPath, JSON.stringify(config, null, 2))
+      const tsconfigPath = join(app, "tsconfig.json")
+      const ts = await import("typescript")
+      const parsed = ts.parseConfigFileTextToJson(
+        tsconfigPath,
+        await readFile(tsconfigPath, "utf8"),
+      )
+      if (parsed.error) throw Error("无法读取探针 tsconfig")
+      const configTs = parsed.config
+      configTs.compilerOptions.paths = {
+        ...configTs.compilerOptions.paths,
+        "@acme/ui/components": [
+          `./${appRoot ? appRoot + "/" : ""}components/ui`,
+        ],
+        "@acme/ui/lib": [`./${appRoot ? appRoot + "/" : ""}lib`],
+        "@acme/ui/hooks": [`./${appRoot ? appRoot + "/" : ""}hooks`],
+        "@acme/ui/components/*": [
+          `./${appRoot ? appRoot + "/" : ""}components/ui/*`,
+        ],
+        "@acme/ui/lib/*": [`./${appRoot ? appRoot + "/" : ""}lib/*`],
+        "@acme/ui/hooks/*": [`./${appRoot ? appRoot + "/" : ""}hooks/*`],
+      }
+      await writeFile(tsconfigPath, JSON.stringify(configTs, null, 2))
+      // 初始化已有的官方原语也必须采用探针别名。
+      async function rewriteAliases(dir: string) {
+        for (const entry of await readdir(dir, { withFileTypes: true })) {
+          if (["node_modules", ".next", ".git"].includes(entry.name)) continue
+          const filename = join(dir, entry.name)
+          if (entry.isDirectory()) await rewriteAliases(filename)
+          else if (/\.tsx?$/.test(entry.name)) {
+            const text = await readFile(filename, "utf8")
+            await writeFile(
+              filename,
+              text
+                .replaceAll("@/components/ui/", "@acme/ui/components/")
+                .replaceAll("@/lib/", "@acme/ui/lib/")
+                .replaceAll("@/hooks/", "@acme/ui/hooks/"),
+            )
+          }
+        }
+      }
+      await rewriteAliases(app)
+      if (items.some((item) => item.name === "value-slider")) {
+        const view = await run(
+          "monorepo-dry-run-view",
+          [
+            ...cli,
+            "add",
+            `${base}/r/value-slider.json`,
+            "--dry-run",
+            "--view",
+            `${appRoot ? appRoot + "/" : ""}components/ui/value-slider/value-slider.tsx`,
+          ],
+          app,
+        )
+        if (view.code) throw Error("monorepo dry-run view 失败")
+      }
+    }
+    const installedTargets = new Map<string, string>()
     for (const item of items) {
       const row = {
         name: item.name,
@@ -273,6 +342,16 @@ async function main() {
         row.notes.push("CLI 失败、覆盖提示或未写文件")
         continue
       }
+      for (const file of item.files) {
+        if (!file.target?.startsWith("@ui/")) continue
+        const target = join(app, appRoot, "components/ui", file.target.slice(4))
+        if (!existsSync(target)) row.notes.push(`缺少组件独立文件 ${target}`)
+        else if (!installedTargets.has(target))
+          installedTargets.set(target, await readFile(target, "utf8"))
+      }
+      for (const [target, content] of installedTargets)
+        if ((await readFile(target, "utf8")) !== content)
+          row.notes.push(`已安装文件被覆盖 ${target}`)
       row.install = "通过"
       try {
         // 区块、模板自带页面，直接访问；组件与工具库（registry:lib）用文档示例生成页面
@@ -347,7 +426,7 @@ async function main() {
                   console.log(`  示例额外安装官方组件 ${official[1]}`)
                 }
                 // 示例引用的本站条目不在被测条目的依赖里（如选择器示例用的行政区划数据、时间线示例用的统计卡片），
-                // 按 target 或源码路径找到对应条目补装，只是补齐示例环境。registry:ui 的文件多半没写 target，只能按 path 对
+                // 按 target 或源码路径找到对应条目补装，只是补齐示例环境。
                 const installed = () =>
                   [
                     path + ".tsx",
@@ -396,6 +475,11 @@ async function main() {
               relative(join(root, "src/registry/examples"), source),
             )
             await mkdir(dirname(target), { recursive: true })
+            if (args.includes("--monorepo"))
+              text = text
+                .replaceAll("@/components/ui/", "@acme/ui/components/")
+                .replaceAll("@/lib/", "@acme/ui/lib/")
+                .replaceAll("@/hooks/", "@acme/ui/hooks/")
             await writeFile(target, text)
           }
           await copyDemo(resolve(root, "src/registry", match[1] + ".tsx"))

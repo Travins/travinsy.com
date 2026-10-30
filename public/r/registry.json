@@ -14,7 +14,8 @@
       "files": [
         {
           "path": "src/registry/ui/grid-layout/grid-layout.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/grid-layout/grid-layout.tsx"
         }
       ],
       "cssVars": {
@@ -130,27 +131,33 @@
       "files": [
         {
           "path": "src/registry/ui/local-time/local-time.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/local-time/local-time.tsx"
         },
         {
           "path": "src/registry/ui/local-time/world-clock.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/local-time/world-clock.tsx"
         },
         {
           "path": "src/registry/ui/local-time/analog-clock.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/local-time/analog-clock.tsx"
         },
         {
           "path": "src/registry/ui/local-time/time-parts.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/local-time/time-parts.tsx"
         },
         {
           "path": "src/registry/ui/local-time/zone.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/local-time/zone.ts"
         },
         {
           "path": "src/registry/ui/local-time/config.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/local-time/config.ts"
         },
         {
           "path": "src/registry/hooks/use-now.ts",
@@ -183,19 +190,23 @@
       "files": [
         {
           "path": "src/registry/ui/greeting/greeting.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/greeting/greeting.tsx"
         },
         {
           "path": "src/registry/ui/greeting/use-greeting-period.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/greeting/use-greeting-period.ts"
         },
         {
           "path": "src/registry/ui/greeting/period.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/greeting/period.ts"
         },
         {
           "path": "src/registry/ui/greeting/config.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/greeting/config.ts"
         },
         {
           "path": "src/registry/hooks/use-now.ts",
@@ -698,15 +709,18 @@
       "files": [
         {
           "path": "src/registry/ui/isometric-mark/isometric-mark.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/isometric-mark/isometric-mark.tsx"
         },
         {
           "path": "src/registry/ui/isometric-mark/geometry.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/isometric-mark/geometry.ts"
         },
         {
           "path": "src/registry/ui/isometric-mark/sound.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/isometric-mark/sound.ts"
         }
       ],
       "type": "registry:ui"
@@ -758,27 +772,33 @@
       "files": [
         {
           "path": "src/registry/ui/flow-diagram/flow-diagram.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/flow-diagram/flow-diagram.tsx"
         },
         {
           "path": "src/registry/ui/flow-diagram/elements.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/flow-diagram/elements.tsx"
         },
         {
           "path": "src/registry/ui/flow-diagram/beam.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/flow-diagram/beam.tsx"
         },
         {
           "path": "src/registry/ui/flow-diagram/route.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/flow-diagram/route.ts"
         },
         {
           "path": "src/registry/ui/flow-diagram/flow-clock.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/flow-diagram/flow-clock.tsx"
         },
         {
           "path": "src/registry/ui/flow-diagram/background.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/flow-diagram/background.ts"
         }
       ],
       "type": "registry:ui"
@@ -795,23 +815,28 @@
       "files": [
         {
           "path": "src/registry/ui/stat-card/stat-card.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/stat-card/stat-card.tsx"
         },
         {
           "path": "src/registry/ui/stat-card/stat-status.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/stat-card/stat-status.tsx"
         },
         {
           "path": "src/registry/ui/stat-card/stat-bars.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/stat-card/stat-bars.tsx"
         },
         {
           "path": "src/registry/ui/stat-card/stat-zones.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/stat-card/stat-zones.tsx"
         },
         {
           "path": "src/registry/ui/stat-card/config.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/stat-card/config.ts"
         },
         {
           "path": "src/registry/lib/data-display.ts",
@@ -859,15 +884,18 @@
       "files": [
         {
           "path": "src/registry/ui/mini-chart/mini-chart.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/mini-chart/mini-chart.tsx"
         },
         {
           "path": "src/registry/ui/mini-chart/mini-ring.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/mini-chart/mini-ring.tsx"
         },
         {
           "path": "src/registry/ui/mini-chart/mini-donut.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/mini-chart/mini-donut.tsx"
         },
         {
           "path": "src/registry/lib/data-display.ts",
@@ -915,27 +943,33 @@
       "files": [
         {
           "path": "src/registry/ui/chart-card/chart-card.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/chart-card/chart-card.tsx"
         },
         {
           "path": "src/registry/ui/chart-card/chart-gauge.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/chart-card/chart-gauge.tsx"
         },
         {
           "path": "src/registry/ui/chart-card/chart-series.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/chart-card/chart-series.tsx"
         },
         {
           "path": "src/registry/ui/chart-card/chart-ranking.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/chart-card/chart-ranking.tsx"
         },
         {
           "path": "src/registry/ui/chart-card/chart-legend.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/chart-card/chart-legend.tsx"
         },
         {
           "path": "src/registry/ui/chart-card/chart-parts.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/chart-card/chart-parts.tsx"
         },
         {
           "path": "src/registry/lib/data-display.ts",
@@ -983,7 +1017,8 @@
       "files": [
         {
           "path": "src/registry/ui/orbit/orbit.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/orbit/orbit.tsx"
         }
       ],
       "type": "registry:ui"
@@ -1003,7 +1038,8 @@
       "files": [
         {
           "path": "src/registry/ui/ripple/ripple.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/ripple/ripple.tsx"
         }
       ],
       "type": "registry:ui"
@@ -1024,35 +1060,43 @@
       "files": [
         {
           "path": "src/registry/ui/value-slider/value-slider.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/value-slider/value-slider.tsx"
         },
         {
           "path": "src/registry/ui/value-slider/value-slider-parts.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/value-slider/value-slider-parts.tsx"
         },
         {
           "path": "src/registry/ui/value-slider/types.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/value-slider/types.ts"
         },
         {
           "path": "src/registry/ui/value-slider/utils.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/value-slider/utils.ts"
         },
         {
           "path": "src/registry/ui/value-slider/sound.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/value-slider/sound.ts"
         },
         {
           "path": "src/registry/ui/value-slider/use-elastic-pull.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/value-slider/use-elastic-pull.ts"
         },
         {
           "path": "src/registry/ui/value-slider/use-touch-intent.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/value-slider/use-touch-intent.ts"
         },
         {
           "path": "src/registry/ui/value-slider/use-handle-dodge.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/value-slider/use-handle-dodge.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1104,23 +1148,28 @@
       "files": [
         {
           "path": "src/registry/ui/amount-input/amount-input.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/amount-input/amount-input.tsx"
         },
         {
           "path": "src/registry/ui/amount-input/amount-input-parts.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/amount-input/amount-input-parts.tsx"
         },
         {
           "path": "src/registry/ui/amount-input/types.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/amount-input/types.ts"
         },
         {
           "path": "src/registry/ui/amount-input/utils.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/amount-input/utils.ts"
         },
         {
           "path": "src/registry/ui/amount-input/config.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/amount-input/config.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1149,23 +1198,28 @@
       "files": [
         {
           "path": "src/registry/ui/phone-input/phone-input.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/phone-input/phone-input.tsx"
         },
         {
           "path": "src/registry/ui/phone-input/phone-input-parts.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/phone-input/phone-input-parts.tsx"
         },
         {
           "path": "src/registry/ui/phone-input/types.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/phone-input/types.ts"
         },
         {
           "path": "src/registry/ui/phone-input/utils.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/phone-input/utils.ts"
         },
         {
           "path": "src/registry/ui/phone-input/config.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/phone-input/config.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1186,27 +1240,33 @@
       "files": [
         {
           "path": "src/registry/ui/id-number-input/id-number-input.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/id-number-input/id-number-input.tsx"
         },
         {
           "path": "src/registry/ui/id-number-input/id-number-input-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/id-number-input/id-number-input-variants.ts"
         },
         {
           "path": "src/registry/ui/id-number-input/use-id-number-input-state.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/id-number-input/use-id-number-input-state.ts"
         },
         {
           "path": "src/registry/ui/id-number-input/types.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/id-number-input/types.ts"
         },
         {
           "path": "src/registry/ui/id-number-input/config.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/id-number-input/config.ts"
         },
         {
           "path": "src/registry/ui/id-number-input/utils.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/id-number-input/utils.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1232,15 +1292,18 @@
       "files": [
         {
           "path": "src/registry/ui/number-stepper/number-stepper.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/number-stepper/number-stepper.tsx"
         },
         {
           "path": "src/registry/ui/number-stepper/types.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/number-stepper/types.ts"
         },
         {
           "path": "src/registry/ui/number-stepper/use-number-stepper.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/number-stepper/use-number-stepper.ts"
         }
       ],
       "type": "registry:ui"
@@ -1260,15 +1323,18 @@
       "files": [
         {
           "path": "src/registry/ui/steps/steps.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/steps/steps.tsx"
         },
         {
           "path": "src/registry/ui/steps/types.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/steps/types.ts"
         },
         {
           "path": "src/registry/ui/steps/config.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/steps/config.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1296,27 +1362,33 @@
       "files": [
         {
           "path": "src/registry/ui/region-picker/region-picker.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/region-picker/region-picker.tsx"
         },
         {
           "path": "src/registry/ui/region-picker/region-picker-panel.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/region-picker/region-picker-panel.tsx"
         },
         {
           "path": "src/registry/ui/region-picker/region-picker-parts.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/region-picker/region-picker-parts.tsx"
         },
         {
           "path": "src/registry/ui/region-picker/types.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/region-picker/types.ts"
         },
         {
           "path": "src/registry/ui/region-picker/utils.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/region-picker/utils.ts"
         },
         {
           "path": "src/registry/ui/region-picker/config.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/region-picker/config.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1342,7 +1414,8 @@
       "files": [
         {
           "path": "src/registry/ui/segmented-control/segmented-control.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/segmented-control/segmented-control.tsx"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1367,7 +1440,8 @@
       "files": [
         {
           "path": "src/registry/ui/toggle-switch/toggle-switch.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/toggle-switch/toggle-switch.tsx"
         }
       ],
       "type": "registry:ui"
@@ -1387,7 +1461,8 @@
       "files": [
         {
           "path": "src/registry/ui/tone-picker/tone-picker.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/tone-picker/tone-picker.tsx"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1411,7 +1486,8 @@
       "files": [
         {
           "path": "src/registry/ui/angle-dial/angle-dial.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/angle-dial/angle-dial.tsx"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1433,7 +1509,8 @@
       "files": [
         {
           "path": "src/registry/ui/xy-pad/xy-pad.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/xy-pad/xy-pad.tsx"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1457,11 +1534,13 @@
       "files": [
         {
           "path": "src/registry/ui/control-panel/control-panel.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/control-panel/control-panel.tsx"
         },
         {
           "path": "src/registry/ui/control-panel/format-jsx.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/control-panel/format-jsx.ts"
         }
       ],
       "cssVars": {
@@ -1491,11 +1570,13 @@
       "files": [
         {
           "path": "src/registry/ui/timeline/timeline.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/timeline/timeline.tsx"
         },
         {
           "path": "src/registry/ui/timeline/timeline.css",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/timeline/timeline.css"
         }
       ],
       "type": "registry:ui"
@@ -1515,19 +1596,23 @@
       "files": [
         {
           "path": "src/registry/ui/card-stack/card-stack.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/card-stack/card-stack.tsx"
         },
         {
           "path": "src/registry/ui/card-stack/card-stack-layer.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/card-stack/card-stack-layer.tsx"
         },
         {
           "path": "src/registry/ui/card-stack/context.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/card-stack/context.ts"
         },
         {
           "path": "src/registry/ui/card-stack/controls.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/card-stack/controls.tsx"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1552,23 +1637,28 @@
       "files": [
         {
           "path": "src/registry/ui/globe/globe.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/globe/globe.tsx"
         },
         {
           "path": "src/registry/ui/globe/use-globe.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/globe/use-globe.ts"
         },
         {
           "path": "src/registry/ui/globe/color.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/globe/color.ts"
         },
         {
           "path": "src/registry/ui/globe/projection.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/globe/projection.ts"
         },
         {
           "path": "src/registry/ui/globe/types.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/globe/types.ts"
         }
       ],
       "type": "registry:ui"
@@ -1588,15 +1678,18 @@
       "files": [
         {
           "path": "src/registry/ui/checklist/checklist.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/checklist/checklist.tsx"
         },
         {
           "path": "src/registry/ui/checklist/scribble.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/checklist/scribble.tsx"
         },
         {
           "path": "src/registry/ui/checklist/context.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/checklist/context.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1621,15 +1714,18 @@
       "files": [
         {
           "path": "src/registry/ui/shuffle-grid/shuffle-grid.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/shuffle-grid/shuffle-grid.tsx"
         },
         {
           "path": "src/registry/ui/shuffle-grid/engine.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/shuffle-grid/engine.ts"
         },
         {
           "path": "src/registry/ui/shuffle-grid/pills.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/shuffle-grid/pills.tsx"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1647,7 +1743,8 @@
       "files": [
         {
           "path": "src/registry/ui/marquee/marquee.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/marquee/marquee.tsx"
         }
       ],
       "type": "registry:ui"
@@ -1667,15 +1764,18 @@
       "files": [
         {
           "path": "src/registry/ui/text-animate/text-animate.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/text-animate/text-animate.tsx"
         },
         {
           "path": "src/registry/ui/text-animate/text-scramble.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/text-animate/text-scramble.tsx"
         },
         {
           "path": "src/registry/ui/text-animate/shared.ts",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/text-animate/shared.ts"
         }
       ],
       "type": "registry:ui"
@@ -1694,7 +1794,8 @@
       "files": [
         {
           "path": "src/registry/ui/glyph-field/glyph-field.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/glyph-field/glyph-field.tsx"
         }
       ],
       "type": "registry:ui"
@@ -1713,7 +1814,8 @@
       "files": [
         {
           "path": "src/registry/ui/code-stack/code-stack.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "@ui/code-stack/code-stack.tsx"
         }
       ],
       "type": "registry:ui"

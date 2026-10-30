@@ -30,7 +30,7 @@ type Diagnostic = {
 }
 type RegistryItem = {
   name: string
-  files?: { path: string }[]
+  files?: { path: string; type?: string; target?: string }[]
   dependencies?: string[]
   registryDependencies?: string[]
 }
@@ -514,15 +514,30 @@ function lintRegistry(root: string): Diagnostic[] {
       message: `[${item.name}] ${message}`,
     })
   }
+  const targets = new Map<string, { name: string; path: string }>()
+  for (const item of items) {
+    for (const entry of item.files ?? []) {
+      if (entry.type === "registry:ui" && !entry.target)
+        add(item, "error", `registry:ui 文件必须有 target：${entry.path}`)
+      if (!entry.target) continue
+      const target = path.posix.normalize(entry.target)
+      const previous = targets.get(target)
+      if (previous && previous.path !== entry.path)
+        add(
+          item,
+          "error",
+          `target 冲突 ${target}：${previous.name} 的 ${previous.path} 与 ${entry.path}`,
+        )
+      targets.set(target, { name: item.name, path: entry.path })
+    }
+  }
   for (const item of items) {
     const own = new Set(
       (item.files ?? []).map((f) => slash(path.normalize(f.path))),
     )
     const deps = new Set(
       (item.registryDependencies ?? [])
-        .map((d) =>
-          siteDependency(d, registry.homepage ?? "https://yiui.dev"),
-        )
+        .map((d) => siteDependency(d, registry.homepage ?? "https://yiui.dev"))
         .filter((d): d is string => !!d),
     )
     const allowed = new Set(own)
