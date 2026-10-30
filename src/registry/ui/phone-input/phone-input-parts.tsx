@@ -96,6 +96,14 @@ function PhoneInputSendButton({
         : state === "again"
           ? labels.resend
           : labels.send
+  // 四种状态的文字长短不一，宽度会跟着跳。把它们都叠在同一格里（只显示当前这一个），
+  // 按钮宽度取最长的那个；倒计时用冷却秒数占位（位数最多），数字是等宽的
+  const sizers = [
+    labels.send,
+    labels.sending,
+    labels.countdown.replace("{seconds}", String(cooldown)),
+    labels.resend,
+  ]
 
   return (
     <button
@@ -114,7 +122,20 @@ function PhoneInputSendButton({
       )}
       {...props}
     >
-      {text}
+      <span className="grid justify-items-center">
+        {sizers.map((sizer) => (
+          <span
+            key={sizer}
+            aria-hidden="true"
+            className="invisible col-start-1 row-start-1 whitespace-nowrap"
+          >
+            {sizer}
+          </span>
+        ))}
+        <span className="col-start-1 row-start-1 whitespace-nowrap">
+          {text}
+        </span>
+      </span>
     </button>
   )
 }
