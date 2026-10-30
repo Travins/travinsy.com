@@ -24,15 +24,15 @@ export default function RegionPickerMobileDemo() {
   const [code, setCode] = React.useState<string | null>(null)
 
   return (
-    <div className="max-w-full rounded-[3.875rem] border border-edge bg-muted p-2 shadow-lg">
+    <div className="max-w-full rounded-[3.875rem] border border-edge bg-muted p-2 shadow-lg max-sm:contents">
       {/* 屏幕：relative + overflow-clip，让底部面板和遮罩只盖住它；clip 不像 hidden 那样能被滚动。
           页面比手机窄时（真在手机上看）随宽度收窄 */}
       <div
         ref={screenRef}
-        className="relative flex aspect-[402/874] w-[402px] max-w-full flex-col overflow-clip rounded-[3.375rem] bg-background"
+        className="relative flex aspect-[402/874] w-[402px] max-w-full flex-col overflow-clip rounded-[3.375rem] bg-background max-sm:aspect-auto max-sm:h-[calc(100dvh-3rem)] max-sm:w-full max-sm:rounded-none"
       >
         {/* 状态栏 54pt，灵动岛 126 × 37pt；宽度按屏幕比例取，页面比手机窄时一起收窄 */}
-        <div className="relative flex h-[54px] shrink-0 items-center justify-between px-[8%] pt-1 text-[15px] font-semibold tabular-nums">
+        <div className="relative flex h-[54px] shrink-0 items-center justify-between px-[8%] pt-1 text-[15px] font-semibold tabular-nums max-sm:hidden">
           <span>9:41</span>
           <span
             aria-hidden="true"
@@ -81,7 +81,7 @@ export default function RegionPickerMobileDemo() {
         </div>
 
         {/* 底部留出 34pt 的主屏指示条安全区 */}
-        <div className="shrink-0 px-4 pt-3 pb-[34px]">
+        <div className="shrink-0 px-4 pt-3 pb-[34px] max-sm:pb-[max(1rem,env(safe-area-inset-bottom))]">
           <Button type="button" size="lg" className="w-full">
             保存地址
           </Button>
@@ -89,7 +89,7 @@ export default function RegionPickerMobileDemo() {
         {/* 主屏指示条盖在底部面板之上，和真机一样 */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-2 left-1/2 z-[60] h-[5px] w-[134px] -translate-x-1/2 rounded-full bg-foreground"
+          className="pointer-events-none absolute bottom-2 left-1/2 z-[60] h-[5px] w-[134px] -translate-x-1/2 rounded-full bg-foreground max-sm:hidden"
         />
       </div>
     </div>
