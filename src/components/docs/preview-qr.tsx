@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { demoPath } from "./demo-slug"
 import { IconTip } from "./icon-tip"
 
 /** 开发时本机的局域网地址（next.config 注入，线上为空） */
@@ -55,7 +56,7 @@ function QrCode({ value, className }: { value: string; className?: string }) {
 }
 
 /**
- * 预览框工具栏上的「手机体验」：指向这个示例的全屏页（/mobile/<示例名>/），打开后只有这一个示例。
+ * 预览框工具栏上的「手机体验」：指向这个示例的全屏页（/demo/<组件>-mobile/），打开后只有这一个示例。
  * 桌面上点开是二维码，用手机扫；手机上已经在手机里了，点一下直接进全屏页
  */
 export function PreviewQrButton({ name }: { name: string }) {
@@ -66,7 +67,7 @@ export function PreviewQrButton({ name }: { name: string }) {
     <>
       <IconTip label="全屏体验">
         <Link
-          href={`/mobile/${name}/`}
+          href={demoPath(name)}
           aria-label="全屏体验这个示例"
           className={cn(
             buttonVariants({ variant: "ghost", size: "icon-sm" }),
@@ -77,7 +78,7 @@ export function PreviewQrButton({ name }: { name: string }) {
         </Link>
       </IconTip>
       <Popover
-        onOpenChange={(open) => open && setUrl(phoneUrl(`/mobile/${name}/`))}
+        onOpenChange={(open) => open && setUrl(phoneUrl(demoPath(name)))}
       >
         <IconTip label="手机扫码体验">
           <PopoverTrigger

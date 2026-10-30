@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+import { toDemoSlug } from "@/components/docs/demo-slug"
 import { DemoView } from "@/components/docs/demo-view"
 import {
   getRegistryItem,
@@ -30,13 +31,20 @@ function ownerOf(name: string) {
   return undefined
 }
 
+/** 地址里的 slug → 示例名 */
+function exampleOf(slug: string) {
+  const name = exampleNames().find((entry) => toDemoSlug(entry) === slug)
+  if (!name) throw new Error(`找不到示例：${slug}`)
+  return name
+}
+
 export const dynamicParams = false
 export function generateStaticParams() {
-  return exampleNames().map((name) => ({ name }))
+  return exampleNames().map((name) => ({ name: toDemoSlug(name) }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const owner = ownerOf((await params).name)
+  const owner = ownerOf(exampleOf((await params).name))
   return {
     title: owner ? `${owner.title} · 示例` : "示例",
     robots: { index: false, follow: false },
@@ -48,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * 不用在整页文档里找。页头只留返回文档的链接。
  */
 export default async function Page({ params }: Props) {
-  const { name } = await params
+  const name = exampleOf((await params).name)
   const owner = ownerOf(name)
   // 「手机上的体验」示例自带手机外框；真在手机上打开时外框收起、铺满屏幕，这里也不留边距
   const phone = name.endsWith("-mobile-demo")
