@@ -1,5 +1,5 @@
 /**
- * 全国省、市、区县三级行政区划数据（共 3214 条），由 scripts/build-china-regions.ts 生成，不要手改。
+ * 全国省、市、区县三级行政区划数据（共 3211 条），由 scripts/build-china-regions.ts 生成，不要手改。
  *
  * 来源：国家地名信息库（民政部）公开接口，采集于 2026-10-30。
  * - code：6 位行政区划代码（GB/T 2260 县级以上部分）
@@ -4671,9 +4671,6 @@ const chinaRegions: ChinaRegion[] = [
       { code: "659013", name: "草湖市", pinyin: "cao hu shi" },
     ],
   },
-  { code: "810000", name: "香港特别行政区", pinyin: "xiang gang te bie xing zheng qu" },
-  { code: "820000", name: "澳门特别行政区", pinyin: "ao men te bie xing zheng qu" },
-  { code: "710000", name: "台湾省", pinyin: "tai wan sheng" },
 ]
 
 export { CHINA_REGIONS_UPDATED_AT, chinaRegions }

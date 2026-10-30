@@ -7,6 +7,7 @@
  * 处理规则：
  * - 代码取前 6 位（国标县级以上代码），名称用官方全称
  * - 层级照官方原样：直辖市只有「市 → 区」两级，省直辖县级市、不设区的市没有下级
+ * - 不收录香港、澳门、台湾（见 EXCLUDED_PROVINCES）
  * - 拼音用 pinyin-pro 生成，地名特殊读音（成都 du、六安 lu、蔚县 yu……）按下方修正表覆盖；ü 写作 v
  */
 import { writeFile } from "node:fs/promises"
@@ -140,16 +141,16 @@ async function fetchList(query: string): Promise<ApiNode> {
 }
 
 /**
- * 接口对个别省级给的是占位值而不是代码（如台湾省返回「资料暂缺」），
- * 这类按 GB/T 2260 补上标准代码；遇到没登记的非数字代码直接报错，避免脏数据进库
+ * 不收录的省级：香港、澳门、台湾。它们在官方数据里只有省级一条、没有下级，
+ * 放进省市区选择里只会多出几个选不下去的项（台湾省的代码还是占位文字「资料暂缺」）
  */
-const CODE_FALLBACKS: Record<string, string> = { 台湾省: "710000" }
+const EXCLUDED_PROVINCES = new Set(["香港特别行政区", "澳门特别行政区", "台湾省"])
 
 function toCode(node: ApiNode) {
-  if (/^\d{6}/.test(node.code)) return node.code.slice(0, 6)
-  const fallback = CODE_FALLBACKS[node.name]
-  if (!fallback) throw new Error(`${node.name} 的代码不是数字：${node.code}`)
-  return fallback
+  // 遇到非数字代码直接报错，避免占位值之类的脏数据进库
+  if (!/^\d{6}/.test(node.code))
+    throw new Error(`${node.name} 的代码不是数字：${node.code}`)
+  return node.code.slice(0, 6)
 }
 
 function toRegion(node: ApiNode): Region {
@@ -175,6 +176,7 @@ async function main() {
   const provinces: Region[] = []
   // 逐省请求本级、下级、下下级；间隔一下，避免给公共接口造成压力
   for (const province of root.children ?? []) {
+    if (EXCLUDED_PROVINCES.has(province.name)) continue
     provinces.push(
       toRegion(await fetchList(`code=${province.code.slice(0, 6)}&maxLevel=2`)),
     )
