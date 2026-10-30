@@ -87,8 +87,9 @@ function RegionPickerPanel({
     null,
   )
   // 前进从右滑入、后退从左滑入，让人感觉到「下一步 / 上一步」
-  const [direction, setDirection] = React.useState<"forward" | "back">(
-    "forward",
+  // null = 刚打开，列表不做横向动画，只跟着面板整体出现，免得两个方向的动作叠在一起
+  const [direction, setDirection] = React.useState<"forward" | "back" | null>(
+    null,
   )
 
   const defaultTrail = React.useMemo(
@@ -473,11 +474,15 @@ function RegionPickerPanel({
             <div
               key={listKey}
               className={cn(
-                "motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in-0",
-                !searching &&
-                  (direction === "forward"
-                    ? "motion-safe:slide-in-from-right-4"
-                    : "motion-safe:slide-in-from-left-4"),
+                direction &&
+                  !searching &&
+                  "motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in-0",
+                direction === "forward" &&
+                  !searching &&
+                  "motion-safe:slide-in-from-right-4",
+                direction === "back" &&
+                  !searching &&
+                  "motion-safe:slide-in-from-left-4",
                 searching && !sheet && "flex flex-col gap-0.5",
               )}
             >

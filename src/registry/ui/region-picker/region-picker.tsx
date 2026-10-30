@@ -256,7 +256,7 @@ function RegionPicker({
             <Dialog.Backdrop
               data-slot="region-picker-backdrop"
               className={cn(
-                "inset-0 z-50 bg-background/70 backdrop-blur-xs transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0",
+                "inset-0 z-50 bg-background/70 backdrop-blur-xs transition-opacity duration-[320ms] data-ending-style:opacity-0 data-starting-style:opacity-0",
                 contained ? "absolute" : "fixed",
               )}
             />
@@ -265,7 +265,7 @@ function RegionPicker({
               // 不自动聚焦搜索框，免得软键盘弹出来盖住列表；焦点先落在关闭按钮上
               initialFocus={closeRef}
               className={cn(
-                "inset-x-0 bottom-0 z-50 mx-auto flex w-full max-w-xl flex-col rounded-t-xl border-t bg-popover text-sm text-popover-foreground shadow-lg transition-transform duration-200 ease-out outline-none data-ending-style:translate-y-full data-starting-style:translate-y-full motion-reduce:transition-none sm:border-x",
+                "inset-x-0 bottom-0 z-50 mx-auto flex w-full max-w-xl flex-col rounded-t-xl border-t bg-popover text-sm text-popover-foreground shadow-lg transition-transform duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)] outline-none data-ending-style:translate-y-full data-ending-style:duration-200 data-ending-style:ease-in data-starting-style:translate-y-full motion-reduce:transition-none sm:border-x",
                 contained ? "absolute h-[85%]" : "fixed h-[85dvh]",
               )}
             >
