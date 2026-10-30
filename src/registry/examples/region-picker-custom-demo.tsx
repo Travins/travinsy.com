@@ -48,7 +48,7 @@ export default function RegionPickerCustomDemo() {
   const [saved, setSaved] = React.useState<string | null>("330199")
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-5">
+    <div className="flex w-full max-w-xs flex-col gap-5 rounded-xl border border-edge bg-background p-5 shadow-sm">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="region-custom-delivery" className="text-sm font-medium">
           配送城市

@@ -13,18 +13,25 @@ export default function RegionPickerDemo() {
   const [code, setCode] = React.useState<string | null>("330106")
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-1.5">
-      <label htmlFor="region-picker-demo" className="text-sm font-medium">
-        所在地区
-      </label>
-      <RegionPicker
-        id="region-picker-demo"
-        regions={loadRegions}
-        value={code}
-        onValueChange={setCode}
-      />
-      <p className="font-mono text-[11px] text-muted-foreground">
-        value = {JSON.stringify(code)}
+    <div className="w-full max-w-xs rounded-xl border border-edge bg-background p-5 shadow-sm">
+      <p className="text-sm font-medium">收货地址</p>
+      <p className="mt-0.5 text-xs text-muted-foreground">
+        按省、市、区三步选择，也可以直接搜拼音
+      </p>
+      <div className="mt-4 flex flex-col gap-1.5">
+        <label htmlFor="region-picker-demo" className="text-xs font-medium">
+          所在地区
+        </label>
+        <RegionPicker
+          id="region-picker-demo"
+          regions={loadRegions}
+          value={code}
+          onValueChange={setCode}
+        />
+      </div>
+      <p className="mt-3 flex items-center justify-between font-mono text-[11px] text-muted-foreground">
+        <span>地区代码</span>
+        <span className="tabular-nums">{code ?? "—"}</span>
       </p>
     </div>
   )

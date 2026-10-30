@@ -16,7 +16,7 @@ export default function RegionPickerDepthDemo() {
   const [area, setArea] = React.useState<string | null>("330000")
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-5">
+    <div className="flex w-full max-w-xs flex-col gap-5 rounded-xl border border-edge bg-background p-5 shadow-sm">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="region-depth-city" className="text-sm font-medium">
           所在城市

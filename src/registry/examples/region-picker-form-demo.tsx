@@ -22,7 +22,7 @@ export default function RegionPickerFormDemo() {
 
   return (
     <form
-      className="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-edge bg-background p-5 shadow-xs"
+      className="flex w-full max-w-xs flex-col gap-4 rounded-xl border border-edge bg-background p-5 shadow-sm"
       onSubmit={(event) => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
