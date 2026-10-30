@@ -27,6 +27,7 @@ export default function OtpInputDemo() {
         </p>
       </div>
       <OtpInput
+        align="center"
         aria-label="短信验证码"
         value={code}
         onValueChange={(next) => {

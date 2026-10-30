@@ -1,5 +1,5 @@
 import { readdirSync } from "node:fs"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
 
@@ -38,6 +38,17 @@ function exampleOf(slug: string) {
   return name
 }
 
+/**
+ * 全屏页模拟一个 App 页面：禁止缩放，双指、双击都不会把页面放大，拖动滑块、点按钮时页面不晃。
+ * 文档页本身不限制，读文字时照常可以放大
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
+
 export const dynamicParams = false
 export function generateStaticParams() {
   return exampleNames().map((name) => ({ name: toDemoSlug(name) }))
@@ -61,7 +72,7 @@ export default async function Page({ params }: Props) {
   // 「手机上的体验」示例自带手机外框；真在手机上打开时外框收起、铺满屏幕，这里也不留边距
   const phone = name.endsWith("-mobile-demo")
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
+    <div className="flex min-h-dvh touch-manipulation flex-col bg-background">
       <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-2 border-b border-edge bg-background/90 px-2 backdrop-blur-sm">
         <Link
           href={owner ? `/components/${owner.name}/` : "/components/"}

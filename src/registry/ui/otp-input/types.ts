@@ -23,6 +23,11 @@ type OtpInputProps = Omit<
    * @default "default"
    */
   size?: OtpInputSize
+  /**
+   * 格子与错误提示的对齐：表单里跟着标签左对齐用 `start`；单独一屏输验证码（登录页、弹窗）用 `center`
+   * @default "start"
+   */
+  align?: "start" | "center"
   /** 错误提示：显示在格子下方，所有格子变红 */
   error?: React.ReactNode
   /** 格子组的可访问名称（第一格的读屏名称），没有可见标签时传 */

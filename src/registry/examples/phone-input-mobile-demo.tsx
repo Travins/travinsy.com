@@ -68,12 +68,13 @@ export default function PhoneInputMobileDemo() {
             }
           />
           {sent && (
-            <div className="mt-3 flex flex-col gap-2">
+            <div className="mt-3 flex flex-col gap-2 text-center">
               <p className="text-sm text-muted-foreground">
                 验证码已发送至 {maskPhone(phone)}
               </p>
               <OtpInput
                 size="lg"
+                align="center"
                 aria-label="短信验证码"
                 value={code}
                 onValueChange={(next) => {

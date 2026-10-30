@@ -35,6 +35,7 @@ const otpInputSlotVariants = cva(
 function OtpInput({
   length = 6,
   groupSize,
+  align = "start",
   size = "default",
   error,
   labels: labelsProp,
@@ -57,6 +58,7 @@ function OtpInput({
     <div
       data-slot="otp-input"
       data-size={size}
+      data-align={align}
       data-invalid={invalid ? "" : undefined}
       className={cn("flex flex-col gap-1.5", className)}
     >
@@ -67,7 +69,10 @@ function OtpInput({
         aria-label={ariaLabel}
         aria-describedby={describedBy}
         data-slot="otp-input-group"
-        className="flex items-center gap-1.5 pointer-coarse:gap-2"
+        className={cn(
+          "flex items-center gap-1.5 pointer-coarse:gap-2",
+          align === "center" && "justify-center",
+        )}
       >
         {Array.from({ length }, (_, index) => (
           <React.Fragment key={index}>
@@ -96,7 +101,10 @@ function OtpInput({
         <p
           id={errorId}
           data-slot="otp-input-error"
-          className="text-xs text-destructive"
+          className={cn(
+            "text-xs text-destructive",
+            align === "center" && "text-center",
+          )}
         >
           {error}
         </p>

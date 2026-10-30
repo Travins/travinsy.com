@@ -35,6 +35,8 @@ export function VerifyForm() {
 
 ### 校验与错误
 
+`align="center"` 让格子和错误提示居中，适合登录页、弹窗这种单独一屏输验证码的场景；放在表单里跟着标签走时用默认的 `start`。
+
 自己判断对错后传 `error`：所有格子变红，下方显示文字。常见做法是填满时校验，错了清空并提示，用户直接重输，示例就是这样。
 
 ## 示例
@@ -86,7 +88,7 @@ type OtpInputLabels = {
 | 分组短横线 | `otp-input-separator` |
 | 错误提示 | `otp-input-error` |
 
-根元素带 `data-size`，出错时带 `data-invalid`；格子带 Base UI 的 `data-filled`、`data-focused`、`data-complete` 等状态。
+根元素带 `data-size`、`data-align`，出错时带 `data-invalid`；格子带 Base UI 的 `data-filled`、`data-focused`、`data-complete` 等状态。
 
 ## 可访问性
 
