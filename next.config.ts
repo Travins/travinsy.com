@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   // 只有 /api/github-stars/ 这类需要实时数据的接口按 revalidate 定时刷新
   trailingSlash: true,
   images: { unoptimized: true },
+  // 开发时允许局域网里的手机直接打开 dev 服务器真机调试（只影响 next dev，不影响线上）
+  allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "*.local"],
   // 基础安全响应头；/view/ 预览页会被本站 iframe 嵌入，所以只允许同源嵌套
   async headers() {
     return [
