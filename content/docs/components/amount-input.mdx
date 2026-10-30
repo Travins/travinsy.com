@@ -23,6 +23,8 @@ export function PayForm() {
 
 不带状态时用 `defaultValue` 给初始值，组件自己管；需要读值就加 `value` 与 `onValueChange` 走受控。设了 `name`，表单提交的是**不带千分位的原始数值**（`"1234.50"`），不是输入框里看到的 `1,234.50`。
 
+输入框是一条方条，和方条开关、分段选择、数值滑块同一套外观与 28 / 32 / 36px 三档高度：`label` 写在条内左侧，金额靠右；不传 `label` 时金额从左边开始，标签可以照常写在外面。
+
 ### 值是字符串
 
 `value`、`defaultValue`、`onValueChange` 的参数都是十进制字符串，空串表示没填，没有 `null`。原因有三：
@@ -185,13 +187,13 @@ type AmountInputProps = {
 >
 ```
 
-### data-slot
+## data-slot
 
 | 元素             | `data-slot`                |
 | ---------------- | -------------------------- |
 | 根元素           | `amount-input`             |
-| 标签             | `amount-input-label`       |
-| 输入框外框       | `amount-input-control`     |
+| 条内标签         | `amount-input-label`       |
+| 方条外框         | `amount-input-control`     |
 | 货币符号         | `amount-input-symbol`      |
 | 输入框           | `amount-input-input`       |
 | 读数行           | `amount-input-readout`     |
@@ -206,7 +208,7 @@ type AmountInputProps = {
 ## 可访问性
 
 - 输入框是 `type="text"` 加 `inputMode`（有小数位用 `decimal`，整数用 `numeric`，允许负数时用 `text`，因为移动端数字键盘没有减号），不用 `type="number"`：后者不能带千分位，滚轮和方向键还会误改金额。
-- `label` 通过 `htmlFor` 与输入框关联；没有可见标签时传 `aria-label`。
+- `label` 写在方条内左侧，通过 `htmlFor` 与输入框关联，点标签或条内空白都会聚焦输入框；没有可见标签时传 `aria-label`。
 - 货币符号是装饰，`aria-hidden`；金额的单位由标签或大写读数传达，所以标签最好写明，如「付款金额（元）」。
 - 错误提示通过 `aria-describedby` 与输入框关联，输入框同时有 `aria-invalid`；错误态不只靠红色，还有文字。
 - 读屏策略见「原理」：描述在聚焦时朗读，敲字停顿后 polite 播报一次，不逐字打断。

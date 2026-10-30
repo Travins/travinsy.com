@@ -62,6 +62,11 @@ type RegionPickerProps = Omit<
   /** 未选时拦住表单提交 */
   required?: boolean
   disabled?: boolean
+  /**
+   * 写在触发器条内左侧的标签，如「所在地区」；选中的路径随之靠右。
+   * 不传时触发器里只有路径，标签可以照常写在外面
+   */
+  label?: React.ReactNode
   /** 未选时触发器显示的提示，默认取 `labels.placeholder` */
   placeholder?: string
   /**

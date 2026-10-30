@@ -14,25 +14,38 @@ export default function AmountInputValidationDemo() {
   const [withdraw, setWithdraw] = React.useState("12000")
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-edge bg-background p-5 shadow-xs">
-      <AmountInput
-        label="单笔转账（100 – 50,000）"
-        min={100}
-        max={50000}
-        defaultValue="60000"
-        showApproximate={false}
-      />
-      <AmountInput
-        label={`提现（余额 ¥${BALANCE.toLocaleString("en-US")}）`}
-        value={withdraw}
-        onValueChange={setWithdraw}
-        error={
-          Number(withdraw) > BALANCE
-            ? "余额不足，最多可提现 ¥8,000.00"
-            : undefined
-        }
-        showApproximate={false}
-      />
+    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
+      <div className="flex items-baseline justify-between gap-2 pb-3">
+        <div className="min-w-0">
+          <p className="text-sm font-medium">转账与提现</p>
+          <p className="truncate text-xs text-muted-foreground">
+            单笔 ¥100 – ¥50,000，提现不超过余额
+          </p>
+        </div>
+        <p className="shrink-0 font-mono text-[11px] text-muted-foreground tabular-nums">
+          余额 {BALANCE.toLocaleString("en-US")}
+        </p>
+      </div>
+      <div className="flex flex-col gap-3">
+        <AmountInput
+          label="单笔转账"
+          min={100}
+          max={50000}
+          defaultValue="60000"
+          showApproximate={false}
+        />
+        <AmountInput
+          label="提现"
+          value={withdraw}
+          onValueChange={setWithdraw}
+          error={
+            Number(withdraw) > BALANCE
+              ? "余额不足，最多可提现 ¥8,000.00"
+              : undefined
+          }
+          showApproximate={false}
+        />
+      </div>
     </div>
   )
 }

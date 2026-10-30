@@ -53,6 +53,7 @@ function RegionPicker({
   form,
   required = false,
   disabled,
+  label,
   placeholder,
   fallbackLabel,
   title: titleProp,
@@ -158,12 +159,28 @@ function RegionPicker({
   if (code !== null) {
     if (valuePath.length) {
       title = formatRegionPath(valuePath)
-      text = valuePath.map((node, i) => (
-        <React.Fragment key={node.code}>
-          {i > 0 && <span className="text-muted-foreground/60"> / </span>}
-          {node.name}
-        </React.Fragment>
-      ))
+      // 放不下时只截上级，最末一级（真正选中的那个）始终完整显示
+      const last = valuePath[valuePath.length - 1]
+      const parents = valuePath.slice(0, -1)
+      const sep = <span className="text-muted-foreground/60"> / </span>
+      text = (
+        <>
+          {parents.length > 0 && (
+            <span className="min-w-0 truncate">
+              {parents.map((node, i) => (
+                <React.Fragment key={node.code}>
+                  {i > 0 && sep}
+                  {node.name}
+                </React.Fragment>
+              ))}
+            </span>
+          )}
+          {parents.length > 0 && (
+            <span className="shrink-0 whitespace-pre">{sep}</span>
+          )}
+          <span className="shrink-0">{last.name}</span>
+        </>
+      )
     } else {
       title =
         fallbackLabel ??
@@ -207,14 +224,30 @@ function RegionPicker({
     className: regionPickerTriggerVariants({ size }),
     children: (
       <>
+        {label && (
+          <span
+            data-slot="region-picker-label"
+            className="shrink-0 text-muted-foreground"
+          >
+            {label}
+          </span>
+        )}
         <span
           data-slot="region-picker-value-text"
           className={cn(
-            "min-w-0 flex-1 truncate",
+            "flex min-w-0 flex-1",
+            // 有条内标签时值靠右，与方条开关、数值滑块的「左标签右数值」一致
+            label && "justify-end",
             code === null && "text-muted-foreground",
           )}
         >
-          {code === null ? (placeholder ?? labels.placeholder) : text}
+          {typeof text === "string" || code === null ? (
+            <span className="min-w-0 truncate">
+              {code === null ? (placeholder ?? labels.placeholder) : text}
+            </span>
+          ) : (
+            text
+          )}
         </span>
         <ChevronDown
           aria-hidden="true"

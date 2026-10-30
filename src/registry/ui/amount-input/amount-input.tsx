@@ -210,15 +210,6 @@ function AmountInput({
       data-readonly={readOnly ? "" : undefined}
       className={cn("flex w-full flex-col gap-1.5", className)}
     >
-      {label && (
-        <label
-          data-slot="amount-input-label"
-          htmlFor={id}
-          className="text-sm leading-none font-medium"
-        >
-          {label}
-        </label>
-      )}
       {readoutPlacement === "above" && readout}
       <div
         data-slot="amount-input-control"
@@ -226,12 +217,27 @@ function AmountInput({
           amountInputControlVariants({ size }),
           invalid
             ? "border-destructive ring-3 ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40"
-            : "border-input focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
-          disabled &&
-            "cursor-not-allowed bg-input/50 opacity-50 dark:bg-input/80",
-          readOnly && "bg-muted/40",
+            : "border-edge focus-within:ring-3 focus-within:ring-ring/50 hover:bg-muted",
+          disabled && "cursor-not-allowed opacity-50",
+          readOnly && "bg-muted/30",
         )}
+        // 点到条内空白处（标签与数字之间）也聚焦输入框
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) {
+            event.preventDefault()
+            inputRef.current?.focus()
+          }
+        }}
       >
+        {label && (
+          <label
+            data-slot="amount-input-label"
+            htmlFor={id}
+            className="mr-auto shrink-0 text-muted-foreground max-md:text-sm"
+          >
+            {label}
+          </label>
+        )}
         {symbol != null && (
           <span
             data-slot="amount-input-symbol"
@@ -261,7 +267,12 @@ function AmountInput({
           readOnly={readOnly}
           aria-invalid={invalid || undefined}
           aria-describedby={describedBy}
-          className="h-full min-w-0 flex-1 bg-transparent font-medium tabular-nums outline-none placeholder:font-normal placeholder:text-muted-foreground disabled:cursor-not-allowed"
+          className={cn(
+            "h-full min-w-0 bg-transparent font-medium tabular-nums outline-none placeholder:font-normal placeholder:text-muted-foreground disabled:cursor-not-allowed",
+            // 有条内标签时金额靠右，与方条开关、数值滑块的「左标签右数值」一致；
+            // 输入框按内容收窄，货币符号才会贴着金额而不是贴着标签
+            label ? "field-sizing-content max-w-full text-right" : "flex-1",
+          )}
           onChange={(event) => {
             const input = event.currentTarget
             // 输入法组词期间不整理，否则会打断候选词；组词结束时再统一处理

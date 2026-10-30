@@ -3,15 +3,19 @@ import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * 输入框是一条方条：与方条开关、分段选择同一套外观（浅灰底、细边框、标签在条内左侧），
+ * 放进同一个面板里能对齐。高度只来自既有三档：28 / 32 / 36px；
+ * 手机上字号保持 16px，iOS 聚焦时才不会自动放大页面
+ */
 const amountInputControlVariants = cva(
-  "flex w-full min-w-0 items-center gap-1.5 rounded-lg border bg-transparent transition-colors dark:bg-input/30",
+  "flex w-full min-w-0 cursor-text items-center gap-1.5 rounded-md border bg-muted/60 px-3 transition-colors",
   {
     variants: {
-      // 高度只来自既有三档：28 / 32 / 36px
       size: {
-        sm: "h-7 px-2 text-base md:text-sm",
-        default: "h-8 px-2.5 text-base md:text-sm",
-        lg: "h-9 px-3 text-base",
+        sm: "h-7 text-base md:text-xs",
+        default: "h-8 text-base md:text-sm",
+        lg: "h-9 text-base md:text-sm",
       },
     },
     defaultVariants: { size: "default" },

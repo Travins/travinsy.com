@@ -27,6 +27,7 @@ import { RegionPicker } from "@/components/ui/region-picker/region-picker"
 export function AddressForm() {
   return (
     <RegionPicker
+      label="所在地区"
       name="region"
       required
       regions={() =>
@@ -176,7 +177,9 @@ findRegionPath(chinaRegions, "999999") // []，找不到返回空数组
 
 ## 界面与适配
 
-设计参照了 Vant、TDesign、NutUI 的移动端级联选择与 Ant Design 的桌面级联，取它们共同的三点：**分步、选完自动前进、点已完成的步骤回退**。
+交互取级联选择最常见的三点：**分步、选完自动前进、点已完成的步骤回退**。
+
+- **触发器**是一条方条，和方条开关、分段选择、数值滑块同一套外观与 28 / 32 / 36px 三档高度。传 `label` 时标签写在条内左侧、路径靠右，放进同一张设置卡里能对齐；不传时条内只有路径，标签照常写在外面。
 
 - **手机与触屏设备**（视口窄于 640px，或 `pointer: coarse`）：从底部弹出面板，高 85% 视口。
   - 顶部标题栏：「选择地区」、清除（有值且非必填时）、关闭。
@@ -279,9 +282,12 @@ type RegionPickerProps = {
   form?: string
   required?: boolean
   disabled?: boolean
+  label?: React.ReactNode
   placeholder?: string
   fallbackLabel?: string
   size?: RegionPickerSize
+  presentation?: "auto" | "sheet" | "popover"
+  container?: HTMLElement | React.RefObject<HTMLElement | null> | null
   open?: boolean
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
@@ -289,13 +295,13 @@ type RegionPickerProps = {
 } & Omit<React.ComponentProps<"button">, /* 以上已定义的属性 */ "value" | "defaultValue" | "onChange" | "type" | "children">
 ```
 
-### data-slot
+## data-slot
 
 | 元素 | `data-slot` |
 | --- | --- |
 | 根元素 | `region-picker` |
 | 触发器 | `region-picker-trigger` |
-| 触发器文字 | `region-picker-value-text` |
+| 触发器里的标签 / 路径文字 | `region-picker-label` / `region-picker-value-text` |
 | 提交与校验用的隐藏输入 | `region-picker-value` |
 | 面板内容（带 `data-variant="sheet"` 或 `"popover"`） | `region-picker-panel` |
 | 手机底部面板 / 遮罩 | `region-picker-sheet` / `region-picker-backdrop` |
@@ -315,7 +321,7 @@ type RegionPickerProps = {
 - 搜索框是 **combobox**：焦点始终留在输入框，选项通过 `aria-activedescendant` 表达高亮，选项是 `role="option"`，列表是 `role="listbox"`。
 - 键盘：`↑` `↓` 逐项移动，搜索框为空时 `←` `→` 也能逐项移动；`Enter` 选择；`Backspace` 在搜索框为空时回到上一步；`Esc` 关闭并把焦点还给触发器。
 - 屏幕阅读器：每次换步骤播报「第 2 步，选择城市，共 21 项」，搜索时播报「找到 12 个结果」，通过隐藏的 `role="status"` 区域；步骤条是有序列表，当前步带 `aria-current="step"`；手机面板是带标题的对话框，打开时焦点落在关闭按钮上。
-- 触发器是 `button`，带 `aria-haspopup`、`aria-expanded`；可以用 `<label htmlFor>` 或 `aria-label` 命名。
+- 触发器是 `button`，带 `aria-haspopup`、`aria-expanded`；传了 `label` 时可访问名称就是条内的文字（「所在地区 浙江省 / 杭州市 / 西湖区」）；不传时用 `<label htmlFor>` 或 `aria-label` 命名。
 - 焦点环、选项高亮都有可见样式；已选项除了底色，还有对勾（末级）或箭头（非末级）。
 
 ## 注意事项

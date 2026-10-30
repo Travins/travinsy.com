@@ -7,15 +7,18 @@ import { cn } from "@/lib/utils"
 /** 浮层形态：手机与触屏用底部面板，桌面用输入框下方的浮层 */
 type RegionPickerVariant = "sheet" | "popover"
 
-/** 触发器外观与 shadcn Input 同一套，高度只用既有三档：28 / 32 / 36px */
+/**
+ * 触发器是一条方条：与方条开关、分段选择同一套外观（浅灰底、细边框、标签在条内左侧），
+ * 放进同一个面板里能对齐。高度只用既有三档：28 / 32 / 36px
+ */
 const regionPickerTriggerVariants = cva(
-  "flex w-full min-w-0 items-center gap-2 rounded-lg border border-input bg-transparent text-left transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-popup-open:border-ring data-popup-open:ring-3 data-popup-open:ring-ring/50 dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+  "flex w-full min-w-0 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-left transition-colors outline-none select-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-popup-open:bg-muted data-popup-open:ring-3 data-popup-open:ring-ring/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {
-        sm: "h-7 px-2 text-base md:text-sm",
-        default: "h-8 px-2.5 text-base md:text-sm",
-        lg: "h-9 px-3 text-base",
+        sm: "h-7 text-xs",
+        default: "h-8 text-sm",
+        lg: "h-9 text-sm",
       },
     },
     defaultVariants: { size: "default" },

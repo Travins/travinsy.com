@@ -16,43 +16,40 @@ export default function RegionPickerDepthDemo() {
   const [area, setArea] = React.useState<string | null>("330000")
 
   return (
-    <div className="flex w-full max-w-xs flex-col gap-5 rounded-xl border border-edge bg-background p-5 shadow-sm">
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="region-depth-city" className="text-sm font-medium">
-          所在城市
-          <span className="ml-2 font-mono text-[11px] font-normal text-muted-foreground">
-            depth=2
-          </span>
-        </label>
+    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
+      <div className="flex items-baseline justify-between gap-2 pb-3">
+        <div className="min-w-0">
+          <p className="text-sm font-medium">门店设置</p>
+          <p className="truncate text-xs text-muted-foreground">
+            城市只选到市，服务范围可以停在省
+          </p>
+        </div>
+        <p className="shrink-0 font-mono text-[11px] text-muted-foreground tabular-nums">
+          depth · partial
+        </p>
+      </div>
+      <div className="flex flex-col gap-2">
         <RegionPicker
-          id="region-depth-city"
+          label="所在城市"
           regions={loadRegions}
           depth={2}
           value={city}
           onValueChange={setCity}
         />
-        <p className="font-mono text-[11px] text-muted-foreground">
-          value = {JSON.stringify(city)}
-        </p>
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="region-depth-area" className="text-sm font-medium">
-          服务范围
-          <span className="ml-2 font-mono text-[11px] font-normal text-muted-foreground">
-            allowPartial
-          </span>
-        </label>
         <RegionPicker
-          id="region-depth-area"
+          label="服务范围"
           regions={loadRegions}
           allowPartial
           value={area}
           onValueChange={setArea}
         />
-        <p className="font-mono text-[11px] text-muted-foreground">
-          value = {JSON.stringify(area)}
-        </p>
       </div>
+      <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 font-mono text-[11px] text-muted-foreground">
+        <dt>depth=2</dt>
+        <dd>value = {JSON.stringify(city)}</dd>
+        <dt>allowPartial</dt>
+        <dd>value = {JSON.stringify(area)}</dd>
+      </dl>
     </div>
   )
 }

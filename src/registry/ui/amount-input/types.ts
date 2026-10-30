@@ -42,7 +42,7 @@ type AmountInputProps = Omit<
    * @default "¥"
    */
   symbol?: React.ReactNode
-  /** 输入框上方的标签，自动与输入框关联 */
+  /** 写在输入框条内左侧的标签，自动与输入框关联；传入后金额靠右 */
   label?: React.ReactNode
   /**
    * 控件高度档位：28 / 32 / 36px

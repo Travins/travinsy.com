@@ -4,11 +4,16 @@ import * as React from "react"
 import { ChevronLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { RegionPicker } from "@/registry/ui/region-picker/region-picker"
 
 const loadRegions = () =>
   import("@/registry/lib/china-regions").then((m) => m.chinaRegions)
+
+/** 文本框也做成方条：标签在条内左侧、内容靠右，和选择器排在一起是一套样式 */
+const FIELD =
+  "flex h-9 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-sm focus-within:ring-3 focus-within:ring-ring/50"
+const FIELD_INPUT =
+  "min-w-0 flex-1 bg-transparent text-right text-base outline-none placeholder:text-muted-foreground md:text-sm"
 
 /**
  * 手机上的体验：在桌面页面里放一台「手机」，选择器固定用底部面板，并挂进手机屏幕里，
@@ -41,41 +46,24 @@ export default function RegionPickerMobileDemo() {
           <p className="text-[15px] font-medium">新增收货地址</p>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 px-4 pt-4">
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="mobile-consignee" className="text-xs font-medium">
-              收货人
-            </label>
-            <Input
-              id="mobile-consignee"
-              defaultValue="王小明"
-              className="h-9"
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="mobile-region" className="text-xs font-medium">
-              所在地区
-            </label>
-            <RegionPicker
-              id="mobile-region"
-              regions={loadRegions}
-              presentation="sheet"
-              container={screenRef}
-              size="lg"
-              value={code}
-              onValueChange={setCode}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="mobile-detail" className="text-xs font-medium">
-              详细地址
-            </label>
-            <Input
-              id="mobile-detail"
-              placeholder="街道、门牌号"
-              className="h-9"
-            />
-          </div>
+        <div className="flex flex-1 flex-col gap-2 px-4 pt-4">
+          <label className={FIELD}>
+            <span className="shrink-0 text-muted-foreground">收货人</span>
+            <input defaultValue="王小明" className={FIELD_INPUT} />
+          </label>
+          <RegionPicker
+            label="所在地区"
+            regions={loadRegions}
+            presentation="sheet"
+            container={screenRef}
+            size="lg"
+            value={code}
+            onValueChange={setCode}
+          />
+          <label className={FIELD}>
+            <span className="shrink-0 text-muted-foreground">详细地址</span>
+            <input placeholder="街道、门牌号" className={FIELD_INPUT} />
+          </label>
         </div>
 
         <div className="shrink-0 px-4 pb-6">
