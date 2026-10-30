@@ -1,0 +1,105 @@
+---
+title: 验证码输入
+titleEn: OTP Input
+description: 短信验证码输入：一格一位，支持 iOS / 安卓短信一键填入、粘贴整串自动分格、填满回调与自动提交；三档格子大小，可按 3-3 分组。基于 Base UI 的 OTPField。
+group: input
+---
+
+<ComponentPreview name="otp-input-demo" />
+
+## 安装
+
+<InstallCommand name="otp-input" />
+
+## 用法
+
+```tsx title="components/verify-form.tsx"
+import { OtpInput } from "@/components/ui/otp-input/otp-input"
+
+export function VerifyForm() {
+  return (
+    <form action="/verify">
+      <OtpInput name="code" aria-label="短信验证码" autoSubmit />
+    </form>
+  )
+}
+```
+
+值是字符串，每格一位，默认只收数字。填满时触发 `onValueComplete(value)`，适合在这里直接校验；设了 `autoSubmit` 会顺带提交所在的表单。
+
+### 短信一键填入与粘贴
+
+- 第一格带 `autocomplete="one-time-code"`：iOS 收到短信后键盘上方出现验证码，点一下填满；安卓的 Chrome 也会提示。
+- 粘贴整串（包括带空格、横线的「246 810」）会自动分到各格；粘贴的非数字字符被过滤，`onValueInvalid` 会收到被拒的内容。
+- 每格都是真实的输入框，退格、方向键、Home / End 都能用；删到空格时退格会跳回上一格。
+
+### 校验与错误
+
+自己判断对错后传 `error`：所有格子变红，下方显示文字。常见做法是填满时校验，错了清空并提示，用户直接重输，示例就是这样。
+
+## 示例
+
+### 手机上的体验
+
+一台按真机尺寸画的「手机」里的验证码登录页，号码用的是[手机号输入](/components/phone-input/)。演示用验证码：`246810`。
+
+<ComponentPreview name="phone-input-mobile-demo" item="phone-input" />
+
+### 尺寸、位数与分组
+
+`size` 三档格子：`sm` 32 × 36px、`default` 40 × 44px、`lg` 44 × 52px，触屏设备上各放大一档（`lg` 到 48 × 56px），手指点得准。`length` 改位数，`groupSize={3}` 把 6 位分成 3-3。
+
+<ComponentPreview name="otp-input-sizes-demo" />
+
+## API
+
+<PropsTable name="otp-input" component="OtpInput" />
+
+### 继承自 Base UI OTPField
+
+| 属性 | 说明 |
+| --- | --- |
+| `value` / `defaultValue` / `onValueChange` | 受控与非受控的值 |
+| `onValueComplete(value)` | 填满时触发；粘贴一个和当前相同的完整值也会触发 |
+| `onValueInvalid(value)` | 输入或粘贴了被过滤掉的字符 |
+| `autoSubmit` | 填满时提交所在的表单 |
+| `validationType` | 允许的字符：默认 `"numeric"`，也可以是字母、字母数字 |
+| `mask` | 用圆点遮住已输入的字符（支付密码之类） |
+| `name` / `form` / `required` | 表单字段，值通过一个隐藏输入提交 |
+| `disabled` / `readOnly` | 禁用、只读 |
+
+### labels
+
+```ts
+type OtpInputLabels = {
+  slot: string // "第 {index} 位"：第 2 格起每格的读屏名称
+}
+```
+
+## data-slot
+
+| 元素 | `data-slot` |
+| --- | --- |
+| 根元素 | `otp-input` |
+| 格子组 | `otp-input-group` |
+| 单个格子 | `otp-input-slot` |
+| 分组短横线 | `otp-input-separator` |
+| 错误提示 | `otp-input-error` |
+
+根元素带 `data-size`，出错时带 `data-invalid`；格子带 Base UI 的 `data-filled`、`data-focused`、`data-complete` 等状态。
+
+## 可访问性
+
+- 格子组是 `role="group"`；第一格用组件的 `aria-label`（或外面的 `<label>`）命名，之后每格读作「第 2 位」「第 3 位」……
+- 错误提示通过 `aria-describedby` 关联，格子带 `aria-invalid`；错误态不只靠红色，还有文字。
+- 焦点所在的格子有可见的焦点环。
+
+## 注意事项
+
+- 分组的短横线只是视觉，值里没有横线。
+- `onValueComplete` 里清空输入（`setCode("")`）要用受控模式，非受控时组件不会听外部清空。
+- 出错时传 `error`，格子变红，和其他表单控件的错误态一致。
+
+## 源码
+
+<ComponentSource name="otp-input" />

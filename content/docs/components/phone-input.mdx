@@ -1,0 +1,145 @@
+---
+title: 手机号输入
+titleEn: Phone Input
+description: 中国大陆手机号输入：边输边按 3-4-4 分隔且光标不乱跳，粘贴、自动填充带 +86 或横线的号码自动整理，失焦校验号段；条内可放带倒计时的「获取验证码」。值是 11 位纯数字。
+group: input
+---
+
+<ComponentPreview name="phone-input-demo" />
+
+## 安装
+
+<InstallCommand name="phone-input" />
+
+## 用法
+
+```tsx title="components/login-form.tsx"
+import {
+  PhoneInput,
+  PhoneInputSendButton,
+} from "@/components/ui/phone-input/phone-input"
+
+export function LoginForm() {
+  return (
+    <PhoneInput
+      name="phone"
+      label="手机号"
+      required
+      action={<PhoneInputSendButton onSend={() => sendCode()} />}
+    />
+  )
+}
+```
+
+`value`、`defaultValue`、`onValueChange` 的值都是 **11 位纯数字字符串**（`"13800138000"`），没填是空串；界面上看到的 `138 0013 8000` 只是显示。设了 `name`，表单提交的也是纯数字。
+
+### 输入整理
+
+- 只收数字，全角数字转半角，其他字符丢掉；最多 11 位。
+- 粘贴或自动填充带区号、横线、空格的号码（`+86 138-0013-8000`、`0086 13800138000`）会去掉区号和符号，剩下 11 位。
+- 增删时光标停在同一个数字后面；光标紧贴分隔空格时按退格，删的是旁边的数字，不会删了空格又长回来。
+
+### 校验
+
+号码要是 11 位、以 13–19 开头。敲字时不打扰，失焦后不合格才提示「请输入正确的手机号」；`required` 时没填会拦住表单提交。自己的业务校验（比如「该号码已注册」）判断后传 `error`，和组件自带的提示在同一个位置。
+
+### 获取验证码
+
+`action` 放在条内右侧，通常放 `PhoneInputSendButton`：
+
+- 号码不合格时自动置灰；点了先执行 `onSend`，返回 Promise 时显示「发送中…」，完成后倒计时「56 秒后重发」，结束变成「重新获取」。
+- `onSend` 抛错时不进入倒计时，可以马上重试；错误提示由你自己处理。
+- 剩余秒数按截止时间算，页面切到后台计时器变慢也不会多等。
+- 单独使用（比如邮箱输入旁边）时传 `variant="button"`，外观和高度与按钮一致；需要完全自己画按钮时用 `useSendCode(onSend, cooldown)`，它返回 `{ state, remaining, send }`。
+
+### 手机上
+
+- `type="tel"` 加 `inputMode="numeric"`：iOS 弹纯数字键盘，自动填充也认得出这是电话号码（`autocomplete="tel-national"`）。
+- 触屏设备上方条各加高一档（36 / 40 / 44px），字号不小于 16px，聚焦时页面不会被放大。
+
+## 示例
+
+### 手机上的体验
+
+一台按真机尺寸画的「手机」里的验证码登录页：填号码 → 获取验证码 → 输入 6 位（演示用 `246810`）→ 登录。验证码用的是[验证码输入](/components/otp-input/)。
+
+<ComponentPreview name="phone-input-mobile-demo" />
+
+### 尺寸
+
+三档高度和方条开关、金额输入一致（28 / 32 / 36px，触屏上 36 / 40 / 44px），带不带「获取验证码」都对得齐。最后一行是单独使用的发送按钮。
+
+<ComponentPreview name="phone-input-sizes-demo" />
+
+### 表单与校验
+
+试试输入 128 开头的号码，或只填一半再点别处。
+
+<ComponentPreview name="phone-input-form-demo" />
+
+## API
+
+<PropsTable name="phone-input" component="PhoneInput" />
+
+`className` 作用于根元素，其余未列出的属性（`id`、`required`、`placeholder`、`autoFocus`、`onFocus`、`onBlur`……）交给 `<input>`；`ref` 指向 `<input>`。`name` 例外：它加在一个隐藏输入上，提交纯数字。
+
+### PhoneInputSendButton
+
+<PropsTable name="phone-input" component="PhoneInputSendButton" />
+
+### 工具函数
+
+```ts
+formatPhone("13800138000") // "138 0013 8000"
+maskPhone("13800138000") // "138 **** 8000"，第二个参数换打码符号
+isValidPhone("13800138000") // true：11 位、13–19 开头
+useSendCode(onSend, 60) // { state: "idle" | "sending" | "counting" | "again", remaining, send }
+```
+
+### labels
+
+```ts
+type PhoneInputLabels = {
+  placeholder: string // "请输入手机号"
+  invalid: string // "请输入正确的手机号"
+  required: string // "请输入手机号"
+  send: string // "获取验证码"
+  sending: string // "发送中…"
+  countdown: string // "{seconds} 秒后重发"
+  resend: string // "重新获取"
+}
+```
+
+`PhoneInput` 和 `PhoneInputSendButton` 各自接受 `labels`。
+
+## data-slot
+
+| 元素             | `data-slot`           |
+| ---------------- | --------------------- |
+| 根元素           | `phone-input`         |
+| 方条外框         | `phone-input-control` |
+| 条内标签         | `phone-input-label`   |
+| 输入框           | `phone-input-input`   |
+| 获取验证码按钮   | `phone-input-send`    |
+| 错误提示         | `phone-input-error`   |
+| 提交用的隐藏输入 | `phone-input-value`   |
+
+根元素带 `data-size`，出错时带 `data-invalid`，禁用带 `data-disabled`；发送按钮带 `data-state`（`idle` / `sending` / `counting` / `again`）。
+
+## 可访问性
+
+- `label` 写在方条内左侧，通过 `htmlFor` 与输入框关联，点标签或条内空白都会聚焦输入框；没有可见标签时传 `aria-label`。
+- 错误提示通过 `aria-describedby` 关联，输入框同时带 `aria-invalid`；错误态不只靠红色，还有文字。
+- 发送按钮是原生 `button`，倒计时期间 `disabled`；秒数每秒都在变，不用 `aria-live` 逐秒播报，读屏聚焦时会念出当前文字。
+
+## 注意事项
+
+- 只处理中国大陆手机号（11 位）。需要选国家 / 地区的国际号码，请用专门的国际号码库。
+- 受控模式下记得同时处理 `onValueChange`；外部传入的值会先去掉非数字再显示。
+- 非受控的表单 `reset` 会回到 `defaultValue`；受控的由外部自己重置。
+- 撤销（`⌘Z`）：整理会重写输入框内容，浏览器的撤销栈不再可靠，这是实时格式化输入的通病。
+- 出错时传 `aria-invalid` 或 `error`，方条变红，和其他表单控件的错误态一致。
+
+## 源码
+
+<ComponentSource name="phone-input" />

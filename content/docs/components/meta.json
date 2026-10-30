@@ -17,6 +17,8 @@
     "toggle-switch",
     "tone-picker",
     "amount-input",
+    "phone-input",
+    "otp-input",
     "region-picker",
     "chart-card",
     "stat-card",

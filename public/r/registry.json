@@ -1124,6 +1124,71 @@
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "phone-input",
+      "title": "手机号输入",
+      "description": "中国大陆手机号输入：边输边按 3-4-4 分隔且光标不乱跳，粘贴、自动填充带 +86 或横线的号码自动整理，失焦校验号段；条内可放带倒计时的「获取验证码」。值是 11 位纯数字。",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/phone-input/phone-input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/phone-input/phone-input-parts.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/phone-input/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/phone-input/utils.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/phone-input/config.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "otp-input",
+      "title": "验证码输入",
+      "description": "短信验证码输入：一格一位，支持 iOS / 安卓短信一键填入、粘贴整串自动分格、填满回调与自动提交；三档格子大小，可按 3-3 分组。基于 Base UI 的 OTPField。",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/otp-input/otp-input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/otp-input/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/otp-input/config.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
       "name": "region-picker",
       "title": "省市区选择",
       "description": "分步选择省 / 市 / 区：步骤条清楚显示第几步、可点回上一步，长列表按拼音首字母分组，支持汉字、全拼、首字母搜索；手机上从底部弹出面板。值只存最末一级的代码，数据由 props 传入、可惰性加载。",
