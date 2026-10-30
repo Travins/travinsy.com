@@ -75,7 +75,9 @@ function FeaturedBento() {
   })
 
   return (
-    <div className="overflow-clip">
+    // flow-root 挡住 ul 的 -mb-px 外边距折叠出去：overflow-clip 不像 overflow-hidden 那样会建立格式化上下文，
+    // 少了它负外边距会穿出容器，最后一行的下边线不被裁掉，和下一节的分隔线叠成双线
+    <div className="flow-root overflow-clip">
       <ul className="-mr-px -mb-px grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 lg:grid-rows-[30rem_23rem] lg:max-[1099px]:grid-rows-[30rem_32rem]">
         {items.map(({ item, size }) => (
           <li
