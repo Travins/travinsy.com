@@ -10,11 +10,12 @@ import { DEFAULT_LABELS } from "./config"
 import type { OtpInputProps } from "./types"
 
 /**
- * 格子与方条同一套外观（浅灰底、细边框、rounded-md）。三档大小，触屏设备上各放大一档，
+ * 格子与方条同一套外观与状态：浅灰底、细边框、rounded-md，填没填都不换底色；
+ * 聚焦只加一圈焦点环，出错是红边加淡红光晕，和金额输入、手机号输入的方条一致。三档大小，触屏设备上各放大一档，
  * 手指点得准；字号不小于 16px，iOS 聚焦时不会自动放大页面
  */
 const otpInputSlotVariants = cva(
-  "min-w-0 rounded-md border border-edge bg-muted/60 text-center font-semibold tabular-nums caret-foreground outline-none transition-[color,box-shadow,border-color] select-none placeholder:text-muted-foreground/40 hover:bg-muted focus:border-ring focus:bg-background focus:ring-3 focus:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-[filled]:bg-background aria-invalid:border-destructive aria-invalid:text-destructive aria-invalid:focus:ring-destructive/20 dark:aria-invalid:border-destructive/50",
+  "min-w-0 rounded-md border border-edge bg-muted/60 text-center font-medium tabular-nums caret-foreground outline-none transition-[background-color,box-shadow] select-none placeholder:text-muted-foreground/40 hover:bg-muted focus:ring-3 focus:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {

@@ -123,7 +123,7 @@ function PhoneInput({
       data-size={size}
       data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
-      // 容器查询：组件比 17rem 窄时（手机上的窄卡片）收起条内标签、缩小间距，号码不被挤掉
+      // 容器查询：窄于 20rem 时缩小间距和按钮内边距，窄于 17rem 时再收起条内标签（读屏仍可读），号码不被挤掉
       className={cn(
         "@container/phone-input flex w-full flex-col gap-1.5",
         className,
@@ -133,7 +133,7 @@ function PhoneInput({
         data-slot="phone-input-control"
         className={cn(
           phoneInputControlVariants({ size }),
-          "@max-[17rem]/phone-input:gap-2",
+          "@max-[20rem]/phone-input:gap-2",
           invalid
             ? "border-destructive ring-3 ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40"
             : "border-edge focus-within:ring-3 focus-within:ring-ring/50 hover:bg-muted",
@@ -177,7 +177,7 @@ function PhoneInput({
           aria-invalid={invalid || undefined}
           aria-describedby={describedBy}
           className={cn(
-            "h-full min-w-0 flex-1 bg-transparent font-medium tracking-wide tabular-nums outline-none placeholder:font-normal placeholder:tracking-normal placeholder:text-muted-foreground disabled:cursor-not-allowed",
+            "h-full min-w-0 flex-1 bg-transparent font-medium tabular-nums outline-none placeholder:font-normal placeholder:text-muted-foreground disabled:cursor-not-allowed",
             // 有条内标签时号码靠右，与方条开关、金额输入的「左标签右数值」一致
             label && "text-right",
           )}
