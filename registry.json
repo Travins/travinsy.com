@@ -1144,30 +1144,6 @@
       ]
     },
     {
-      "name": "otp-input",
-      "type": "registry:ui",
-      "title": "验证码输入",
-      "description": "短信验证码输入：一格一位，支持 iOS / 安卓短信一键填入、粘贴整串自动分格、填满回调与自动提交；三档格子大小，可按 3-3 分组。基于 Base UI 的 OTPField。",
-      "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority"
-      ],
-      "files": [
-        {
-          "path": "src/registry/ui/otp-input/otp-input.tsx",
-          "type": "registry:ui"
-        },
-        {
-          "path": "src/registry/ui/otp-input/types.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "src/registry/ui/otp-input/config.ts",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "region-picker",
       "type": "registry:ui",
       "title": "省市区选择",

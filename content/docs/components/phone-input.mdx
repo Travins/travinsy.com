@@ -61,7 +61,7 @@ export function LoginForm() {
 
 ### 手机上的体验
 
-一台按真机尺寸画的「手机」里的验证码登录页：填号码 → 获取验证码 → 输入 6 位（演示用 `246810`）→ 登录。验证码用的是[验证码输入](/components/otp-input/)。
+一台按真机尺寸画的「手机」里的验证码登录页：填号码 → 获取验证码 → 输入 6 位（演示用 `246810`）→ 登录。验证码格子直接用 Base UI 的 `OTPField`（shadcn 的 `input-otp` 同理），样式照方条写，见示例源码。
 
 <ComponentPreview name="phone-input-mobile-demo" />
 

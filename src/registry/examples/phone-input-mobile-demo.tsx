@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
+import { OTPField } from "@base-ui/react/otp-field"
 import { BatteryFull, ChevronLeft, Signal, Wifi } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { OtpInput } from "@/registry/ui/otp-input/otp-input"
 import {
   PhoneInput,
   PhoneInputSendButton,
@@ -12,6 +12,13 @@ import {
 } from "@/registry/ui/phone-input/phone-input"
 
 const CORRECT = "246810"
+
+/**
+ * 验证码格子直接用 Base UI 的 OTPField（shadcn 的 input-otp 同理），样式照方条写：
+ * 浅灰底、细边框，聚焦加焦点环，出错红边加淡红光晕；触屏上放大一档
+ */
+const SLOT =
+  "h-13 w-11 min-w-0 rounded-md border border-edge bg-muted/60 text-center text-2xl font-medium tabular-nums caret-foreground outline-none transition-[background-color,box-shadow] hover:bg-muted focus:ring-3 focus:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 pointer-coarse:h-14 pointer-coarse:w-12"
 
 /**
  * 手机上的体验：一台 6.3 英寸的「手机」（402 × 874pt）里的验证码登录页。
@@ -72,10 +79,12 @@ export default function PhoneInputMobileDemo() {
               <p className="text-sm text-muted-foreground">
                 验证码已发送至 {maskPhone(phone)}
               </p>
-              <OtpInput
-                size="lg"
-                align="center"
+              <OTPField.Root
+                length={6}
                 aria-label="短信验证码"
+                aria-describedby={
+                  state === "error" ? "login-code-error" : undefined
+                }
                 value={code}
                 onValueChange={(next) => {
                   setCode(next)
@@ -88,8 +97,22 @@ export default function PhoneInputMobileDemo() {
                     setCode("")
                   }
                 }}
-                error={state === "error" ? "验证码错误，请重新输入" : undefined}
-              />
+                className="flex justify-center gap-2"
+              >
+                {Array.from({ length: 6 }, (_, index) => (
+                  <OTPField.Input
+                    key={index}
+                    aria-label={index === 0 ? undefined : `第 ${index + 1} 位`}
+                    aria-invalid={state === "error" || undefined}
+                    className={SLOT}
+                  />
+                ))}
+              </OTPField.Root>
+              {state === "error" && (
+                <p id="login-code-error" className="text-xs text-destructive">
+                  验证码错误，请重新输入
+                </p>
+              )}
               <p className="text-xs text-muted-foreground">
                 {state === "done"
                   ? "验证通过，可以登录了"

@@ -97,8 +97,6 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "orbit-half-demo": lazy(() => import("./examples/orbit-half-demo")),
   "orbit-icons-demo": lazy(() => import("./examples/orbit-icons-demo")),
   "orbit-stack-demo": lazy(() => import("./examples/orbit-stack-demo")),
-  "otp-input-demo": lazy(() => import("./examples/otp-input-demo")),
-  "otp-input-sizes-demo": lazy(() => import("./examples/otp-input-sizes-demo")),
   "phone-input-demo": lazy(() => import("./examples/phone-input-demo")),
   "phone-input-form-demo": lazy(() => import("./examples/phone-input-form-demo")),
   "phone-input-mobile-demo": lazy(() => import("./examples/phone-input-mobile-demo")),
