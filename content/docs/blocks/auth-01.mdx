@@ -14,11 +14,12 @@ description: 左侧品牌面板 + 右侧表单的分屏登录页：登录（密�
 - 三个视图在同一个组件内切换，带 180ms 的淡入位移过渡，系统开启「减少动态效果」时只保留淡入。
 - 大屏左半屏是品牌面板，窄屏隐藏面板并在表单上方显示 Logo 与名称。
 - 品牌面板的颜色都来自主题变量，切换颜色主题和亮暗模式后自动跟随：亮色下是 `primary` 底配 `primary-foreground` 文字；暗色下 `primary` 会变成浅色，面板改用 `card` 深底，只叠一层低透明度的 `primary` 渐变染上主题色，文字回到 `foreground`。光斑、波纹、字符矩阵共用一个 `--panel-glow` 变量。预览里可以直接试。
-- 输入框、提交按钮、第三方登录按钮、「获取验证码」、「返回登录」统一为 36px（按钮用 `size="lg"`，输入框 `h-9`），与方条分段控件的 `lg` 档对齐。
+- 所有输入框都是方条：标签写在条内左侧，值靠右，出错时整条变红、错误文字在条下方；「忘记密码？」放在密码条下方右侧。输入框、提交按钮、第三方登录按钮、「返回登录」统一为 36px（触屏 44px），与方条分段控件的 `lg` 档对齐。
+- 验证码登录的手机号用 [`phone-input`](/components/phone-input)：边输边按 `138 0013 8000` 分隔，粘贴带 `+86`、横线的号码会自动整理；「获取验证码」放在条内右侧，号码不完整时置灰，发送成功后 60 秒倒计时，发送失败不进入倒计时。
 
 ### 用到的本站组件
 
-这个区块本身就是自研组件的一组真实用例，除表单输入、按钮、复选框（注册页的条款勾选）仍用 shadcn 原语外，其余都换成了本站组件：
+这个区块本身就是自研组件的一组真实用例，除按钮、复选框（注册页的条款勾选）仍用 shadcn 原语外，其余都换成了本站组件：
 
 | 位置 | 组件 | 说明 |
 | --- | --- | --- |
@@ -27,13 +28,14 @@ description: 左侧品牌面板 + 右侧表单的分屏登录页：登录（密�
 | 品牌面板标题 | [`text-animate`](/components/text-animate) 的 `TextReveal` | 挂载时按词逐个显现，读屏仍读完整标题 |
 | 登录方式切换 | [`segmented-control`](/components/segmented-control) | 密码登录 / 验证码登录，替代原来的 Tabs |
 | 记住登录状态 | [`toggle-switch`](/components/toggle-switch) | 即时生效的设置项，替代原来的复选框 |
+| 验证码登录的手机号 | [`phone-input`](/components/phone-input) | 3-4-4 自动分隔、条内「获取验证码」与倒计时 |
 | 「邮件已发送」 | [`ripple`](/components/ripple) | 邮件图标为圆心，表达「已发出」 |
 
 ## 安装
 
 <InstallCommand name="auth-01" />
 
-会安装 shadcn 的 `button`、`input`、`label`、`checkbox`，本站的 `ripple`、`glyph-field`、`text-animate`、`segmented-control`、`toggle-switch`（及它们依赖的 `flow-diagram` 色调与背景），以及 npm 包 `motion`、`zod`、`lucide-react`。如果项目里已有同名文件，CLI 会询问是否覆盖。
+会安装 shadcn 的 `button`、`label`、`checkbox`，本站的 `ripple`、`glyph-field`、`text-animate`、`segmented-control`、`toggle-switch`、`phone-input`（及它们依赖的 `flow-diagram` 色调与背景），以及 npm 包 `motion`、`zod`、`lucide-react`。如果项目里已有同名文件，CLI 会询问是否覆盖。
 
 ## 用法
 
@@ -166,7 +168,7 @@ export default function LoginPage() {
     onSignIn: { type: "(values: SignInValues) => Promise<void>", description: '`values` 是联合类型：`{ method: "password", account, password, remember }` 或 `{ method: "code", phone, code }`' },
     onSignUp: { type: "(values: { name; email; password }) => Promise<void>", description: "校验通过后才会调用；确认密码与条款勾选已在组件内校验" },
     onForgotPassword: { type: "(email: string) => Promise<void>", description: "成功返回后显示「邮件已发送」" },
-    onSendCode: { type: "(phone: string) => Promise<void>", description: "成功返回后「获取验证码」按钮进入 60 秒倒计时" },
+    onSendCode: { type: "(phone: string) => Promise<void>", description: "`phone` 是 11 位纯数字；成功返回后「获取验证码」按钮进入 60 秒倒计时，抛错则不进入倒计时" },
     onSocialSignIn: { type: "(provider) => Promise<void>", description: "点击第三方登录按钮时调用" },
     className: { type: "string", description: "追加到最外层容器" },
   }}
@@ -201,7 +203,7 @@ export default function LoginPage() {
 | `accountPlaceholder` | `请输入用户名或邮箱` | 账号输入框的占位文字 |
 | `passwordLabel` | `密码` | 密码输入框的标签 |
 | `passwordPlaceholder` | `请输入密码` | 密码输入框的占位文字 |
-| `forgotPassword` | `忘记密码？` | 密码框右侧的链接按钮 |
+| `forgotPassword` | `忘记密码？` | 密码条下方右侧的链接按钮 |
 | `remember` | `记住登录状态` | 记住登录状态开关的标签 |
 | `signInSubmit` | `登录` | 登录按钮与其加载文案 |
 | `signInPending` | `登录中…` | 登录按钮与其加载文案 |
@@ -209,9 +211,9 @@ export default function LoginPage() {
 | `phonePlaceholder` | `请输入 11 位手机号` | 验证码登录的手机号输入框的占位文字 |
 | `codeLabel` | `验证码` | 验证码输入框的标签 |
 | `codePlaceholder` | `6 位数字验证码` | 验证码输入框的占位文字 |
-| `sendCode` | `获取验证码` | 「获取验证码」按钮的三种状态 |
-| `sendCodePending` | `发送中…` | 「获取验证码」按钮的三种状态 |
-| `resendCode` | `{seconds}s 后重发` | 「获取验证码」按钮的三种状态 |
+| `sendCode` | `获取验证码` | 「获取验证码」按钮的初始与倒计时结束后的文字 |
+| `sendCodePending` | `发送中…` | 「获取验证码」按钮发送中的文字 |
+| `resendCode` | `{seconds}s 后重发` | 「获取验证码」按钮倒计时中的文字 |
 | `socialDivider` | `或` | 第三方登录上方的分隔文字 |
 | `noAccount` | `还没有账号？` | 跳转注册 |
 | `signUpLink` | `注册` | 跳转注册 |
@@ -265,7 +267,7 @@ export default function LoginPage() {
 ## 可访问性
 
 - 每个视图只有一个 `h1`（由 `ViewHeading` 渲染），品牌面板是带 `aria-label` 的 `aside`，光斑、波纹与字符矩阵等装饰全部 `aria-hidden`；品牌标题的逐词动画只作用在隐藏层，读屏读到的是完整原文。
-- 输入框与 `Label` 通过 `htmlFor` / `id` 关联；字段错误用 `aria-describedby` 关联到同一个输入框，出错时设置 `aria-invalid`；表单级错误是 `role="alert"`，出现时立即朗读。
+- 条内标签是 `label`，通过 `htmlFor` / `id` 与输入框关联；字段错误用 `aria-describedby` 关联到同一个输入框，出错时设置 `aria-invalid`；表单级错误是 `role="alert"`，出现时立即朗读。
 - 密码显示切换按钮带 `aria-pressed` 和随状态变化的中文名称（显示密码 / 隐藏密码）。
 - 登录方式是带 `aria-label` 的单选组（`segmented-control`），方向键切换；「记住登录状态」是 `role="switch"` 的开关；「或」分隔线是 `role="separator"`。
 - 密码强度条是装饰（`aria-hidden`），文字结果用 `aria-live="polite"` 播报；强度不只靠颜色区分，同时有文字。
@@ -289,7 +291,7 @@ components/auth-01/
 ├── forgot-password-form.tsx             # 找回密码（成功态用波纹）
 ├── password-strength.tsx                # 密码强度条与评分
 ├── social-buttons.tsx                   # GitHub / Google 按钮
-├── form-parts.tsx                       # 输入框、密码框、错误提示等共用件
+├── form-parts.tsx                       # 方条输入框、密码框、错误提示等共用件
 ├── schemas.ts                           # zod 校验规则工厂与规则常量，提示语取自 labels
 └── use-auth-form.ts                     # 受控表单状态 + 校验 + 提交状态
 ```
@@ -300,7 +302,7 @@ components/auth-01/
 
 ### 如何自定义
 
-- **校验规则**：规则常量都在 `schemas.ts`。手机号默认是中国大陆 11 位规则，面向其他地区时替换 `PHONE_PATTERN` 并同步 `PHONE_LENGTH`；密码策略是 `PASSWORD_MIN_LENGTH` 与两条正则（必须含字母、必须含数字）；姓名最短长度是 `NAME_MIN_LENGTH`，验证码位数是 `CODE_LENGTH`。提示文案不用改，数字会跟着常量走；`newPasswordPlaceholder`（「至少 8 位，包含字母和数字」）是静态示例文案，改了最小长度记得一并改。
+- **校验规则**：规则常量都在 `schemas.ts`。手机号默认是中国大陆 11 位规则，面向其他地区时替换 `PHONE_PATTERN` 并同步 `PHONE_LENGTH`，同时把 `sign-in-form.tsx` 里的 `PhoneInput` 换成适合该地区的输入框（它只处理大陆 11 位号码）；密码策略是 `PASSWORD_MIN_LENGTH` 与两条正则（必须含字母、必须含数字）；姓名最短长度是 `NAME_MIN_LENGTH`，验证码位数是 `CODE_LENGTH`。提示文案不用改，数字会跟着常量走；`newPasswordPlaceholder`（「至少 8 位，包含字母和数字」）是静态示例文案，改了最小长度记得一并改。
 - **强度条算法**：`password-strength.tsx` 的 `getPasswordStrength`，按长度（8、12）与大小写、数字、符号计分，颜色从 `destructive` 过渡到 `primary`。
 - **只要登录**：传 `allowSignUp={false}`，再传 `socialProviders={[]}` 隐藏第三方登录（省略时默认会显示 GitHub 和 Google）。
 - **增减第三方平台**：在 `social-buttons.tsx` 的 `providers` 里补一项，并扩展 `SocialProvider` 类型。

@@ -1,6 +1,5 @@
 "use client"
 
-import { Lock, Mail, User } from "lucide-react"
 import { useMemo } from "react"
 
 import { Checkbox } from "@/components/ui/checkbox"
@@ -62,7 +61,6 @@ function SignUpForm({
         <TextField
           id="sign-up-name"
           label={text.nameLabel}
-          icon={User}
           autoComplete="name"
           placeholder={text.namePlaceholder}
           value={form.values.name}
@@ -73,7 +71,6 @@ function SignUpForm({
         <TextField
           id="sign-up-email"
           label={text.emailLabel}
-          icon={Mail}
           type="email"
           autoComplete="email"
           placeholder={text.emailPlaceholder}
@@ -86,7 +83,6 @@ function SignUpForm({
           <PasswordField
             id="sign-up-password"
             label={text.passwordLabel}
-            icon={Lock}
             autoComplete="new-password"
             placeholder={text.newPasswordPlaceholder}
             value={form.values.password}
@@ -100,7 +96,6 @@ function SignUpForm({
         <PasswordField
           id="sign-up-confirm"
           label={text.confirmPasswordLabel}
-          icon={Lock}
           autoComplete="new-password"
           placeholder={text.confirmPasswordPlaceholder}
           value={form.values.confirm}

@@ -1,6 +1,6 @@
 "use client"
 
-import { Mail, MailCheck } from "lucide-react"
+import { MailCheck } from "lucide-react"
 import { useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -87,7 +87,6 @@ function ForgotPasswordForm({
         <TextField
           id="forgot-email"
           label={text.emailLabel}
-          icon={Mail}
           type="email"
           autoComplete="email"
           placeholder={text.emailPlaceholder}

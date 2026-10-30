@@ -1,66 +1,82 @@
 "use client"
 
-import { Eye, EyeOff, Loader2, type LucideIcon } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { useState, type ComponentProps, type ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
 import { resolveLabels, type Auth01Labels } from "./config"
 
-/** 带图标、错误提示的输入框；错误通过 aria-describedby 关联，读屏会一并读出。 */
+/**
+ * 方条输入框：标签在条内左侧，值靠右；错误文字在条下方，通过 aria-describedby 关联，读屏会一并读出。
+ * 高度取 lg 档（36px，触屏 44px），与区块里 size="lg" 的按钮等高。
+ */
 function TextField({
   id,
   label,
-  icon: Icon,
   error,
-  labelAction,
+  footerAction,
   trailing,
-  adjacent,
   className,
   ...props
-}: Omit<ComponentProps<typeof Input>, "id"> & {
+}: Omit<ComponentProps<"input">, "id"> & {
   id: string
   label: string
-  icon: LucideIcon
   error?: string
-  /** 标签行右侧的操作，例如「忘记密码？」 */
-  labelAction?: ReactNode
-  /** 输入框内右侧的元素，例如显示/隐藏密码按钮 */
+  /** 条下方右侧的操作，例如「忘记密码？」；有错误文字时错误在左、操作在右 */
+  footerAction?: ReactNode
+  /** 条内最右侧的元素，例如显示/隐藏密码按钮 */
   trailing?: ReactNode
-  /** 输入框外右侧的元素，例如「获取验证码」按钮 */
-  adjacent?: ReactNode
 }) {
   const errorId = `${id}-error`
   return (
-    <div data-slot="auth-01-text-field" className="flex flex-col gap-2">
-      <div className="flex items-center justify-between gap-2">
-        <Label htmlFor={id}>{label}</Label>
-        {labelAction}
+    <div data-slot="auth-01-text-field" className="flex flex-col gap-1.5">
+      <div
+        data-slot="auth-01-text-field-control"
+        className={cn(
+          "flex h-9 w-full min-w-0 cursor-text items-center gap-3 rounded-md border bg-muted/60 px-3 text-base transition-colors pointer-coarse:h-11 md:text-sm has-disabled:cursor-not-allowed has-disabled:opacity-50",
+          error
+            ? "border-destructive ring-3 ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40"
+            : "border-edge focus-within:ring-3 focus-within:ring-ring/50 hover:bg-muted",
+        )}
+        // 点到条内空白处（标签与值之间）也聚焦输入框
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) {
+            event.preventDefault()
+            event.currentTarget.querySelector("input")?.focus()
+          }
+        }}
+      >
+        <label
+          htmlFor={id}
+          className="shrink-0 text-muted-foreground max-md:text-sm"
+        >
+          {label}
+        </label>
+        <input
+          id={id}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
+          className={cn(
+            "h-full min-w-0 flex-1 bg-transparent text-right font-medium outline-none placeholder:font-normal placeholder:text-muted-foreground disabled:cursor-not-allowed",
+            className,
+          )}
+          {...props}
+        />
+        {trailing}
       </div>
-      <div className="flex gap-2">
-        <div className="relative min-w-0 flex-1">
-          <Icon
-            aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-          />
-          <Input
-            id={id}
-            aria-invalid={error ? true : undefined}
-            aria-describedby={error ? errorId : undefined}
-            className={cn("h-9 pl-9", trailing && "pr-10", className)}
-            {...props}
-          />
-          {trailing}
+      {error || footerAction ? (
+        <div className="flex items-start justify-between gap-3">
+          {error ? (
+            <p id={errorId} className="text-xs text-destructive">
+              {error}
+            </p>
+          ) : (
+            <span />
+          )}
+          {footerAction}
         </div>
-        {adjacent}
-      </div>
-      {error ? (
-        <p id={errorId} className="text-xs text-destructive">
-          {error}
-        </p>
       ) : null}
     </div>
   )
@@ -87,7 +103,8 @@ function PasswordField({
           onClick={() => setVisible((value) => !value)}
           aria-label={visible ? text.hidePassword : text.showPassword}
           aria-pressed={visible}
-          className="absolute inset-y-0 right-1.5 my-auto text-muted-foreground hover:text-foreground"
+          // 按钮比条内边距大，向右让出 8px，图标视觉上仍与条的右缘留足间距
+          className="-mr-2 shrink-0 text-muted-foreground hover:text-foreground"
         >
           {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
         </Button>

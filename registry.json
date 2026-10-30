@@ -237,14 +237,14 @@
       ],
       "registryDependencies": [
         "button",
-        "input",
         "label",
         "checkbox",
         "https://yiui.dev/r/ripple.json",
         "https://yiui.dev/r/glyph-field.json",
         "https://yiui.dev/r/text-animate.json",
         "https://yiui.dev/r/segmented-control.json",
-        "https://yiui.dev/r/toggle-switch.json"
+        "https://yiui.dev/r/toggle-switch.json",
+        "https://yiui.dev/r/phone-input.json"
       ],
       "files": [
         {

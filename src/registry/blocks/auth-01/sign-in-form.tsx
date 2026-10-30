@@ -1,9 +1,11 @@
 "use client"
 
-import { KeyRound, Lock, Smartphone, User } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 
-import { Button } from "@/components/ui/button"
+import {
+  PhoneInput,
+  PhoneInputSendButton,
+} from "@/registry/ui/phone-input/phone-input"
 import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
 import { ToggleSwitch } from "@/registry/ui/toggle-switch/toggle-switch"
 
@@ -16,7 +18,11 @@ import {
   TextField,
   ViewHeading,
 } from "./form-parts"
-import { createCodeSignInSchema, createSignInSchema } from "./schemas"
+import {
+  PHONE_LENGTH,
+  createCodeSignInSchema,
+  createSignInSchema,
+} from "./schemas"
 import { SocialButtons, type SocialProvider } from "./social-buttons"
 import { useAsyncAction, useAuthForm } from "./use-auth-form"
 
@@ -58,7 +64,6 @@ function PasswordSignIn({
       <TextField
         id="sign-in-account"
         label={text.accountLabel}
-        icon={User}
         autoComplete="username"
         placeholder={text.accountPlaceholder}
         value={form.values.account}
@@ -69,7 +74,6 @@ function PasswordSignIn({
       <PasswordField
         id="sign-in-password"
         label={text.passwordLabel}
-        icon={Lock}
         autoComplete="current-password"
         placeholder={text.passwordPlaceholder}
         value={form.values.password}
@@ -77,7 +81,7 @@ function PasswordSignIn({
         onChange={(event) => form.setValue("password", event.target.value)}
         onBlur={() => form.blur("password")}
         labels={labels}
-        labelAction={
+        footerAction={
           <LinkButton className="text-xs" onClick={onForgotPassword}>
             {text.forgotPassword}
           </LinkButton>
@@ -114,21 +118,16 @@ function CodeSignIn({
     { fallbackError: text.requestFailed },
   )
   const sender = useAsyncAction(text.requestFailed)
-  const [seconds, setSeconds] = useState(0)
-  useEffect(() => {
-    if (seconds <= 0) return
-    const timer = window.setTimeout(
-      () => setSeconds((value) => value - 1),
-      1000,
-    )
-    return () => window.clearTimeout(timer)
-  }, [seconds])
 
+  // 失败时必须 throw：PhoneInputSendButton 遇到抛错就不进入倒计时，用户可以马上重试
   const sendCode = async () => {
-    if (!form.validateField("phone")) return
-    const sent = await sender.run(() => onSendCode(form.values.phone.trim()))
-    if (sent) setSeconds(CODE_COOLDOWN)
+    if (!form.validateField("phone")) throw new Error(text.validationPhoneInvalid)
+    const sent = await sender.run(() => onSendCode(form.values.phone))
+    if (!sent) throw new Error(text.requestFailed)
   }
+  const phoneInvalid = formatLabel(text.validationPhoneInvalid, {
+    length: PHONE_LENGTH,
+  })
   return (
     <form
       data-slot="auth-01-sign-in-code"
@@ -139,23 +138,32 @@ function CodeSignIn({
       className="flex flex-col gap-5"
     >
       <FormError message={form.formError ?? sender.error} />
-      <TextField
+      <PhoneInput
         id="sign-in-phone"
+        size="lg"
         label={text.phoneLabel}
-        icon={Smartphone}
-        type="tel"
-        inputMode="numeric"
-        autoComplete="tel"
         placeholder={text.phonePlaceholder}
         value={form.values.phone}
         error={form.errors.phone}
-        onChange={(event) => form.setValue("phone", event.target.value)}
+        labels={{ invalid: phoneInvalid, required: phoneInvalid }}
+        onValueChange={(phone) => form.setValue("phone", phone)}
         onBlur={() => form.blur("phone")}
+        action={
+          <PhoneInputSendButton
+            cooldown={CODE_COOLDOWN}
+            onSend={sendCode}
+            labels={{
+              send: text.sendCode,
+              sending: text.sendCodePending,
+              countdown: text.resendCode,
+              resend: text.sendCode,
+            }}
+          />
+        }
       />
       <TextField
         id="sign-in-code"
         label={text.codeLabel}
-        icon={KeyRound}
         inputMode="numeric"
         maxLength={6}
         autoComplete="one-time-code"
@@ -164,22 +172,6 @@ function CodeSignIn({
         error={form.errors.code}
         onChange={(event) => form.setValue("code", event.target.value)}
         onBlur={() => form.blur("code")}
-        adjacent={
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="w-28 shrink-0 tabular-nums"
-            disabled={sender.pending || seconds > 0}
-            onClick={sendCode}
-          >
-            {sender.pending
-              ? text.sendCodePending
-              : seconds > 0
-                ? formatLabel(text.resendCode, { seconds })
-                : text.sendCode}
-          </Button>
-        }
       />
       <SubmitButton pending={form.pending} pendingText={text.signInPending}>
         {text.signInSubmit}
