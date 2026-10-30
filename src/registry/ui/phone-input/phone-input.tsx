@@ -123,12 +123,24 @@ function PhoneInput({
       data-size={size}
       data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
-      // 容器查询：窄于 20rem 时缩小间距和按钮内边距，窄于 17rem 时再收起条内标签（读屏仍可读），号码不被挤掉
+      // 容器查询：窄于 20rem 时缩小间距和按钮内边距，并把标签挪到条上方，号码不被挤掉
       className={cn(
         "@container/phone-input flex w-full flex-col gap-1.5",
         className,
       )}
     >
+      {/* 窄于 20rem 时条内放不下「标签 + 号码」：标签挪到条上方显示，条内那份只留给读屏。
+          这一份 aria-hidden，只负责看和点（点它聚焦输入框），可访问名称仍来自条内的 label */}
+      {label && (
+        <label
+          aria-hidden="true"
+          htmlFor={id}
+          data-slot="phone-input-label-above"
+          className="hidden text-xs text-muted-foreground @max-[20rem]/phone-input:block"
+        >
+          {label}
+        </label>
+      )}
       <div
         data-slot="phone-input-control"
         className={cn(
@@ -154,7 +166,7 @@ function PhoneInput({
           <label
             data-slot="phone-input-label"
             htmlFor={id}
-            className="shrink-0 text-muted-foreground max-md:text-sm @max-[17rem]/phone-input:sr-only"
+            className="shrink-0 text-muted-foreground max-md:text-sm @max-[20rem]/phone-input:sr-only"
           >
             {label}
           </label>
@@ -179,7 +191,7 @@ function PhoneInput({
           className={cn(
             "h-full min-w-0 flex-1 bg-transparent font-medium tabular-nums outline-none placeholder:font-normal placeholder:text-muted-foreground disabled:cursor-not-allowed",
             // 有条内标签时号码靠右，与方条开关、金额输入的「左标签右数值」一致
-            label && "text-right",
+            label && "text-right @max-[20rem]/phone-input:text-left",
           )}
           onChange={(event) => {
             const input = event.currentTarget

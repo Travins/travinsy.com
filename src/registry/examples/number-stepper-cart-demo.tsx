@@ -39,10 +39,13 @@ export default function NumberStepperCartDemo() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-medium">{name}</p>
-              <p className="mt-1 truncate text-[11px] text-muted-foreground tabular-nums">
+              <p className="mt-1 text-[11px] text-muted-foreground tabular-nums">
                 {currency(price)}
-                {index === 1 ? " · 仅余 3 件" : ""}
               </p>
+              {/* 库存提示单独一行：窄屏下和价格挤一行会被截断，这是关键信息 */}
+              {index === 1 ? (
+                <p className="text-[11px] text-muted-foreground">仅余 3 件</p>
+              ) : null}
             </div>
             <NumberStepper
               size="sm"

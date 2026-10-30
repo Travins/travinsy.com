@@ -20,7 +20,7 @@ const DEFAULT_LABELS: NumberStepperLabels = {
 }
 
 const numberStepperControlVariants = cva(
-  "flex min-w-0 items-center rounded-md border border-edge bg-muted/60 text-sm transition-colors focus-within:ring-3 focus-within:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+  "flex min-w-0 items-center rounded-md border border-edge bg-muted/60 text-sm transition-colors has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {
@@ -65,6 +65,10 @@ function NumberStepper({
   const autoId = React.useId()
   const id = idProp ?? autoId
   const inputRef = React.useRef<HTMLInputElement>(null)
+  // 最近一次是按哪个键改的数：保存时让那个按钮转圈，数字照常显示，用户看得到自己改成了几
+  const [lastAction, setLastAction] = React.useState<"decrement" | "increment">(
+    "increment",
+  )
   const { value, pending, commitError, change, commit, reset } =
     useNumberStepper({
       value: valueProp,
@@ -185,6 +189,7 @@ function NumberStepper({
         )}
         <NumberField.Decrement
           data-slot="number-stepper-decrement"
+          onPointerDown={() => setLastAction("decrement")}
           aria-label={labels.decrement}
           disabled={pending || readOnly || (value !== null && value <= min)}
           className={cn(
@@ -192,7 +197,15 @@ function NumberStepper({
             "-ml-px border-r border-edge first:rounded-l-md",
           )}
         >
-          <Minus aria-hidden="true" />
+          {pending && lastAction === "decrement" ? (
+            <Loader2
+              data-slot="number-stepper-spinner"
+              aria-hidden="true"
+              className="motion-safe:animate-spin"
+            />
+          ) : (
+            <Minus aria-hidden="true" />
+          )}
         </NumberField.Decrement>
         <div className="relative min-w-0">
           <NumberField.Input
@@ -211,9 +224,13 @@ function NumberStepper({
             form={props.form}
             className={cn(
               "field-sizing-content min-h-0 max-w-24 min-w-10 bg-transparent px-2 text-center text-sm font-medium tabular-nums outline-none pointer-coarse:text-base",
-              pending && "text-transparent",
+              pending && "text-muted-foreground",
             )}
             onKeyDown={(event) => {
+              if (["ArrowDown", "PageDown", "Home"].includes(event.key))
+                setLastAction("decrement")
+              else if (["ArrowUp", "PageUp", "End"].includes(event.key))
+                setLastAction("increment")
               if (
                 event.key === "Enter" &&
                 !event.nativeEvent.isComposing &&
@@ -226,16 +243,10 @@ function NumberStepper({
               }
             }}
           />
-          {pending && (
-            <Loader2
-              data-slot="number-stepper-spinner"
-              aria-hidden="true"
-              className="pointer-events-none absolute top-1/2 left-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 motion-safe:animate-spin"
-            />
-          )}
         </div>
         <NumberField.Increment
           data-slot="number-stepper-increment"
+          onPointerDown={() => setLastAction("increment")}
           aria-label={labels.increment}
           disabled={
             pending ||
@@ -247,7 +258,15 @@ function NumberStepper({
             "-mr-px rounded-r-md border-l border-edge",
           )}
         >
-          <Plus aria-hidden="true" />
+          {pending && lastAction === "increment" ? (
+            <Loader2
+              data-slot="number-stepper-spinner"
+              aria-hidden="true"
+              className="motion-safe:animate-spin"
+            />
+          ) : (
+            <Plus aria-hidden="true" />
+          )}
         </NumberField.Increment>
       </NumberField.Group>
       {message && (
