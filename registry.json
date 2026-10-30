@@ -1780,6 +1780,61 @@
           "target": "@ui/code-stack/code-stack.tsx"
         }
       ]
+    },
+    {
+      "name": "file-upload",
+      "type": "registry:ui",
+      "title": "文件上传",
+      "description": "多文件选择与证件槽位，支持拖放、拍照、格式大小校验与受控上传状态，组件不发送请求。",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "attachment",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/file-upload/file-upload.tsx",
+          "type": "registry:ui",
+          "target": "@ui/file-upload/file-upload.tsx"
+        },
+        {
+          "path": "src/registry/ui/file-upload/config.ts",
+          "type": "registry:ui",
+          "target": "@ui/file-upload/config.ts"
+        },
+        {
+          "path": "src/registry/ui/file-upload/file-upload-parts.tsx",
+          "type": "registry:ui",
+          "target": "@ui/file-upload/file-upload-parts.tsx"
+        },
+        {
+          "path": "src/registry/ui/file-upload/file-upload-slot.tsx",
+          "type": "registry:ui",
+          "target": "@ui/file-upload/file-upload-slot.tsx"
+        },
+        {
+          "path": "src/registry/ui/file-upload/types.ts",
+          "type": "registry:ui",
+          "target": "@ui/file-upload/types.ts"
+        },
+        {
+          "path": "src/registry/ui/file-upload/use-file-selection.ts",
+          "type": "registry:ui",
+          "target": "@ui/file-upload/use-file-selection.ts"
+        },
+        {
+          "path": "src/registry/ui/file-upload/utils.ts",
+          "type": "registry:ui",
+          "target": "@ui/file-upload/utils.ts"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
     }
   ]
 }

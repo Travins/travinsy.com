@@ -1,0 +1,24 @@
+const DEFAULT_LABELS = {
+  drop: "把文件拖到这里，或",
+  choose: "选择文件",
+  camera: "拍照",
+  album: "从相册选择",
+  pending: "待提交",
+  uploading: "上传中",
+  error: "上传失败",
+  done: "已完成",
+  remove: "删除 {name}",
+  retry: "重试 {name}",
+  replace: "重拍",
+  delete: "删除",
+  upload: "上传{label}",
+  any: "任意格式",
+  hint: "{accept} · 单个不超过 {size}",
+  unlimited: "不限大小",
+  typeError: "「{name}」格式不支持，请选择{accept}",
+  sizeError: "「{name}」超过 {size}",
+  countError: "最多可添加 {count} 个文件，超出的未添加",
+}
+type FileUploadLabels = typeof DEFAULT_LABELS
+export { DEFAULT_LABELS }
+export type { FileUploadLabels }

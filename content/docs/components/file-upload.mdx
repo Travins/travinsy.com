@@ -1,0 +1,139 @@
+---
+title: 文件上传
+titleEn: File Upload
+description: 多文件选择与证件槽位，支持拖放、拍照、格式大小校验与受控上传状态，组件不发送请求。
+group: input
+status: new
+---
+
+<ComponentPreview name="file-upload-demo" />
+
+## 安装
+
+<InstallCommand name="file-upload" />
+
+## 用法
+
+```tsx
+"use client"
+import { useState } from "react"
+import {
+  FileUpload,
+  appendFiles,
+  type FileUploadItem,
+} from "@/components/ui/file-upload/file-upload"
+
+export function ApplicationAttachments() {
+  const [items, setItems] = useState<FileUploadItem[]>([])
+  return (
+    <form
+      onSubmit={async (event) => {
+        event.preventDefault()
+        const data = new FormData(event.currentTarget)
+        appendFiles(data, "attachments", items)
+        await fetch("/api/application", { method: "POST", body: data })
+      }}
+    >
+      <FileUpload
+        value={items}
+        onValueChange={setItems}
+        accept="image/*,.pdf"
+        maxSize={10 * 1024 * 1024}
+        maxFiles={5}
+      />
+      <button type="submit">提交</button>
+    </form>
+  )
+}
+```
+
+### 只选择，提交时才上传
+
+组件不负责上传，不发送请求。`value` / `defaultValue` / `onValueChange` 管理文件列表。提交时调用 `appendFiles(formData, name, items)`，再由业务代码发送请求。槽位的值是单个条目或 `null`。
+
+默认状态为 `pending`（待提交）；使用方把状态改为 `uploading`、`error`、`done`。`progress` 是 0–100 的数字，上传中显示百分比和进度条；`error` 是该文件的错误信息。传入 `onRetry` 后，失败的条目右侧会出现重试按钮，点击时把该条目交回给你重新上传。
+
+### 校验与清除错误
+
+`accept` 支持 MIME、通配 MIME 和扩展名（如 `image/*,.pdf`）。`maxSize` 的单位为字节，`maxFiles` 限制总数。`multiple={false}` 最多保留一个文件。非法文件不进入列表，通过 `onReject` 返回 `type`、`size`、`count` 原因。下一次成功选择或删除会清除旧错误；同一次选择仍有拒绝文件时保留本次原因。外部 `error` 由使用方更新。
+
+### 为什么不同步到原生 input
+
+iOS Safari 对通过脚本写入 `FileList` 的支持不可靠。因此组件不提供隐式表单文件提交：每次处理后清空 file input，允许重复选择同一文件；提交必须显式调用 `appendFiles`。表单 reset 时，非受控组件回到 defaultValue；受控值由使用方重置。
+
+## 示例
+
+### 证件正反面
+
+用 `FileUploadSlot` 配合内置线稿，窄容器单列展示。
+
+<ComponentPreview name="file-upload-id-card-demo" />
+
+### 提交与单独重试
+
+用定时器逐个模拟上传，首次提交的第一个文件固定失败，点它右侧的重试按钮（`onRetry`）单独重传。示例不发送真实请求。
+
+<ComponentPreview name="file-upload-submit-demo" />
+
+### 手机上的体验
+
+手机外框为 402 × 874。触屏使用拍照、相册按钮；桌面使用拖放区。`capture={false}` 隐藏拍照按钮，只接受非图片时也隐藏。
+
+<ComponentPreview name="file-upload-mobile-demo" />
+
+## API
+
+<PropsTable name="file-upload" component="FileUpload" />
+
+### FileUploadSlot
+
+<PropsTable name="file-upload" component="FileUploadSlot" />
+
+`label` 为必填槽位名称；`placeholder` 可放 ReactNode 示意图；默认 `accept="image/*"`、`capture="environment"`，单文件选择会替换旧值。
+
+### 类型与工具
+
+```ts
+type FileUploadItem = {
+  id: string
+  file: File
+  status?: "pending" | "uploading" | "error" | "done"
+  progress?: number
+  error?: string
+}
+type FileUploadRejection = { file: File; reason: "type" | "size" | "count" }
+appendFiles(formData: FormData, name: string, items: FileUploadItem[]): void
+```
+
+`IdCardFrontIllustration`、`IdCardBackIllustration` 接受 SVG 属性，使用 `currentColor`，仅为示意图。`FileUploadLabels` 导出全部文案类型；两种组件均接受 `labels?: Partial<FileUploadLabels>`。可覆盖 `drop`、`choose`、`camera`、`album`、四种状态、`remove`、`retry`、`replace`、`delete`、`upload`、`any`、`hint`、`unlimited` 和三个错误模板。模板占位符见安装源码的 `config.ts`。
+
+### data-slot
+
+| 元素                | data-slot                                             |
+| ------------------- | ----------------------------------------------------- |
+| 多文件根节点        | `file-upload`                                         |
+| 普通 / 拍照输入     | `file-upload-input` / `file-upload-camera`            |
+| 拖放区              | `file-upload-dropzone`                                |
+| 缩略图              | `file-upload-preview`                                 |
+| 错误区              | `file-upload-error`                                   |
+| 槽位根节点 / 控件   | `file-upload-slot` / `file-upload-slot-control`       |
+| 槽位输入 / 触发按钮 | `file-upload-slot-input` / `file-upload-slot-trigger` |
+| 槽位错误区          | `file-upload-slot-error`                              |
+
+文件列表复用官方 Attachment 的 `attachment-*` 槽位。拖入状态用 `data-dragging` 表示。
+
+## 可访问性
+
+选择按钮及空槽使用真正的 button，Tab 聚焦后按 Enter 或空格打开文件选择。删除、重试按钮的名称包含文件名。错误区使用 `aria-live="polite"`，控件通过 `aria-describedby` 关联错误提示。被拒绝的文件只在下方给出一行说明，不把整个控件标红；红色边框只跟随外部传入的 `error`。
+
+## 注意事项
+
+- 文件格式和大小也必须由服务器验证；`accept` 只是前端筛选。
+- HEIC 不做转码，是否接收由 `accept` 决定。图片预览失败时显示扩展名。
+- objectURL 在 effect 中创建，替换、删除和卸载时释放。
+- 手机拍照行为由浏览器和系统决定，`capture` 是提示。
+- 相同文件允许重复添加；需要去重时在受控回调中处理。
+
+## 源码
+
+<ComponentSource name="file-upload" />
