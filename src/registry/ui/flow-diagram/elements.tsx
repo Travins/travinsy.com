@@ -14,7 +14,11 @@ import { cn } from "@/lib/utils"
 import { FlowLineDraw, FlowLineFlow } from "./beam"
 import { FLOW_BEAM_SPEED, flowTextWidth, type FlowRoute } from "./route"
 import { useFlowClock } from "./flow-clock"
-import { flowToneStyle, toneClasses, type FlowTone } from "./tone"
+import {
+  flowToneStyle,
+  toneClasses,
+  type FlowTone,
+} from "@/registry/lib/flow-tone"
 
 /** 节点里图标的边长，以及图标与文字之间的间距（设计像素） */
 const ICON_SIZE = 12

@@ -2,7 +2,7 @@ import {
   FLOW_TONES,
   type FlowTone,
   type FlowToneName,
-} from "@/registry/ui/flow-diagram/tone"
+} from "@/registry/lib/flow-tone"
 
 /** cobe 接受的颜色：三个 0–1 的分量。 */
 type GlobeRgb = [number, number, number]

@@ -14,7 +14,7 @@ import {
   FADE_MASK,
   type FlowBackgroundName,
 } from "@/registry/ui/flow-diagram/background"
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 
 // 订阅系统偏好的实时变更，服务端始终使用静帧。
 function subscribeReducedMotion(callback: () => void) {

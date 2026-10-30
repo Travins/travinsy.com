@@ -190,7 +190,7 @@ type XyPadProps = Omit<
 - 受控模式下记得同时处理 `onValueChange`，否则拖动后手柄会弹回。
 - 用作表单字段时传 `name`：`name="pos"` 提交 `pos.x` 与 `pos.y` 两个字段，也可以写成 `{ x: "pan", y: "tilt" }` 分别指定；非受控时表单重置回到 `defaultValue`。
 - 出错时传 `aria-invalid`，方条变红（和金额输入、省市区选择的错误态一致）；错误文字放在控件下方，用 `aria-describedby` 关联，读屏聚焦时一并朗读。
-- `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取；手动安装需要自己补上 `--flow-*` 变量。
+- `tone` 的颜色变量由 `flow-tone`（色调变量）条目提供，安装时会一并拉取；手动安装需要自己补上 `--flow-*` 变量。
 
 ## 源码
 

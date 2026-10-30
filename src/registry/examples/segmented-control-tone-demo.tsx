@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { flowToneStyle } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle } from "@/registry/lib/flow-tone"
 import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
 
 /** 三个时间范围各一份固定数据，柱子高度是百分比 */

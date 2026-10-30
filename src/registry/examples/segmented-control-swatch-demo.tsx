@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
 
 /** 两个色点拼成的小样，给每个选项说明它把界面调成什么颜色 */

@@ -42,7 +42,11 @@ import {
   type FlowPoint,
   type FlowRoute,
 } from "./route"
-import { flowToneStyle, type FlowTone, type FlowToneName } from "./tone"
+import {
+  flowToneStyle,
+  type FlowTone,
+  type FlowToneName,
+} from "@/registry/lib/flow-tone"
 
 type FlowFit = "scale-down" | "contain" | "none"
 

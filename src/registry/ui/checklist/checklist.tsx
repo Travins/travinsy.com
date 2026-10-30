@@ -6,7 +6,7 @@ import { useInView, useReducedMotion } from "motion/react"
 
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 import {
   ChecklistContext,
   ChecklistRowContext,

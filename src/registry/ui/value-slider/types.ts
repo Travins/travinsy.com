@@ -1,7 +1,7 @@
 import type { Slider as SliderPrimitive } from "@base-ui/react/slider"
 import type * as React from "react"
 
-import type { FlowTone } from "@/registry/ui/flow-diagram/tone"
+import type { FlowTone } from "@/registry/lib/flow-tone"
 
 type ValueSliderValue = number | readonly number[]
 type ValueSliderSize = "sm" | "default" | "lg"

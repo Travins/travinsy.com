@@ -4,7 +4,7 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 
 const LANG_TONES: Record<string, FlowTone> = {
   ts: "blue",

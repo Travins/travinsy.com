@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { flowToneStyle } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle } from "@/registry/lib/flow-tone"
 import { XyPad } from "@/registry/ui/xy-pad/xy-pad"
 
 type Mood = { x: number; y: number }

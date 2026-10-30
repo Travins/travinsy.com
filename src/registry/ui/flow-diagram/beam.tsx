@@ -5,7 +5,11 @@ import { useMemo } from "react"
 
 import { useFlowClock } from "./flow-clock"
 import { FLOW_BEAM_SPEED, FLOW_LINE_SPEED, type FlowRoute } from "./route"
-import { flowToneStyle, toneClasses, type FlowTone } from "./tone"
+import {
+  flowToneStyle,
+  toneClasses,
+  type FlowTone,
+} from "@/registry/lib/flow-tone"
 
 /** 光点本体与拖尾的长度（像素） */
 const HEAD_LENGTH = 8

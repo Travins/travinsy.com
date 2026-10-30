@@ -18,7 +18,7 @@ import {
   flowToneStyle,
   type FlowTone,
   type FlowToneName,
-} from "@/registry/ui/flow-diagram/tone"
+} from "@/registry/lib/flow-tone"
 
 // 订阅系统偏好的实时变更，服务端始终使用静帧。
 function subscribeReducedMotion(callback: () => void) {

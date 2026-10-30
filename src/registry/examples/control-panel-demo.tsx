@@ -12,7 +12,7 @@ import {
   ControlPanelTitle,
   formatJsx,
 } from "@/registry/ui/control-panel/control-panel"
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
 import { TonePicker, toneOptions } from "@/registry/ui/tone-picker/tone-picker"
 import { ToggleSwitch } from "@/registry/ui/toggle-switch/toggle-switch"

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useInView } from "motion/react"
 
-import type { FlowToneName } from "@/registry/ui/flow-diagram/tone"
+import type { FlowToneName } from "@/registry/lib/flow-tone"
 
 import type { TextScrambleCharset } from "./text-scramble"
 

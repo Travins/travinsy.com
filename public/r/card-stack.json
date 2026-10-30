@@ -8,9 +8,7 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "button",
-    "https://yiui.dev/r/grid-layout.json",
-    "https://yiui.dev/r/stat-card.json"
+    "button"
   ],
   "files": [
     {

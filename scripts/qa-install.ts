@@ -346,8 +346,8 @@ async function main() {
                   // 只是补齐示例环境，不算失败（备注列只记录问题）
                   console.log(`  示例额外安装官方组件 ${official[1]}`)
                 }
-                // 示例引用的本站条目不在被测条目的依赖里（如选择器示例用的行政区划数据），
-                // 按 target 找到对应条目补装，只是补齐示例环境
+                // 示例引用的本站条目不在被测条目的依赖里（如选择器示例用的行政区划数据、时间线示例用的统计卡片），
+                // 按 target 或源码路径找到对应条目补装，只是补齐示例环境。registry:ui 的文件多半没写 target，只能按 path 对
                 const installed = () =>
                   [
                     path + ".tsx",
@@ -359,7 +359,10 @@ async function main() {
                   const companion = catalog.items.find((i) =>
                     i.files.some(
                       (f) =>
-                        f.target?.replace(/\.tsx?$/, "") === candidate.slice(2),
+                        f.target?.replace(/\.tsx?$/, "") ===
+                          candidate.slice(2) ||
+                        f.path.replace(/\.tsx?$/, "") ===
+                          `src/${spec.slice(2)}`,
                     ),
                   )
                   if (companion) {

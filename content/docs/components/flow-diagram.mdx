@@ -199,7 +199,7 @@ function Progress() {
 | `destructive` | `var(--destructive)` | 失败、拒绝 |
 | `blue` `green` `amber` `rose` `violet` `cyan` | `var(--flow-blue)` 等 | 多彩色调，不随颜色主题变化 |
 
-多彩色调来自六个 CSS 变量，由 registry 条目的 `cssVars` 提供亮 / 暗两套 oklch 值，`shadcn add` 时会写进你的全局样式（本站已经在 `globals.css` 里同名定义）：
+多彩色调来自六个 CSS 变量，由[色调变量](/components/flow-tone/)（`flow-tone`）条目提供亮 / 暗两套 oklch 值，安装本组件时一并带上，`shadcn add` 时会写进你的全局样式（本站已经在 `globals.css` 里同名定义）：
 
 | 变量 | 亮色 | 暗色 |
 | --- | --- | --- |

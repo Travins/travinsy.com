@@ -8,7 +8,7 @@ import {
 import {
   flowToneStyle,
   type FlowToneName,
-} from "@/registry/ui/flow-diagram/tone"
+} from "@/registry/lib/flow-tone"
 
 // 每张卡有自己的色调与封面图形；卡片底部一条同色细带，叠在后面时露出来，层次一眼可见
 const LINES =

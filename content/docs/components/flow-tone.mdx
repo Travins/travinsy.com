@@ -1,0 +1,130 @@
+---
+title: 色调变量
+titleEn: Flow Tone
+description: 全站带颜色的组件共用的色调：primary、blue、green 等内置名或任意 CSS 颜色，统一换成 --flow-tone 变量；附带六种多彩色调的亮 / 暗取值，在全局样式里改写即可换成品牌色。
+group: utils
+---
+
+<ComponentPreview name="flow-tone-demo" />
+
+## 安装
+
+<InstallCommand name="flow-tone" />
+
+它是所有带颜色的组件共用的底层工具，安装下面任何一个组件时都会自动带上，一般不需要单独装。
+
+## 用法
+
+`flowToneStyle(tone)` 把色调名换成一条 CSS 变量，返回可以直接铺在元素上的 `style` 对象：
+
+```tsx title="components/tone-dot.tsx"
+import { flowToneStyle } from "@/lib/flow-tone"
+
+export function ToneDot() {
+  // 变量写在外层，里面的色块只需要读 --flow-tone
+  return (
+    <div style={flowToneStyle("violet")}>
+      <span className="block size-3 rounded-sm bg-(--flow-tone)" />
+    </div>
+  )
+}
+```
+
+带颜色的原语都只读 `--flow-tone`，CSS 变量沿 DOM 继承，所以在哪一层设置它，里面没有自己指定 `tone` 的原语就一起跟着变——自己写的 SVG、进度条、色点同样可以直接用 `bg-(--flow-tone)`、`stroke-(--flow-tone)` 取色。
+
+不传 `tone` 时返回 `undefined`，元素上不会写入这条变量，即沿用外层继承来的色调。
+
+内置的十个名字对应如下变量，前四个跟随颜色主题，后六个由本条目提供亮 / 暗两套取值：
+
+| 名称          | 取值                      |
+| ------------- | ------------------------- |
+| `primary`     | `var(--primary)`          |
+| `foreground`  | `var(--foreground)`       |
+| `muted`       | `var(--muted-foreground)` |
+| `destructive` | `var(--destructive)`      |
+| `blue`        | `var(--flow-blue)`        |
+| `green`       | `var(--flow-green)`       |
+| `amber`       | `var(--flow-amber)`       |
+| `rose`        | `var(--flow-rose)`        |
+| `violet`      | `var(--flow-violet)`      |
+| `cyan`        | `var(--flow-cyan)`        |
+
+映射表也导出了，需要遍历或做选择器时直接读：
+
+```ts
+import { FLOW_TONES } from "@/lib/flow-tone"
+
+FLOW_TONES.blue // "var(--flow-blue)"
+```
+
+`toneClasses` 汇总了几种常用的取色写法，字符串里已经写全类名，Tailwind 能正常扫描到：`lit`（淡底色 + 描边，点亮节点）、`stroke`、`flow`（流动的虚线纹理）、`line`（淡化连线）、`fill`。
+
+### 换成品牌色
+
+六个 `--flow-*` 写在全局样式的 `:root` 与 `.dark` 里，改这两处就换掉了全站的多彩色调：
+
+```css
+:root {
+  --flow-blue: oklch(0.56 0.2 258);
+  --flow-green: oklch(0.62 0.16 150);
+  --flow-amber: oklch(0.7 0.16 70);
+  --flow-rose: oklch(0.62 0.21 5);
+  --flow-violet: oklch(0.56 0.22 292);
+  --flow-cyan: oklch(0.66 0.12 215);
+}
+
+.dark {
+  --flow-blue: oklch(0.72 0.15 255);
+  /* 其余五个同理，暗色一般调亮一档、降一点彩度 */
+}
+```
+
+这几个变量不随颜色主题（`data-theme`）变化。想让品牌色跟着颜色主题走，就在每套主题的选择器下各写一份；只想给某一块区域换色，直接在这块区域的元素上传 `flowToneStyle("var(--brand)")` 即可，不必动全局。
+
+## 哪些组件在用
+
+组件的 `tone` 属性都走这套变量，装了它们就等于装了 `flow-tone`：
+
+- 图形与动效：[flow-diagram](/components/flow-diagram/)、[orbit](/components/orbit/)、[ripple](/components/ripple/)、[shuffle-grid](/components/shuffle-grid/)、[glyph-field](/components/glyph-field/)、[code-stack](/components/code-stack/)、[globe](/components/globe/)
+- 表单与输入：[value-slider](/components/value-slider/)、[xy-pad](/components/xy-pad/)、[angle-dial](/components/angle-dial/)、[segmented-control](/components/segmented-control/)、[toggle-switch](/components/toggle-switch/)、[tone-picker](/components/tone-picker/)
+- 数据与内容：[timeline](/components/timeline/)、[checklist](/components/checklist/)、[text-animate](/components/text-animate/)
+- 区块：[settings-01](/blocks/settings-01/)
+
+## API
+
+```ts
+type FlowToneName =
+  | "primary"
+  | "foreground"
+  | "muted"
+  | "destructive"
+  | "blue"
+  | "green"
+  | "amber"
+  | "rose"
+  | "violet"
+  | "cyan"
+
+/** 内置名，或任意 CSS 颜色："#f97316"、"oklch(0.7 0.2 150)"、"var(--brand)" 都可以 */
+type FlowTone = FlowToneName | (string & {})
+
+/** 返回 { "--flow-tone": 颜色 }；不传 tone 返回 undefined */
+function flowToneStyle(tone?: FlowTone): CSSProperties | undefined
+
+/** 内置名到主题变量的映射 */
+const FLOW_TONES: Record<FlowToneName, string>
+
+/** 常用的取色类名：lit / stroke / flow / line / fill */
+const toneClasses: Record<"lit" | "stroke" | "flow" | "line" | "fill", string>
+```
+
+## 注意事项
+
+- 取色只能写 CSS 变量形式：`bg-(--flow-tone)`、`stroke-(--flow-tone)`、`text-(--flow-tone)`。变量是运行时才有的自定义属性，Tailwind 不会为它生成 `bg-flow-tone` 这样的类名。
+- 传内置名以外的字符串会原样写进 `--flow-tone`，不做校验；写错了颜色不会报错，只是取不到色，可以用 `FLOW_TONES` 先判断一下是不是内置名。
+- 只有 `primary`、`foreground`、`muted`、`destructive` 跟随亮暗与颜色主题；六个 `--flow-*` 是固定取值，暗色另有一套，需要跟着主题变就自己按主题选择器覆盖。
+- 文件是纯函数，没有 `"use client"`，返回的只是内联 `style` 对象，服务端组件里可以直接用；不需要任何 npm 依赖。
+
+## 源码
+
+<ComponentSource name="flow-tone" />

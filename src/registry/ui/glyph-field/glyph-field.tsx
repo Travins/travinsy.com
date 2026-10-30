@@ -4,7 +4,7 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import { FLOW_TONES, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { FLOW_TONES, type FlowTone } from "@/registry/lib/flow-tone"
 
 const GLYPHS = {
   latin: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",

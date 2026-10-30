@@ -183,7 +183,7 @@ type SegmentedControlProps = Omit<
 - 选项文字不换行（`whitespace-nowrap` + `truncate`），选项太多太窄时优先缩短文字，不要靠缩小字号。
 - 值是字符串。需要数字或其他类型时在 `onValueChange` 里自己转，或者用 `String(value)` 存选项的 `value`。
 - 受控 / 非受控共用一个 `useControllableState`；`options` 变化后如果当前值已不存在，组件不会自动改选，请在父级同步。
-- `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取。
+- `tone` 的颜色变量由 `flow-tone`（色调变量）条目提供，安装时会一并拉取。
 
 ## 源码
 

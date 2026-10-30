@@ -1,4 +1,4 @@
-import type { FlowTone } from "@/registry/ui/flow-diagram/tone"
+import type { FlowTone } from "@/registry/lib/flow-tone"
 
 /** 地球色调：与 flow-diagram 共用，内置名或任意 CSS 颜色（可含 `var()`）。 */
 type GlobeTone = FlowTone

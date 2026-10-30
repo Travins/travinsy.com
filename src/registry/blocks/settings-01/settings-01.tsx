@@ -7,7 +7,7 @@ import { useMemo, useState, type ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
-import { flowToneStyle } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle } from "@/registry/lib/flow-tone"
 
 import { AppearanceSection } from "./appearance-section"
 import {

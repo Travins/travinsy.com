@@ -97,7 +97,7 @@ export function SourceFiles() {
 - 调整面板通过 `CodeStackTuningContext` 覆盖子树里的 `spread`、`max`、`hoverSpread`、`active`，并用 `onReport` 回报示例自己的取值。不包这一层时组件行为不变；它面向调试与文档，正常使用不需要。
 
 - 扇形与级联的卡片宽度随容器变化，默认最多显示八张，适用于组件封面与空状态插图。
-- 全部颜色来自主题 token 和 `--flow-*`，后者由安装时带入的 `flow-diagram` 条目提供。
+- 全部颜色来自主题 token 和 `--flow-*`，后者由安装时带入的 `flow-tone`（色调变量）条目提供。
 - CSS 随组件输出，静态导出与无 JavaScript 环境均可显示并响应悬停。
 
 ## 源码

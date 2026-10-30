@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 
 /**
  * 角度刻度尺：方条中间是一段可以左右拖动的刻度，固定在正中的竖线指针读出当前角度。

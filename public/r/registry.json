@@ -337,7 +337,7 @@
         "https://yiui.dev/r/toggle-switch.json",
         "https://yiui.dev/r/tone-picker.json",
         "https://yiui.dev/r/control-panel.json",
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -713,6 +713,38 @@
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "flow-tone",
+      "title": "色调变量",
+      "description": "全站带颜色的组件共用的色调：primary、blue、green 等内置名或任意 CSS 颜色，统一换成 --flow-tone 变量；附带六种多彩色调的亮 / 暗取值，在全局样式里改写即可换成品牌色。",
+      "files": [
+        {
+          "path": "src/registry/lib/flow-tone.ts",
+          "type": "registry:lib",
+          "target": "lib/flow-tone.ts"
+        }
+      ],
+      "cssVars": {
+        "light": {
+          "flow-blue": "oklch(0.56 0.2 258)",
+          "flow-green": "oklch(0.62 0.16 150)",
+          "flow-amber": "oklch(0.7 0.16 70)",
+          "flow-rose": "oklch(0.62 0.21 5)",
+          "flow-violet": "oklch(0.56 0.22 292)",
+          "flow-cyan": "oklch(0.66 0.12 215)"
+        },
+        "dark": {
+          "flow-blue": "oklch(0.72 0.15 255)",
+          "flow-green": "oklch(0.77 0.17 152)",
+          "flow-amber": "oklch(0.82 0.15 82)",
+          "flow-rose": "oklch(0.74 0.16 8)",
+          "flow-violet": "oklch(0.74 0.15 295)",
+          "flow-cyan": "oklch(0.82 0.11 208)"
+        }
+      },
+      "type": "registry:lib"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
       "name": "flow-diagram",
       "title": "流程动画图示",
       "description": "节点、细线与流动光点组成的循环动画流程图：统一时间轴、进入视口才播放、减少动态效果时停在静帧；色调与底纹可配置，附带光点路径、逐字输入、加载圈与状态点等原语。",
@@ -720,7 +752,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/grid-layout.json"
+        "https://yiui.dev/r/grid-layout.json",
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -744,32 +777,10 @@
           "type": "registry:ui"
         },
         {
-          "path": "src/registry/ui/flow-diagram/tone.ts",
-          "type": "registry:ui"
-        },
-        {
           "path": "src/registry/ui/flow-diagram/background.ts",
           "type": "registry:ui"
         }
       ],
-      "cssVars": {
-        "light": {
-          "flow-blue": "oklch(0.56 0.2 258)",
-          "flow-green": "oklch(0.62 0.16 150)",
-          "flow-amber": "oklch(0.7 0.16 70)",
-          "flow-rose": "oklch(0.62 0.21 5)",
-          "flow-violet": "oklch(0.56 0.22 292)",
-          "flow-cyan": "oklch(0.66 0.12 215)"
-        },
-        "dark": {
-          "flow-blue": "oklch(0.72 0.15 255)",
-          "flow-green": "oklch(0.77 0.17 152)",
-          "flow-amber": "oklch(0.82 0.15 82)",
-          "flow-rose": "oklch(0.74 0.16 8)",
-          "flow-violet": "oklch(0.74 0.15 295)",
-          "flow-cyan": "oklch(0.82 0.11 208)"
-        }
-      },
       "type": "registry:ui"
     },
     {
@@ -966,7 +977,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json",
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -985,7 +997,8 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-diagram.json",
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1006,7 +1019,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1221,7 +1234,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1246,7 +1259,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1266,7 +1279,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1290,7 +1303,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1312,7 +1325,7 @@
       "description": "一块带网格的区域，拖动手柄同时调两个值，十字线与淡色填充标出位置，键盘左右 / 上下分别调两条轴。",
       "dependencies": [],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1370,7 +1383,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1394,9 +1407,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "button",
-        "https://yiui.dev/r/grid-layout.json",
-        "https://yiui.dev/r/stat-card.json"
+        "button"
       ],
       "files": [
         {
@@ -1433,7 +1444,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1469,7 +1480,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1502,7 +1513,7 @@
       ],
       "registryDependencies": [
         "button",
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1548,7 +1559,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1575,7 +1586,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {
@@ -1594,7 +1605,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/flow-diagram.json"
+        "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
         {

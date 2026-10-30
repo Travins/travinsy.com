@@ -7,7 +7,7 @@ import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 
 /**
  * 与数值滑块同一套方条与高度表（bar 28 / 32 / 36px，compact 18 / 22 / 24px）。

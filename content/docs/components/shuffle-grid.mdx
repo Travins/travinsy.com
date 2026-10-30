@@ -86,7 +86,7 @@ export function ShuffleGridExample() {
 - 调整面板通过 `ShuffleGridTuningContext` 覆盖子树里 `ShuffleGrid` 的 `interval`、`activeCount`、`litCount`、`variant` 与 `paused`，并用 `onReport` 回报示例自己的取值；`stableFrame` 让盘面按打开时的宽高比铺满，切换 `variant` 不改变容器大小。不包这一层时组件行为不变；它面向调试与文档，正常使用不需要。
 - 同一条目在分类间换位用的是 `motion` 的共享布局动画，条目 `id` 在同一个盘面里必须唯一。
 - 格子是正方形（`aspect-square`），盘面宽度由外层决定；`cols` 很大时单格会变小，图标大小可以通过 `content` 自行指定。
-- 点亮的色调来自 `--flow-*` 变量，依赖 `flow-diagram` 条目，安装时会一并提供。
+- 点亮的色调来自 `--flow-*` 变量，依赖 `flow-tone`（色调变量）条目，安装时会一并提供。
 
 ## 源码
 

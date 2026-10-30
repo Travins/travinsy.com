@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Tag } from "lucide-react"
 
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 import { TonePicker } from "@/registry/ui/tone-picker/tone-picker"
 
 /**

@@ -14,7 +14,7 @@ import {
   ControlPanelTitle,
   formatJsx,
 } from "@/registry/ui/control-panel/control-panel"
-import { flowToneStyle } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle } from "@/registry/lib/flow-tone"
 import { ValueSlider } from "@/registry/ui/value-slider/value-slider"
 
 type CoverSettings = { width: number; height: number; radius: number }

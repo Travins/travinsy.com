@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import type { FlowTone } from "@/registry/ui/flow-diagram/tone"
+import type { FlowTone } from "@/registry/lib/flow-tone"
 
 type ChecklistSize = "default" | "sm"
 

@@ -8,7 +8,7 @@ import { motion } from "motion/react"
 
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
-import { flowToneStyle } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle } from "@/registry/lib/flow-tone"
 
 import { playEdge, playTick, useValueSliderMuted } from "./sound"
 import type {

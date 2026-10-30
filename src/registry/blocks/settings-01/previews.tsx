@@ -2,7 +2,7 @@ import type * as React from "react"
 import { Monitor, Moon, Sparkles, Sun } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { flowToneStyle } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle } from "@/registry/lib/flow-tone"
 
 import type { Settings01Labels } from "./config"
 import type { Density, Settings01Values, ThemeMode } from "./types"

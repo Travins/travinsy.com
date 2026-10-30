@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import {
   flowToneStyle,
   type FlowToneName,
-} from "@/registry/ui/flow-diagram/tone"
+} from "@/registry/lib/flow-tone"
 import {
   useTextTuning,
   useTextMotion,

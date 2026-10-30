@@ -5,7 +5,7 @@ import { Switch } from "@base-ui/react/switch"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 
 /**
  * 整条方条都是开关：左侧标签，右侧一个胶囊轨道和圆形手柄。

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Check, Share2 } from "lucide-react"
 
-import { flowToneStyle } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle } from "@/registry/lib/flow-tone"
 import { TonePicker, toneOptions } from "@/registry/ui/tone-picker/tone-picker"
 
 // 内置色调里取五个，色点排一行刚好

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { LayoutGrid, List, SquareKanban } from "lucide-react"
 
-import { flowToneStyle } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle } from "@/registry/lib/flow-tone"
 import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
 
 const VIEW_OPTIONS = [

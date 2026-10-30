@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
 import { TonePicker, toneOptions } from "@/registry/ui/tone-picker/tone-picker"
 
 const TONES = toneOptions()

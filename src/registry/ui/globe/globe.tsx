@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-import { flowToneStyle } from "@/registry/ui/flow-diagram/tone"
+import { flowToneStyle } from "@/registry/lib/flow-tone"
 import { anglesFor } from "./projection"
 import type { GlobeArc, GlobeMarker, GlobeTone } from "./types"
 import { useGlobe } from "./use-globe"
