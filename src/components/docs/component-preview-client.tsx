@@ -1,7 +1,14 @@
 "use client"
 
 import { PreviewSkeleton } from "@/components/docs/preview-skeleton"
-import { Suspense, useMemo, useState, type ReactNode } from "react"
+import {
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { registryExamples } from "@/registry/__index__"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
@@ -25,6 +32,7 @@ import {
   useTuner,
 } from "./tuner"
 import { PreviewBackdrop } from "./preview-backdrop"
+import { PreviewQrButton } from "./preview-qr"
 import { V0Icon } from "./v0-icon"
 
 /**
@@ -75,6 +83,14 @@ export function ComponentPreviewClient({
   const tunerConfig = useMemo(() => resolveTuner(item, name), [item, name])
   const tuner = useTuner(tunerConfig)
   const reduced = useReducedMotion()
+  // 「手机扫码」只放在页面的第一个示例（主示例）上，扫的是整页，放一个就够
+  const markerRef = useRef<HTMLSpanElement>(null)
+  const [primary, setPrimary] = useState(false)
+  useEffect(() => {
+    setPrimary(
+      document.querySelector("[data-preview-marker]") === markerRef.current,
+    )
+  }, [])
   return (
     <Tabs
       value={view}
@@ -87,6 +103,8 @@ export function ComponentPreviewClient({
           <DocTabsTrigger value="code">代码</DocTabsTrigger>
         </DocTabsList>
         <div className="flex items-center gap-0.5">
+          <span ref={markerRef} data-preview-marker hidden />
+          {primary && <PreviewQrButton />}
           {tunerConfig && view === "preview" && (
             <TunerToggle
               config={tunerConfig}
