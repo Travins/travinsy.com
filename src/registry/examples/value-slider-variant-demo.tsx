@@ -51,7 +51,7 @@ export default function ValueSliderVariantDemo() {
   const [smoothness, setSmoothness] = React.useState(68)
 
   return (
-    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-5 shadow-sm">
+    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
       <div className="flex items-baseline justify-between gap-2">
         <p className="text-sm font-medium">画笔设置</p>
         <p className="text-xs text-muted-foreground">铅笔 · 软头</p>

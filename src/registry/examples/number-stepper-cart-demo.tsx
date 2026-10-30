@@ -38,7 +38,12 @@ export default function NumberStepperCartDemo() {
               <Icon className="size-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium">{name}</p>
+              <p
+                id={`cart-item-${index}`}
+                className="truncate text-xs font-medium"
+              >
+                {name}
+              </p>
               <p className="mt-1 text-[11px] text-muted-foreground tabular-nums">
                 {currency(price)}
               </p>
@@ -49,7 +54,7 @@ export default function NumberStepperCartDemo() {
             </div>
             <NumberStepper
               size="sm"
-              aria-label={`${name}数量`}
+              aria-labelledby={`cart-item-${index}`}
               value={quantities[index]}
               max={max}
               onValueChange={(value) =>

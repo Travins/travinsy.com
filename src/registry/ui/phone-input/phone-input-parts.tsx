@@ -123,9 +123,10 @@ function PhoneInputSendButton({
       {...props}
     >
       <span className="grid justify-items-center">
-        {sizers.map((sizer) => (
+        {/* 用位置当 key：调用方可能把两种状态写成同一句文案（如 send 与 resend 都是「获取验证码」） */}
+        {sizers.map((sizer, index) => (
           <span
-            key={sizer}
+            key={index}
             aria-hidden="true"
             className="invisible col-start-1 row-start-1 whitespace-nowrap"
           >

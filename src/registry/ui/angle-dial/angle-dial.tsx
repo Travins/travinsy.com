@@ -361,7 +361,7 @@ function AngleDial({
         onBlur={() => setPointerFocus(false)}
         onKeyDown={handleKeyDown}
         onDoubleClick={handleDoubleClick}
-        className="relative h-full min-w-0 flex-1 cursor-ew-resize touch-pan-y rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 in-data-[disabled]:cursor-not-allowed data-pointer-focus:focus-visible:ring-0"
+        className="relative h-full min-w-0 flex-1 cursor-ew-resize touch-pan-y rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset in-data-[disabled]:cursor-not-allowed data-pointer-focus:focus-visible:ring-0"
       >
         {/* 刻度：两层重复渐变，小刻度每 5°、大刻度每 15°；两端渐隐，像一段从窗口里露出来的转盘 */}
         <span

@@ -50,7 +50,7 @@ export default function ValueSliderMoodDemo() {
   const MoodIcon = mood.icon
   return (
     <div
-      className="w-full max-w-xs rounded-xl border border-edge bg-background p-4 shadow-sm"
+      className="w-full max-w-xs rounded-xl border border-edge bg-background p-4 shadow-xs"
       style={{ "--flow-tone": TONE_COLORS[mood.tone] } as React.CSSProperties}
     >
       <div className="flex items-center gap-3">

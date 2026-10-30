@@ -200,7 +200,7 @@ function TonePicker({
             title={option.label}
             data-slot="tone-picker-swatch"
             className={cn(
-              "relative size-(--tone-picker-swatch) shrink-0 cursor-pointer rounded-full transition-transform outline-none before:absolute before:-inset-x-[3px] before:-inset-y-2 before:content-[''] hover:scale-110 focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:scale-100 pointer-coarse:before:-inset-x-1.5 pointer-coarse:before:-inset-y-4",
+              "relative size-(--tone-picker-swatch) shrink-0 cursor-pointer rounded-full transition-transform outline-none before:absolute before:-inset-x-[3px] before:-inset-y-2 before:content-[''] hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring focus-visible:outline-solid motion-reduce:transition-none motion-reduce:hover:scale-100 pointer-coarse:before:-inset-x-1.5 pointer-coarse:before:-inset-y-4",
               // 选中：外面再套一圈前景色细环，和色点之间隔一道背景色缝
               "data-[checked]:ring-2 data-[checked]:ring-foreground/70 data-[checked]:ring-offset-2 data-[checked]:ring-offset-background",
               option.tone === null

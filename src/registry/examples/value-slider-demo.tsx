@@ -59,7 +59,7 @@ export default function ValueSliderDemo() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_45%_at_50%_55%,color-mix(in_oklab,var(--primary)_18%,transparent),transparent_72%)]"
       />
-      <div className="relative w-full max-w-sm rounded-xl border border-edge bg-background p-5 shadow-sm">
+      <div className="relative w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs text-muted-foreground">显示与声音</p>
           <SoundToggle />

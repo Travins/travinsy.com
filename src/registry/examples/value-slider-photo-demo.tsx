@@ -27,7 +27,7 @@ export default function ValueSliderPhotoDemo() {
   }
 
   return (
-    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-sm">
+    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-medium">调色</p>
         <Button

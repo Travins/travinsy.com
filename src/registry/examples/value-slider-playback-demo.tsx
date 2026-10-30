@@ -46,7 +46,7 @@ export default function ValueSliderPlaybackDemo() {
   }
 
   return (
-    <div className="w-full max-w-xs rounded-xl border border-edge bg-background p-4 shadow-sm">
+    <div className="w-full max-w-xs rounded-xl border border-edge bg-background p-4 shadow-xs">
       <div className="flex items-center gap-3">
         <div
           className="grid size-12 shrink-0 place-items-center rounded-lg text-foreground/75"

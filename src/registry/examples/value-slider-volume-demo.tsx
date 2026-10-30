@@ -40,7 +40,7 @@ export default function ValueSliderVolumeDemo() {
   const [volume, setVolume] = React.useState(60)
   const [muted, setMuted] = useValueSliderMuted()
   return (
-    <div className="w-full max-w-xs rounded-xl border border-edge bg-background p-4 shadow-sm">
+    <div className="w-full max-w-xs rounded-xl border border-edge bg-background p-4 shadow-xs">
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-0.5">
           <p className="text-sm font-medium">输出音量</p>

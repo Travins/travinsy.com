@@ -30,7 +30,7 @@ export default function ValueSliderRangeDemo() {
   }, 0)
 
   return (
-    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-sm">
+    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
       <div className="flex items-baseline justify-between gap-2">
         <p className="text-sm font-medium">价格分布</p>
         <p className="text-xs text-muted-foreground">全场 {TOTAL} 件</p>

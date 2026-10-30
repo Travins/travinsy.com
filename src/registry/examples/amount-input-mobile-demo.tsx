@@ -76,7 +76,7 @@ export default function AmountInputMobileDemo() {
             {BALANCE.toLocaleString("en-US", { minimumFractionDigits: 2 })}
             <button
               type="button"
-              className="ml-2 text-primary underline-offset-2 hover:underline"
+              className="ml-2 rounded-sm text-primary underline-offset-2 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
               onClick={() => setAmount(String(BALANCE))}
             >
               全部转出
