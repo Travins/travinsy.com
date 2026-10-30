@@ -1,0 +1,105 @@
+---
+title: 订单结算
+titleEn: Checkout
+description: 地址、配送、发票与支付方式组成的订单结算区块。
+status: new
+---
+
+<BlockViewer name="checkout-01" />
+
+## 功能说明
+
+桌面左右分栏，窄容器单栏并显示底部提交栏。支持新增地址、自提、企业发票格式校验、运费优惠计算、失败重试和完成时间线。金额单位为元；区块不发请求。
+
+### 用到的组件
+
+| 组件                             | 用途                     |
+| -------------------------------- | ------------------------ |
+| region-picker / phone-input      | 收货地址                 |
+| id-number-input                  | 企业税号格式             |
+| segmented-control                | 发票类型                 |
+| timeline / chinese-number        | 完成进度与人民币大写     |
+| radio-group / dialog / separator | 单选、地址弹层、明细分隔 |
+| steps                            | 手机示例六步进度         |
+
+## 安装
+
+<InstallCommand name="checkout-01" />
+
+安装后会多出一个可以直接访问的 `app/checkout/page.tsx`，里面是示例数据；把地址簿、商品、支付方式换成你自己的，`onSubmit` 接上下单接口即可。
+
+## 用法
+
+```tsx title="app/checkout/page.tsx"
+"use client"
+import { Checkout01 } from "@/components/checkout-01/checkout-01"
+
+export default function CheckoutPage() {
+  return (
+    <Checkout01
+      addresses={[]}
+      regions={[
+        {
+          code: "330000",
+          name: "浙江省",
+          children: [
+            {
+              code: "330100",
+              name: "杭州市",
+              children: [{ code: "330106", name: "西湖区" }],
+            },
+          ],
+        },
+      ]}
+      items={[{ id: "shirt", title: "亚麻衬衫", quantity: 1, price: 269 }]}
+      shippingOptions={[{ id: "express", label: "快递", fee: 8 }]}
+      paymentMethods={[{ id: "online", label: "在线支付" }]}
+      discount={0}
+      invoice={{ type: "none" }}
+      onAddressCreate={async (address) => {
+        const response = await fetch("/api/addresses", {
+          method: "POST",
+          body: JSON.stringify(address),
+        })
+        if (!response.ok) throw new Error("地址保存失败")
+        return response.json()
+      }}
+      onSubmit={async (payload) => {
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        })
+        if (!response.ok) throw new Error("下单失败，请重试")
+        return response.json()
+      }}
+      onViewOrder={(id) => {
+        window.location.href = "/orders/" + id
+      }}
+      onContinue={() => {
+        window.location.href = "/shop"
+      }}
+      labels={{ submit: "确认下单" }}
+    />
+  )
+}
+```
+
+服务端必须重新核对库存、商品单价、运费和优惠，不能信任客户端 total。`onSubmit` 在完成真实下单及所需支付流程后返回 `{ orderId, timeline? }`；支付取消或失败时抛错，区块保留输入并允许重试。回调可在外层接支付 SDK，区块不内置支付接口。
+
+## API
+
+`addresses`、`regions`、`items`、`shippingOptions`、`paymentMethods` 和 `onSubmit` 必填。`defaultAddressId` 决定初始地址，默认第一项；`discount` 默认 0；`invoice` 默认不开发票。`onAddressCreate` 可省略，此时新增地址仅保存在本次会话。`onViewOrder(orderId)`、`onContinue()` 负责完成页跳转。`labels` 可覆盖全部区块文案。
+
+完成时间线节点支持 `{ title, description?, time?, status? }`，`status` 为 `done`、`current` 或 `upcoming`，由使用方传入真实进度与时间。默认完成页仅把下单标为已完成。
+
+地址结构：`{ id, name, phone, regionCode, region, detail }`。地区树通过 `regions` 传入，不内置加载。提交结构：`{ address?, shippingId, paymentId, invoice, items, total }`，自提不传地址。
+
+## 可访问性
+
+卡片单选支持键盘操作；弹层管理焦点并支持 Esc 关闭。提交校验失败时滚动并聚焦首个出错模块；修正内容后错误消失。异步错误通过 alert 播报。
+
+## 手机示例：门店下单
+
+全部为虚构数据。二维码指向不可访问的演示域名，可模拟过期、地址不完整、改单、支付失败和取消；不连接真实支付。
+
+<ComponentPreview name="checkout-01-store-mobile-demo" />

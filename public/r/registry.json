@@ -1881,6 +1881,63 @@
         }
       ],
       "type": "registry:ui"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "checkout-01",
+      "title": "订单结算",
+      "description": "地址、配送、发票与支付方式组成的订单结算区块。",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "radio-group",
+        "dialog",
+        "separator",
+        "https://yiui.dev/r/region-picker.json",
+        "https://yiui.dev/r/phone-input.json",
+        "https://yiui.dev/r/id-number-input.json",
+        "https://yiui.dev/r/segmented-control.json",
+        "https://yiui.dev/r/timeline.json",
+        "https://yiui.dev/r/chinese-number.json"
+      ],
+      "files": [
+        {
+          "path": "src/registry/blocks/checkout-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/checkout/page.tsx"
+        },
+        {
+          "path": "src/registry/blocks/checkout-01/checkout-01.tsx",
+          "type": "registry:component",
+          "target": "components/checkout-01/checkout-01.tsx"
+        },
+        {
+          "path": "src/registry/blocks/checkout-01/types.ts",
+          "type": "registry:component",
+          "target": "components/checkout-01/types.ts"
+        },
+        {
+          "path": "src/registry/blocks/checkout-01/config.ts",
+          "type": "registry:component",
+          "target": "components/checkout-01/config.ts"
+        },
+        {
+          "path": "src/registry/blocks/checkout-01/form-parts.tsx",
+          "type": "registry:component",
+          "target": "components/checkout-01/form-parts.tsx"
+        },
+        {
+          "path": "src/registry/blocks/checkout-01/completion.tsx",
+          "type": "registry:component",
+          "target": "components/checkout-01/completion.tsx"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "1000px"
+      },
+      "type": "registry:block"
     }
   ]
 }

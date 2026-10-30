@@ -25,6 +25,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "checklist-compact-demo": lazy(() => import("./examples/checklist-compact-demo")),
   "checklist-demo": lazy(() => import("./examples/checklist-demo")),
   "checklist-interactive-demo": lazy(() => import("./examples/checklist-interactive-demo")),
+  "checkout-01-store-mobile-demo": lazy(() => import("./examples/checkout-01-store-mobile-demo")),
   "china-regions-demo": lazy(() => import("./examples/china-regions-demo")),
   "chinese-number-demo": lazy(() => import("./examples/chinese-number-demo")),
   "code-stack-cascade-demo": lazy(() => import("./examples/code-stack-cascade-demo")),
@@ -175,5 +176,6 @@ export const registryViews: Record<string, LazyExoticComponent<ComponentType>> =
   "agent-chat-01": lazy(() => import("./blocks/agent-chat-01/demo")),
   "app-shell-01": lazy(() => import("./templates/app-shell-01/demo")),
   "auth-01": lazy(() => import("./blocks/auth-01/demo")),
+  "checkout-01": lazy(() => import("./blocks/checkout-01/demo")),
   "settings-01": lazy(() => import("./blocks/settings-01/demo")),
 }
