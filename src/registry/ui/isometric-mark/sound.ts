@@ -5,9 +5,12 @@ import * as React from "react"
 /**
  * 按下 / 松开的音效：用 Web Audio 现场合成，不需要音频文件。
  * 按下是一声清脆的「咔」（短促的下滑正弦 + 高频带通噪声做触感，只留少量低频厚度），松开是更轻、更高的一声「嗒」。
- * AudioContext 在第一次按下（用户手势）时才创建，满足浏览器的自动播放限制。
+ * 浏览器的自动播放限制见下面的 unlock：手机上第一次按下的声音会在松手时补放。
  */
 let context: AudioContext | null = null
+/** 音频还没解锁时攒下的声音：解锁后补放，超过 PENDING_TTL 毫秒的就丢掉 */
+let pending: { play: (ctx: AudioContext) => void; at: number }[] = []
+const PENDING_TTL = 600
 
 function audio() {
   if (typeof window === "undefined") return null
@@ -19,13 +22,61 @@ function audio() {
     if (!Ctor) return null
     context = new Ctor()
   }
-  if (context.state === "suspended") void context.resume()
   return context
 }
 
-function tone(from: number, to: number, duration: number, volume: number) {
+function flush() {
+  const ctx = context
+  if (!ctx || ctx.state !== "running") return
+  const now = performance.now()
+  const queue = pending
+  pending = []
+  for (const item of queue) if (now - item.at < PENDING_TTL) item.play(ctx)
+}
+
+/**
+ * 手机浏览器只认「松手」类的手势解锁音频（pointerup、touchend、click、keydown），
+ * 触摸的按下不算，所以手指按下那一刻 AudioContext 还是挂起的。
+ * 在页面上监听这些手势：第一次松手就恢复 AudioContext 并补放刚才攒下的声音，之后按下也能直接出声。
+ * 老版 iOS 还要在手势里真正播一段声音才算解锁，顺手播一个 1 帧的静音缓冲。
+ */
+function unlock() {
   const ctx = audio()
   if (!ctx) return
+  if (ctx.state === "running") {
+    for (const type of GESTURES) window.removeEventListener(type, unlock, true)
+    return flush()
+  }
+  const silent = ctx.createBufferSource()
+  silent.buffer = ctx.createBuffer(1, 1, ctx.sampleRate)
+  silent.connect(ctx.destination)
+  silent.start()
+  void ctx.resume().then(flush, () => {})
+}
+
+const GESTURES = ["pointerup", "touchend", "click", "keydown"] as const
+if (typeof window !== "undefined") {
+  for (const type of GESTURES)
+    window.addEventListener(type, unlock, { capture: true, passive: true })
+}
+
+/** 有声就放；还没解锁就先记下，解锁后补放 */
+function withAudio(play: (ctx: AudioContext) => void) {
+  const ctx = audio()
+  if (!ctx) return
+  if (ctx.state === "running") return play(ctx)
+  // 只留最近两声：解锁前拖了一路滑块，补放时不能一下子炸出一串滴答
+  pending = [...pending, { play, at: performance.now() }].slice(-2)
+  void ctx.resume().then(flush, () => {})
+}
+
+function tone(
+  ctx: AudioContext,
+  from: number,
+  to: number,
+  duration: number,
+  volume: number,
+) {
   const now = ctx.currentTime
   const osc = ctx.createOscillator()
   const gain = ctx.createGain()
@@ -40,9 +91,12 @@ function tone(from: number, to: number, duration: number, volume: number) {
   osc.stop(now + duration + 0.02)
 }
 
-function tick(frequency: number, duration: number, volume: number) {
-  const ctx = audio()
-  if (!ctx) return
+function tick(
+  ctx: AudioContext,
+  frequency: number,
+  duration: number,
+  volume: number,
+) {
   const now = ctx.currentTime
   const length = Math.ceil(ctx.sampleRate * duration)
   const buffer = ctx.createBuffer(1, length, ctx.sampleRate)
@@ -69,25 +123,32 @@ const mix = (a: number, b: number, t: number) => a + (b - a) * t
  */
 function playPress(crisp = 0.6) {
   const t = Math.min(Math.max(crisp, 0), 1)
-  tone(
-    mix(150, 340, t),
-    mix(62, 150, t),
-    mix(0.14, 0.06, t),
-    mix(0.22, 0.12, t),
-  )
-  if (t > 0.05) tone(mix(900, 1600, t), mix(700, 1000, t), 0.03, 0.08 * t)
-  tick(mix(1600, 4200, t), mix(0.022, 0.013, t), mix(0.1, 0.22, t))
+  withAudio((ctx) => {
+    tone(
+      ctx,
+      mix(150, 340, t),
+      mix(62, 150, t),
+      mix(0.14, 0.06, t),
+      mix(0.22, 0.12, t),
+    )
+    if (t > 0.05)
+      tone(ctx, mix(900, 1600, t), mix(700, 1000, t), 0.03, 0.08 * t)
+    tick(ctx, mix(1600, 4200, t), mix(0.022, 0.013, t), mix(0.1, 0.22, t))
+  })
 }
 
 function playRelease(crisp = 0.6) {
   const t = Math.min(Math.max(crisp, 0), 1)
-  tone(
-    mix(260, 700, t),
-    mix(180, 520, t),
-    mix(0.06, 0.035, t),
-    mix(0.08, 0.06, t),
-  )
-  tick(mix(3000, 6000, t), mix(0.012, 0.009, t), mix(0.05, 0.13, t))
+  withAudio((ctx) => {
+    tone(
+      ctx,
+      mix(260, 700, t),
+      mix(180, 520, t),
+      mix(0.06, 0.035, t),
+      mix(0.08, 0.06, t),
+    )
+    tick(ctx, mix(3000, 6000, t), mix(0.012, 0.009, t), mix(0.05, 0.13, t))
+  })
 }
 
 /* ---------- 静音偏好：存在 localStorage，全站带音效的组件共用 ---------- */

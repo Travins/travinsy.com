@@ -5,9 +5,12 @@ import * as React from "react"
 /**
  * 滑块的音效：用 Web Audio 现场合成，不需要音频文件。
  * 刻度是一声很短的高频「嗒」，音高跟着值走；碰到轨道两端是一声低闷的「咚」。
- * AudioContext 在第一次真正发声（用户手势里）时才创建，满足浏览器的自动播放限制。
+ * 浏览器的自动播放限制见下面的 unlock：手机上第一次按下的声音会在松手时补放。
  */
 let context: AudioContext | null = null
+/** 音频还没解锁时攒下的声音：解锁后补放，超过 PENDING_TTL 毫秒的就丢掉 */
+let pending: { play: (ctx: AudioContext) => void; at: number }[] = []
+const PENDING_TTL = 600
 
 function audio() {
   if (typeof window === "undefined") return null
@@ -19,16 +22,64 @@ function audio() {
     if (!Ctor) return null
     context = new Ctor()
   }
-  if (context.state === "suspended") void context.resume()
   return context
+}
+
+function flush() {
+  const ctx = context
+  if (!ctx || ctx.state !== "running") return
+  const now = performance.now()
+  const queue = pending
+  pending = []
+  for (const item of queue) if (now - item.at < PENDING_TTL) item.play(ctx)
+}
+
+/**
+ * 手机浏览器只认「松手」类的手势解锁音频（pointerup、touchend、click、keydown），
+ * 触摸的按下不算，所以手指按下那一刻 AudioContext 还是挂起的。
+ * 在页面上监听这些手势：第一次松手就恢复 AudioContext 并补放刚才攒下的声音，之后按下也能直接出声。
+ * 老版 iOS 还要在手势里真正播一段声音才算解锁，顺手播一个 1 帧的静音缓冲。
+ */
+function unlock() {
+  const ctx = audio()
+  if (!ctx) return
+  if (ctx.state === "running") {
+    for (const type of GESTURES) window.removeEventListener(type, unlock, true)
+    return flush()
+  }
+  const silent = ctx.createBufferSource()
+  silent.buffer = ctx.createBuffer(1, 1, ctx.sampleRate)
+  silent.connect(ctx.destination)
+  silent.start()
+  void ctx.resume().then(flush, () => {})
+}
+
+const GESTURES = ["pointerup", "touchend", "click", "keydown"] as const
+if (typeof window !== "undefined") {
+  for (const type of GESTURES)
+    window.addEventListener(type, unlock, { capture: true, passive: true })
+}
+
+/** 有声就放；还没解锁就先记下，解锁后补放 */
+function withAudio(play: (ctx: AudioContext) => void) {
+  const ctx = audio()
+  if (!ctx) return
+  if (ctx.state === "running") return play(ctx)
+  // 只留最近两声：解锁前拖了一路滑块，补放时不能一下子炸出一串滴答
+  pending = [...pending, { play, at: performance.now() }].slice(-2)
+  void ctx.resume().then(flush, () => {})
 }
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value))
 
 /** 一段指数衰减的正弦：用来做「咚」的主体。 */
-function tone(from: number, to: number, duration: number, volume: number) {
-  const ctx = audio()
-  if (!ctx) return
+function tone(
+  ctx: AudioContext,
+  from: number,
+  to: number,
+  duration: number,
+  volume: number,
+) {
   const now = ctx.currentTime
   const osc = ctx.createOscillator()
   const gain = ctx.createGain()
@@ -44,9 +95,13 @@ function tone(from: number, to: number, duration: number, volume: number) {
 }
 
 /** 一段带通滤过的噪声：构成「嗒」的颗粒感，长度只有十几毫秒。 */
-function noise(frequency: number, duration: number, volume: number, q = 2.4) {
-  const ctx = audio()
-  if (!ctx) return
+function noise(
+  ctx: AudioContext,
+  frequency: number,
+  duration: number,
+  volume: number,
+  q = 2.4,
+) {
   const now = ctx.currentTime
   const length = Math.max(1, Math.ceil(ctx.sampleRate * duration))
   const buffer = ctx.createBuffer(1, length, ctx.sampleRate)
@@ -71,14 +126,18 @@ function noise(frequency: number, duration: number, volume: number, q = 2.4) {
  */
 function playTick(pitch = 0.5) {
   const t = clamp(pitch)
-  noise(2400 + 2600 * t, 0.011, 0.05 + 0.04 * t, 3)
-  tone(1100 + 1000 * t, 900 + 800 * t, 0.012, 0.028 + 0.012 * t)
+  withAudio((ctx) => {
+    noise(ctx, 2400 + 2600 * t, 0.011, 0.05 + 0.04 * t, 3)
+    tone(ctx, 1100 + 1000 * t, 900 + 800 * t, 0.012, 0.028 + 0.012 * t)
+  })
 }
 
 /** 碰到轨道两端的一声低闷「咚」：低频下滑 + 一点点噪声让它不空。 */
 function playEdge() {
-  tone(168, 62, 0.15, 0.17)
-  noise(420, 0.045, 0.06, 1.1)
+  withAudio((ctx) => {
+    tone(ctx, 168, 62, 0.15, 0.17)
+    noise(ctx, 420, 0.045, 0.06, 1.1)
+  })
 }
 
 /* ---------- 静音偏好：存在 localStorage，全站带音效的组件共用 ---------- */
