@@ -123,12 +123,17 @@ function PhoneInput({
       data-size={size}
       data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
-      className={cn("flex w-full flex-col gap-1.5", className)}
+      // 容器查询：组件比 17rem 窄时（手机上的窄卡片）收起条内标签、缩小间距，号码不被挤掉
+      className={cn(
+        "@container/phone-input flex w-full flex-col gap-1.5",
+        className,
+      )}
     >
       <div
         data-slot="phone-input-control"
         className={cn(
           phoneInputControlVariants({ size }),
+          "@max-[17rem]/phone-input:gap-2",
           invalid
             ? "border-destructive ring-3 ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40"
             : "border-edge focus-within:ring-3 focus-within:ring-ring/50 hover:bg-muted",
@@ -149,7 +154,7 @@ function PhoneInput({
           <label
             data-slot="phone-input-label"
             htmlFor={id}
-            className="shrink-0 text-muted-foreground max-md:text-sm"
+            className="shrink-0 text-muted-foreground max-md:text-sm @max-[17rem]/phone-input:sr-only"
           >
             {label}
           </label>

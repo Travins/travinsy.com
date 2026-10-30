@@ -134,6 +134,7 @@ type PhoneInputLabels = {
 
 ## 注意事项
 
+- 触屏设备上方条加高一档（36 / 40 / 44px）。并排的按钮要一起加高才对得齐：本站的 `Button` 已经在三档尺寸里加了 `pointer-coarse:h-9 / h-10 / h-11`；如果你用的是 shadcn 默认的按钮，在 `button.tsx` 的 `sm`、`default`、`lg` 里补上这三个类即可。
 - 只处理中国大陆手机号（11 位）。需要选国家 / 地区的国际号码，请用专门的国际号码库。
 - 受控模式下记得同时处理 `onValueChange`；外部传入的值会先去掉非数字再显示。
 - 非受控的表单 `reset` 会回到 `defaultValue`；受控的由外部自己重置。

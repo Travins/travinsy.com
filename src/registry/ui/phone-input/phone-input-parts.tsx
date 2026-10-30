@@ -108,7 +108,7 @@ function PhoneInputSendButton({
       className={cn(
         variant === "inline"
           ? // 条内：撑满条高、左侧一道竖线隔开号码，文字用主题色，像一段可点的链接
-            "-mr-3 flex h-full shrink-0 items-center border-l border-edge px-3 text-primary tabular-nums transition-colors outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:bg-transparent max-md:text-sm"
+            "-mr-3 flex h-full shrink-0 items-center border-l border-edge px-3 text-primary tabular-nums transition-colors outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:bg-transparent max-md:text-sm @max-[17rem]/phone-input:px-2.5"
           : cn(buttonVariants({ variant: "outline", size }), "tabular-nums"),
         className,
       )}

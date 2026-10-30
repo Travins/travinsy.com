@@ -125,11 +125,13 @@ export { StatusCard, StatusCardTitle, statusCardVariants }
 - 尺寸优先 `size-*`；图标尺寸由父级 `[&_svg:not([class*='size-'])]:size-4` 统一
 - **按钮高度只有三档**，一律通过 `Button` 或 `buttonVariants` 的 `size` 取得，不用 `h-*`/`py-*` 自定义：
 
-  | 档位 | 文字按钮 | 图标按钮 | 高度 | 用途 |
-  |---|---|---|---|---|
-  | 小 | `sm` | `icon-sm` | 28px | 工具栏、表格行内、文档框内操作 |
-  | 默认 | `default` | `icon` | 32px | 表单、对话框、卡片内操作 |
-  | 大 | `lg` | `icon-lg` | 36px | 首屏 / 页面级主操作 |
+  | 档位 | 文字按钮 | 图标按钮 | 高度 | 触屏高度 | 用途 |
+  |---|---|---|---|---|---|
+  | 小 | `sm` | `icon-sm` | 28px | 36px | 工具栏、表格行内、文档框内操作 |
+  | 默认 | `default` | `icon` | 32px | 40px | 表单、对话框、卡片内操作 |
+  | 大 | `lg` | `icon-lg` | 36px | 44px | 首屏 / 页面级主操作 |
+
+  触屏高度由 `pointer-coarse:` 自动切换，按钮、输入框（`components/ui/input`）、方条控件三者同一张表：同一档的按钮和表单控件在桌面、手机上都等高。示例里手写的方条文本框也要照这张表写（如 `h-9 pointer-coarse:h-11`），不要只写一个固定高度
 
   同一行并排的按钮（包括图标按钮）必须同一档；只有设计明确指定时才例外，并在代码旁注释原因。`xs`/`icon-xs` 只用于徽标、标签内的微型操作。链接按钮写 `className={buttonVariants({ variant, size, className })}`，额外类通过 `className` 参数传入，由 `buttonVariants` 内部合并
 - `dark:` 变体只在 token 无法表达时使用
