@@ -29,14 +29,9 @@ const env: NodeJS.ProcessEnv = {
   CI: "1",
   NEXT_TELEMETRY_DISABLED: "1",
 }
-for (const key of [
-  "ALL_PROXY",
-  "all_proxy",
-  "HTTP_PROXY",
-  "HTTPS_PROXY",
-  "http_proxy",
-  "https_proxy",
-]) {
+// 只去掉 SOCKS 的 ALL_PROXY（会让 shadcn CLI 请求失败）；HTTP(S)_PROXY 要保留，
+// 初始化项目时 CLI 要 git clone GitHub 上的模板，没有代理的网络下会失败。本地 registry 走 NO_PROXY
+for (const key of ["ALL_PROXY", "all_proxy"]) {
   delete env[key]
   delete process.env[key]
 }
@@ -334,7 +329,9 @@ async function main() {
                   .replace("@/registry/", "@/")
                 const path = join(app, appRoot, candidate.slice(2))
                 // 示例可能用到条目本身不依赖的 shadcn 官方组件（如工具库示例里的 input），缺了就先装上
-                const official = /^@\/components\/ui\/([a-z-]+)$/.exec(candidate)
+                const official = /^@\/components\/ui\/([a-z-]+)$/.exec(
+                  candidate,
+                )
                 if (
                   official &&
                   ![path + ".tsx", path + ".ts"].some(existsSync)
@@ -344,18 +341,49 @@ async function main() {
                     [...cli, "add", official[1], "--yes"],
                     app,
                   )
-                  if (added.code) throw Error(`示例依赖的官方组件安装失败：${official[1]}`)
+                  if (added.code)
+                    throw Error(`示例依赖的官方组件安装失败：${official[1]}`)
                   // 只是补齐示例环境，不算失败（备注列只记录问题）
                   console.log(`  示例额外安装官方组件 ${official[1]}`)
                 }
-                if (
-                  ![
+                // 示例引用的本站条目不在被测条目的依赖里（如选择器示例用的行政区划数据），
+                // 按 target 找到对应条目补装，只是补齐示例环境
+                const installed = () =>
+                  [
                     path + ".tsx",
                     path + ".ts",
                     join(path, "index.tsx"),
                     join(path, "index.ts"),
                   ].some(existsSync)
-                )
+                if (!installed()) {
+                  const companion = catalog.items.find((i) =>
+                    i.files.some(
+                      (f) =>
+                        f.target?.replace(/\.tsx?$/, "") === candidate.slice(2),
+                    ),
+                  )
+                  if (companion) {
+                    const added = await run(
+                      `${item.name}-demo-${companion.name}`,
+                      [
+                        ...cli,
+                        "add",
+                        args.includes("--namespace")
+                          ? `@yiui/${companion.name}`
+                          : `${base}/r/${companion.name}.json`,
+                        "--yes",
+                        "--overwrite",
+                      ],
+                      app,
+                    )
+                    if (added.code)
+                      throw Error(
+                        `示例依赖的本站条目安装失败：${companion.name}`,
+                      )
+                    console.log(`  示例额外安装本站条目 ${companion.name}`)
+                  }
+                }
+                if (!installed())
                   throw Error(`找不到安装后的 import：${spec} → ${candidate}`)
                 text = text.replaceAll(spec, candidate)
               }

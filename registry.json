@@ -1044,6 +1044,19 @@
       ]
     },
     {
+      "name": "china-regions",
+      "type": "registry:lib",
+      "title": "全国行政区划",
+      "description": "全国省、市、区县三级行政区划数据，取自国家地名信息库：6 位国标代码、官方全称和校对过的地名拼音，直辖市照官方为两级。纯数据，可替换为自己的版本。",
+      "files": [
+        {
+          "path": "src/registry/lib/china-regions.ts",
+          "type": "registry:lib",
+          "target": "lib/china-regions.ts"
+        }
+      ]
+    },
+    {
       "name": "amount-input",
       "type": "registry:ui",
       "title": "金额输入",
@@ -1084,6 +1097,52 @@
           "path": "src/registry/lib/data-display.ts",
           "type": "registry:lib",
           "target": "lib/data-display.ts"
+        }
+      ]
+    },
+    {
+      "name": "region-picker",
+      "type": "registry:ui",
+      "title": "省市区选择",
+      "description": "省 / 市 / 区的选择器：搜索框支持汉字、全拼、首字母和代码，下方按层级浏览；层级深浅不固定，值只存最末一级的代码。数据由 props 传入，函数形式惰性加载，不绑定任何数据。",
+      "dependencies": [
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "popover"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/region-picker/region-picker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/region-picker/region-picker-panel.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/region-picker/region-picker-parts.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/region-picker/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/region-picker/utils.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/region-picker/config.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
         }
       ]
     },

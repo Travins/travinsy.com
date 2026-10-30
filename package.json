@@ -18,7 +18,8 @@
     "qa:install": "tsx scripts/qa-install.ts",
     "qa:loading": "tsx scripts/qa-loading.ts",
     "qa:shots": "tsx scripts/qa-shots.ts",
-    "test:chinese-number": "tsx scripts/chinese-number-self-test.ts"
+    "test:chinese-number": "tsx scripts/chinese-number-self-test.ts",
+    "regions:build": "env -u ALL_PROXY -u all_proxy -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy tsx scripts/build-china-regions.ts"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.157",
@@ -53,6 +54,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
+    "pinyin-pro": "^3.29.5",
     "playwright-core": "^1.64.1",
     "postcss": "^8.5.31",
     "prettier": "^3.9.10",

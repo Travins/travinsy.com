@@ -1,0 +1,306 @@
+---
+title: 省市区选择
+titleEn: Region Picker
+description: 省 / 市 / 区的选择器：搜索框支持汉字、全拼、首字母和代码，下方按层级浏览；层级深浅不固定，值只存最末一级的代码。数据由 props 传入，函数形式惰性加载，不绑定任何数据。
+group: input
+---
+
+<ComponentPreview name="region-picker-demo" />
+
+## 安装
+
+组件和数据是两个条目，分开安装：
+
+<InstallCommand name="region-picker" />
+
+数据用国家地名信息库的官方行政区划，见 [`china-regions`](/components/china-regions/)；用自己的数据就不必装：
+
+<InstallCommand name="china-regions" />
+
+组件本身不引用数据，`regions` 传什么它就用什么。
+
+## 用法
+
+```tsx title="components/address-form.tsx"
+import { RegionPicker } from "@/components/ui/region-picker/region-picker"
+
+export function AddressForm() {
+  return (
+    <RegionPicker
+      name="region"
+      required
+      regions={() =>
+        import("@/lib/china-regions").then((m) => m.chinaRegions)
+      }
+    />
+  )
+}
+```
+
+`value`、`defaultValue`、`onValueChange` 的值都是**一个代码字符串**（最末一级的 `code`），没选时是 `null`。`onValueChange(code, path)` 的第二个参数是从最顶层到它的完整路径，需要名称时不用自己再查。
+
+```tsx
+<RegionPicker
+  regions={regions}
+  value={code}
+  onValueChange={(code, path) => {
+    setCode(code)
+    console.log(path.map((node) => node.name).join(" / ")) // 浙江省 / 杭州市 / 西湖区
+  }}
+/>
+```
+
+### 数据标准
+
+`regions` 接收一棵树，节点结构就是组件认的「标准」，任何符合它的数据都能用：
+
+```ts
+type RegionOption = {
+  code: string // 全树唯一，也是组件对外的值
+  name: string // 显示名称
+  pinyin?: string // 无声调拼音，音节用空格分隔："hang zhou shi"
+  children?: RegionOption[] // 没有或为空数组 = 末级
+}
+```
+
+- **层级深度不固定**。直辖市只有「市 → 区」两级（北京市 → 东城区），东莞、儋州这类不设区的市，以及香港、澳门没有下级。选到没有 `children` 的节点就选完了，组件不会凭空造出一层同名节点。
+- **`pinyin` 可以没有**。没有时搜索只按名称和代码；有的话才支持全拼和首字母。
+- **`code` 不必是国标码**，任何字符串都行，只要在整棵树里唯一。
+
+组件的类型叫 `RegionOption`，和 `china-regions` 的 `ChinaRegion` 结构相同，TypeScript 按结构兼容，直接传即可。
+
+### 惰性加载
+
+`regions` 可以是数组，也可以是返回 Promise 的函数。官方数据有 3214 条、约 200KB，打进首屏很不划算，推荐写成动态 `import()`：
+
+```tsx
+<RegionPicker
+  regions={() => import("@/lib/china-regions").then((m) => m.chinaRegions)}
+/>
+```
+
+函数形式的调用时机：
+
+- 用户**第一次打开**浮层时调用；
+- 如果已经有初始值（`value` / `defaultValue` 非空），需要显示「浙江省 / 杭州市 / 西湖区」，则**挂载后**就调用，不用等打开；
+- 只调用一次，之后复用结果。每次渲染都写内联箭头函数也不会重复请求。
+
+加载中，触发器显示「正在加载地区数据…」（有 `fallbackLabel` 时显示它），浮层里是加载提示；失败时浮层显示错误和「重试」按钮。数组形式则没有这些状态。
+
+数组形式请保持引用稳定（放在组件外，或 `useMemo`），否则每次渲染都会重建搜索索引。
+
+### 值存代码，不存名称
+
+只存一个 `code`，是因为它短、稳定、能进数据库的索引，完整路径随时可由数据反查：
+
+- 名称会改（「县」改「区」），代码在改名后一般不变；
+- 一个代码就能还原三级，不会出现「省存了、市存了、区对不上」的半截数据；
+- 表单提交、接口入参只有一个字段。
+
+后端回显或导出时把代码转成名称，用 `findRegionPath`（纯函数，服务端可用）：
+
+```ts
+import { findRegionPath, formatRegionPath } from "@/components/ui/region-picker/utils"
+import { chinaRegions } from "@/lib/china-regions"
+
+const path = findRegionPath(chinaRegions, "330106")
+formatRegionPath(path) // "浙江省 / 杭州市 / 西湖区"
+formatRegionPath(path, "") // "浙江省杭州市西湖区"
+path.map((node) => node.name) // ["浙江省", "杭州市", "西湖区"]
+findRegionPath(chinaRegions, "999999") // []，找不到返回空数组
+```
+
+### 代码失效时
+
+行政区划会调整：地区被撤销、合并，或者你的数据版本比存下来的旧。这时代码在数据里找不到。触发器不会空白，而是：
+
+- 显示 `fallbackLabel`——调用方保存数据时**一并存下的名称**，用户看到的仍是当时选的地址；
+- 没传 `fallbackLabel` 就显示「未知地区（330199）」。
+
+```tsx
+<RegionPicker
+  regions={regions}
+  value={order.regionCode}
+  fallbackLabel={order.regionName}
+/>
+```
+
+用户重新打开选择，选了新的值，`fallbackLabel` 就不再用到。建议保存地址时同时存 `code` 和当时的名称。
+
+### 搜索
+
+浮层顶部的搜索框在**任意层级**命中，结果显示完整路径并高亮命中部分：
+
+| 输入 | 命中 |
+| --- | --- |
+| `杭州`、`西湖` | 名称包含 |
+| `hangzhou`、`hang zhou` | 全拼，去掉空格后匹配 |
+| `hz` | 拼音首字母 |
+| `3301` | 代码前缀 |
+| `杭州 西湖`、`浙江 杭州`、`hangzhou xihu` | 带路径：最后一个词命中本级，其余的词命中本级或任一上级 |
+
+排序：完全匹配与开头匹配优先，同级时层级浅的优先，再同级保持数据里的顺序；最多显示 50 条，超出时列表下方提示缩小范围。选中末级节点直接确认；选中非末级节点则跳到它的下级继续选。
+
+输入拼音时，输入法组词阶段的回车与方向键不会被当作列表操作。
+
+### 限制层级与选到中间级
+
+- `depth={2}`：最多选到第 2 级（省市），到达这一级的节点视为末级。
+- `allowPartial`：允许不选到底。浏览到非顶层时，底部出现「选择「浙江省」」按钮，直接确认当前路径。
+
+## 示例
+
+### 表单提交
+
+设了 `name`，表单提交的是最末一级的代码，未选时是空串；`required` 未选时拦住提交，浏览器提示「请选择地区」。非受控的表单 `reset` 会回到 `defaultValue`。
+
+<ComponentPreview name="region-picker-form-demo" />
+
+### 限制层级与选到中间级
+
+第一个只选到省市；第二个允许停在中间层级，展开后进入下级，底部能确认当前路径。
+
+<ComponentPreview name="region-picker-depth-demo" />
+
+### 自己的数据
+
+不必用官方数据。第一个只开通了几个城市，代码用自己的编号，部分节点没有 `pinyin`（搜索只按名称和代码）；第二个演示代码失效：数据里没有 `"330199"`，触发器显示调用方存下的 `fallbackLabel`。
+
+<ComponentPreview name="region-picker-custom-demo" />
+
+## 浮层布局
+
+- 顶部是搜索框，打开后自动聚焦（触屏上不聚焦，免得软键盘盖住列表）。
+- 下面是**层级标签条**：已选的层级显示名称，当前要选的显示「请选择」，点任一层级回到那里。
+- 再下面是当前层级的选项。选项多时用**网格**排列（宽屏 3 列，窄屏 2 列），比单列更紧凑、更好扫读；每项高度 28px，最多约 8 行，超出滚动。搜索时换成单列，显示完整路径和代码。
+- 有下级的选项右侧带箭头；已选路径上的选项会高亮，再次打开时自动滚到它。
+- 浮层宽度最小等于触发器，最大 26rem，窄屏不超出视口。
+
+## API
+
+<PropsTable name="region-picker" component="RegionPicker" />
+
+`className` 作用于根元素，其余未列出的属性（`id`、`aria-label`、`aria-invalid`、`onBlur`……）交给触发器按钮，`ref` 指向触发器。`name` 与 `form` 加在一个覆盖在触发器上、不可见的文本输入上（`data-slot="region-picker-value"`），它提交最末一级的代码，并让 `required` 参与浏览器的表单校验。
+
+### labels
+
+```ts
+type RegionPickerLabels = {
+  placeholder: string // "请选择省 / 市 / 区"
+  searchPlaceholder: string // "搜索名称、拼音或代码"
+  searchLabel: string // "搜索地区"，搜索框与列表的读屏名称
+  levelPending: string // "请选择"，层级标签条里当前级的占位
+  levelNav: string // "选择层级"
+  levelStatus: string // "第 {level} 级，共 {count} 项"，读屏播报
+  resultStatus: string // "找到 {count} 个结果"，读屏播报
+  resultTruncated: string // "仅显示前 {limit} 条，输入更多字符可缩小范围"
+  empty: string // "没有匹配的地区"
+  loading: string // "正在加载地区数据…"
+  loadFailed: string // "地区数据加载失败"
+  retry: string // "重试"
+  clear: string // "清除"
+  confirmPartial: string // "选择「{name}」"，allowPartial 时底部的确认按钮
+  unknown: string // "未知地区"，代码找不到且没有 fallbackLabel 时，后面自动加（代码）
+  required: string // "请选择地区"，必填未选时的校验提示
+}
+```
+
+### 工具函数
+
+都在 `region-picker/utils.ts`，没有 `"use client"`，服务端组件和 Route Handler 里可以直接用。
+
+```ts
+// 按代码找完整路径，找不到返回 []
+function findRegionPath(regions: RegionOption[], code: string): RegionOption[]
+
+// 路径转文字，默认用 " / " 连接
+function formatRegionPath(path: RegionOption[], separator?: string): string
+
+// 一次性搜索，每次调用都重建索引；返回命中节点、完整路径、各级高亮区间
+function searchRegions(
+  regions: RegionOption[],
+  query: string,
+  options?: { depth?: number; limit?: number }, // limit 默认 50
+): RegionSearchResult[]
+
+// 高频搜索：先建一次索引，再反复查
+function createRegionIndex(regions: RegionOption[], options?: { depth?: number }): RegionIndex
+function searchRegionIndex(index: RegionIndex, query: string, limit?: number): {
+  results: RegionSearchResult[]
+  total: number // 命中总数，results 最多 limit 条
+}
+```
+
+`searchRegions` 的用法：做一个自己的联想输入，或者在服务端按关键字查地区。
+
+```ts
+import { searchRegions } from "@/components/ui/region-picker/utils"
+
+const [first] = searchRegions(regions, "hz xh")
+first.path.map((node) => node.name) // ["浙江省", "杭州市", "西湖区"]
+```
+
+### 类型
+
+```ts
+type RegionPickerSize = "sm" | "default" | "lg"
+type RegionsSource = RegionOption[] | (() => Promise<RegionOption[]>)
+
+type RegionPickerProps = {
+  regions: RegionsSource
+  value?: string | null
+  defaultValue?: string | null
+  onValueChange?: (code: string | null, path: RegionOption[]) => void
+  depth?: number
+  allowPartial?: boolean
+  name?: string
+  form?: string
+  required?: boolean
+  disabled?: boolean
+  placeholder?: string
+  fallbackLabel?: string
+  size?: RegionPickerSize
+  open?: boolean
+  defaultOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+  labels?: Partial<RegionPickerLabels>
+} & Omit<React.ComponentProps<"button">, /* 以上已定义的属性 */ "value" | "defaultValue" | "onChange" | "type" | "children">
+```
+
+### data-slot
+
+| 元素 | `data-slot` |
+| --- | --- |
+| 根元素 | `region-picker` |
+| 触发器 | `region-picker-trigger` |
+| 触发器文字 | `region-picker-value-text` |
+| 提交与校验用的隐藏输入 | `region-picker-value` |
+| 浮层内容 | `region-picker-panel` |
+| 搜索框 | `region-picker-search` |
+| 层级标签条 / 单个层级 | `region-picker-levels` / `region-picker-level` |
+| 选项列表 / 单项 | `region-picker-list` / `region-picker-option` |
+| 搜索命中高亮 | `region-picker-mark` |
+| 加载中 / 出错 / 无结果 | `region-picker-notice` |
+| 结果被截断的提示 | `region-picker-hint` |
+| 底部操作区 | `region-picker-footer` |
+
+根元素带 `data-size`、`data-disabled`；选项带 `data-active`（键盘或鼠标高亮）与 `data-selected`（在已选路径上）；浮层打开时触发器带 `data-popup-open`。
+
+## 可访问性
+
+- 搜索框是 **combobox**：焦点始终留在输入框，选项通过 `aria-activedescendant` 表达高亮，选项是 `role="option"`，列表是 `role="listbox"`。
+- 键盘：`↑` `↓` 在网格里按行上下移动（搜索结果是单列），搜索框为空时 `←` `→` 横向移动；`Enter` 选择；`Backspace` 在搜索框为空时回到上一级；`Esc` 关闭并把焦点还给触发器。
+- 屏幕阅读器：每次换层级播报「第 2 级，共 18 项」，搜索时播报「找到 12 个结果」，通过隐藏的 `role="status"` 区域；层级标签条是 `nav`，当前层级带 `aria-current="step"`。
+- 触发器是 `button`，带 `aria-haspopup`、`aria-expanded`；可以用 `<label htmlFor>` 或 `aria-label` 命名。
+- 焦点环、选项高亮都有可见样式；已选项除了底色，还有对勾（末级）或箭头（非末级）。
+
+## 注意事项
+
+- 触发器是个 `button`，不是文本输入；`required` 的原生气泡提示挂在覆盖其上的隐藏输入，聚焦会转交给触发器。
+- 受控模式下记得同时处理 `onValueChange`，否则选择后触发器不更新。
+- `depth` 小于已选值所在的层级时，值照常回显完整路径，只是浮层里到不了更深的节点。
+- 约 3000 条数据的索引构建与单次搜索都在毫秒级，不需要防抖；数据达到几十万条时请自己换服务端搜索。
+
+## 源码
+
+<ComponentSource name="region-picker" />

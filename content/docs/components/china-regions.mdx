@@ -1,0 +1,99 @@
+---
+title: 全国行政区划
+titleEn: China Regions
+description: 全国省、市、区县三级行政区划数据，取自国家地名信息库：6 位国标代码、官方全称和校对过的地名拼音，直辖市照官方为两级。纯数据，可替换为自己的版本。
+group: utils
+---
+
+<ComponentPreview name="china-regions-demo" />
+
+## 安装
+
+<InstallCommand name="china-regions" />
+
+这是一份**纯数据**（约 200KB），配合 [`region-picker`](/components/region-picker/) 使用，但两者互不依赖：没有它，选择器照样能用自己的数据；没有选择器，它也是一份普通的行政区划表。
+
+## 用法
+
+```ts
+import { chinaRegions, CHINA_REGIONS_UPDATED_AT } from "@/lib/china-regions"
+
+chinaRegions.length // 34，省级
+chinaRegions[0] // { code: "110000", name: "北京市", pinyin: "bei jing shi", children: [...] }
+CHINA_REGIONS_UPDATED_AT // "2026-10-30"
+```
+
+交给选择器时建议惰性加载，让这份数据单独成块、不进首屏：
+
+```tsx
+<RegionPicker
+  regions={() => import("@/lib/china-regions").then((m) => m.chinaRegions)}
+/>
+```
+
+## 数据标准
+
+共 34 个省级单位、3214 条记录，每个节点：
+
+```ts
+type ChinaRegion = {
+  code: string // 6 位行政区划代码
+  name: string // 官方全称
+  pinyin?: string // 全称的无声调拼音
+  children?: ChinaRegion[] // 下级
+}
+```
+
+| 字段 | 含义 |
+| --- | --- |
+| `code` | 国标 GB/T 2260 县级以上的 6 位代码，如 `330106`（浙江省杭州市西湖区）。前两位省、中间两位市、后两位区县，整棵树里唯一。 |
+| `name` | 官方全称，带「省」「市」「区」「自治区」等后缀，不做简称。 |
+| `pinyin` | 全称的无声调拼音，**音节之间用空格**（`xi hu qu`）；ü 写作 `v`（`lv`、`nv`）。 |
+| `children` | 下级；没有这个字段，或者是空数组，表示末级。 |
+
+### 层级规则
+
+层级深浅**照官方原样**，不补齐、不造假节点：
+
+- 普通省份：省 → 市 → 区县，三级；
+- 直辖市：只有「市 → 区」两级（北京市 → 东城区），区县直接挂在市下，没有一个同名的「市辖区」层；
+- 不设区的市、省直辖县级市（东莞、儋州、济源、仙桃……）：没有下级，在地级位置就是末级；
+- 香港、澳门、台湾省：只有省级一条记录，没有下级。
+
+所以同样是「第 2 级」，在省里是市，在直辖市里是区。需要把所有区县拉平时，递归取没有 `children` 的节点，而不要假设固定三层。
+
+### 来源与版本
+
+数据取自国家地名信息库（民政部）的公开行政区划接口，采集日期记录在导出的 `CHINA_REGIONS_UPDATED_AT`（当前是 `2026-10-30`）。行政区划每年都有零星调整，这份数据是**一个时间点的快照**：
+
+- 界面上想提示版本时，直接显示 `CHINA_REGIONS_UPDATED_AT`；
+- 库里存的历史代码可能在新数据里找不到，用 `region-picker` 的 `fallbackLabel` 兜底（见其文档「代码失效时」）；
+- 数据只到区县，不含乡镇街道；台湾省只有省级一条记录，没有下级。
+
+### 拼音读音修正
+
+拼音由工具生成，多音的地名容易读错，所以对一批特殊读音做了人工修正，例如：
+
+- 成都的「都」读 `du`，不读 `dou`；六安的「六」读 `lu`；蔚县的「蔚」读 `yu`；
+- 闵行 `min hang`，乐清 `yue qing`，单县 `shan xian`，蚌埠 `beng bu`。
+
+读错会直接影响全拼搜索（搜 `chengdu` 要能命中成都），所以修正表和逐条核对的分歧记录都放在生成脚本里。
+
+## 换成自己的数据
+
+数据的结构就是 `region-picker` 的 `RegionOption`，换数据只要保持这个结构：
+
+- **裁剪**：只保留可配送的省市，用 `filter` / `map` 递归处理一遍即可；
+- **补充**：加上自己维护的节点（海外地区、自定义商圈），`code` 在整棵树里保持唯一；
+- **换版本**：用自己的数据文件替换 `lib/china-regions.ts`，导出同名的 `chinaRegions` 即可，不影响其他代码。
+
+本仓库的维护者用 `pnpm regions:build` 重新拉取并生成这份文件（地名拼音的修正表也在这个脚本里）；通过 CLI 安装到你项目里的是生成后的 `china-regions.ts`，不需要运行它。
+
+## 注意事项
+
+- 文件是一个大数组字面量，没有 `"use client"`，服务端和客户端都能 import；但在客户端组件里**静态** import 会把整份数据打进该组件所在的包，推荐用动态 `import()`。
+- 数据是只读的，请不要在运行时修改它（选择器的索引按引用缓存）。
+
+## 源码
+
+<ComponentSource name="china-regions" />
