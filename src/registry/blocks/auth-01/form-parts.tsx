@@ -35,10 +35,10 @@ function TextField({
       <div
         data-slot="auth-01-text-field-control"
         className={cn(
-          "flex h-9 w-full min-w-0 cursor-text items-center gap-3 rounded-md border bg-muted/60 px-3 text-base transition-colors pointer-coarse:h-11 md:text-sm has-disabled:cursor-not-allowed has-disabled:opacity-50",
+          "flex h-9 w-full min-w-0 cursor-text items-center gap-3 rounded-md border bg-muted/60 px-3 text-base transition-colors has-disabled:cursor-not-allowed has-disabled:opacity-50 md:text-sm pointer-coarse:h-11",
           error
             ? "border-destructive ring-3 ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40"
-            : "border-edge focus-within:ring-3 focus-within:ring-ring/50 hover:bg-muted",
+            : "border-edge focus-within:border-foreground/25 focus-within:bg-background hover:not-focus-within:bg-muted dark:focus-within:bg-input/30",
         )}
         // 点到条内空白处（标签与值之间）也聚焦输入框
         onMouseDown={(event) => {
@@ -188,4 +188,11 @@ function LinkButton({ className, ...props }: ComponentProps<"button">) {
   )
 }
 
-export { FormError, LinkButton, PasswordField, SubmitButton, TextField, ViewHeading }
+export {
+  FormError,
+  LinkButton,
+  PasswordField,
+  SubmitButton,
+  TextField,
+  ViewHeading,
+}

@@ -487,7 +487,10 @@ function RegionPickerPanel({
           enterKeyHint="search"
           placeholder={labels.searchPlaceholder}
           // 面板里用 16px 字号与 40px 高，iOS 聚焦时不会放大页面，手指也好点
-          className={cn("pl-8", sheet && "h-10 bg-muted/50 text-base")}
+          className={cn(
+            "pl-8 focus-visible:border-foreground/25 focus-visible:ring-0",
+            sheet && "h-10 bg-muted/50 text-base",
+          )}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={onKeyDown}

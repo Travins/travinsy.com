@@ -38,7 +38,7 @@ export default function IdNumberInputFormDemo() {
           >
             发票抬头
           </span>
-          <label className="flex h-8 min-w-0 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-sm focus-within:ring-3 focus-within:ring-ring/50 @max-[20rem]/field:px-2.5 pointer-coarse:h-10">
+          <label className="flex h-8 min-w-0 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-sm focus-within:border-foreground/25 focus-within:bg-background @max-[20rem]/field:px-2.5 dark:focus-within:bg-input/30 pointer-coarse:h-10">
             <span className="shrink-0 text-muted-foreground @max-[20rem]/field:sr-only">
               发票抬头
             </span>

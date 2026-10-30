@@ -10,7 +10,7 @@ const BALANCE = 26_480.5
 
 /** 文本框也做成方条：标签在条内左侧、内容靠右，和其他表单控件是一套样式 */
 const FIELD =
-  "flex h-9 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-sm pointer-coarse:h-11 focus-within:ring-3 focus-within:ring-ring/50"
+  "flex h-9 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-sm pointer-coarse:h-11 focus-within:border-foreground/25 focus-within:bg-background dark:focus-within:bg-input/30"
 const FIELD_INPUT =
   "min-w-0 flex-1 bg-transparent text-right text-base outline-none placeholder:text-muted-foreground md:text-sm"
 

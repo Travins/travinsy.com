@@ -193,7 +193,7 @@ function Steps({
                   status === "finish" &&
                     "border-primary bg-primary text-primary-foreground",
                   status === "process" &&
-                    "border-primary text-primary ring-3 ring-primary/15",
+                    "border-2 border-primary bg-background text-primary",
                   status === "wait" && "border-edge text-muted-foreground",
                   status === "error" && "border-destructive text-destructive",
                 )}

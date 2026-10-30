@@ -18,7 +18,7 @@ const CORRECT = "246810"
  * 浅灰底、细边框，聚焦加焦点环，出错红边加淡红光晕；触屏上放大一档
  */
 const SLOT =
-  "h-13 w-11 min-w-0 rounded-md border border-edge bg-muted/60 text-center text-2xl font-medium tabular-nums caret-foreground outline-none transition-[background-color,box-shadow] hover:bg-muted focus:ring-3 focus:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 pointer-coarse:h-14 pointer-coarse:w-12"
+  "h-13 w-11 min-w-0 rounded-md border border-edge bg-muted/60 text-center text-2xl font-medium tabular-nums caret-foreground outline-none transition-[background-color,box-shadow] hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 pointer-coarse:h-14 pointer-coarse:w-12"
 
 /**
  * 手机上的体验：一台 6.3 英寸的「手机」（402 × 874pt）里的验证码登录页。

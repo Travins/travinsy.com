@@ -11,13 +11,13 @@ description: yiui.dev 组件书写规范（强制）。编写或修改 src/regis
 
 ## 1. 分层与依赖方向
 
-| 层 | 目录 | registry type | 定位 | 可以依赖 |
-|---|---|---|---|---|
-| 组件 ui | `src/registry/ui/<name>/` | `registry:ui` | 单一职责、可组合的原语（如 trace、grid-layout） | `@/lib/utils`、`@/components/ui/*`、npm 包、其他 `ui` 条目 |
-| 区块 block | `src/registry/blocks/<name>/` | `registry:block` | 一个完整的界面区域（登录页、AI 助手面板） | 以上全部 + 其他 `block` |
-| 模板 template | `src/registry/templates/<name>/` | `registry:block`（含 page 文件） | 一整页 / 一套布局 | 以上全部 |
-| 演示 example | `src/registry/examples/` 或条目内 `demo.tsx` | 不发布 | 文档预览 | 任意 |
-| Hook / lib | `src/registry/hooks/`、`src/registry/lib/` | `registry:hook` / `registry:lib` | 跨条目复用的逻辑 | `@/lib/utils`、npm 包 |
+| 层            | 目录                                         | registry type                    | 定位                                            | 可以依赖                                                   |
+| ------------- | -------------------------------------------- | -------------------------------- | ----------------------------------------------- | ---------------------------------------------------------- |
+| 组件 ui       | `src/registry/ui/<name>/`                    | `registry:ui`                    | 单一职责、可组合的原语（如 trace、grid-layout） | `@/lib/utils`、`@/components/ui/*`、npm 包、其他 `ui` 条目 |
+| 区块 block    | `src/registry/blocks/<name>/`                | `registry:block`                 | 一个完整的界面区域（登录页、AI 助手面板）       | 以上全部 + 其他 `block`                                    |
+| 模板 template | `src/registry/templates/<name>/`             | `registry:block`（含 page 文件） | 一整页 / 一套布局                               | 以上全部                                                   |
+| 演示 example  | `src/registry/examples/` 或条目内 `demo.tsx` | 不发布                           | 文档预览                                        | 任意                                                       |
+| Hook / lib    | `src/registry/hooks/`、`src/registry/lib/`   | `registry:hook` / `registry:lib` | 跨条目复用的逻辑                                | `@/lib/utils`、npm 包                                      |
 
 **禁止**：registry 代码 import `src/config/**`、`src/components/site|home|docs/**`、`src/lib/source.ts` 等站点私有代码；下层依赖上层（ui 不能依赖 block）。
 跨条目依赖在 registry.json 的 `registryDependencies` 中用完整 URL：`https://yiui.dev/r/<name>.json`。
@@ -79,6 +79,7 @@ export { StatusCard, StatusCardTitle, statusCardVariants }
 ```
 
 规则：
+
 1. **函数声明** `function X() {}`，不用箭头函数常量定义组件；**不用 `forwardRef`**（React 19 ref 即 prop）
 2. **导出统一放在文件末尾** `export { A, B }`；**禁止 `export default`**，例外：`page.tsx`、`layout.tsx`、`demo.tsx`、`src/registry/examples/*`
 3. 每个渲染 DOM 的组件根元素都有 **`data-slot="<kebab-name>"`**；状态用 `data-state` / `data-*` 暴露，供样式与父级选择器（`has-data-[slot=x]`）使用
@@ -91,27 +92,28 @@ export { StatusCard, StatusCardTitle, statusCardVariants }
 
 ## 4. Props API 约定
 
-| 场景 | 约定 |
-|---|---|
+| 场景     | 约定                                                                                                                           |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | 开关状态 | `open` / `defaultOpen` / `onOpenChange(open)`，**同时支持受控与非受控**（使用 `src/registry/hooks/use-controllable-state.ts`） |
-| 值 | `value` / `defaultValue` / `onValueChange(value)` |
-| 模式枚举 | 字符串字面量联合类型并导出类型，如 `type AgentChatMode = "embedded" \| "floating"` |
-| 异步动作 | `onXxx(payload): Promise<void>`；组件内部管理 loading 与错误展示，抛出的 `Error.message` 显示给用户 |
-| 数据 | 通过 props 传入（`items`、`data`、`config`），组件内只放**默认示例数据**（放 `config.ts`） |
-| 布尔 | 肯定式命名：`allowSignUp`、`collapsible`，不用 `disableXxx` 双重否定 |
-| 回调参数 | 传对象而非多个位置参数（便于扩展） |
+| 值       | `value` / `defaultValue` / `onValueChange(value)`                                                                              |
+| 模式枚举 | 字符串字面量联合类型并导出类型，如 `type AgentChatMode = "embedded" \| "floating"`                                             |
+| 异步动作 | `onXxx(payload): Promise<void>`；组件内部管理 loading 与错误展示，抛出的 `Error.message` 显示给用户                            |
+| 数据     | 通过 props 传入（`items`、`data`、`config`），组件内只放**默认示例数据**（放 `config.ts`）                                     |
+| 布尔     | 肯定式命名：`allowSignUp`、`collapsible`，不用 `disableXxx` 双重否定                                                           |
+| 回调参数 | 传对象而非多个位置参数（便于扩展）                                                                                             |
 
 **表单控件（方条系列、金额输入、省市区选择等）另外遵守：**
 
-| 场景 | 约定 |
-|---|---|
-| 随表单提交 | 支持 `name` / `form`，用 `<input type="hidden">` 提交原始值（不带格式）；多个值时 `name` 可以是字符串（自动加后缀）或对象 |
-| 表单重置 | 非受控时监听所属表单的 `reset` 事件，等一帧后回到 `defaultValue` |
-| 错误态 | `aria-invalid` 时方条变红：`aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20`（暗色 `/50`、`/40`）；根元素是字段容器的组件再提供 `error` 属性，文字放在控件下方，用 `aria-describedby` 关联 |
-| 触屏高度 | `bar` 档在 `pointer-coarse:` 下各加高一档：28 / 32 / 36 → 36 / 40 / 44px；`compact` 不加高 |
-| 点按后的焦点环 | 焦点环只给键盘用户看。组件若在指针按下时**主动** `focus()` 别的元素（如点加减后把焦点给输入框、按下刻度后聚焦刻度尺），浏览器会把它当键盘聚焦显示焦点环：用 `pointerFocus` 状态 + `data-pointer-focus` 压掉（`data-pointer-focus:focus-visible:ring-0`），在 `onKeyDownCapture`（Base UI 会吃掉方向键，必须用捕获阶段）和失焦时复位。正在输入文字的框聚焦时保留焦点环 |
-| 窄容器 | 根元素设 `@container`，窄于 20rem（放不下「条内标签 + 值」）时：条内标签 `sr-only`，另渲染一份 `aria-hidden` 的 `<label htmlFor>` 显示在条上方（`text-xs text-muted-foreground`），值改为左对齐。**不要只把标签藏起来**，多字段表单会分不清字段；示例里手写的方条字段也按同一规则 |
-| 触摸手势 | 横向占满的拖动控件用 `touch-action: pan-y`，先判断方向再接管；二维控件只在按住手柄时拖动，空白处交给页面滚动 |
+| 场景           | 约定                                                                                                                                                                                                                                                                              |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 随表单提交     | 支持 `name` / `form`，用 `<input type="hidden">` 提交原始值（不带格式）；多个值时 `name` 可以是字符串（自动加后缀）或对象                                                                                                                                                         |
+| 表单重置       | 非受控时监听所属表单的 `reset` 事件，等一帧后回到 `defaultValue`                                                                                                                                                                                                                  |
+| 错误态         | `aria-invalid` 时方条变红：`aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20`（暗色 `/50`、`/40`）；根元素是字段容器的组件再提供 `error` 属性，文字放在控件下方，用 `aria-describedby` 关联                                                   |
+| 触屏高度       | `bar` 档在 `pointer-coarse:` 下各加高一档：28 / 32 / 36 → 36 / 40 / 44px；`compact` 不加高                                                                                                                                                                                        |
+| 聚焦样式       | 鼠标点按、文字输入聚焦与下拉打开时用边框加深 + 底色提亮（`focus-within:border-foreground/25 focus-within:bg-background`，下拉用 `data-popup-open:`），不用外圈；文字输入经 Tab 聚焦也相同。外圈 ring 只留给非文字控件的键盘 `focus-visible` 与出错态                              |
+| 点按后的焦点环 | 非文字控件只在键盘 `focus-visible` 时显示外圈。指针主动转移焦点时用 `pointerFocus` + `data-pointer-focus` 压掉误触发的环，键盘捕获和失焦时复位；文字输入统一使用边框加深 + 底色提亮，无需压制 ring。`data-pointer-focus` 隐藏光标等独立逻辑保留                                   |
+| 窄容器         | 根元素设 `@container`，窄于 20rem（放不下「条内标签 + 值」）时：条内标签 `sr-only`，另渲染一份 `aria-hidden` 的 `<label htmlFor>` 显示在条上方（`text-xs text-muted-foreground`），值改为左对齐。**不要只把标签藏起来**，多字段表单会分不清字段；示例里手写的方条字段也按同一规则 |
+| 触摸手势       | 横向占满的拖动控件用 `touch-action: pan-y`，先判断方向再接管；二维控件只在按住手柄时拖动，空白处交给页面滚动                                                                                                                                                                      |
 
 ## 5. 文案与 i18n
 
@@ -127,15 +129,16 @@ export { StatusCard, StatusCardTitle, statusCardVariants }
 - 尺寸优先 `size-*`；图标尺寸由父级 `[&_svg:not([class*='size-'])]:size-4` 统一
 - **按钮高度只有三档**，一律通过 `Button` 或 `buttonVariants` 的 `size` 取得，不用 `h-*`/`py-*` 自定义：
 
-  | 档位 | 文字按钮 | 图标按钮 | 高度 | 触屏高度 | 用途 |
-  |---|---|---|---|---|---|
-  | 小 | `sm` | `icon-sm` | 28px | 36px | 工具栏、表格行内、文档框内操作 |
-  | 默认 | `default` | `icon` | 32px | 40px | 表单、对话框、卡片内操作 |
-  | 大 | `lg` | `icon-lg` | 36px | 44px | 首屏 / 页面级主操作 |
+  | 档位 | 文字按钮  | 图标按钮  | 高度 | 触屏高度 | 用途                           |
+  | ---- | --------- | --------- | ---- | -------- | ------------------------------ |
+  | 小   | `sm`      | `icon-sm` | 28px | 36px     | 工具栏、表格行内、文档框内操作 |
+  | 默认 | `default` | `icon`    | 32px | 40px     | 表单、对话框、卡片内操作       |
+  | 大   | `lg`      | `icon-lg` | 36px | 44px     | 首屏 / 页面级主操作            |
 
   触屏高度由 `pointer-coarse:` 自动切换，按钮、输入框（`components/ui/input`）、方条控件三者同一张表：同一档的按钮和表单控件在桌面、手机上都等高。示例里手写的方条文本框也要照这张表写（如 `h-9 pointer-coarse:h-11`），不要只写一个固定高度
 
   同一行并排的按钮（包括图标按钮）必须同一档；只有设计明确指定时才例外，并在代码旁注释原因。`xs`/`icon-xs` 只用于徽标、标签内的微型操作。链接按钮写 `className={buttonVariants({ variant, size, className })}`，额外类通过 `className` 参数传入，由 `buttonVariants` 内部合并
+
 - `dark:` 变体只在 token 无法表达时使用
 - 动效：`motion/react`，时长 150–300ms，必须处理 `useReducedMotion()`
 - 不写内联 `style`，除非是运行时计算值（宽度、坐标、CSS 变量）
@@ -170,6 +173,7 @@ description: 一句话说明（同 registry.json 的 description）
 ## 可访问性                                    ← 键盘、ARIA 行为
 ## 注意事项                                    ← 可选：SSR、性能、已知限制
 ```
+
 来源于用户项目的条目，在简介中写"提炼自我的一个 xxx 项目"，不写真实品牌名。
 
 ## 10. 自动检查与自查清单
@@ -177,6 +181,7 @@ description: 一句话说明（同 registry.json 的 description）
 `pnpm registry:lint` 检查：`data-slot`、导出方式、`"use client"` 位置、禁用颜色、禁止的 import 路径、registry.json 依赖与实际 import 是否一致。
 
 交付前自查：
+
 - [ ] `pnpm registry:lint && pnpm lint && pnpm build` 全部通过
 - [ ] 全部颜色主题（14 个，含中性基底）× 亮/暗 下外观正常；375px 无横向溢出
 - [ ] 文案可通过 `labels` 覆盖；无硬编码颜色

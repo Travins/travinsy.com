@@ -188,7 +188,7 @@ function SegmentedControl({
               value={option.value}
               disabled={option.disabled}
               data-slot="segmented-control-item"
-              className="relative flex min-w-0 flex-auto cursor-pointer items-center justify-center gap-1.5 px-2 whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
+              className="relative flex min-w-0 flex-auto cursor-pointer items-center justify-center gap-1.5 px-2 whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
             >
               {selected ? (
                 <motion.span

@@ -12,7 +12,7 @@ type RegionPickerVariant = "sheet" | "popover"
  * 放进同一个面板里能对齐。高度只用既有三档：28 / 32 / 36px，触屏设备上各加高一档（36 / 40 / 44px）
  */
 const regionPickerTriggerVariants = cva(
-  "flex w-full min-w-0 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-left transition-colors outline-none select-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-popup-open:bg-muted data-popup-open:ring-3 data-popup-open:ring-ring/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+  "flex w-full min-w-0 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-left transition-colors outline-none select-none hover:not-data-popup-open:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 not-aria-invalid:data-popup-open:border-foreground/25 data-popup-open:bg-background dark:data-popup-open:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {
@@ -128,7 +128,7 @@ function RegionPickerSteps({
                   "relative z-10 flex size-5 shrink-0 items-center justify-center rounded-full border font-mono text-[11px] tabular-nums",
                   done && "border-primary bg-primary text-primary-foreground",
                   current &&
-                    "border-primary bg-background text-primary ring-3 ring-primary/15",
+                    "border-2 border-primary bg-background text-primary",
                   step.state === "todo" &&
                     "border-border bg-background text-muted-foreground",
                 )}
@@ -212,9 +212,9 @@ function RegionPickerOption({
       className={cn(
         "flex min-w-0 cursor-pointer items-center gap-2 select-none",
         layout === "chip"
-          ? "h-8 rounded-md border border-border px-2.5 text-sm transition-colors hover:border-foreground/25 hover:bg-muted data-selected:border-primary data-selected:bg-primary/10 data-selected:font-medium data-selected:text-primary data-active:border-ring data-active:ring-2 data-active:ring-ring/30"
+          ? "h-8 rounded-md border border-border px-2.5 text-sm transition-colors hover:border-foreground/25 hover:bg-muted data-selected:border-primary data-selected:bg-primary/10 data-selected:font-medium data-selected:text-primary data-active:border-foreground/30 data-active:bg-muted"
           : sheet
-            ? "h-11 px-4 text-sm active:bg-muted data-selected:font-medium data-selected:text-primary"
+            ? "h-11 px-4 text-sm active:bg-muted data-selected:font-medium data-selected:text-primary data-active:bg-muted"
             : "h-8 rounded-md px-2.5 text-sm data-selected:font-medium data-selected:text-primary data-active:bg-muted",
         className,
       )}

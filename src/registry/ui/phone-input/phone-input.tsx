@@ -148,7 +148,7 @@ function PhoneInput({
           "@max-[20rem]/phone-input:gap-2",
           invalid
             ? "border-destructive ring-3 ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40"
-            : "border-edge focus-within:ring-3 focus-within:ring-ring/50 hover:bg-muted",
+            : "border-edge focus-within:border-foreground/25 focus-within:bg-background hover:not-focus-within:bg-muted dark:focus-within:bg-input/30",
           disabled && "cursor-not-allowed opacity-50",
           readOnly && "bg-muted/30",
           // 条内有按钮时右边不留内边距，按钮自己贴边

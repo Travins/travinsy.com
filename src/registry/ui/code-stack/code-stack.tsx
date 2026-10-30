@@ -210,7 +210,7 @@ function CodeFile({
       data-slot="code-file"
       data-active={active || undefined}
       className={cn(
-        "relative flex aspect-[4/5] w-full min-w-0 flex-col overflow-hidden rounded-lg border border-edge bg-card text-card-foreground shadow-sm data-active:border-primary/60 data-active:ring-2 data-active:ring-primary/10",
+        "relative flex aspect-[4/5] w-full min-w-0 flex-col overflow-hidden rounded-lg border border-edge bg-card text-card-foreground shadow-sm data-active:border-foreground/30 data-active:bg-muted",
         className,
       )}
       style={{ ...flowToneStyle(LANG_TONES[language] ?? "primary"), ...style }}

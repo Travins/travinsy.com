@@ -20,7 +20,7 @@ const DEFAULT_LABELS: NumberStepperLabels = {
 }
 
 const numberStepperControlVariants = cva(
-  "flex min-w-0 items-center rounded-md border border-edge bg-muted/60 text-sm transition-colors has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 data-pointer-focus:has-[:focus-visible]:ring-0 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+  "flex min-w-0 items-center rounded-md border border-edge bg-muted/60 text-sm transition-colors not-aria-invalid:has-[[data-slot=number-stepper-input]:focus]:border-foreground/25 not-aria-invalid:has-[[data-slot=number-stepper-input]:focus]:bg-background dark:not-aria-invalid:has-[[data-slot=number-stepper-input]:focus]:bg-input/30 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {
@@ -66,8 +66,7 @@ function NumberStepper({
   const id = idProp ?? autoId
   const inputRef = React.useRef<HTMLInputElement>(null)
   // 最近一次是按哪个键改的数：保存时让那个按钮转圈，数字照常显示，用户看得到自己改成了几
-  // 点加减按钮时 Base UI 会把焦点移到中间的输入框，而文本输入框一聚焦就匹配 :focus-visible，
-  // 焦点环会在每次点按后出现。记下「这次焦点是点按钮带来的」，按任意键后恢复
+  // 点加减按钮时 Base UI 会把焦点移到中间的输入框；指针带来的焦点隐藏光标，按任意键后恢复。
   const [pointerFocus, setPointerFocus] = React.useState(false)
   const [lastAction, setLastAction] = React.useState<"decrement" | "increment">(
     "increment",
@@ -125,9 +124,10 @@ function NumberStepper({
   const buttonClass = buttonVariants({
     variant: "ghost",
     size: buttonSize,
+    // 按下时只缩小图标给一点触感，按钮底色和尺寸不动；减少动态效果时不缩。
     // 按钮留在方条边框里面、撑满框内高度：不用负边距伸到边线上，否则按下时的底色和下沉会盖住边框（出错时的红边尤其明显）
     className:
-      "h-full touch-manipulation self-stretch rounded-none border-0 border-edge text-muted-foreground transition-colors active:not-aria-[haspopup]:translate-y-0 aria-disabled:pointer-events-none aria-disabled:opacity-40 disabled:opacity-40",
+      "h-full touch-manipulation self-stretch focus-visible:ring-inset [&_svg]:transition-transform [&_svg]:duration-100 [&_svg]:ease-out active:[&_svg]:scale-[0.8] motion-reduce:[&_svg]:transition-none motion-reduce:active:[&_svg]:scale-100 rounded-none border-0 border-edge text-muted-foreground transition-colors active:not-aria-[haspopup]:translate-y-0 aria-disabled:pointer-events-none aria-disabled:opacity-40 disabled:opacity-40",
   })
 
   function handleCommit(next: number | null) {

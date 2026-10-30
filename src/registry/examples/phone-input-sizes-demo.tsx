@@ -37,7 +37,7 @@ export default function PhoneInputSizesDemo() {
         />
         {/* 发送按钮也能单独用，比如放在邮箱输入旁边：高度与默认档的方条一致 */}
         <div className="flex gap-2">
-          <label className="flex h-8 min-w-0 flex-1 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-sm focus-within:ring-3 focus-within:ring-ring/50 pointer-coarse:h-10">
+          <label className="flex h-8 min-w-0 flex-1 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-sm focus-within:border-foreground/25 focus-within:bg-background dark:focus-within:bg-input/30 pointer-coarse:h-10">
             <span className="shrink-0 text-muted-foreground">邮箱</span>
             <input
               type="email"

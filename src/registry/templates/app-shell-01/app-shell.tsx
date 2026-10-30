@@ -104,7 +104,7 @@ function AppShell({
   const currentHref = activeHref ?? pathname
   const active = React.useMemo(
     () => resolveNav(nav, currentHref),
-    [nav, currentHref]
+    [nav, currentHref],
   )
 
   // 非受控时折叠状态来自 localStorage（水合安全）；受控时完全由外部决定
@@ -134,7 +134,7 @@ function AppShell({
         onNavigate?.(payload)
       },
     }),
-    [onNavigate]
+    [onNavigate],
   )
 
   const group = active?.module
@@ -151,7 +151,7 @@ function AppShell({
             data-has-workspace={group ? "" : undefined}
             className={cn(
               "group/app-shell flex h-svh flex-col overflow-hidden bg-muted/35 text-foreground",
-              className
+              className,
             )}
             // 首帧脚本会在水合前改写 data-collapsed，以 DOM 为准
             suppressHydrationWarning
@@ -163,7 +163,7 @@ function AppShell({
             ) : null}
             <a
               href="#main-content"
-              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-lg focus:ring-3 focus:ring-ring/50 focus:outline-none"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-lg focus:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               {text.skipToContent}
             </a>
@@ -198,7 +198,7 @@ function AppShell({
                 className={cn(
                   "hidden shrink-0 border-r border-sidebar-border bg-sidebar min-[800px]:flex",
                   NAV_WIDTH_CLASS.sidebar,
-                  NAV_WIDTH_TRANSITION
+                  NAV_WIDTH_TRANSITION,
                 )}
               >
                 <PrimaryNav
@@ -217,7 +217,10 @@ function AppShell({
                   labels={labels}
                 />
               ) : null}
-              <div data-slot="app-shell-workspace" className="@container/workspace relative flex min-h-0 min-w-0 flex-1">
+              <div
+                data-slot="app-shell-workspace"
+                className="@container/workspace relative flex min-h-0 min-w-0 flex-1"
+              >
                 <main
                   data-slot="app-shell-main"
                   id="main-content"
@@ -229,7 +232,9 @@ function AppShell({
                   {children}
                 </main>
                 {/* 留足主区域 600px；助手最大拖拽宽度 640px，空间不足时覆盖显示。 */}
-                <div className="contents [&>[data-mode=embedded]]:absolute [&>[data-mode=embedded]]:inset-y-0 [&>[data-mode=embedded]]:right-0 [&>[data-mode=embedded]]:z-30 [&>[data-mode=embedded]]:max-w-full [&>[data-mode=embedded]]:shadow-xl @min-[1240px]/workspace:[&>[data-mode=embedded]]:relative @min-[1240px]/workspace:[&>[data-mode=embedded]]:shadow-none">{aside}</div>
+                <div className="contents [&>[data-mode=embedded]]:absolute [&>[data-mode=embedded]]:inset-y-0 [&>[data-mode=embedded]]:right-0 [&>[data-mode=embedded]]:z-30 [&>[data-mode=embedded]]:max-w-full [&>[data-mode=embedded]]:shadow-xl @min-[1240px]/workspace:[&>[data-mode=embedded]]:relative @min-[1240px]/workspace:[&>[data-mode=embedded]]:shadow-none">
+                  {aside}
+                </div>
               </div>
             </div>
             <SheetContent
@@ -237,7 +242,9 @@ function AppShell({
               className="gap-0 p-0 data-[side=left]:w-[280px] data-[side=left]:sm:max-w-[280px]"
             >
               <SheetHeader className="border-b border-border px-4 py-3">
-                <SheetTitle className="text-sm">{text.mainNavigation}</SheetTitle>
+                <SheetTitle className="text-sm">
+                  {text.mainNavigation}
+                </SheetTitle>
                 <SheetDescription className="sr-only">
                   {text.mainNavigationDescription}
                 </SheetDescription>
@@ -259,9 +266,4 @@ function AppShell({
 }
 
 export { AppShell, AppShellScript }
-export type {
-  AppShellBrand,
-  AppShellProps,
-  AppShellScriptProps,
-  AppShellUser,
-}
+export type { AppShellBrand, AppShellProps, AppShellScriptProps, AppShellUser }
