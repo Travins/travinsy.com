@@ -1,14 +1,31 @@
 "use client"
 
-import { IdNumberInput } from "@/registry/ui/id-number-input/id-number-input"
+import * as React from "react"
 
+import {
+  IdNumberInput,
+  isValidUscc,
+} from "@/registry/ui/id-number-input/id-number-input"
+
+/**
+ * 三种号码：身份证、银行卡失焦打码；信用代码故意把末位写错（正确是 Y43），
+ * 18 位填满且校验位不对时提示，改对后提示立即消失。
+ */
 export default function IdNumberInputKindsDemo() {
+  const [uscc, setUscc] = React.useState("91350100M000100Y44")
+  const wrong = uscc.length === 18 && !isValidUscc(uscc)
+
   return (
     <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
-      <div className="pb-3">
-        <p className="text-sm font-medium">三种号码</p>
-        <p className="text-xs text-muted-foreground">
-          聚焦查看明文，失焦恢复打码
+      <div className="flex items-baseline justify-between gap-2 pb-3">
+        <div className="min-w-0">
+          <p className="text-sm font-medium">三种号码</p>
+          <p className="truncate text-xs text-muted-foreground">
+            聚焦查看明文，失焦恢复打码
+          </p>
+        </div>
+        <p className="shrink-0 font-mono text-[11px] text-muted-foreground">
+          GB 11643 · GB 32100
         </p>
       </div>
       <div className="flex flex-col gap-3">
@@ -27,8 +44,9 @@ export default function IdNumberInputKindsDemo() {
         <IdNumberInput
           kind="uscc"
           label="信用代码"
-          defaultValue="91350100M000100Y44"
-          error="校验位不正确，请核对证件上的末位字符"
+          value={uscc}
+          onValueChange={setUscc}
+          error={wrong ? "校验位不正确，请核对证件上的末位字符" : undefined}
         />
       </div>
     </div>
