@@ -51,6 +51,13 @@ type XyPadProps = Omit<
    */
   modified?: boolean
   disabled?: boolean
+  /**
+   * 表单字段名：设了就随表单提交两个值。传字符串 `"pos"` 时字段是 `pos.x` 与 `pos.y`，
+   * 也可以分别指定 `{ x: "pan", y: "tilt" }`。表单重置时回到 `defaultValue`
+   */
+  name?: string | { x: string; y: string }
+  /** 关联到另一个表单的 id，同 `<input form>` */
+  form?: string
 }
 
 type ResolvedAxis = Required<Omit<XyPadAxis, "format">> &
@@ -73,6 +80,9 @@ function clampStep(value: number, axis: ResolvedAxis) {
     axis.min + Math.round((clamped - axis.min) / axis.step) * axis.step
   return Number(Math.min(axis.max, stepped).toFixed(decimals))
 }
+
+/** 触摸时移动超过这么多像素就不再算「点按」，交给页面滚动 */
+const TOUCH_SLOP = 6
 
 const percentOf = (value: number, axis: ResolvedAxis) =>
   ((value - axis.min) / (axis.max - axis.min || 1)) * 100
@@ -99,6 +109,8 @@ function XyPad({
   tone,
   modified = false,
   disabled = false,
+  name,
+  form,
   className,
   style,
   "aria-label": ariaLabel,
@@ -114,9 +126,31 @@ function XyPad({
     },
     onChange: onValueChange,
   })
+
+  // 非受控时表单重置回到初始值；reset 事件在表单清空之前触发，等一帧再覆盖
+  const initialRef = React.useRef(value)
+  const hiddenRef = React.useRef<HTMLInputElement>(null)
+  const controlled = valueProp !== undefined
+  React.useEffect(() => {
+    const element = hiddenRef.current?.form
+    if (!element || controlled) return
+    const reset = () => window.setTimeout(() => setValue(initialRef.current))
+    element.addEventListener("reset", reset)
+    return () => element.removeEventListener("reset", reset)
+  }, [controlled, setValue])
+  const fieldNames =
+    name === undefined
+      ? null
+      : typeof name === "string"
+        ? { x: `${name}.x`, y: `${name}.y` }
+        : name
   const labelId = React.useId()
   const areaRef = React.useRef<HTMLDivElement>(null)
   const [dragging, setDragging] = React.useState(false)
+  // 按在手柄上时记下手指与手柄中心的偏移，拖动时手柄不会先跳到指尖下
+  const offsetRef = React.useRef({ x: 0, y: 0 })
+  // 触摸按在空白处：先不拖，松手时没怎么动才算点按
+  const tapRef = React.useRef<{ id: number; x: number; y: number } | null>(null)
   const hasTone = tone !== undefined
 
   const update = (next: XyPadValue) => {
@@ -131,8 +165,9 @@ function XyPad({
   const fromPointer = (event: React.PointerEvent) => {
     const rect = areaRef.current?.getBoundingClientRect()
     if (!rect) return value
-    const px = (event.clientX - rect.left) / rect.width
-    const py = 1 - (event.clientY - rect.top) / rect.height
+    const px = (event.clientX - offsetRef.current.x - rect.left) / rect.width
+    const py =
+      1 - (event.clientY - offsetRef.current.y - rect.top) / rect.height
     return update({
       x: xAxis.min + px * (xAxis.max - xAxis.min),
       y: yAxis.min + py * (yAxis.max - yAxis.min),
@@ -143,6 +178,24 @@ function XyPad({
     if (disabled || event.button !== 0) return
     // 鼠标按下时不让浏览器开始选中旁边的文字
     if (event.pointerType === "mouse") event.preventDefault()
+    const thumb = (event.target as Element).closest("[data-slot=xy-pad-handle]")
+    // 触摸按在空白处：板子是 touch-action: pan-x pan-y，手指一动就交给页面滚动，
+    // 只有原地点一下才把手柄移过去；要拖动得按住手柄（手柄外围有 44px 的触摸区，且 touch-action: none）
+    if (event.pointerType === "touch" && !thumb) {
+      tapRef.current = {
+        id: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+      }
+      return
+    }
+    if (thumb) {
+      const box = thumb.getBoundingClientRect()
+      offsetRef.current = {
+        x: event.clientX - (box.left + box.width / 2),
+        y: event.clientY - (box.top + box.height / 2),
+      }
+    } else offsetRef.current = { x: 0, y: 0 }
     event.currentTarget.setPointerCapture(event.pointerId)
     setDragging(true)
     fromPointer(event)
@@ -151,10 +204,27 @@ function XyPad({
   }
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const tap = tapRef.current
+    if (
+      tap?.id === event.pointerId &&
+      Math.hypot(event.clientX - tap.x, event.clientY - tap.y) > TOUCH_SLOP
+    )
+      tapRef.current = null
     if (dragging) fromPointer(event)
   }
 
   const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const tap = tapRef.current
+    if (tap?.id === event.pointerId) {
+      tapRef.current = null
+      if (event.type === "pointerup") {
+        offsetRef.current = { x: 0, y: 0 }
+        // 先算再回调，不能写进可选调用里：没传回调时会连 fromPointer 一起短路掉
+        const committed = fromPointer(event)
+        onValueCommitted?.(committed)
+      }
+      return
+    }
     if (!dragging) return
     setDragging(false)
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -197,7 +267,7 @@ function XyPad({
       data-modified={modified ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
       className={cn(
-        "group/xy-pad relative aspect-square w-full min-w-0 overflow-hidden rounded-md border border-edge bg-muted/60 text-xs select-none has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 data-[disabled]:opacity-50",
+        "group/xy-pad relative aspect-square w-full min-w-0 overflow-hidden rounded-md border border-edge bg-muted/60 text-xs select-none has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-[disabled]:opacity-50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
         className,
       )}
       style={{ ...flowToneStyle(tone), ...style }}
@@ -209,7 +279,7 @@ function XyPad({
         onPointerMove={handlePointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        className="absolute inset-0 cursor-crosshair touch-none in-data-[disabled]:cursor-not-allowed"
+        className="absolute inset-0 cursor-crosshair touch-pan-x touch-pan-y in-data-[disabled]:cursor-not-allowed"
       >
         {/*
           背景网格：等分的细线，与站点的线条网格同一种颜色。
@@ -256,16 +326,21 @@ function XyPad({
           )}
           style={{ bottom: `${bottom}%` }}
         />
-        {/* 手柄：与开关同一种圆形手柄，拖动时轻微放大 */}
+        {/* 手柄：与开关同一种圆形手柄，拖动时轻微放大。外面套一层 44px 的透明触摸区，按住它才能拖 */}
         <span
           aria-hidden="true"
-          data-slot="xy-pad-thumb"
-          className={cn(
-            "pointer-events-none absolute size-3.5 -translate-x-1/2 translate-y-1/2 rounded-full border-2 bg-background shadow-sm transition-transform group-data-[dragging]/xy-pad:scale-125 motion-reduce:transition-none",
-            hasTone ? "border-(--flow-tone)" : "border-foreground",
-          )}
+          data-slot="xy-pad-handle"
+          className="absolute flex size-11 -translate-x-1/2 translate-y-1/2 cursor-grab touch-none items-center justify-center group-data-[dragging]/xy-pad:cursor-grabbing in-data-[disabled]:cursor-not-allowed"
           style={{ left: `${left}%`, bottom: `${bottom}%` }}
-        />
+        >
+          <span
+            data-slot="xy-pad-thumb"
+            className={cn(
+              "size-3.5 rounded-full border-2 bg-background shadow-sm transition-transform group-data-[dragging]/xy-pad:scale-125 motion-reduce:transition-none pointer-coarse:size-5",
+              hasTone ? "border-(--flow-tone)" : "border-foreground",
+            )}
+          />
+        </span>
         {(["x", "y"] as const).map((key) => {
           const axis = key === "x" ? xAxis : yAxis
           return (
@@ -305,6 +380,19 @@ function XyPad({
       >
         {show(value.x, xAxis)} · {show(value.y, yAxis)}
       </span>
+      {fieldNames &&
+        (["x", "y"] as const).map((key) => (
+          <input
+            key={key}
+            ref={key === "x" ? hiddenRef : undefined}
+            type="hidden"
+            data-slot={`xy-pad-field-${key}`}
+            name={fieldNames[key]}
+            form={form}
+            value={value[key]}
+            disabled={disabled}
+          />
+        ))}
     </div>
   )
 }

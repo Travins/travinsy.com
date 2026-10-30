@@ -54,6 +54,7 @@ function RegionPicker({
   required = false,
   disabled,
   label,
+  error,
   placeholder,
   fallbackLabel,
   title: titleProp,
@@ -214,8 +215,20 @@ function RegionPicker({
     return () => element.removeEventListener("reset", reset)
   }, [controlled, defaultValue, setCode])
 
+  const errorId = React.useId()
+  const invalid =
+    Boolean(error) ||
+    props["aria-invalid"] === true ||
+    props["aria-invalid"] === "true"
+  const describedBy =
+    [props["aria-describedby"], error ? errorId : undefined]
+      .filter(Boolean)
+      .join(" ") || undefined
+
   const triggerProps = {
     ...props,
+    "aria-invalid": invalid || undefined,
+    "aria-describedby": describedBy,
     ref: triggerRef,
     "data-slot": "region-picker-trigger",
     disabled,
@@ -278,6 +291,7 @@ function RegionPicker({
     <div
       data-slot="region-picker"
       data-size={size}
+      data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
       className={cn("relative w-full", className)}
     >
@@ -365,8 +379,18 @@ function RegionPicker({
         value={code ?? ""}
         onChange={() => {}}
         onFocus={() => triggerRef.current?.focus()}
-        className="pointer-events-none absolute inset-0 size-full opacity-0"
+        // 只盖住触发器那一行，原生的必填气泡指向触发器而不是下面的错误文字
+        className="pointer-events-none absolute inset-x-0 top-0 h-full max-h-11 w-full opacity-0"
       />
+      {error && (
+        <p
+          id={errorId}
+          data-slot="region-picker-error"
+          className="mt-1.5 text-xs text-destructive"
+        >
+          {error}
+        </p>
+      )}
     </div>
   )
 }

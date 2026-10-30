@@ -67,6 +67,11 @@ type RegionPickerProps = Omit<
    * 不传时触发器里只有路径，标签可以照常写在外面
    */
   label?: React.ReactNode
+  /**
+   * 错误提示：显示在触发器下方，触发器变红并带 `aria-invalid`，读屏聚焦时一并朗读。
+   * 业务校验（比如「该地区暂不配送」）自己判断后传入
+   */
+  error?: React.ReactNode
   /** 未选时触发器显示的提示，默认取 `labels.placeholder` */
   placeholder?: string
   /**

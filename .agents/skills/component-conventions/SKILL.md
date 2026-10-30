@@ -101,6 +101,16 @@ export { StatusCard, StatusCardTitle, statusCardVariants }
 | 布尔 | 肯定式命名：`allowSignUp`、`collapsible`，不用 `disableXxx` 双重否定 |
 | 回调参数 | 传对象而非多个位置参数（便于扩展） |
 
+**表单控件（方条系列、金额输入、省市区选择等）另外遵守：**
+
+| 场景 | 约定 |
+|---|---|
+| 随表单提交 | 支持 `name` / `form`，用 `<input type="hidden">` 提交原始值（不带格式）；多个值时 `name` 可以是字符串（自动加后缀）或对象 |
+| 表单重置 | 非受控时监听所属表单的 `reset` 事件，等一帧后回到 `defaultValue` |
+| 错误态 | `aria-invalid` 时方条变红：`aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20`（暗色 `/50`、`/40`）；根元素是字段容器的组件再提供 `error` 属性，文字放在控件下方，用 `aria-describedby` 关联 |
+| 触屏高度 | `bar` 档在 `pointer-coarse:` 下各加高一档：28 / 32 / 36 → 36 / 40 / 44px；`compact` 不加高 |
+| 触摸手势 | 横向占满的拖动控件用 `touch-action: pan-y`，先判断方向再接管；二维控件只在按住手柄时拖动，空白处交给页面滚动 |
+
 ## 5. 文案与 i18n
 
 - 默认中文。**用户可见文案不得散落硬编码在 JSX 深处**：区块/模板把文案集中为 `DEFAULT_LABELS`（放 `config.ts`），组件接收 `labels?: Partial<Labels>` 覆盖

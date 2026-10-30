@@ -283,6 +283,7 @@ type RegionPickerProps = {
   required?: boolean
   disabled?: boolean
   label?: React.ReactNode
+  error?: React.ReactNode
   placeholder?: string
   fallbackLabel?: string
   size?: RegionPickerSize
@@ -312,9 +313,10 @@ type RegionPickerProps = {
 | 搜索命中高亮 | `region-picker-mark` |
 | 加载中 / 出错 / 无结果 | `region-picker-notice` |
 | 结果被截断的提示 | `region-picker-hint` |
+| 错误提示 | `region-picker-error` |
 | 底部操作区 | `region-picker-footer` |
 
-根元素带 `data-size`、`data-disabled`；选项带 `data-active`（键盘或鼠标高亮）与 `data-selected`（在已选路径上）；浮层打开时触发器带 `data-popup-open`。
+根元素带 `data-size`、`data-disabled`，出错时带 `data-invalid`；选项带 `data-active`（键盘或鼠标高亮）与 `data-selected`（在已选路径上）；浮层打开时触发器带 `data-popup-open`。
 
 ## 可访问性
 
@@ -328,6 +330,7 @@ type RegionPickerProps = {
 
 - 触发器是个 `button`，不是文本输入；`required` 的原生气泡提示挂在覆盖其上的隐藏输入，聚焦会转交给触发器。
 - 受控模式下记得同时处理 `onValueChange`，否则选择后触发器不更新。
+- 业务校验（比如「该地区暂不配送」）自己判断后传 `error`：文字显示在触发器下方，触发器变红并带 `aria-invalid`，读屏聚焦时一并朗读。和金额输入的 `error` 是同一种做法。
 - `depth` 小于已选值所在的层级时，值照常回显完整路径，只是浮层里到不了更深的节点。
 - 约 3000 条数据的索引构建与单次搜索都在毫秒级，不需要防抖；数据达到几十万条时请自己换服务端搜索。
 

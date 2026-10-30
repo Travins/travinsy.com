@@ -147,6 +147,8 @@ type AngleDialProps = Omit<
   tone?: FlowTone
   modified?: boolean
   disabled?: boolean
+  name?: string
+  form?: string
 }
 ```
 
@@ -161,6 +163,7 @@ type AngleDialProps = Omit<
 | 指针       | `angle-dial-needle` |
 | 读数与表盘 | `angle-dial-value`  |
 | 小表盘     | `angle-dial-glyph`  |
+| 提交用的隐藏输入 | `angle-dial-field` |
 
 根元素始终带 `data-variant`（`bar` / `compact`）；拖动中带 `data-dragging`，`modified` 为真时带 `data-modified`，禁用时带 `data-disabled`。
 
@@ -180,7 +183,8 @@ type AngleDialProps = Omit<
 - 组件在服务端就输出完整结构（刻度按当前值平移、表盘指针带着 `rotate()`），不需要预水合脚本，禁用 JS 时也能看到当前值。
 - `formatValue`、`defaultValue` 建议定义在组件外，避免每次渲染都换一个新函数或新对象。
 - 拖动期间的读数变化会正常触发 React 渲染；一次拖动里读数会连续刷新，这是有意的。
-- 用作表单字段时外面自己套 `input type="hidden"`，组件只提交到 `onValueChange` / `onValueCommitted`。
+- 用作表单字段时传 `name`，提交当前角度（数字字符串）；非受控时表单重置回到 `defaultValue`。
+- 出错时传 `aria-invalid`，方条变红（和金额输入、省市区选择的错误态一致）；错误文字放在控件下方，用 `aria-describedby` 关联，读屏聚焦时一并朗读。
 - 受控模式下记得同时处理 `onValueChange`，否则拖动后值会弹回。
 - `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取；手动安装需要自己补上 `--flow-*` 变量。
 

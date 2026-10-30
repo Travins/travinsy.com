@@ -14,7 +14,7 @@ import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
  * 触屏设备上 bar 各加高一档（36 / 40 / 44px），色点放大、间距拉开，每个色点外围还有一圈看不见的点按区。
  */
 const tonePickerVariants = cva(
-  "group/tone-picker flex h-(--tone-picker-height) w-full min-w-0 items-center justify-between gap-3 rounded-md border border-edge bg-muted/60 px-3 select-none",
+  "group/tone-picker flex h-(--tone-picker-height) w-full min-w-0 items-center justify-between gap-3 rounded-md border border-edge bg-muted/60 px-3 select-none aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {

@@ -15,7 +15,7 @@ import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
 const TOUCH_SLOP = 6
 
 const angleDialVariants = cva(
-  "group/angle-dial relative flex h-(--angle-dial-height) w-full min-w-0 items-center gap-3 overflow-hidden rounded-md border border-edge bg-muted/60 px-3 select-none",
+  "group/angle-dial relative flex h-(--angle-dial-height) w-full min-w-0 items-center gap-3 overflow-hidden rounded-md border border-edge bg-muted/60 px-3 select-none aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {
@@ -131,6 +131,10 @@ type AngleDialProps = Omit<
    */
   modified?: boolean
   disabled?: boolean
+  /** 表单字段名：设了就随表单提交当前角度（数字字符串），表单重置时回到 `defaultValue` */
+  name?: string
+  /** 关联到另一个表单的 id，同 `<input form>` */
+  form?: string
 }
 
 /** 小刻度的间隔（度）与每隔几个小刻度画一根大刻度 */
@@ -185,6 +189,8 @@ function AngleDial({
   tone,
   modified = false,
   disabled = false,
+  name,
+  form,
   className,
   style,
   "aria-label": ariaLabel,
@@ -198,6 +204,17 @@ function AngleDial({
     defaultProp: resetValue,
     onChange: onValueChange,
   })
+
+  // 非受控时表单重置回到初始值；reset 事件在表单清空之前触发，等一帧再覆盖
+  const hiddenRef = React.useRef<HTMLInputElement>(null)
+  const controlled = valueProp !== undefined
+  React.useEffect(() => {
+    const element = hiddenRef.current?.form
+    if (!element || controlled) return
+    const reset = () => window.setTimeout(() => setValue(resetValue))
+    element.addEventListener("reset", reset)
+    return () => element.removeEventListener("reset", reset)
+  }, [controlled, resetValue, setValue])
   const labelId = React.useId()
   const [dragging, setDragging] = React.useState(false)
   // pending：触摸刚按下、还没看出是横向拖动还是上下滚动页面
@@ -398,6 +415,17 @@ function AngleDial({
           />
         </svg>
       </span>
+      {name !== undefined && (
+        <input
+          ref={hiddenRef}
+          type="hidden"
+          data-slot="angle-dial-field"
+          name={name}
+          form={form}
+          value={value}
+          disabled={disabled}
+        />
+      )}
     </div>
   )
 }

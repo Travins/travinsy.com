@@ -15,7 +15,7 @@ import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
  * 高度表也与数值滑块一致（bar 28 / 32 / 36px，compact 18 / 22 / 24px），放在同一个面板里能对齐。
  */
 const segmentedControlVariants = cva(
-  "group/segmented-control relative flex h-(--segmented-control-height) w-full min-w-0 items-stretch overflow-hidden rounded-md border border-edge bg-muted/60 select-none",
+  "group/segmented-control relative flex h-(--segmented-control-height) w-full min-w-0 items-stretch overflow-hidden rounded-md border border-edge bg-muted/60 select-none aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {

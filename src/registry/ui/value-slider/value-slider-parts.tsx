@@ -58,7 +58,7 @@ function ValueSliderTrack({
       ref={trackRef}
       data-slot="value-slider-track"
       className={cn(
-        "group/track relative h-(--value-slider-track-height) w-full overflow-hidden border border-edge bg-muted/60",
+        "group/track relative h-(--value-slider-track-height) w-full overflow-hidden border border-edge bg-muted/60 in-aria-invalid:border-destructive in-aria-invalid:ring-3 in-aria-invalid:ring-destructive/20 dark:in-aria-invalid:border-destructive/50 dark:in-aria-invalid:ring-destructive/40",
         slim ? "rounded-xs" : "rounded-md",
       )}
     >

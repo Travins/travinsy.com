@@ -151,6 +151,7 @@ type TonePickerProps = Omit<
 
 ## 注意事项
 
+- 出错时传 `aria-invalid`，方条变红（和金额输入、省市区选择的错误态一致）；错误文字放在控件下方，用 `aria-describedby` 关联，读屏聚焦时一并朗读。
 - 触屏设备（`pointer: coarse`）上方条各加高一档（`sm` / `default` / `lg` 变成 36 / 40 / 44px），手指好点；色点同时放大到 18px、间距拉开，每个色点外围还有一圈看不见的点按区；`compact` 是密排用的，不加高，手机上请用默认的方条。
 - 色点颜色来自主题变量，亮暗与颜色主题切换时会跟着变；要固定成品牌色就写任意 CSS 颜色。
 - `modified` 只有配 `label` 时才有可见效果（标签从次要色变成前景色）；没有 `label` 时只留下 `data-modified`。

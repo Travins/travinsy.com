@@ -13,7 +13,7 @@ import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
  * 高度表与数值滑块一致（bar 28 / 32 / 36px，compact 18 / 22 / 24px）。
  */
 const toggleSwitchVariants = cva(
-  "group/toggle-switch relative flex h-(--toggle-switch-height) w-full min-w-0 cursor-pointer items-center justify-between gap-3 overflow-hidden rounded-md border border-edge bg-muted/60 px-3 text-start text-muted-foreground outline-none select-none transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+  "group/toggle-switch relative flex h-(--toggle-switch-height) w-full min-w-0 cursor-pointer items-center justify-between gap-3 overflow-hidden rounded-md border border-edge bg-muted/60 px-3 text-start text-muted-foreground outline-none select-none transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {

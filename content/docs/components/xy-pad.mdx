@@ -36,9 +36,11 @@ export function LightPad() {
 
 ### 拖动与十字线
 
-按住任意位置或手柄拖动，两条轴一起变；十字线标出当前位置，一块淡色填充从左下角铺到手柄，与数值滑块的已选填充是同一种做法。松手时触发一次 `onValueCommitted`，拖动过程中只走 `onValueChange`。
+鼠标按住任意位置或手柄拖动，两条轴一起变；十字线标出当前位置，一块淡色填充从左下角铺到手柄，与数值滑块的已选填充是同一种做法。松手时触发一次 `onValueCommitted`，拖动过程中只走 `onValueChange`。
 
 指针按下时组件会把焦点交给横轴的隐藏滑块，所以拖完可以直接按方向键微调，不用再点一次。
+
+触摸时只有按住手柄才拖动，手柄外围有一圈 44px 的触摸区。手指落在空白处再滑动，页面照常滚动，板子不受影响；原地点一下则把手柄移到那里。这样手机上划过一块大面板时，不会把值改掉，页面也不会被卡住。
 
 ### 两条轴
 
@@ -146,6 +148,8 @@ type XyPadProps = Omit<
   tone?: FlowTone
   modified?: boolean
   disabled?: boolean
+  name?: string | { x: string; y: string }
+  form?: string
 }
 ```
 
@@ -158,11 +162,13 @@ type XyPadProps = Omit<
 | 背景网格 | `xy-pad-grid`      |
 | 淡色填充 | `xy-pad-fill`      |
 | 竖十字线 | `xy-pad-crosshair` |
+| 手柄触摸区 | `xy-pad-handle`  |
 | 手柄     | `xy-pad-thumb`     |
 | 横轴滑块 | `xy-pad-input-x`   |
 | 纵轴滑块 | `xy-pad-input-y`   |
 | 标签     | `xy-pad-label`     |
 | 读数     | `xy-pad-value`     |
+| 提交用的隐藏输入 | `xy-pad-field-x` / `xy-pad-field-y` |
 
 根元素在拖动中带 `data-dragging`，`modified` 为真时带 `data-modified`，禁用时带 `data-disabled`。
 
@@ -182,7 +188,8 @@ type XyPadProps = Omit<
 - 落点会先夹进 `min`–`max`，再对齐到 `step`，所以读数不会出现步长之外的数值。
 - 小数的位数按 `step` 的写法推导：`step={0.5}` 保留一位，`step={0.01}` 保留两位。
 - 受控模式下记得同时处理 `onValueChange`，否则拖动后手柄会弹回。
-- 用作表单字段时外面自己套两个 `input type="hidden"`，组件只提交到回调。
+- 用作表单字段时传 `name`：`name="pos"` 提交 `pos.x` 与 `pos.y` 两个字段，也可以写成 `{ x: "pan", y: "tilt" }` 分别指定；非受控时表单重置回到 `defaultValue`。
+- 出错时传 `aria-invalid`，方条变红（和金额输入、省市区选择的错误态一致）；错误文字放在控件下方，用 `aria-describedby` 关联，读屏聚焦时一并朗读。
 - `tone` 的颜色变量由 `flow-diagram` 条目提供，安装时会一并拉取；手动安装需要自己补上 `--flow-*` 变量。
 
 ## 源码
