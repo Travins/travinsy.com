@@ -12,6 +12,8 @@ export const docs = defineDocs({
       titleEn: z.string().optional(),
       /** 分组 id：登记在 src/components/docs/docs-groups.ts，决定侧栏与列表页的分组 */
       group: z.string().optional(),
+      /** 状态标记：`new` 在侧栏条目旁显示一个小小的「新」，组件稳定后删掉这一行即可 */
+      status: z.enum(["new"]).optional(),
       links: z.record(z.string(), z.url()).optional(),
     }),
   },

@@ -96,6 +96,11 @@ export function DocsSidebarNav({
                                 translate="no"
                               >
                                 {item.titleEn}
+                                {item.status === "new" ? (
+                                  <span className="ms-1.5 inline-flex h-3.5 items-center rounded-sm bg-(--flow-green)/12 px-1 align-[0.1em] text-[9px] leading-none font-medium text-(--flow-green)">
+                                    新<span className="sr-only">增</span>
+                                  </span>
+                                ) : null}
                               </span>
                               <span className="docs-nav-secondary">
                                 {item.title}
@@ -105,6 +110,11 @@ export function DocsSidebarNav({
                             <span className="docs-nav-label">
                               <span className="docs-nav-primary">
                                 {item.title}
+                                {item.status === "new" ? (
+                                  <span className="ms-1.5 inline-flex h-3.5 items-center rounded-sm bg-(--flow-green)/12 px-1 align-[0.1em] text-[9px] leading-none font-medium text-(--flow-green)">
+                                    新<span className="sr-only">增</span>
+                                  </span>
+                                ) : null}
                               </span>
                             </span>
                           )}

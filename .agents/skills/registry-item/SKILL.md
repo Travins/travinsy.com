@@ -23,7 +23,7 @@ description: 在 yiui.dev 新增或修改一个 shadcn registry 条目（组件 
    - `files[].path`；页面模板文件必须写 `target`（如 `app/page.tsx`）
    - 用到 `src/styles/grid.css` 工具类或新的 CSS 变量时，写进 `css` / `cssVars`
 3. **写演示**：`src/registry/examples/<name>-demo.tsx`（默认导出一个组件），多个变体用 `<name>-<variant>-demo.tsx`
-4. **写文档**：`content/docs/<components|blocks|templates>/<name>.mdx`，frontmatter 包含 `title`、`description`；正文使用文档组件（`ComponentPreview`、`InstallCommand` 等，以 `src/components/docs/` 中实际导出的为准）；可选 `group: <分组 id>` 决定侧栏与 `/components/` 列表页的分组，分组表（id、中英文标题、顺序）统一在 `src/components/docs/docs-groups.ts` 维护，新增分组先在表里登记，frontmatter 写了未登记的 id 构建会报错，不写 `group` 则归入默认组（无小标题）
+4. **写文档**：`content/docs/<components|blocks|templates>/<name>.mdx`，frontmatter 包含 `title`、`description`；正文使用文档组件（`ComponentPreview`、`InstallCommand` 等，以 `src/components/docs/` 中实际导出的为准）；可选 `group: <分组 id>` 决定侧栏与 `/components/` 列表页的分组，分组表（id、中英文标题、顺序）统一在 `src/components/docs/docs-groups.ts` 维护，新增分组先在表里登记，frontmatter 写了未登记的 id 构建会报错，不写 `group` 则归入默认组（无小标题）；新条目在 frontmatter 加 `status: new`，侧栏条目旁显示绿色的「新」，组件稳定（通常上线一两个版本后）删掉这一行即可
 5. **验证**
    ```bash
    source ~/.nvm/nvm.sh && nvm use

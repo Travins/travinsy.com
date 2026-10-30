@@ -8,9 +8,10 @@ export type NavItem = {
   title: string
   url: string
   titleEn?: string
+  /** 来自 MDX frontmatter 的 `status`：侧栏据此显示「新」标 */
+  status?: "new"
 }
-export type NavSectionId =
-  "docs" | "components" | "blocks" | "templates"
+export type NavSectionId = "docs" | "components" | "blocks" | "templates"
 /** 分区内的一组条目（小标题可选）；编号在整个分区内连续，不按组重置。 */
 export type NavGroup = EntryGroup<NavItem>
 export type NavSection = {
@@ -48,21 +49,28 @@ function mdxItems(section: NavSectionId, includeIndex: boolean): GroupedItem[] {
         title: page.data.title,
         url: withSlash(page.url),
         ...(page.data.titleEn ? { titleEn: page.data.titleEn } : {}),
+        ...(page.data.status ? { status: page.data.status } : {}),
       },
     }))
 }
 
 function entryItems(section: EntrySection): GroupedItem[] {
-  return sectionItems(section).map((entry) => ({
-    // 区块 / 模板的 group 写在各自的 MDX frontmatter 里
-    group: source.getPage([section, entry.name], siteConfig.defaultLanguage)
-      ?.data.group,
-    item: {
-      title: entry.title,
-      url: `/${section}/${entry.name}/`,
-      titleEn: entryTitleEn(section, entry.name),
-    },
-  }))
+  return sectionItems(section).map((entry) => {
+    // 区块 / 模板的 group、status 写在各自的 MDX frontmatter 里
+    const page = source.getPage(
+      [section, entry.name],
+      siteConfig.defaultLanguage,
+    )
+    return {
+      group: page?.data.group,
+      item: {
+        title: entry.title,
+        url: `/${section}/${entry.name}/`,
+        titleEn: entryTitleEn(section, entry.name),
+        ...(page?.data.status ? { status: page.data.status } : {}),
+      },
+    }
+  })
 }
 
 /** 侧栏、移动导航和相邻页共用当前分区的顺序（先按分组表排，再按分区内原顺序）。 */
