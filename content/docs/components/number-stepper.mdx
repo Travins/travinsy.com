@@ -1,0 +1,144 @@
+---
+title: 数量选择
+titleEn: Number Stepper
+description: 方条数量选择，支持长按步进、范围约束和异步提交，保存失败自动回滚。
+group: input
+---
+
+<ComponentPreview name="number-stepper-demo" />
+
+## 安装
+
+<InstallCommand name="number-stepper" />
+
+## 用法
+
+```tsx title="components/quantity.tsx"
+"use client"
+
+import * as React from "react"
+import { NumberStepper } from "@/components/ui/number-stepper/number-stepper"
+
+export function Quantity() {
+  const [value, setValue] = React.useState<number | null>(1)
+  return (
+    <NumberStepper
+      label="数量"
+      name="quantity"
+      value={value}
+      onValueChange={setValue}
+      min={1}
+      max={6}
+      step={1}
+    />
+  )
+}
+```
+
+`value`、`defaultValue` 和回调都使用 `number | null`，`null` 表示未填写。受控时同时处理 `onValueChange`；非受控时传 `defaultValue`。`name`、`form` 交给 NumberField，表单提交原始数值。
+
+### 范围与步长
+
+`min` 默认 `0`，`step` 默认 `1`。到达边界后，对应按钮不可用；输入过程中可暂时为空，失焦或按 Enter 后整理显示并限制范围。非空值按 `min` 为基准对齐到最近的 `step`，再限制到 min/max；空值保留 `null`，需要必填时传 `required`。
+
+NumberField 自带长按连续步进：等待约 400ms 后，每 60ms 改变一次，没有加速。该节奏由 Base UI 内部固定，组件不额外叠加计时器。默认小步长与 `step` 一致，避免整数数量在按 Alt 时变成小数；可用 `smallStep` 覆盖。
+
+### 异步提交与回滚
+
+```tsx
+<NumberStepper
+  label="数量"
+  defaultValue={1}
+  max={6}
+  onValueCommit={async (quantity) => {
+    const response = await fetch("/api/cart/quantity", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ quantity }),
+    })
+    if (!response.ok) throw new Error("保存失败，请重试")
+  }}
+  onCommitError={(error) => console.error(error)}
+/>
+```
+
+`onValueChange` 实时更新；`onValueCommit` 在按钮松开、键盘步进、失焦或 Enter 后，再等 400ms 执行。连续快速操作合并成一次提交，长按期间不提交；改回这批操作之前的数值时跳过提交。
+
+返回 Promise 时，数字区显示转圈，输入变成只读，加减按钮锁定，根元素带 `aria-busy`。失败后回到这批操作开始前的值，同时调用 `onValueChange` 和可选的 `onCommitError`；`Error.message` 显示在条下，外部 `error` 优先。同步抛错同样回滚。外部主动替换 `value` 或非受控表单重置后，旧请求结果不会覆盖新值。
+
+### 为什么默认关闭滚轮
+
+滚动页面时容易碰到已聚焦的数量输入。`allowWheelScrub` 默认 `false`，避免无意中修改购物车；确有需要可显式开启。
+
+## 示例
+
+### 购物车
+
+无 `label` 时随内容收窄，适合放在商品行右侧。示例用 600ms Promise 模拟保存，第二件商品库存为 3，达到上限后加号不可用。
+
+<ComponentPreview name="number-stepper-cart-demo" />
+
+### 尺寸与状态
+
+三档高度 28 / 32 / 36px，触屏上为 36 / 40 / 44px；按钮点击区域随之加大。
+
+<ComponentPreview name="number-stepper-sizes-demo" />
+
+## API
+
+<PropsTable name="number-stepper" component="NumberStepper" />
+
+`min=0`、`step=1`、`allowWheelScrub=false`、`locale="zh-CN"`。未列出的属性透传至 `NumberField.Root`，包括 `name`、`form`、`required`、`format`、`smallStep`、`largeStep`、根元素事件和 `ref`。`ref` 指向根元素；Base UI 的 `inputRef` 指向提交用的隐藏输入。
+
+`id`、`aria-label`、`aria-labelledby`、`aria-describedby`、`aria-invalid` 作用于可见输入。`className` 作用于根容器。`onValueCommitted` 由组件接管，对外用 `onValueCommit`；`render`、`children`、`allowOutOfRange`、`snapOnStep` 不开放，保证组合结构和提交规则一致。
+
+### 类型与 labels
+
+```ts
+type NumberStepperSize = "sm" | "default" | "lg"
+
+type NumberStepperLabels = {
+  decrement: string // "减少"
+  increment: string // "增加"
+  input: string // "数量"，未提供 label / aria-label 时使用
+  pending: string // "正在保存数量"
+  commitError: string // "保存失败，请重试"，非 Error 的异常兜底
+}
+```
+
+导出 `NumberStepperProps`、`NumberStepperSize`、`NumberStepperLabels`，以及 `numberStepperControlVariants({ size })`。通过 `labels?: Partial<NumberStepperLabels>` 覆盖文案。
+
+## data-slot
+
+| 元素     | `data-slot`                |
+| -------- | -------------------------- |
+| 根元素   | `number-stepper`           |
+| 方条     | `number-stepper-control`   |
+| 条内标签 | `number-stepper-label`     |
+| 减号按钮 | `number-stepper-decrement` |
+| 输入框   | `number-stepper-input`     |
+| 加号按钮 | `number-stepper-increment` |
+| 加载图标 | `number-stepper-spinner`   |
+| 错误提示 | `number-stepper-error`     |
+
+根元素带 `data-size`；出错、禁用、只读时分别带 `data-invalid`、`data-disabled`、`data-readonly`。
+
+## 可访问性
+
+- Base UI 当前可见输入默认是 text，并未声明 spinbutton；本组件补充 `role="spinbutton"` 和 `aria-valuemin/max/now`。键盘与步进逻辑仍交给 NumberField。
+- ↑ / ↓ 增减；Shift 配合上下键用 `largeStep`（默认 `step × 10`），Alt 用 `smallStep`。Home 跳到 min，End 在设置 max 时跳到 max；Enter 整理并提交，同时让输入失焦。
+- 按钮沿用 NumberField 的 `tabIndex=-1`，键盘通过输入框操作，触屏读屏仍可访问加减按钮。按钮名称可用 `labels` 覆盖。
+- 条内 `label` 与输入关联；无可见标签时传 `aria-label`，否则默认为「数量」。错误通过 `aria-describedby` 关联并播报，提交状态通过 `role="status"` 提示。
+- 转圈仅在允许动画时旋转，减少动态效果时保留静态图标。
+
+## 注意事项
+
+- 主要用于整数数量；小数步长可搭配 `format` 使用，numeric 软键盘可能没有小数点键。
+- `step` 应大于 0，或传 `"any"` 关闭步长对齐；`max` 应不小于 `min`。外部受控值与初始值应在范围内。
+- 非受控表单 reset 回到 `defaultValue`；受控表单由外部重置。
+- `disabled` 不参与表单提交；`readOnly` 保留提交值。保存期间只读，避免重叠请求覆盖回滚基准。
+- 不修改 Base UI 内部长按节奏。若业务需要更慢的长按速度，需等待其公开配置能力或单独实现交互。
+
+## 源码
+
+<ComponentSource name="number-stepper" />

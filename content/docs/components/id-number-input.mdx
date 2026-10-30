@@ -1,0 +1,159 @@
+---
+title: 证件号输入
+titleEn: ID Number Input
+description: 身份证号、银行卡号与统一社会信用代码输入：自动整理与分组、保持光标、失焦校验，支持打码显示和原始值提交。
+group: input
+---
+
+<ComponentPreview name="id-number-input-demo" />
+
+## 安装
+
+<InstallCommand name="id-number-input" />
+
+## 用法
+
+```tsx title="components/identity-form.tsx"
+import { IdNumberInput } from "@/components/ui/id-number-input/id-number-input"
+
+export function IdentityForm() {
+  return (
+    <div className="flex flex-col gap-3">
+      <IdNumberInput kind="idcard" label="身份证号" name="idcard" required />
+      <IdNumberInput kind="bankcard" label="银行卡号" name="bankcard" />
+      <IdNumberInput kind="uscc" label="信用代码" name="uscc" />
+    </div>
+  )
+}
+```
+
+`kind` 默认是 `idcard`。`value`、`defaultValue`、`onValueChange` 使用**不带分隔空格的大写原始号码**；空串表示未填写。设置 `name` 后，隐藏输入提交同样的原始值，`form` 可关联外部表单。
+
+### 输入整理
+
+- 身份证号按 6-8-4 分组；银行卡号每 4 位分组；统一社会信用代码不分组。
+- 全角字符转半角、字母转大写。身份证只保留数字，`X` 只能在第 18 位；银行卡只保留数字；信用代码只保留规定字符集。
+- 粘贴 `110105-19491231-002x` 会整理为 `110105 19491231 002X`。输入时只过滤、分组，不提前报错；IME 组合期间不整理。
+- 增删后按有效字符数恢复光标；在分隔空格旁退格或删除，会越过空格删除相邻字符。
+
+### 校验规则
+
+| 类型             | 规则                                                                                   | 依据                     |
+| ---------------- | -------------------------------------------------------------------------------------- | ------------------------ |
+| 身份证号         | 18 位；出生日期合法且不晚于今天；ISO 7064 MOD 11-2 校验位                              | GB 11643-1999            |
+| 旧身份证号       | 默认拒绝；`allowLegacy15` 开启后仅校验 15 位数字与出生日期（年份按 19xx 解析），不转换 | 兼容选项                 |
+| 银行卡号         | 默认仅校验 16–19 位数字；`bankcardCheck="luhn"` 增加 Luhn 校验                         | 长度规则与可选 Luhn 算法 |
+| 统一社会信用代码 | 18 位，字符集 `0123456789ABCDEFGHJKLMNPQRTUWXY`，按规定权重计算校验位                  | GB 32100-2015            |
+
+国内并非所有借记卡都满足 Luhn，因此银行卡默认使用 `bankcardCheck="length"`。组件不识别银行名称，也不包含 BIN 数据。
+
+失焦后显示错误；`required` 的空值也会提示。表单提交前，`setCustomValidity` 会拦住无效号码。外部业务错误通过 `error` 传入，优先显示并拦截提交；清除后恢复内置校验。`readOnly` 遵循浏览器行为，不参与原生约束校验。
+
+身份证有效时，默认显示出生日期与性别（按顺序码奇偶解析），可用 `showParsed={false}` 关闭；银行卡可用 `showLength` 显示位数。
+
+### 键盘与打码
+
+身份证末位可能是 `X`，所以身份证和信用代码使用 `inputMode="text"`、`autoCapitalize="characters"`，保留输入字母的能力；银行卡使用数字键盘。触屏高度为 36 / 40 / 44px，字号不小于 16px。
+
+`mask` 在未聚焦时打码，聚焦后恢复明文：身份证保留前 4 后 4 位，银行卡保留后 4 位，信用代码保留前 2 后 4 位。未填完整、无法保留两端的短号码全部打码。身份证打码时也隐藏解析提示。
+
+**打码只影响显示**，`value`、回调、隐藏输入和 FormData 仍含完整号码，不能替代后端权限控制、加密或脱敏处理。
+
+## 示例
+
+### 三种号码与错误态
+
+<ComponentPreview name="id-number-input-kinds-demo" />
+
+### 表单提交与重置
+
+试试修改校验位再提交，或点击重置恢复初始值。此示例会展示完整 FormData，仅用于说明提交行为。
+
+<ComponentPreview name="id-number-input-form-demo" />
+
+## API
+
+<PropsTable name="id-number-input" component="IdNumberInput" />
+
+`className` 作用于字段容器；其他原生输入属性透传给可见输入，`ref` 指向该输入。`name` 只用于提交原始值的隐藏输入；`form` 同时关联两个输入。`inputMode`、`autoCapitalize` 由 `kind` 决定。
+
+### 工具函数
+
+组件入口重新导出以下纯函数；服务端使用时可直接从 `utils.ts` 导入。
+
+```ts
+isValidIdCard("11010519491231002X") // true
+isValidIdCard("110105491231002", { allowLegacy15: true }) // true
+parseIdCard("11010519491231002X")
+// { birthDate: "1949-12-31", gender: "female" }
+isValidBankCard("4111111111111111", { luhn: true }) // true
+isValidUscc("91350100M000100Y43") // true
+formatIdNumber("idcard", "11010519491231002X") // "110105 19491231 002X"
+maskIdNumber("bankcard", "6222021234567890123") // "**** **** **** ***0 123"
+```
+
+`parseIdCard(value, { allowLegacy15 })` 只解析校验通过的号码，否则返回 `null`。`isValidBankCard(value, { luhn })` 的 `luhn` 默认 `false`。校验函数要求原始大写号码，不会先过滤非法字符；格式化和打码函数会整理输入。
+
+### labels
+
+```ts
+type IdNumberInputLabels = {
+  placeholder: string // 按 kind 默认为「请输入身份证号」等
+  invalid: string // 按 kind 默认为「请输入正确的身份证号」等
+  required: string // 按 kind 默认为「请输入身份证号」等
+  male: string // "男"
+  female: string // "女"
+  parsed: string // "{birthDate} · {gender}"
+  length: string // "{length} 位"
+}
+```
+
+通过 `labels?: Partial<IdNumberInputLabels>` 覆盖；`placeholder` 属性优先于 `labels.placeholder`。日期按 `zh-CN` 格式化，`parsed` 中的占位符可以调整排列。
+
+### 类型
+
+```ts
+type IdNumberKind = "idcard" | "bankcard" | "uscc"
+type IdNumberInputSize = "sm" | "default" | "lg"
+type IdCardOptions = { allowLegacy15?: boolean }
+type ParsedIdCard = {
+  birthDate: string // YYYY-MM-DD
+  gender: "male" | "female"
+}
+```
+
+以上类型以及 `IdNumberInputProps`、`IdNumberInputLabels` 均从组件入口导出。
+
+## data-slot
+
+| 元素           | data-slot                 |
+| -------------- | ------------------------- |
+| 字段容器       | `id-number-input`         |
+| 方条           | `id-number-input-control` |
+| 标签           | `id-number-input-label`   |
+| 输入框         | `id-number-input-input`   |
+| 解析或长度提示 | `id-number-input-hint`    |
+| 错误提示       | `id-number-input-error`   |
+| 提交用隐藏输入 | `id-number-input-value`   |
+
+容器带 `data-kind`、`data-size`，出错时带 `data-invalid`，禁用时带 `data-disabled`。
+
+## 可访问性
+
+- 标签通过 `htmlFor` 关联输入；没有可见 `label` 时传 `aria-label`。窄容器内标签在视觉上收起，读屏仍能读取。
+- 错误态包含文字和 `aria-invalid`；提示、错误均通过 `aria-describedby` 关联，并以 `aria-live="polite"` 播报更新。
+- 保留原生文本输入的键盘操作；表单校验失败时浏览器聚焦无效输入。聚焦外框有清晰的焦点环。
+
+## 注意事项
+
+- 号码格式和校验位合法，不代表证件真实、身份已核实或银行卡可用；业务端仍需独立校验。
+- 不要把完整号码写入日志、埋点或错误报告；示例数据也不要替换成真实用户资料。
+- 非受控表单重置回到初始 `defaultValue`，受控模式由调用方重置；切换 `kind` 时建议同步清空值。
+- 外部传入值会先整理再显示与提交；受控模式应同时处理 `onValueChange`。
+- 不检查身份证行政区划代码是否存在，也不推断银行名称。
+- 实时整理会重写输入框内容，浏览器的撤销栈可能不完整。
+- `sm` / `default` / `lg` 桌面高度为 28 / 32 / 36px；触屏自动加高一档，并排按钮使用同一档。
+
+## 源码
+
+<ComponentSource name="id-number-input" />

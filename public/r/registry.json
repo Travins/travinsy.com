@@ -1177,6 +1177,109 @@
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "id-number-input",
+      "title": "证件号输入",
+      "description": "身份证号、银行卡号与统一社会信用代码输入：自动整理与分组、保持光标、失焦校验，支持打码显示和原始值提交。",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/id-number-input/id-number-input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/id-number-input/id-number-input-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/id-number-input/use-id-number-input-state.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/id-number-input/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/id-number-input/config.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/id-number-input/utils.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "number-stepper",
+      "title": "数量选择",
+      "description": "方条数量选择：− 数字 +，支持长按步进、范围约束和异步提交，保存失败自动回滚。",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/number-stepper/number-stepper.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/number-stepper/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/number-stepper/use-number-stepper.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "steps",
+      "title": "步骤条",
+      "description": "多步流程的进度与回退导航，支持横排、竖排、错误状态和随容器宽度切换的紧凑形态。",
+      "dependencies": [
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/steps/steps.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/steps/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/ui/steps/config.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
       "name": "region-picker",
       "title": "省市区选择",
       "description": "分步选择省 / 市 / 区：步骤条清楚显示第几步、可点回上一步，长列表按拼音首字母分组，支持汉字、全拼、首字母搜索；手机上从底部弹出面板。值只存最末一级的代码，数据由 props 传入、可惰性加载。",

@@ -1,0 +1,184 @@
+---
+title: 步骤条
+titleEn: Steps
+description: 多步流程的进度与回退导航，支持横排、竖排、错误状态和随容器宽度切换的紧凑形态。
+group: input
+---
+
+<ComponentPreview name="steps-demo" />
+
+## 安装
+
+<InstallCommand name="steps" />
+
+## 用法
+
+```tsx title="components/checkout-steps.tsx"
+"use client"
+
+import { useState } from "react"
+import { Steps } from "@/components/ui/steps/steps"
+
+export function CheckoutSteps() {
+  const [value, setValue] = useState(0)
+
+  return (
+    <Steps
+      items={[
+        { title: "填写信息" },
+        { title: "选择支付" },
+        { title: "下单成功" },
+      ]}
+      value={value}
+      onValueChange={setValue}
+    />
+  )
+}
+```
+
+`value` 从 **0** 开始。之前的步骤为 `finish`，当前为 `process`，之后为 `wait`；`items[].status` 可以单独覆盖状态。默认只能点回当前索引之前、状态为 `finish` 且未禁用的步骤；`clickable="none"` 关闭回退。
+
+### 配合表单逐步校验
+
+步骤条只显示进度、发出回退请求。前进按钮先校验当前页，再更新 `value`；最后一步提交由业务表单处理。
+
+```tsx title="components/verified-checkout.tsx"
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Steps } from "@/components/ui/steps/steps"
+
+export function VerifiedCheckout() {
+  const [value, setValue] = useState(0)
+  const items = [
+    { title: "填写信息" },
+    { title: "选择支付" },
+    { title: "下单成功" },
+  ]
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        // 浏览器先校验当前渲染的字段，通过后才触发 onSubmit。
+        if (value < items.length - 1) setValue(value + 1)
+      }}
+    >
+      <Steps items={items} value={value} onValueChange={setValue} />
+      {value === 0 && (
+        <label>
+          收件人
+          <input name="recipient" autoComplete="shipping name" required />
+        </label>
+      )}
+      {value === 1 && (
+        <label>
+          支付方式
+          <select name="payment" required defaultValue="">
+            <option value="" disabled>
+              请选择支付方式
+            </option>
+            <option value="card">银行卡</option>
+          </select>
+        </label>
+      )}
+      {value < items.length - 1 ? (
+        <Button type="submit" size="default">
+          下一步
+        </Button>
+      ) : (
+        <p role="status">下单成功</p>
+      )}
+    </form>
+  )
+}
+```
+
+使用表单库时，前进逻辑可换成 `if (await form.trigger(currentFields)) setValue(value + 1)`。受控模式下，`onValueChange` 也可以先检查业务条件，再决定是否更新；不更新就停留在原步骤。
+
+## 示例
+
+### 竖排与错误状态
+
+`orientation="vertical"` 将描述靠右显示，适合打码信息回显。`status="error"` 显示感叹号和错误色，并为读屏补上「出错」。
+
+<ComponentPreview name="steps-vertical-demo" />
+
+### 随容器宽度切换
+
+`orientation="auto"` 在组件容器窄于 28rem 时显示 compact，宽度足够时恢复横排。拖动滑块观察切换；手机上的可用空间较小时会一直保持 compact。也可以用 `variant="compact"` 固定为紧凑形态。
+
+<ComponentPreview name="steps-compact-demo" />
+
+## API
+
+<PropsTable name="steps" component="Steps" />
+
+根元素为 `div`；`className`、`ref` 和其他 HTML 属性都作用于它。空数组显示「第 0 步 / 共 0 步」摘要（compact 时），不产生可点步骤。越界值按有效索引夹取，非有限数按 0 显示；不会因此触发回调。
+
+### 类型
+
+```ts
+type StepStatus = "wait" | "process" | "finish" | "error"
+
+type StepItem = {
+  title: React.ReactNode
+  description?: React.ReactNode
+  status?: StepStatus
+  disabled?: boolean
+}
+```
+
+入口还导出 `StepsProps`、`StepsLabels` 和 `stepsVariants`。`disabled` 只禁止该步回退，不改变其状态。
+
+### labels
+
+```ts
+type StepsLabels = {
+  compactText: string // "第 {current} 步 / 共 {total} 步"
+  list: string // "流程步骤"
+  srWait: string // "未开始"
+  srProcess: string // "进行中"
+  srFinish: string // "已完成"
+  srError: string // "出错"
+  srDisabled: string // "不可返回"
+}
+```
+
+通过 `labels` 部分覆盖；`compactText` 的 `{current}` 为从 1 开始的序号，`{total}` 为总步骤数。
+
+## data-slot
+
+| 元素                | `data-slot`         |
+| ------------------- | ------------------- |
+| 根元素              | `steps`             |
+| 每一步              | `steps-item`        |
+| 圆形序号 / 状态图标 | `steps-indicator`   |
+| 标题                | `steps-title`       |
+| 描述                | `steps-description` |
+| 圆点间连线          | `steps-separator`   |
+| 紧凑形态容器        | `steps-compact`     |
+| 紧凑形态的进度分段  | `steps-progress`    |
+
+根元素提供 `data-orientation`、`data-variant`、`data-size`；步骤提供 `data-state` 和 `data-disabled`。
+
+## 可访问性
+
+- 两种形态都使用 `ol > li`，当前索引的步骤带 `aria-current="step"`。容器查询隐藏的形态不进入无障碍树。
+- 只有允许回退的步骤渲染为 `button type="button"`，支持 Tab 聚焦、Enter / 空格激活和可见焦点环；其他步骤是普通文本。
+- compact 每个分段都有完整的标题、描述、状态，当前摘要使用 `aria-live="polite"` 播报变化。
+- 完成用勾号、错误用感叹号区分，读屏也有对应状态文字；不只靠颜色。
+- 触屏下可点区域至少 44px 高；减少动态效果时关闭按钮过渡。
+
+## 注意事项
+
+- 这是流程导航，不是输入字段；不提交表单值，也不响应表单 reset。受控表单应自行重置步骤索引。
+- `title` 和 `description` 允许换行；建议使用文本或非交互内容，避免在回退按钮里嵌套链接、按钮等控件。
+- `item.status` 只改变视觉状态，当前索引仍由 `value` 决定。前面的步骤被标成 `error` 后也不能通过步骤条回退，修复入口由业务页面提供。
+- `auto` 使用 CSS 容器查询，无需测量浏览器尺寸，服务端渲染时内容即可见。
+- 本示例表单只展示校验流程。实际业务应将字段值保存在外部状态或表单库中，保证切换步骤后仍能恢复。
+
+## 源码
+
+<ComponentSource name="steps" />
