@@ -1122,7 +1122,7 @@
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
       "name": "region-picker",
       "title": "省市区选择",
-      "description": "省 / 市 / 区的选择器：搜索框支持汉字、全拼、首字母和代码，下方按层级浏览；层级深浅不固定，值只存最末一级的代码。数据由 props 传入，函数形式惰性加载，不绑定任何数据。",
+      "description": "分步选择省 / 市 / 区：步骤条清楚显示第几步、可点回上一步，长列表按拼音首字母分组，支持汉字、全拼、首字母搜索；手机上从底部弹出面板。值只存最末一级的代码，数据由 props 传入、可惰性加载。",
       "dependencies": [
         "class-variance-authority",
         "lucide-react"
@@ -1130,7 +1130,8 @@
       "registryDependencies": [
         "button",
         "input",
-        "popover"
+        "popover",
+        "sheet"
       ],
       "files": [
         {

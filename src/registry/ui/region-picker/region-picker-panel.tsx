@@ -1,24 +1,29 @@
 "use client"
 
 import * as React from "react"
-import { Check, Search } from "lucide-react"
+import { Search } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
-import type { RegionPickerLabels } from "./config"
+import { GROUP_THRESHOLD, type RegionPickerLabels } from "./config"
 import {
   RegionPickerHighlight,
-  RegionPickerLevels,
   RegionPickerNotice,
   RegionPickerOption,
+  RegionPickerSteps,
+  type RegionPickerStep,
+  type RegionPickerVariant,
 } from "./region-picker-parts"
 import type { RegionOption } from "./types"
 import {
   formatRegionPath,
+  groupRegionsByInitial,
   isLeafRegion,
+  regionTreeDepth,
   searchRegionIndex,
+  type RegionGroup,
   type RegionHighlight,
   type RegionIndex,
 } from "./utils"
@@ -38,10 +43,12 @@ const fill = (template: string, values: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ""))
 
 /**
- * 浮层内容：搜索框 + 层级标签条 + 当前层级的选项（或搜索结果）。
- * 浮层关闭时整体卸载，所以浏览位置、搜索词每次打开都是全新的。
+ * 面板内容：步骤条 → 搜索框 → 当前这一步的选项（或搜索结果）→ 底部操作。
+ * 选完一步自动进入下一步，最后一步选完即确认；点已完成的步骤回到那一步重选。
+ * 浮层 / 面板关闭时整体卸载，所以浏览位置、搜索词每次打开都是全新的。
  */
 function RegionPickerPanel({
+  variant,
   index,
   status,
   labels,
@@ -54,6 +61,7 @@ function RegionPickerPanel({
   onRetry,
   onCommit,
 }: {
+  variant: RegionPickerVariant
   /** 数据没加载好时为 null */
   index: RegionIndex | null
   status: "loading" | "error" | "ready"
@@ -68,14 +76,19 @@ function RegionPickerPanel({
   /** 确认选择；空数组表示清除 */
   onCommit: (path: RegionOption[]) => void
 }) {
+  const sheet = variant === "sheet"
   const baseId = React.useId()
   const listId = `${baseId}-list`
-  const listRef = React.useRef<HTMLDivElement>(null)
+  const scrollRef = React.useRef<HTMLDivElement>(null)
 
   const [query, setQuery] = React.useState("")
-  // null = 还没手动浏览过，跟随当前值所在的层级；这样懒加载的数据到了之后也能自动定位
+  // null = 还没手动浏览过，跟随当前值所在的那一步；这样懒加载的数据到了之后也能自动定位
   const [trailState, setTrailState] = React.useState<RegionOption[] | null>(
     null,
+  )
+  // 前进从右滑入、后退从左滑入，让人感觉到「下一步 / 上一步」
+  const [direction, setDirection] = React.useState<"forward" | "back">(
+    "forward",
   )
 
   const defaultTrail = React.useMemo(
@@ -93,17 +106,52 @@ function RegionPickerPanel({
     ? (trail[level - 1].children ?? EMPTY_PATH)
     : roots
 
-  // 当前层级里属于已选路径的那一项（上级路径一致时才算）
+  // 当前这一步里属于已选路径的那一项（上级路径一致时才算）
   const selectedHere =
     valuePath.length > level &&
     trail.every((node, i) => node.code === valuePath[i].code)
       ? valuePath[level]
       : undefined
 
+  // ---------- 步骤条 ----------
+  // 全局最深几级，与当前这条路径最深几级；名称从最深一级往上对齐（直辖市第二步叫「区县」）
+  const totalSteps = Math.min(depth, regionTreeDepth(roots))
+  const stepCount = Math.max(
+    level + 1,
+    Math.min(depth, level + regionTreeDepth(options)),
+  )
+  const stepLabel = (step: number) => {
+    const at = step === 0 ? 0 : step + Math.max(0, totalSteps - stepCount)
+    return labels.levels[at] ?? fill(labels.stepFallback, { step: step + 1 })
+  }
+  const steps: RegionPickerStep[] = Array.from(
+    { length: stepCount },
+    (_, step) => {
+      const label = stepLabel(step)
+      if (step < level) return { label, value: trail[step].name, state: "done" }
+      if (step === level)
+        return {
+          label,
+          value:
+            selectedHere?.name ?? fill(labels.stepPending, { level: label }),
+          state: "current",
+        }
+      return { label, state: "todo" }
+    },
+  )
+
+  // ---------- 列表 ----------
   const searching = query.trim() !== ""
   const search = React.useMemo(
     () => (index && searching ? searchRegionIndex(index, query) : null),
     [index, query, searching],
+  )
+
+  // 选项多时像通讯录一样按拼音首字母分组；数据没拼音就保持原顺序
+  const groups = React.useMemo<RegionGroup[] | null>(
+    () =>
+      options.length >= GROUP_THRESHOLD ? groupRegionsByInitial(options) : null,
+    [options],
   )
 
   const rows = React.useMemo<Row[]>(() => {
@@ -114,14 +162,11 @@ function RegionPickerPanel({
         path,
         highlights,
       }))
-    return options.map((node) => ({
-      node,
-      level,
-      path: [...trail, node],
-    }))
-  }, [search, options, trail, level])
+    const ordered = groups ? groups.flatMap((group) => group.items) : options
+    return ordered.map((node) => ({ node, level, path: [...trail, node] }))
+  }, [search, groups, options, trail, level])
 
-  // 列表一换（进入下级、搜索词变化），高亮项回到已选项或第一项
+  // 列表一换（进入下一步、搜索词变化），高亮项回到已选项或第一项
   const listKey = searching
     ? `s:${query}`
     : `b:${trail.map((node) => node.code).join(",")}`
@@ -138,63 +183,63 @@ function RegionPickerPanel({
   )
   const setActive = (next: number) =>
     setActiveState({ key: listKey, index: next })
-  const activeId = active >= 0 ? `${baseId}-opt-${active}` : undefined
+  const optionId = (i: number) => `${baseId}-opt-${i}`
+  const activeId = active >= 0 ? optionId(active) : undefined
 
-  // 键盘移动后把高亮项滚进视野；打开时也会把已选项滚出来
+  // 进入新一步时把已选项滚到中间（重新打开能直接看到上次的选择），键盘移动时只滚进视野
+  const lastKey = React.useRef<string | null>(null)
   React.useEffect(() => {
     if (!activeId) return
-    document.getElementById(activeId)?.scrollIntoView({ block: "nearest" })
-  }, [activeId, listKey])
+    const element = document.getElementById(activeId)
+    if (!element) return
+    const fresh = lastKey.current !== listKey
+    lastKey.current = listKey
+    if (fresh && selectedAt < 0) {
+      scrollRef.current?.scrollTo({ top: 0 })
+      return
+    }
+    element.scrollIntoView({ block: fresh ? "center" : "nearest" })
+  }, [activeId, listKey, selectedAt])
 
   const choose = (row: Row) => {
     if (isLeafRegion(row.node, row.level, depth)) return onCommit(row.path)
+    setDirection("forward")
     setTrailState(row.path)
     setQuery("")
-    inputRef.current?.focus()
+    // 手机上不主动聚焦搜索框，免得软键盘弹出来挡住列表
+    if (!sheet) inputRef.current?.focus()
   }
 
-  const goUp = (to: number) => {
-    setTrailState(trail.slice(0, to))
+  const goTo = (step: number) => {
+    setDirection("back")
+    setTrailState(trail.slice(0, step))
     setQuery("")
-    inputRef.current?.focus()
-  }
-
-  const columns = () => {
-    const template = listRef.current
-      ? getComputedStyle(listRef.current).gridTemplateColumns
-      : ""
-    return Math.max(1, template.split(" ").filter(Boolean).length)
+    if (!sheet) inputRef.current?.focus()
   }
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     // 拼音输入法组词时的方向键、回车是在选候选词，不能当作列表操作
     if (event.nativeEvent.isComposing) return
     const count = rows.length
-    const cols = columns()
     switch (event.key) {
-      case "ArrowDown": {
+      case "ArrowDown":
         if (!count) return
         event.preventDefault()
-        const next = active + cols
-        if (next < count) setActive(next)
-        // 最后一行不满时，从倒数第二行往下落到最后一项
-        else if (Math.floor(active / cols) < Math.floor((count - 1) / cols))
-          setActive(count - 1)
+        setActive(Math.min(count - 1, active + 1))
         return
-      }
       case "ArrowUp":
         if (!count) return
         event.preventDefault()
-        if (active - cols >= 0) setActive(active - cols)
+        setActive(Math.max(0, active - 1))
         return
-      // 左右键平时是移动光标，搜索框为空且是多列网格时才用来横向移动
+      // 左右键平时是移动光标，搜索框为空时才用来在选项间移动
       case "ArrowRight":
-        if (!count || query || cols < 2) return
+        if (!count || query) return
         event.preventDefault()
         setActive(Math.min(count - 1, active + 1))
         return
       case "ArrowLeft":
-        if (!count || query || cols < 2) return
+        if (!count || query) return
         event.preventDefault()
         setActive(Math.max(0, active - 1))
         return
@@ -205,7 +250,7 @@ function RegionPickerPanel({
       case "Backspace":
         if (!query && trail.length) {
           event.preventDefault()
-          goUp(trail.length - 1)
+          goTo(trail.length - 1)
         }
         return
     }
@@ -220,21 +265,153 @@ function RegionPickerPanel({
       ? search && search.total
         ? fill(labels.resultStatus, { count: search.total })
         : labels.empty
-      : fill(labels.levelStatus, { level: level + 1, count: rows.length })
+      : fill(labels.levelStatus, {
+          step: level + 1,
+          level: stepLabel(level),
+          count: rows.length,
+        })
 
   const showConfirm = allowPartial && !searching && ready && trail.length > 0
-  const showClear = value !== null && !required
+  // 底部面板的「清除」放在标题栏（由外层渲染），这里只管浮层
+  const showClear = !sheet && value !== null && !required
+
+  // ---------- 渲染 ----------
+  const renderOption = (row: Row, i: number, layout: "row" | "chip") => (
+    <RegionPickerOption
+      key={row.path.map((node) => node.code).join("/")}
+      id={optionId(i)}
+      title={formatRegionPath(row.path)}
+      variant={variant}
+      layout={layout}
+      active={i === active}
+      selected={row.node.code === selectedCode}
+      branch={!isLeafRegion(row.node, row.level, depth)}
+      onSelect={() => choose(row)}
+      onHover={() => i !== active && setActive(i)}
+    >
+      {searching ? (
+        <>
+          <span className="min-w-0 flex-1 truncate">
+            {row.path.map((node, at) => (
+              <React.Fragment key={node.code}>
+                {at > 0 && (
+                  <span className="text-muted-foreground/60">{" / "}</span>
+                )}
+                <span className={cn(at < row.level && "text-muted-foreground")}>
+                  <RegionPickerHighlight
+                    text={node.name}
+                    range={row.highlights?.[at]?.name}
+                  />
+                </span>
+              </React.Fragment>
+            ))}
+          </span>
+          <span className="shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
+            <RegionPickerHighlight
+              text={row.node.code}
+              range={row.highlights?.[row.level]?.code}
+            />
+          </span>
+        </>
+      ) : (
+        <span className="min-w-0 truncate">{row.node.name}</span>
+      )}
+    </RegionPickerOption>
+  )
+
+  // 浏览时的选项：面板里整行单列，浮层里是一格格按钮；分组时每组前面标字母
+  // 每组第一项在 rows 里的序号，渲染时据此拼出选项 id
+  const groupStarts = groups
+    ? groups.map((_, g) =>
+        groups.slice(0, g).reduce((sum, group) => sum + group.items.length, 0),
+      )
+    : []
+  const browseList = groups ? (
+    // 浮层里两栏排布：多数字母下只有一两个地名，单栏会留下大片空白
+    <div className={cn(!sheet && "gap-x-3 sm:columns-2")}>
+      {groups.map((group, g) => {
+        const start = groupStarts[g]
+        const groupId = `${baseId}-group-${group.letter}`
+        return (
+          <div
+            key={group.letter}
+            role="group"
+            aria-labelledby={groupId}
+            data-slot="region-picker-group"
+            className={cn(
+              sheet
+                ? ""
+                : "grid break-inside-avoid grid-cols-[1.25rem_minmax(0,1fr)] items-start gap-x-1.5 py-1",
+            )}
+          >
+            <div
+              id={groupId}
+              data-letter={group.letter}
+              className={cn(
+                "font-mono text-xs font-medium text-muted-foreground",
+                sheet
+                  ? "sticky top-0 z-10 bg-muted/80 px-4 py-1 backdrop-blur-sm"
+                  : "flex h-8 items-center justify-center",
+              )}
+            >
+              {group.letter}
+            </div>
+            <div className={cn(sheet ? "" : "flex flex-wrap gap-1.5")}>
+              {group.items.map((node, i) =>
+                renderOption(
+                  rows[start + i],
+                  start + i,
+                  sheet ? "row" : "chip",
+                ),
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  ) : (
+    <div
+      className={cn(
+        sheet ? "" : "grid grid-cols-2 gap-1.5 py-1 sm:grid-cols-3",
+      )}
+    >
+      {rows.map((row, i) => renderOption(row, i, sheet ? "row" : "chip"))}
+    </div>
+  )
+
+  const jumpTo = (letter: string) => {
+    document
+      .getElementById(`${baseId}-group-${letter}`)
+      ?.scrollIntoView({ block: "start" })
+  }
 
   return (
-    <div data-slot="region-picker-panel" className="flex flex-col gap-2.5">
-      <div className="relative">
+    <div
+      data-slot="region-picker-panel"
+      data-variant={variant}
+      className={cn("flex min-h-0 flex-col", sheet ? "flex-1" : "gap-2 py-2.5")}
+    >
+      {ready && !searching && (
+        <RegionPickerSteps
+          steps={steps}
+          variant={variant}
+          ariaLabel={labels.stepsNav}
+          onSelect={goTo}
+        />
+      )}
+
+      <div className={cn("relative", sheet ? "px-4 py-2" : "px-2.5")}>
         <Search
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
+          className={cn(
+            "pointer-events-none absolute top-1/2 size-4 -translate-y-1/2 text-muted-foreground",
+            sheet ? "left-7" : "left-5",
+          )}
         />
         <Input
           ref={inputRef}
           data-slot="region-picker-search"
+          type="search"
           role="combobox"
           aria-label={labels.searchLabel}
           aria-expanded="true"
@@ -244,114 +421,102 @@ function RegionPickerPanel({
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
+          enterKeyHint="search"
           placeholder={labels.searchPlaceholder}
-          className="pl-8"
+          // 面板里用 16px 字号与 40px 高，iOS 聚焦时不会放大页面，手指也好点
+          className={cn("pl-8", sheet && "h-10 bg-muted/50 text-base")}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={onKeyDown}
         />
       </div>
 
-      {ready && !searching && (
-        <RegionPickerLevels
-          trail={trail}
-          currentLabel={selectedHere?.name}
-          pendingLabel={labels.levelPending}
-          ariaLabel={labels.levelNav}
-          onSelect={goUp}
-        />
-      )}
-
       {!ready ? (
         status === "error" ? (
-          <RegionPickerNotice>
+          <RegionPickerNotice className={cn(sheet && "flex-1")}>
             <span>{labels.loadFailed}</span>
-            <Button type="button" variant="outline" size="sm" onClick={onRetry}>
+            <Button
+              type="button"
+              variant="outline"
+              size={sheet ? "lg" : "sm"}
+              onClick={onRetry}
+            >
               {labels.retry}
             </Button>
           </RegionPickerNotice>
         ) : (
-          <RegionPickerNotice loading>{labels.loading}</RegionPickerNotice>
+          <RegionPickerNotice loading className={cn(sheet && "flex-1")}>
+            {labels.loading}
+          </RegionPickerNotice>
         )
       ) : rows.length ? (
         <div
-          ref={listRef}
-          id={listId}
-          role="listbox"
-          aria-label={labels.searchLabel}
-          data-slot="region-picker-list"
           className={cn(
-            "max-h-60 overflow-y-auto overscroll-contain",
-            searching
-              ? "flex flex-col gap-0.5"
-              : "grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-1",
+            "relative min-h-0",
+            sheet ? "flex-1 border-t border-border" : "",
           )}
         >
-          {rows.map((row, i) => {
-            const leaf = isLeafRegion(row.node, row.level, depth)
-            const selected = row.node.code === selectedCode
-            return (
-              <RegionPickerOption
-                key={row.path.map((node) => node.code).join("/")}
-                id={`${baseId}-opt-${i}`}
-                title={formatRegionPath(row.path)}
-                active={i === active}
-                selected={selected}
-                branch={!leaf}
-                onSelect={() => choose(row)}
-                onHover={() => i !== active && setActive(i)}
-              >
-                {searching ? (
-                  <>
-                    <span className="min-w-0 flex-1 truncate">
-                      {row.path.map((node, at) => (
-                        <React.Fragment key={node.code}>
-                          {at > 0 && (
-                            <span className="text-muted-foreground/60">
-                              {" / "}
-                            </span>
-                          )}
-                          <span
-                            className={cn(
-                              at < row.level && "text-muted-foreground",
-                            )}
-                          >
-                            <RegionPickerHighlight
-                              text={node.name}
-                              range={row.highlights?.[at]?.name}
-                            />
-                          </span>
-                        </React.Fragment>
-                      ))}
-                    </span>
-                    <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                      <RegionPickerHighlight
-                        text={row.node.code}
-                        range={row.highlights?.[row.level]?.code}
-                      />
-                    </span>
-                  </>
-                ) : (
-                  <span className="truncate">{row.node.name}</span>
-                )}
-                {selected && leaf && (
-                  <Check
-                    aria-hidden="true"
-                    className="ml-auto size-3.5 shrink-0"
-                  />
-                )}
-              </RegionPickerOption>
-            )
-          })}
+          <div
+            ref={scrollRef}
+            id={listId}
+            role="listbox"
+            aria-label={searching ? labels.searchLabel : stepLabel(level)}
+            data-slot="region-picker-list"
+            className={cn(
+              "overflow-y-auto overscroll-contain",
+              sheet
+                ? "h-full pb-[env(safe-area-inset-bottom)]"
+                : "max-h-72 px-2.5",
+              sheet && groups && !searching && "pr-6",
+            )}
+          >
+            <div
+              key={listKey}
+              className={cn(
+                "motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in-0",
+                !searching &&
+                  (direction === "forward"
+                    ? "motion-safe:slide-in-from-right-4"
+                    : "motion-safe:slide-in-from-left-4"),
+                searching && !sheet && "flex flex-col gap-0.5",
+              )}
+            >
+              {searching
+                ? rows.map((row, i) => renderOption(row, i, "row"))
+                : browseList}
+            </div>
+          </div>
+
+          {/* 手机上的字母索引条：长列表一点就跳到对应字母 */}
+          {sheet && groups && !searching && (
+            <nav
+              aria-label={labels.letterIndex}
+              data-slot="region-picker-index"
+              className="absolute inset-y-0 right-0 flex w-6 flex-col items-center justify-center"
+            >
+              {groups.map((group) => (
+                <button
+                  key={group.letter}
+                  type="button"
+                  className="flex h-5 w-6 items-center justify-center font-mono text-[11px] text-muted-foreground active:text-primary"
+                  onClick={() => jumpTo(group.letter)}
+                >
+                  {group.letter}
+                </button>
+              ))}
+            </nav>
+          )}
         </div>
       ) : (
-        <RegionPickerNotice>{labels.empty}</RegionPickerNotice>
+        <RegionPickerNotice className={cn(sheet && "flex-1")}>
+          {labels.empty}
+        </RegionPickerNotice>
       )}
 
       {search && search.total > search.results.length && (
         <p
           data-slot="region-picker-hint"
-          className="px-1 text-xs text-muted-foreground"
+          className="px-4 py-2 text-xs text-muted-foreground"
         >
           {fill(labels.resultTruncated, { limit: search.results.length })}
         </p>
@@ -360,29 +525,33 @@ function RegionPickerPanel({
       {(showConfirm || showClear) && (
         <div
           data-slot="region-picker-footer"
-          className="flex items-center gap-2 border-t border-border pt-2.5"
+          className={cn(
+            "flex items-center gap-2 border-t border-border",
+            sheet
+              ? "px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+              : "mx-2.5 pt-2.5",
+          )}
         >
+          {showClear && (
+            <Button
+              type="button"
+              variant="outline"
+              size={sheet ? "lg" : "sm"}
+              onClick={() => onCommit(EMPTY_PATH)}
+            >
+              {labels.clear}
+            </Button>
+          )}
           {showConfirm && (
             <Button
               type="button"
-              size="sm"
-              className="min-w-0"
+              size={sheet ? "lg" : "sm"}
+              className={cn("ml-auto min-w-0", sheet && "flex-1")}
               onClick={() => onCommit(trail)}
             >
               <span className="truncate">
                 {fill(labels.confirmPartial, { name: formatRegionPath(trail) })}
               </span>
-            </Button>
-          )}
-          {showClear && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="ml-auto shrink-0"
-              onClick={() => onCommit(EMPTY_PATH)}
-            >
-              {labels.clear}
             </Button>
           )}
         </div>

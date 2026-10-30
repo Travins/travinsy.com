@@ -297,6 +297,45 @@ function findRegionPath(regions: RegionOption[], code: string): RegionOption[] {
   return []
 }
 
+const depthCache = new WeakMap<RegionOption[], number>()
+
+/** 一组节点往下最多有几级（自身算一级），用来决定步骤条显示几步；按数组引用缓存 */
+function regionTreeDepth(nodes: RegionOption[] | undefined): number {
+  if (!nodes?.length) return 0
+  const cached = depthCache.get(nodes)
+  if (cached !== undefined) return cached
+  let below = 0
+  for (const node of nodes)
+    below = Math.max(below, regionTreeDepth(node.children))
+  depthCache.set(nodes, below + 1)
+  return below + 1
+}
+
+type RegionGroup = {
+  /** 大写首字母 */
+  letter: string
+  items: RegionOption[]
+}
+
+/**
+ * 按拼音首字母分组并按拼音排序，像通讯录一样；有节点缺拼音时返回 `null`，保持数据原顺序。
+ * 多音字已在数据的 pinyin 里处理好，这里只取第一个字母。
+ */
+function groupRegionsByInitial(nodes: RegionOption[]): RegionGroup[] | null {
+  if (!nodes.every((node) => node.pinyin?.trim())) return null
+  const sorted = [...nodes].sort((a, b) =>
+    a.pinyin!.localeCompare(b.pinyin!, "en"),
+  )
+  const groups: RegionGroup[] = []
+  for (const node of sorted) {
+    const letter = node.pinyin!.trim()[0].toUpperCase()
+    const last = groups[groups.length - 1]
+    if (last?.letter === letter) last.items.push(node)
+    else groups.push({ letter, items: [node] })
+  }
+  return groups
+}
+
 /** 路径转成文字：`formatRegionPath(path)` → 「浙江省 / 杭州市」，`formatRegionPath(path, "")` → 「浙江省杭州市」 */
 function formatRegionPath(path: RegionOption[], separator = " / "): string {
   return path.map((node) => node.name).join(separator)
@@ -306,11 +345,14 @@ export {
   createRegionIndex,
   findRegionPath,
   formatRegionPath,
+  groupRegionsByInitial,
   isLeafRegion,
+  regionTreeDepth,
   searchRegionIndex,
   searchRegions,
 }
 export type {
+  RegionGroup,
   RegionHighlight,
   RegionIndex,
   RegionSearchOptions,

@@ -1,7 +1,7 @@
 ---
 title: 省市区选择
 titleEn: Region Picker
-description: 省 / 市 / 区的选择器：搜索框支持汉字、全拼、首字母和代码，下方按层级浏览；层级深浅不固定，值只存最末一级的代码。数据由 props 传入，函数形式惰性加载，不绑定任何数据。
+description: 分步选择省 / 市 / 区：步骤条清楚显示第几步、可点回上一步，长列表按拼音首字母分组，支持汉字、全拼、首字母搜索；手机上从底部弹出面板。值只存最末一级的代码，数据由 props 传入、可惰性加载。
 group: input
 ---
 
@@ -129,7 +129,7 @@ findRegionPath(chinaRegions, "999999") // []，找不到返回空数组
 
 ### 搜索
 
-浮层顶部的搜索框在**任意层级**命中，结果显示完整路径并高亮命中部分：
+搜索框在**任意层级**命中，结果显示完整路径并高亮命中部分：
 
 | 输入 | 命中 |
 | --- | --- |
@@ -168,13 +168,21 @@ findRegionPath(chinaRegions, "999999") // []，找不到返回空数组
 
 <ComponentPreview name="region-picker-custom-demo" />
 
-## 浮层布局
+## 界面与适配
 
-- 顶部是搜索框，打开后自动聚焦（触屏上不聚焦，免得软键盘盖住列表）。
-- 下面是**层级标签条**：已选的层级显示名称，当前要选的显示「请选择」，点任一层级回到那里。
-- 再下面是当前层级的选项。选项多时用**网格**排列（宽屏 3 列，窄屏 2 列），比单列更紧凑、更好扫读；每项高度 28px，最多约 8 行，超出滚动。搜索时换成单列，显示完整路径和代码。
-- 有下级的选项右侧带箭头；已选路径上的选项会高亮，再次打开时自动滚到它。
-- 浮层宽度最小等于触发器，最大 26rem，窄屏不超出视口。
+设计参照了 Vant、TDesign、NutUI 的移动端级联选择与 Ant Design 的桌面级联，取它们共同的三点：**分步、选完自动前进、点已完成的步骤回退**。
+
+- **手机与触屏设备**（视口窄于 640px，或 `pointer: coarse`）：从底部弹出面板，高 85% 视口。
+  - 顶部标题栏：「选择地区」、清除（有值且非必填时）、关闭。
+  - 下面是竖排步骤条：①省份 ②城市 ③区县，每步一行 44px；已完成的打勾、可点回去，当前步垫底色，后面的步骤灰显。
+  - 选项单列整行，每行 44px；超过 16 项时按拼音首字母分组，组标题吸顶，右侧有字母索引条，点一下跳到对应字母。
+  - 搜索框不自动聚焦，免得软键盘弹出来盖住列表；底部留出安全区。
+- **桌面**：输入框下方弹出浮层，宽 30rem（不小于触发器、不超出视口）。
+  - 步骤条横排在顶部，搜索框打开即聚焦。
+  - 选项是带边框的紧凑按钮；分组时按字母两栏排布，最高约 18rem，超出滚动。
+- **步骤数一开始就显示**：数据最深三级就显示三步；选了直辖市后剩两步，第二步名称自动对齐为「区县」（`labels.levels` 从最深一级往上对齐）。
+- 选完一步自动进入下一步，最后一步选完即确认并关闭；换步骤时列表向前或向后滑入，系统开启「减弱动态效果」时不播放。
+- 搜索时步骤条暂时隐藏，结果单列显示完整路径与代码。
 
 ## API
 
@@ -187,19 +195,24 @@ findRegionPath(chinaRegions, "999999") // []，找不到返回空数组
 ```ts
 type RegionPickerLabels = {
   placeholder: string // "请选择省 / 市 / 区"
-  searchPlaceholder: string // "搜索名称、拼音或代码"
+  title: string // "选择地区"，手机底部面板的标题
+  close: string // "关闭"
+  searchPlaceholder: string // "搜索名称、拼音或首字母"
   searchLabel: string // "搜索地区"，搜索框与列表的读屏名称
-  levelPending: string // "请选择"，层级标签条里当前级的占位
-  levelNav: string // "选择层级"
-  levelStatus: string // "第 {level} 级，共 {count} 项"，读屏播报
+  levels: string[] // ["省份", "城市", "区县", "乡镇"]，各步名称，从最深一级往上对齐
+  stepFallback: string // "第 {step} 级"，数据比 levels 更深时的步骤名
+  stepPending: string // "请选择{level}"，当前步的占位
+  stepsNav: string // "选择步骤"，步骤条的读屏名称
+  levelStatus: string // "第 {step} 步，选择{level}，共 {count} 项"，读屏播报
   resultStatus: string // "找到 {count} 个结果"，读屏播报
   resultTruncated: string // "仅显示前 {limit} 条，输入更多字符可缩小范围"
+  letterIndex: string // "按拼音首字母跳转"，手机字母索引条的读屏名称
   empty: string // "没有匹配的地区"
   loading: string // "正在加载地区数据…"
   loadFailed: string // "地区数据加载失败"
   retry: string // "重试"
   clear: string // "清除"
-  confirmPartial: string // "选择「{name}」"，allowPartial 时底部的确认按钮
+  confirmPartial: string // "确定：{name}"，allowPartial 时底部的确认按钮
   unknown: string // "未知地区"，代码找不到且没有 fallbackLabel 时，后面自动加（代码）
   required: string // "请选择地区"，必填未选时的校验提示
 }
@@ -275,9 +288,10 @@ type RegionPickerProps = {
 | 触发器 | `region-picker-trigger` |
 | 触发器文字 | `region-picker-value-text` |
 | 提交与校验用的隐藏输入 | `region-picker-value` |
-| 浮层内容 | `region-picker-panel` |
+| 面板内容（带 `data-variant="sheet"` 或 `"popover"`） | `region-picker-panel` |
 | 搜索框 | `region-picker-search` |
-| 层级标签条 / 单个层级 | `region-picker-levels` / `region-picker-level` |
+| 步骤条 / 单个步骤（带 `data-state`：`done` / `current` / `todo`） | `region-picker-steps` / `region-picker-step` |
+| 拼音首字母分组 / 手机字母索引条 | `region-picker-group` / `region-picker-index` |
 | 选项列表 / 单项 | `region-picker-list` / `region-picker-option` |
 | 搜索命中高亮 | `region-picker-mark` |
 | 加载中 / 出错 / 无结果 | `region-picker-notice` |
@@ -289,8 +303,8 @@ type RegionPickerProps = {
 ## 可访问性
 
 - 搜索框是 **combobox**：焦点始终留在输入框，选项通过 `aria-activedescendant` 表达高亮，选项是 `role="option"`，列表是 `role="listbox"`。
-- 键盘：`↑` `↓` 在网格里按行上下移动（搜索结果是单列），搜索框为空时 `←` `→` 横向移动；`Enter` 选择；`Backspace` 在搜索框为空时回到上一级；`Esc` 关闭并把焦点还给触发器。
-- 屏幕阅读器：每次换层级播报「第 2 级，共 18 项」，搜索时播报「找到 12 个结果」，通过隐藏的 `role="status"` 区域；层级标签条是 `nav`，当前层级带 `aria-current="step"`。
+- 键盘：`↑` `↓` 逐项移动，搜索框为空时 `←` `→` 也能逐项移动；`Enter` 选择；`Backspace` 在搜索框为空时回到上一步；`Esc` 关闭并把焦点还给触发器。
+- 屏幕阅读器：每次换步骤播报「第 2 步，选择城市，共 21 项」，搜索时播报「找到 12 个结果」，通过隐藏的 `role="status"` 区域；步骤条是有序列表，当前步带 `aria-current="step"`；手机面板是带标题的对话框，打开时焦点落在关闭按钮上。
 - 触发器是 `button`，带 `aria-haspopup`、`aria-expanded`；可以用 `<label htmlFor>` 或 `aria-label` 命名。
 - 焦点环、选项高亮都有可见样式；已选项除了底色，还有对勾（末级）或箭头（非末级）。
 

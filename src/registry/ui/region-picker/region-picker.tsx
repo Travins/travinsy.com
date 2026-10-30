@@ -1,17 +1,24 @@
 "use client"
 
 import * as React from "react"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, X } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
-import { DEFAULT_LABELS } from "./config"
+import { DEFAULT_LABELS, SHEET_QUERY } from "./config"
 import { RegionPickerPanel } from "./region-picker-panel"
 import { regionPickerTriggerVariants } from "./region-picker-parts"
 import type { RegionOption, RegionPickerProps } from "./types"
@@ -19,7 +26,24 @@ import { createRegionIndex, formatRegionPath } from "./utils"
 
 const EMPTY_PATH: RegionOption[] = []
 
-/** 省市区选择：触发器 + 搜索与分级浏览浮层。数据通过 `regions` 传入，函数形式会惰性加载。 */
+/** 订阅媒体查询；服务端与首帧按桌面渲染，只影响打开后的容器，触发器两边一致 */
+function useMediaQuery(query: string) {
+  return React.useSyncExternalStore(
+    (onChange) => {
+      const list = window.matchMedia(query)
+      list.addEventListener("change", onChange)
+      return () => list.removeEventListener("change", onChange)
+    },
+    () => window.matchMedia(query).matches,
+    () => false,
+  )
+}
+
+/**
+ * 省市区选择：触发器 + 分步选择面板（①省份 ②城市 ③区县，支持拼音搜索）。
+ * 手机与触屏设备从底部弹出面板，桌面在输入框下方弹出浮层。
+ * 数据通过 `regions` 传入，函数形式会惰性加载。
+ */
 function RegionPicker({
   regions,
   value: valueProp,
@@ -50,6 +74,8 @@ function RegionPicker({
   const triggerRef = React.useRef<HTMLButtonElement>(null)
   React.useImperativeHandle(ref, () => triggerRef.current as HTMLButtonElement)
   const searchRef = React.useRef<HTMLInputElement>(null)
+  const closeRef = React.useRef<HTMLButtonElement>(null)
+  const sheet = useMediaQuery(SHEET_QUERY)
   const proxyRef = React.useRef<HTMLInputElement>(null)
 
   const [open, setOpen] = useControllableState({
@@ -168,6 +194,50 @@ function RegionPicker({
     return () => element.removeEventListener("reset", reset)
   }, [controlled, defaultValue, setCode])
 
+  const triggerProps = {
+    ...props,
+    ref: triggerRef,
+    "data-slot": "region-picker-trigger",
+    disabled,
+    title: title ?? titleProp,
+    "aria-busy": code !== null && !index && !failed && lazy ? true : undefined,
+    className: regionPickerTriggerVariants({ size }),
+    children: (
+      <>
+        <span
+          data-slot="region-picker-value-text"
+          className={cn(
+            "min-w-0 flex-1 truncate",
+            code === null && "text-muted-foreground",
+          )}
+        >
+          {code === null ? (placeholder ?? labels.placeholder) : text}
+        </span>
+        <ChevronDown
+          aria-hidden="true"
+          className="size-4 shrink-0 text-muted-foreground"
+        />
+      </>
+    ),
+  }
+
+  const panel = (variant: "sheet" | "popover") => (
+    <RegionPickerPanel
+      variant={variant}
+      index={index}
+      status={status}
+      labels={labels}
+      value={code}
+      valuePath={valuePath}
+      depth={maxDepth}
+      allowPartial={allowPartial}
+      required={required}
+      inputRef={searchRef}
+      onRetry={retry}
+      onCommit={commit}
+    />
+  )
+
   return (
     <div
       data-slot="region-picker"
@@ -175,53 +245,56 @@ function RegionPicker({
       data-disabled={disabled ? "" : undefined}
       className={cn("relative w-full", className)}
     >
-      <Popover open={open} onOpenChange={(next) => setOpen(next)}>
-        <PopoverTrigger
-          {...props}
-          ref={triggerRef}
-          data-slot="region-picker-trigger"
-          disabled={disabled}
-          title={title ?? titleProp}
-          aria-busy={
-            code !== null && !index && !failed && lazy ? true : undefined
-          }
-          className={regionPickerTriggerVariants({ size })}
-        >
-          <span
-            data-slot="region-picker-value-text"
-            className={cn(
-              "min-w-0 flex-1 truncate",
-              code === null && "text-muted-foreground",
-            )}
+      {sheet ? (
+        <Sheet open={open} onOpenChange={(next) => setOpen(next)}>
+          <SheetTrigger {...triggerProps} />
+          <SheetContent
+            side="bottom"
+            showCloseButton={false}
+            // 不自动聚焦搜索框，免得软键盘弹出来盖住列表；焦点先落在关闭按钮上
+            initialFocus={closeRef}
+            className="mx-auto w-full max-w-xl gap-0 rounded-t-xl data-[side=bottom]:h-[85dvh] sm:border-x"
           >
-            {code === null ? (placeholder ?? labels.placeholder) : text}
-          </span>
-          <ChevronDown
-            aria-hidden="true"
-            className="size-4 shrink-0 text-muted-foreground"
-          />
-        </PopoverTrigger>
-        <PopoverContent
-          align="start"
-          className="w-[26rem] max-w-[calc(100vw-1rem)] min-w-(--anchor-width) gap-0"
-          // 触屏上不自动聚焦搜索框，免得弹出软键盘盖住列表
-          initialFocus={(type) => (type === "touch" ? true : searchRef.current)}
-        >
-          <RegionPickerPanel
-            index={index}
-            status={status}
-            labels={labels}
-            value={code}
-            valuePath={valuePath}
-            depth={maxDepth}
-            allowPartial={allowPartial}
-            required={required}
-            inputRef={searchRef}
-            onRetry={retry}
-            onCommit={commit}
-          />
-        </PopoverContent>
-      </Popover>
+            <div className="flex h-12 shrink-0 items-center justify-between gap-1 pr-2 pl-4">
+              <SheetTitle>{labels.title}</SheetTitle>
+              {/* 标题栏里的按钮同一档 lg：清除与关闭并排 */}
+              {code !== null && !required && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="lg"
+                  className="ml-auto text-muted-foreground"
+                  onClick={() => commit(EMPTY_PATH)}
+                >
+                  {labels.clear}
+                </Button>
+              )}
+              <Button
+                ref={closeRef}
+                type="button"
+                variant="ghost"
+                size="icon-lg"
+                aria-label={labels.close}
+                onClick={() => setOpen(false)}
+              >
+                <X aria-hidden="true" />
+              </Button>
+            </div>
+            {panel("sheet")}
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <Popover open={open} onOpenChange={(next) => setOpen(next)}>
+          <PopoverTrigger {...triggerProps} />
+          <PopoverContent
+            align="start"
+            className="w-[30rem] max-w-[calc(100vw-1rem)] min-w-(--anchor-width) gap-0 p-0"
+            initialFocus={searchRef}
+          >
+            {panel("popover")}
+          </PopoverContent>
+        </Popover>
+      )}
       <input
         ref={proxyRef}
         data-slot="region-picker-value"
