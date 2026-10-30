@@ -125,9 +125,9 @@ function NumberStepper({
   const buttonClass = buttonVariants({
     variant: "ghost",
     size: buttonSize,
-    // 方条边框已占 2px；按钮高度取自 size，负边距让点击区仍覆盖整条高度。
+    // 按钮留在方条边框里面、撑满框内高度：不用负边距伸到边线上，否则按下时的底色和下沉会盖住边框（出错时的红边尤其明显）
     className:
-      "-my-px touch-manipulation rounded-none border-0 border-edge text-muted-foreground transition-colors aria-disabled:pointer-events-none aria-disabled:opacity-40 disabled:opacity-40",
+      "h-full touch-manipulation self-stretch rounded-none border-0 border-edge text-muted-foreground transition-colors active:not-aria-[haspopup]:translate-y-0 aria-disabled:pointer-events-none aria-disabled:opacity-40 disabled:opacity-40",
   })
 
   function handleCommit(next: number | null) {
@@ -207,7 +207,7 @@ function NumberStepper({
           disabled={pending || readOnly || (value !== null && value <= min)}
           className={cn(
             buttonClass,
-            "-ml-px border-r border-edge first:rounded-l-md",
+            "border-r border-edge first:rounded-l-[calc(var(--radius-md)-1px)]",
           )}
         >
           {pending && lastAction === "decrement" ? (
@@ -236,7 +236,7 @@ function NumberStepper({
             inputMode="numeric"
             form={props.form}
             className={cn(
-              "field-sizing-content min-h-0 max-w-24 min-w-10 bg-transparent px-2 text-center text-sm font-medium tabular-nums outline-none pointer-coarse:text-base",
+              "field-sizing-content min-h-0 max-w-24 min-w-10 bg-transparent px-2 text-center text-sm font-medium tabular-nums outline-none in-data-pointer-focus:caret-transparent pointer-coarse:text-base",
               pending && "text-muted-foreground",
             )}
             onKeyDown={(event) => {
@@ -268,7 +268,7 @@ function NumberStepper({
           }
           className={cn(
             buttonClass,
-            "-mr-px rounded-r-md border-l border-edge",
+            "rounded-r-[calc(var(--radius-md)-1px)] border-l border-edge",
           )}
         >
           {pending && lastAction === "increment" ? (
