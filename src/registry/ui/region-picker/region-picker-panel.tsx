@@ -39,6 +39,27 @@ type Row = {
 
 const EMPTY_PATH: RegionOption[] = []
 
+/**
+ * 只滚动列表自身，把 `element` 移进可视区。
+ * 不用 scrollIntoView：它会连带滚动整个页面，浮层跟着触发器一起上下跳。
+ */
+function scrollWithin(
+  list: HTMLElement,
+  element: HTMLElement,
+  block: "start" | "center" | "nearest",
+) {
+  const listRect = list.getBoundingClientRect()
+  const rect = element.getBoundingClientRect()
+  const top = rect.top - listRect.top + list.scrollTop
+  if (block === "start") list.scrollTop = top
+  else if (block === "center")
+    list.scrollTop = top - (list.clientHeight - rect.height) / 2
+  // 上方可能有吸顶的字母标题，往上滚时多留一行的位置
+  else if (rect.top < listRect.top + 28) list.scrollTop = top - 28
+  else if (rect.bottom > listRect.bottom)
+    list.scrollTop = top + rect.height - list.clientHeight
+}
+
 const fill = (template: string, values: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ""))
 
@@ -199,7 +220,8 @@ function RegionPickerPanel({
       scrollRef.current?.scrollTo({ top: 0 })
       return
     }
-    element.scrollIntoView({ block: fresh ? "center" : "nearest" })
+    if (scrollRef.current)
+      scrollWithin(scrollRef.current, element, fresh ? "center" : "nearest")
   }, [activeId, listKey, selectedAt])
 
   const choose = (row: Row) => {
@@ -272,11 +294,17 @@ function RegionPickerPanel({
           count: rows.length,
         })
 
-  const showConfirm = allowPartial && !searching && ready && trail.length > 0
+  // 允许选中间级时「确定」常驻，没有可确认的路径就置灰：按钮时有时无会让面板高度跳动
+  const showConfirm = allowPartial && ready
+  const canConfirm = showConfirm && !searching && trail.length > 0
   // 底部面板的「清除」放在标题栏（由外层渲染），这里只管浮层
   const showClear = !sheet && value !== null && !required
 
   // ---------- 渲染 ----------
+  // 内容区高度固定：面板里撑满剩余空间；浮层里固定 16rem。
+  // 浮层高度一旦随每一步的选项数变化，定位就会在输入框上方、下方之间来回翻，看起来像在抖
+  const bodyClass = sheet ? "flex-1" : "h-64"
+
   const renderOption = (row: Row, i: number, layout: "row" | "chip") => (
     <RegionPickerOption
       key={row.path.map((node) => node.code).join("/")}
@@ -381,9 +409,9 @@ function RegionPickerPanel({
   )
 
   const jumpTo = (letter: string) => {
-    document
-      .getElementById(`${baseId}-group-${letter}`)
-      ?.scrollIntoView({ block: "start" })
+    const group = document.getElementById(`${baseId}-group-${letter}`)
+    if (group && scrollRef.current)
+      scrollWithin(scrollRef.current, group, "start")
   }
 
   return (
@@ -434,7 +462,7 @@ function RegionPickerPanel({
 
       {!ready ? (
         status === "error" ? (
-          <RegionPickerNotice className={cn(sheet && "flex-1")}>
+          <RegionPickerNotice className={bodyClass}>
             <span>{labels.loadFailed}</span>
             <Button
               type="button"
@@ -446,7 +474,7 @@ function RegionPickerPanel({
             </Button>
           </RegionPickerNotice>
         ) : (
-          <RegionPickerNotice loading className={cn(sheet && "flex-1")}>
+          <RegionPickerNotice loading className={bodyClass}>
             {labels.loading}
           </RegionPickerNotice>
         )
@@ -454,7 +482,7 @@ function RegionPickerPanel({
         <div
           className={cn(
             "relative min-h-0",
-            sheet ? "flex-1 border-t border-border" : "",
+            sheet ? "flex-1 border-t border-border" : "h-64",
           )}
         >
           <div
@@ -467,7 +495,7 @@ function RegionPickerPanel({
               "overflow-y-auto overscroll-contain",
               sheet
                 ? "h-full pb-[env(safe-area-inset-bottom)]"
-                : "max-h-72 px-2.5",
+                : "h-full px-2.5",
               sheet && groups && !searching && "pr-6",
             )}
           >
@@ -490,6 +518,18 @@ function RegionPickerPanel({
                 ? rows.map((row, i) => renderOption(row, i, "row"))
                 : browseList}
             </div>
+            {/* 截断提示放在列表末尾一起滚动，不额外占高度 */}
+            {search && search.total > search.results.length && (
+              <p
+                data-slot="region-picker-hint"
+                className={cn(
+                  "py-2 text-xs text-muted-foreground",
+                  sheet && "px-4",
+                )}
+              >
+                {fill(labels.resultTruncated, { limit: search.results.length })}
+              </p>
+            )}
           </div>
 
           {/* 手机上的字母索引条：长列表一点就跳到对应字母 */}
@@ -513,18 +553,9 @@ function RegionPickerPanel({
           )}
         </div>
       ) : (
-        <RegionPickerNotice className={cn(sheet && "flex-1")}>
+        <RegionPickerNotice className={bodyClass}>
           {labels.empty}
         </RegionPickerNotice>
-      )}
-
-      {search && search.total > search.results.length && (
-        <p
-          data-slot="region-picker-hint"
-          className="px-4 py-2 text-xs text-muted-foreground"
-        >
-          {fill(labels.resultTruncated, { limit: search.results.length })}
-        </p>
       )}
 
       {(showConfirm || showClear) && (
@@ -552,10 +583,15 @@ function RegionPickerPanel({
               type="button"
               size={sheet ? "lg" : "sm"}
               className={cn("ml-auto min-w-0", sheet && "flex-1")}
+              disabled={!canConfirm}
               onClick={() => onCommit(trail)}
             >
               <span className="truncate">
-                {fill(labels.confirmPartial, { name: formatRegionPath(trail) })}
+                {canConfirm
+                  ? fill(labels.confirmPartial, {
+                      name: formatRegionPath(trail),
+                    })
+                  : labels.confirmIdle}
               </span>
             </Button>
           )}

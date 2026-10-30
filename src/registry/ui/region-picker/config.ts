@@ -32,6 +32,8 @@ const DEFAULT_LABELS = {
   clear: "清除",
   /** 允许选非末级时，底部确认当前路径的按钮 */
   confirmPartial: "确定：{name}",
+  /** 允许选非末级、但还没有可确认的路径时，确认按钮的文字（按钮置灰） */
+  confirmIdle: "确定",
   /** 代码找不到又没传 fallbackLabel 时的名称，后面自动加（代码） */
   unknown: "未知地区",
   /** 必填未选时的校验提示 */
