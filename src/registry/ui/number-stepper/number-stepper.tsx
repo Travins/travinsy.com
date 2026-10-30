@@ -20,7 +20,7 @@ const DEFAULT_LABELS: NumberStepperLabels = {
 }
 
 const numberStepperControlVariants = cva(
-  "flex min-w-0 items-center rounded-md border border-edge bg-muted/60 text-sm transition-colors has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+  "flex min-w-0 items-center rounded-md border border-edge bg-muted/60 text-sm transition-colors has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 data-pointer-focus:has-[:focus-visible]:ring-0 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {
@@ -66,6 +66,9 @@ function NumberStepper({
   const id = idProp ?? autoId
   const inputRef = React.useRef<HTMLInputElement>(null)
   // 最近一次是按哪个键改的数：保存时让那个按钮转圈，数字照常显示，用户看得到自己改成了几
+  // 点加减按钮时 Base UI 会把焦点移到中间的输入框，而文本输入框一聚焦就匹配 :focus-visible，
+  // 焦点环会在每次点按后出现。记下「这次焦点是点按钮带来的」，按任意键后恢复
+  const [pointerFocus, setPointerFocus] = React.useState(false)
   const [lastAction, setLastAction] = React.useState<"decrement" | "increment">(
     "increment",
   )
@@ -172,7 +175,17 @@ function NumberStepper({
     >
       <NumberField.Group
         data-slot="number-stepper-control"
+        data-pointer-focus={pointerFocus ? "" : undefined}
         aria-invalid={invalid || undefined}
+        onPointerDown={(event) => {
+          if ((event.target as Element).closest("button")) setPointerFocus(true)
+        }}
+        // 用捕获阶段：方向键会被 Base UI 在输入框上处理掉，冒泡阶段收不到
+        onKeyDownCapture={() => setPointerFocus(false)}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget))
+            setPointerFocus(false)
+        }}
         className={cn(
           numberStepperControlVariants({ size }),
           disabled && "cursor-not-allowed opacity-50",

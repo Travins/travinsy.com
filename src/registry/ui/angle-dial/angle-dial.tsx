@@ -217,6 +217,9 @@ function AngleDial({
   }, [controlled, resetValue, setValue])
   const labelId = React.useId()
   const [dragging, setDragging] = React.useState(false)
+  // 按下刻度时会主动把焦点给刻度尺（之后可以直接用方向键微调），但程序聚焦会让浏览器当成键盘聚焦、
+  // 显示焦点环。记下「这次焦点是指针带来的」，按任意键或失焦后恢复
+  const [pointerFocus, setPointerFocus] = React.useState(false)
   // pending：触摸刚按下、还没看出是横向拖动还是上下滚动页面
   const dragRef = React.useRef<{
     x: number
@@ -235,6 +238,7 @@ function AngleDial({
     if (disabled || event.button !== 0) return
     // 鼠标按下不抢走文字选区之外的焦点样式；触摸与笔照常
     if (event.pointerType === "mouse") event.preventDefault()
+    setPointerFocus(true)
     event.currentTarget.focus({ preventScroll: true })
     const touch = event.pointerType === "touch"
     dragRef.current = {
@@ -348,13 +352,16 @@ function AngleDial({
         aria-valuetext={readout}
         aria-disabled={disabled || undefined}
         data-slot="angle-dial-ruler"
+        data-pointer-focus={pointerFocus ? "" : undefined}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
+        onKeyDownCapture={() => setPointerFocus(false)}
+        onBlur={() => setPointerFocus(false)}
         onKeyDown={handleKeyDown}
         onDoubleClick={handleDoubleClick}
-        className="relative h-full min-w-0 flex-1 cursor-ew-resize touch-pan-y rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 in-data-[disabled]:cursor-not-allowed"
+        className="relative h-full min-w-0 flex-1 cursor-ew-resize touch-pan-y rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 in-data-[disabled]:cursor-not-allowed data-pointer-focus:focus-visible:ring-0"
       >
         {/* 刻度：两层重复渐变，小刻度每 5°、大刻度每 15°；两端渐隐，像一段从窗口里露出来的转盘 */}
         <span
