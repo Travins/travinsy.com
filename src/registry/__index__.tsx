@@ -6,6 +6,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "amount-input-custom-demo": lazy(() => import("./examples/amount-input-custom-demo")),
   "amount-input-demo": lazy(() => import("./examples/amount-input-demo")),
   "amount-input-form-demo": lazy(() => import("./examples/amount-input-form-demo")),
+  "amount-input-mobile-demo": lazy(() => import("./examples/amount-input-mobile-demo")),
   "amount-input-states-demo": lazy(() => import("./examples/amount-input-states-demo")),
   "amount-input-validation-demo": lazy(() => import("./examples/amount-input-validation-demo")),
   "angle-dial-compass-demo": lazy(() => import("./examples/angle-dial-compass-demo")),

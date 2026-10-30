@@ -9,7 +9,10 @@ import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
 
-/** 与数值滑块同一套方条与高度表（bar 28 / 32 / 36px，compact 18 / 22 / 24px）。 */
+/**
+ * 与数值滑块同一套方条与高度表（bar 28 / 32 / 36px，compact 18 / 22 / 24px）。
+ * 触屏设备上 bar 各加高一档（36 / 40 / 44px），色点放大、间距拉开，每个色点外围还有一圈看不见的点按区。
+ */
 const tonePickerVariants = cva(
   "group/tone-picker flex h-(--tone-picker-height) w-full min-w-0 items-center justify-between gap-3 rounded-md border border-edge bg-muted/60 px-3 select-none",
   {
@@ -25,9 +28,24 @@ const tonePickerVariants = cva(
       },
     },
     compoundVariants: [
-      { variant: "bar", size: "sm", class: "[--tone-picker-height:1.75rem]" },
-      { variant: "bar", size: "default", class: "[--tone-picker-height:2rem]" },
-      { variant: "bar", size: "lg", class: "[--tone-picker-height:2.25rem]" },
+      {
+        variant: "bar",
+        size: "sm",
+        class:
+          "[--tone-picker-height:1.75rem] pointer-coarse:[--tone-picker-height:2.25rem]",
+      },
+      {
+        variant: "bar",
+        size: "default",
+        class:
+          "[--tone-picker-height:2rem] pointer-coarse:[--tone-picker-height:2.5rem]",
+      },
+      {
+        variant: "bar",
+        size: "lg",
+        class:
+          "[--tone-picker-height:2.25rem] pointer-coarse:[--tone-picker-height:2.75rem]",
+      },
       {
         variant: "compact",
         size: "sm",
@@ -172,7 +190,7 @@ function TonePicker({
       ) : null}
       <span
         data-slot="tone-picker-swatches"
-        className="ms-auto flex shrink-0 items-center gap-1.5"
+        className="ms-auto flex shrink-0 items-center gap-1.5 pointer-coarse:group-data-[variant=bar]/tone-picker:gap-3 pointer-coarse:group-data-[variant=bar]/tone-picker:[--tone-picker-swatch:1.125rem]"
       >
         {options.map((option) => (
           <Radio.Root
@@ -182,7 +200,7 @@ function TonePicker({
             title={option.label}
             data-slot="tone-picker-swatch"
             className={cn(
-              "relative size-(--tone-picker-swatch) shrink-0 cursor-pointer rounded-full transition-transform outline-none hover:scale-110 focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:scale-100",
+              "relative size-(--tone-picker-swatch) shrink-0 cursor-pointer rounded-full transition-transform outline-none before:absolute before:-inset-x-[3px] before:-inset-y-2 before:content-[''] hover:scale-110 focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:scale-100 pointer-coarse:before:-inset-x-1.5 pointer-coarse:before:-inset-y-4",
               // 选中：外面再套一圈前景色细环，和色点之间隔一道背景色缝
               "data-[checked]:ring-2 data-[checked]:ring-foreground/70 data-[checked]:ring-offset-2 data-[checked]:ring-offset-background",
               option.tone === null

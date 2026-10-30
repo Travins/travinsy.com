@@ -4,6 +4,8 @@ import type { AmountInputLabels } from "./config"
 
 type AmountInputSize = "sm" | "default" | "lg"
 
+type AmountInputVariant = "bar" | "display"
+
 type AmountInputProps = Omit<
   React.ComponentProps<"input">,
   | "value"
@@ -42,10 +44,15 @@ type AmountInputProps = Omit<
    * @default "¥"
    */
   symbol?: React.ReactNode
-  /** 写在输入框条内左侧的标签，自动与输入框关联；传入后金额靠右 */
+  /** 标签，自动与输入框关联。`bar` 写在条内左侧、金额随之靠右；`display` 写在金额上方 */
   label?: React.ReactNode
   /**
-   * 控件高度档位：28 / 32 / 36px
+   * 外观：`bar` 方条，和其他表单控件排在一起；`display` 大字，用作付款、转账页上的主金额，标签写在上方
+   * @default "bar"
+   */
+  variant?: AmountInputVariant
+  /**
+   * 档位：`bar` 是高度 28 / 32 / 36px（触屏设备上 36 / 40 / 44px），`display` 是数字字号 24 / 30 / 36px
    * @default "default"
    */
   size?: AmountInputSize
@@ -80,4 +87,4 @@ type AmountInputProps = Omit<
   labels?: Partial<AmountInputLabels>
 }
 
-export type { AmountInputProps, AmountInputSize }
+export type { AmountInputProps, AmountInputSize, AmountInputVariant }

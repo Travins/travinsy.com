@@ -17,6 +17,7 @@ import type {
   ValueSliderValue,
 } from "./types"
 import { useElasticPull } from "./use-elastic-pull"
+import { useTouchIntent } from "./use-touch-intent"
 import { useHandleDodge } from "./use-handle-dodge"
 import {
   ValueSliderReadout,
@@ -45,9 +46,10 @@ const SNAP_RATIO = 0.03
 const valueSliderVariants = cva("flex w-full flex-col select-none", {
   variants: {
     size: {
-      sm: "gap-1 text-xs [--value-slider-height:1.75rem]",
-      default: "gap-1 text-sm [--value-slider-height:2rem]",
-      lg: "gap-1 text-sm [--value-slider-height:2.25rem]",
+      sm: "gap-1 text-xs [--value-slider-height:1.75rem] pointer-coarse:[--value-slider-height:2.25rem]",
+      default:
+        "gap-1 text-sm [--value-slider-height:2rem] pointer-coarse:[--value-slider-height:2.5rem]",
+      lg: "gap-1 text-sm [--value-slider-height:2.25rem] pointer-coarse:[--value-slider-height:2.75rem]",
     },
     variant: {
       // 三种形态都是方条，只是高度不同：bar 沿用尺寸档的高度，compact / slim 在 compoundVariants 里按尺寸细分
@@ -305,6 +307,11 @@ function ValueSlider<Value extends ValueSliderValue = number>(
 
   const elastic = useElasticPull({ elasticity, disabled, onEdge: playEdgeOnce })
 
+  /* ---------- 触摸：上下滑滚动页面，左右拖才改值 ---------- */
+
+  const controlRef = React.useRef<HTMLDivElement>(null)
+  useTouchIntent(controlRef, disabled)
+
   const handleThumbKeyDown = (
     event: React.KeyboardEvent<HTMLInputElement>,
     index: number,
@@ -470,10 +477,11 @@ function ValueSlider<Value extends ValueSliderValue = number>(
         {/* Control 只负责把指针换算成数值，自己不缩放；缩放在它内部的视觉层上。
             slim 的轨道只有几像素高，给 Control 一个 20px 的命中区，视觉层在其中垂直居中 */}
         <SliderPrimitive.Control
+          ref={controlRef}
           data-slot="value-slider-control"
           className={cn(
-            "relative w-full min-w-0 cursor-pointer touch-none select-none in-data-[disabled]:cursor-not-allowed has-[[data-slot=value-slider-thumb]_input:focus-visible]:ring-3 has-[[data-slot=value-slider-thumb]_input:focus-visible]:ring-ring/50",
-            slim && "flex min-h-5 items-center",
+            "relative w-full min-w-0 cursor-pointer touch-pan-y select-none in-data-[disabled]:cursor-not-allowed has-[[data-slot=value-slider-thumb]_input:focus-visible]:ring-3 has-[[data-slot=value-slider-thumb]_input:focus-visible]:ring-ring/50",
+            slim && "flex min-h-5 items-center pointer-coarse:min-h-11",
           )}
           onPointerDown={elastic.onPointerDown}
         >

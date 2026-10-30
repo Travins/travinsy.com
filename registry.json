@@ -1020,6 +1020,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "src/registry/ui/value-slider/use-touch-intent.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "src/registry/ui/value-slider/use-handle-dodge.ts",
           "type": "registry:ui"
         },

@@ -11,6 +11,9 @@ import { flowToneStyle, type FlowTone } from "@/registry/ui/flow-diagram/tone"
  * 角度刻度尺：方条中间是一段可以左右拖动的刻度，固定在正中的竖线指针读出当前角度。
  * 外框与高度表与数值滑块一致（bar 28 / 32 / 36px，compact 18 / 22 / 24px），放进同一个面板能对齐。
  */
+/** 触摸时横向移动超过这么多像素才算拖动，先往上下走的交给页面滚动 */
+const TOUCH_SLOP = 6
+
 const angleDialVariants = cva(
   "group/angle-dial relative flex h-(--angle-dial-height) w-full min-w-0 items-center gap-3 overflow-hidden rounded-md border border-edge bg-muted/60 px-3 select-none",
   {
@@ -26,9 +29,24 @@ const angleDialVariants = cva(
       },
     },
     compoundVariants: [
-      { variant: "bar", size: "sm", class: "[--angle-dial-height:1.75rem]" },
-      { variant: "bar", size: "default", class: "[--angle-dial-height:2rem]" },
-      { variant: "bar", size: "lg", class: "[--angle-dial-height:2.25rem]" },
+      {
+        variant: "bar",
+        size: "sm",
+        class:
+          "[--angle-dial-height:1.75rem] pointer-coarse:[--angle-dial-height:2.25rem]",
+      },
+      {
+        variant: "bar",
+        size: "default",
+        class:
+          "[--angle-dial-height:2rem] pointer-coarse:[--angle-dial-height:2.5rem]",
+      },
+      {
+        variant: "bar",
+        size: "lg",
+        class:
+          "[--angle-dial-height:2.25rem] pointer-coarse:[--angle-dial-height:2.75rem]",
+      },
       {
         variant: "compact",
         size: "sm",
@@ -182,7 +200,13 @@ function AngleDial({
   })
   const labelId = React.useId()
   const [dragging, setDragging] = React.useState(false)
-  const dragRef = React.useRef<{ x: number; from: number } | null>(null)
+  // pending：触摸刚按下、还没看出是横向拖动还是上下滚动页面
+  const dragRef = React.useRef<{
+    x: number
+    y: number
+    from: number
+    pending: boolean
+  } | null>(null)
 
   const commit = (next: number) => {
     const normalized = normalize(next, options)
@@ -194,21 +218,47 @@ function AngleDial({
     if (disabled || event.button !== 0) return
     // 鼠标按下不抢走文字选区之外的焦点样式；触摸与笔照常
     if (event.pointerType === "mouse") event.preventDefault()
-    event.currentTarget.focus()
+    event.currentTarget.focus({ preventScroll: true })
+    const touch = event.pointerType === "touch"
+    dragRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      from: value,
+      pending: touch,
+    }
+    // 触摸先不接管：轨道是 touch-action: pan-y，上下滑由浏览器滚动页面，横向移动过阈值才开始拖
+    if (touch) return
     event.currentTarget.setPointerCapture(event.pointerId)
-    dragRef.current = { x: event.clientX, from: value }
     setDragging(true)
   }
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current
     if (!drag) return
+    if (drag.pending) {
+      const dx = Math.abs(event.clientX - drag.x)
+      const dy = Math.abs(event.clientY - drag.y)
+      if (dx < TOUCH_SLOP && dy < TOUCH_SLOP) return
+      if (dy >= dx) {
+        dragRef.current = null
+        return
+      }
+      // 从这里起算，过阈值的那几像素不计入，转盘不会突然跳一下
+      drag.pending = false
+      drag.x = event.clientX
+      event.currentTarget.setPointerCapture(event.pointerId)
+      setDragging(true)
+      return
+    }
     commit(drag.from - (event.clientX - drag.x) / pixelsPerDegree)
   }
 
   const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current) return
+    const drag = dragRef.current
+    if (!drag) return
     dragRef.current = null
+    // 只是点了一下，或者被浏览器拿去滚动页面了：值没动，不算一次提交
+    if (drag.pending) return
     setDragging(false)
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
@@ -287,7 +337,7 @@ function AngleDial({
         onPointerCancel={endDrag}
         onKeyDown={handleKeyDown}
         onDoubleClick={handleDoubleClick}
-        className="relative h-full min-w-0 flex-1 cursor-ew-resize touch-none rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 in-data-[disabled]:cursor-not-allowed"
+        className="relative h-full min-w-0 flex-1 cursor-ew-resize touch-pan-y rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 in-data-[disabled]:cursor-not-allowed"
       >
         {/* 刻度：两层重复渐变，小刻度每 5°、大刻度每 15°；两端渐隐，像一段从窗口里露出来的转盘 */}
         <span

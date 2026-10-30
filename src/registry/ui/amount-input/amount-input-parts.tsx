@@ -4,21 +4,43 @@ import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * 输入框是一条方条：与方条开关、分段选择同一套外观（浅灰底、细边框、标签在条内左侧），
- * 放进同一个面板里能对齐。高度只来自既有三档：28 / 32 / 36px；
- * 手机上字号保持 16px，iOS 聚焦时才不会自动放大页面
+ * 两种外观：
+ * - `bar` 方条：与方条开关、分段选择同一套（浅灰底、细边框、标签在条内左侧），放进同一个面板里能对齐。
+ *   高度只来自既有三档 28 / 32 / 36px，触屏设备上各加高一档（36 / 40 / 44px）
+ * - `display` 大字：付款、转账页上的主金额，数字放大、下面一道横线，标签写在上方
+ * 手机上字号至少 16px，iOS 聚焦时才不会自动放大页面
  */
 const amountInputControlVariants = cva(
-  "flex w-full min-w-0 cursor-text items-center gap-1.5 rounded-md border bg-muted/60 px-3 transition-colors",
+  "flex w-full min-w-0 cursor-text transition-colors",
   {
     variants: {
-      size: {
-        sm: "h-7 text-base md:text-xs",
-        default: "h-8 text-base md:text-sm",
-        lg: "h-9 text-base md:text-sm",
+      variant: {
+        bar: "items-center gap-1.5 rounded-md border bg-muted/60 px-3",
+        display: "items-baseline gap-1 border-b-2 pb-1 tracking-tight",
       },
+      size: { sm: "", default: "", lg: "" },
     },
-    defaultVariants: { size: "default" },
+    compoundVariants: [
+      {
+        variant: "bar",
+        size: "sm",
+        class: "h-7 text-base pointer-coarse:h-9 md:text-xs",
+      },
+      {
+        variant: "bar",
+        size: "default",
+        class: "h-8 text-base pointer-coarse:h-10 md:text-sm",
+      },
+      {
+        variant: "bar",
+        size: "lg",
+        class: "h-9 text-base pointer-coarse:h-11 md:text-sm",
+      },
+      { variant: "display", size: "sm", class: "text-2xl" },
+      { variant: "display", size: "default", class: "text-3xl" },
+      { variant: "display", size: "lg", class: "text-4xl" },
+    ],
+    defaultVariants: { variant: "bar", size: "default" },
   },
 )
 

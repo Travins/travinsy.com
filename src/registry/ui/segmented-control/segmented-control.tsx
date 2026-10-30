@@ -32,17 +32,20 @@ const segmentedControlVariants = cva(
       {
         variant: "bar",
         size: "sm",
-        class: "[--segmented-control-height:1.75rem]",
+        class:
+          "[--segmented-control-height:1.75rem] pointer-coarse:[--segmented-control-height:2.25rem]",
       },
       {
         variant: "bar",
         size: "default",
-        class: "[--segmented-control-height:2rem]",
+        class:
+          "[--segmented-control-height:2rem] pointer-coarse:[--segmented-control-height:2.5rem]",
       },
       {
         variant: "bar",
         size: "lg",
-        class: "[--segmented-control-height:2.25rem]",
+        class:
+          "[--segmented-control-height:2.25rem] pointer-coarse:[--segmented-control-height:2.75rem]",
       },
       {
         variant: "compact",

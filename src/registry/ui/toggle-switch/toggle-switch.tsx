@@ -31,17 +31,19 @@ const toggleSwitchVariants = cva(
         variant: "bar",
         size: "sm",
         class:
-          "[--toggle-switch-height:1.75rem] [--toggle-switch-knob:0.75rem]",
+          "[--toggle-switch-height:1.75rem] pointer-coarse:[--toggle-switch-height:2.25rem] [--toggle-switch-knob:0.75rem]",
       },
       {
         variant: "bar",
         size: "default",
-        class: "[--toggle-switch-height:2rem] [--toggle-switch-knob:0.875rem]",
+        class:
+          "[--toggle-switch-height:2rem] pointer-coarse:[--toggle-switch-height:2.5rem] [--toggle-switch-knob:0.875rem]",
       },
       {
         variant: "bar",
         size: "lg",
-        class: "[--toggle-switch-height:2.25rem] [--toggle-switch-knob:1rem]",
+        class:
+          "[--toggle-switch-height:2.25rem] pointer-coarse:[--toggle-switch-height:2.75rem] [--toggle-switch-knob:1rem]",
       },
       {
         variant: "compact",

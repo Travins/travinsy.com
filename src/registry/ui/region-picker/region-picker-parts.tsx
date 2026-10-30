@@ -9,16 +9,16 @@ type RegionPickerVariant = "sheet" | "popover"
 
 /**
  * 触发器是一条方条：与方条开关、分段选择同一套外观（浅灰底、细边框、标签在条内左侧），
- * 放进同一个面板里能对齐。高度只用既有三档：28 / 32 / 36px
+ * 放进同一个面板里能对齐。高度只用既有三档：28 / 32 / 36px，触屏设备上各加高一档（36 / 40 / 44px）
  */
 const regionPickerTriggerVariants = cva(
   "flex w-full min-w-0 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-left transition-colors outline-none select-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-popup-open:bg-muted data-popup-open:ring-3 data-popup-open:ring-ring/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {
-        sm: "h-7 text-xs",
-        default: "h-8 text-sm",
-        lg: "h-9 text-sm",
+        sm: "h-7 text-xs pointer-coarse:h-9",
+        default: "h-8 text-sm pointer-coarse:h-10",
+        lg: "h-9 text-sm pointer-coarse:h-11",
       },
     },
     defaultVariants: { size: "default" },

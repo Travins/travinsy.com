@@ -85,7 +85,28 @@ export function PayForm() {
 
 默认失焦时把小数位补齐到 `decimals`（`1,234.5` → `1,234.50`），`onValueChange` 会随之收到 `"1234.50"`。不想要就传 `padDecimals={false}`。聚焦期间不补，敲字时不会冒出零。
 
+### 大字
+
+付款、转账页上那个最主要的金额用 `variant="display"`：数字放大、下面一道横线，标签写在上方，大写读数变成金额下面的一行小字。`size` 在大字外观里控制数字字号（24 / 30 / 36px）。
+
+```tsx
+<AmountInput variant="display" label="转账金额" />
+```
+
+### 手机上
+
+- 用系统数字键盘：有小数位时 `inputMode="decimal"`，整数用 `numeric`。不另做虚拟键盘——系统键盘自带震动反馈、读屏和外接键盘支持，更可靠。
+- 触屏设备上方条各加高一档（36 / 40 / 44px），手指好点。
+- 聚焦后浏览器只保证输入框本身露出来，下面的大写行和错误提示常被软键盘挡住；组件会等键盘弹出后，把自己的底边也滚进可见区域。
+- 字号不小于 16px，iOS 聚焦时不会自动放大页面。
+
 ## 示例
+
+### 手机上的体验
+
+一台按真机尺寸画的「手机」（402 × 874pt）里的转账页：主金额用大字，超过余额时直接给出错误、按钮置灰；「全部转出」把余额填进去。
+
+<ComponentPreview name="amount-input-mobile-demo" />
 
 ### 受控与表单提交
 
@@ -107,7 +128,7 @@ export function PayForm() {
 
 ### 尺寸与状态
 
-`size` 三档高度对应按钮的 `sm` / `default` / `lg`（28 / 32 / 36px），同一行并排的控件用同一档。禁用时灰显且不随表单提交，只读可以聚焦、选中、复制，但不能改。
+`size` 三档高度对应按钮的 `sm` / `default` / `lg`（28 / 32 / 36px，触屏设备上 36 / 40 / 44px），同一行并排的控件用同一档。禁用时灰显且不随表单提交，只读可以聚焦、选中、复制，但不能改。
 
 <ComponentPreview name="amount-input-states-demo" />
 
@@ -157,12 +178,13 @@ type AmountInputLabels = {
 
 ### amountInputControlVariants
 
-输入框外框的 `cva` 样式，有 `size` 一个变体；做自己的金额控件（带按钮、下拉单位）时可以复用它保持高度一致。
+输入框外框的 `cva` 样式，有 `variant`（`bar` / `display`）和 `size` 两个变体；做自己的金额控件（带按钮、下拉单位）时可以复用它保持高度一致。
 
 ### 类型
 
 ```ts
 type AmountInputSize = "sm" | "default" | "lg"
+type AmountInputVariant = "bar" | "display"
 
 type AmountInputProps = {
   value?: string
@@ -173,6 +195,7 @@ type AmountInputProps = {
   decimals?: number
   symbol?: React.ReactNode
   label?: React.ReactNode
+  variant?: AmountInputVariant
   size?: AmountInputSize
   showUppercase?: boolean
   showApproximate?: boolean
@@ -203,7 +226,7 @@ type AmountInputProps = {
 | 提交用的隐藏输入 | `amount-input-value`       |
 | 读屏播报区       | `amount-input-status`      |
 
-根元素带 `data-size`，错误态带 `data-invalid`，禁用带 `data-disabled`，只读带 `data-readonly`。
+根元素带 `data-variant`、`data-size`，错误态带 `data-invalid`，禁用带 `data-disabled`，只读带 `data-readonly`。
 
 ## 可访问性
 

@@ -36,7 +36,7 @@ export default function RegionPickerMobileDemo() {
           <span>9:41</span>
           <span
             aria-hidden="true"
-            className="absolute top-[11px] left-1/2 h-[37px] w-[31%] -translate-x-1/2 rounded-full bg-foreground"
+            className="absolute top-[11px] left-1/2 h-[37px] w-[31%] -translate-x-1/2 rounded-full bg-foreground dark:bg-background dark:ring-1 dark:ring-border"
           />
           <span aria-hidden="true" className="flex items-center gap-1.5">
             <Signal className="size-4" strokeWidth={2.5} />

@@ -27,6 +27,33 @@ import {
 /** 读屏播报大写的防抖时间（毫秒）：停手这么久才报一次，敲字过程中不打断读屏。 */
 const ANNOUNCE_DELAY = 800
 
+/** 软键盘弹出后最多等这么久（毫秒）再检查读数行有没有被挡住 */
+const KEYBOARD_WAIT = 600
+
+/**
+ * 触屏设备上聚焦后，浏览器只保证输入框本身露出来，下面的大写行和错误提示常被软键盘挡住。
+ * 等键盘弹出（visualViewport 缩小）后，把整个组件的底边滚到可见区域里。
+ */
+function revealBelowKeyboard(root: HTMLElement | null) {
+  const viewport = window.visualViewport
+  if (!root || !viewport || !window.matchMedia("(pointer: coarse)").matches)
+    return
+  // 键盘是动画弹出的，resize 会连发几次：停下来 150ms 再量；一直没有 resize（外接键盘、桌面触屏）就到点量一次
+  let timer = window.setTimeout(check, KEYBOARD_WAIT)
+  const settle = () => {
+    window.clearTimeout(timer)
+    timer = window.setTimeout(check, 150)
+  }
+  function check() {
+    viewport!.removeEventListener("resize", settle)
+    const bottom = root!.getBoundingClientRect().bottom
+    const visibleBottom = viewport!.offsetTop + viewport!.height
+    const overflow = bottom - visibleBottom + 12
+    if (overflow > 0) window.scrollBy({ top: overflow, behavior: "smooth" })
+  }
+  viewport.addEventListener("resize", settle)
+}
+
 /** 金额输入框：实时千分位、光标不乱跳，下方同步显示人民币大写与大数估读。 */
 function AmountInput({
   value: valueProp,
@@ -37,6 +64,7 @@ function AmountInput({
   decimals: decimalsProp = 2,
   symbol = "¥",
   label,
+  variant = "bar",
   size = "default",
   showUppercase = true,
   showApproximate = true,
@@ -71,6 +99,7 @@ function AmountInput({
   const autoId = React.useId()
   const id = idProp ?? autoId
   const inputRef = React.useRef<HTMLInputElement>(null)
+  const rootRef = React.useRef<HTMLDivElement>(null)
   React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement)
 
   const [value, setValue] = useControllableState({
@@ -189,6 +218,21 @@ function AmountInput({
       .filter(Boolean)
       .join(" ") || undefined
 
+  const display = variant === "display"
+  const labelNode = label ? (
+    <label
+      data-slot="amount-input-label"
+      htmlFor={id}
+      className={
+        display
+          ? "text-sm text-muted-foreground"
+          : "mr-auto shrink-0 text-muted-foreground max-md:text-sm"
+      }
+    >
+      {label}
+    </label>
+  ) : null
+
   const readout =
     showUppercase || approximate ? (
       <AmountInputReadout
@@ -198,28 +242,37 @@ function AmountInput({
         placeholder={labels.uppercasePlaceholder}
         showUppercase={showUppercase}
         approximate={approximate}
+        // 大字时去掉虚线框，读数就是金额下面的一行小字
+        className={display ? "border-0 bg-transparent px-0" : undefined}
       />
     ) : null
 
   return (
     <div
+      ref={rootRef}
       data-slot="amount-input"
+      data-variant={variant}
       data-size={size}
       data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
       data-readonly={readOnly ? "" : undefined}
       className={cn("flex w-full flex-col gap-1.5", className)}
     >
+      {display && labelNode}
       {readoutPlacement === "above" && readout}
       <div
         data-slot="amount-input-control"
         className={cn(
-          amountInputControlVariants({ size }),
-          invalid
-            ? "border-destructive ring-3 ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40"
-            : "border-edge focus-within:ring-3 focus-within:ring-ring/50 hover:bg-muted",
+          amountInputControlVariants({ variant, size }),
+          display
+            ? invalid
+              ? "border-destructive"
+              : "border-edge focus-within:border-primary"
+            : invalid
+              ? "border-destructive ring-3 ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40"
+              : "border-edge focus-within:ring-3 focus-within:ring-ring/50 hover:bg-muted",
           disabled && "cursor-not-allowed opacity-50",
-          readOnly && "bg-muted/30",
+          readOnly && (display ? "border-dashed" : "bg-muted/30"),
         )}
         // 点到条内空白处（标签与数字之间）也聚焦输入框
         onMouseDown={(event) => {
@@ -229,20 +282,16 @@ function AmountInput({
           }
         }}
       >
-        {label && (
-          <label
-            data-slot="amount-input-label"
-            htmlFor={id}
-            className="mr-auto shrink-0 text-muted-foreground max-md:text-sm"
-          >
-            {label}
-          </label>
-        )}
+        {!display && labelNode}
         {symbol != null && (
           <span
             data-slot="amount-input-symbol"
             aria-hidden="true"
-            className="shrink-0 text-muted-foreground select-none"
+            className={cn(
+              "shrink-0 text-muted-foreground select-none",
+              // 大字时符号小一号、和数字底部对齐，像收银台上的金额
+              display && "text-[0.6em] font-medium",
+            )}
           >
             {symbol}
           </span>
@@ -268,10 +317,17 @@ function AmountInput({
           aria-invalid={invalid || undefined}
           aria-describedby={describedBy}
           className={cn(
-            "h-full min-w-0 bg-transparent font-medium tabular-nums outline-none placeholder:font-normal placeholder:text-muted-foreground disabled:cursor-not-allowed",
-            // 有条内标签时金额靠右，与方条开关、数值滑块的「左标签右数值」一致；
-            // 输入框按内容收窄，货币符号才会贴着金额而不是贴着标签
-            label ? "field-sizing-content max-w-full text-right" : "flex-1",
+            "min-w-0 bg-transparent tabular-nums outline-none placeholder:font-normal placeholder:text-muted-foreground/60 disabled:cursor-not-allowed",
+            display
+              ? "flex-1 py-0.5 leading-tight font-semibold"
+              : // 有条内标签时金额靠右，与方条开关、数值滑块的「左标签右数值」一致；
+                // 输入框按内容收窄，货币符号才会贴着金额而不是贴着标签
+                cn(
+                  "h-full font-medium",
+                  label
+                    ? "field-sizing-content max-w-full text-right"
+                    : "flex-1",
+                ),
           )}
           onChange={(event) => {
             const input = event.currentTarget
@@ -319,6 +375,7 @@ function AmountInput({
           }}
           onFocus={(event) => {
             setFocused(true)
+            revealBelowKeyboard(rootRef.current)
             onFocus?.(event)
           }}
           onBlur={(event) => {
@@ -361,4 +418,8 @@ function AmountInput({
 }
 
 export { AmountInput, amountInputControlVariants }
-export type { AmountInputProps, AmountInputSize } from "./types"
+export type {
+  AmountInputProps,
+  AmountInputSize,
+  AmountInputVariant,
+} from "./types"
