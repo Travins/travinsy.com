@@ -135,6 +135,8 @@ export { StatusCard, StatusCardTitle, statusCardVariants }
   | 默认 | `default` | `icon`    | 32px | 40px     | 表单、对话框、卡片内操作       |
   | 大   | `lg`      | `icon-lg` | 36px | 44px     | 首屏 / 页面级主操作            |
 
+  表单和示例卡片里的提交 / 保存 / 确认 / 重试按钮，至少和同一表单里的控件同档（默认 `default`）；手机页面底部固定栏的主操作用 `lg`；`sm` 只用于工具栏、表格行内这类次要操作。
+
   触屏高度由 `pointer-coarse:` 自动切换，按钮、输入框（`components/ui/input`）、方条控件三者同一张表：同一档的按钮和表单控件在桌面、手机上都等高。示例里手写的方条文本框也要照这张表写（如 `h-9 pointer-coarse:h-11`），不要只写一个固定高度
 
   同一行并排的按钮（包括图标按钮）必须同一档；只有设计明确指定时才例外，并在代码旁注释原因。`xs`/`icon-xs` 只用于徽标、标签内的微型操作。链接按钮写 `className={buttonVariants({ variant, size, className })}`，额外类通过 `className` 参数传入，由 `buttonVariants` 内部合并

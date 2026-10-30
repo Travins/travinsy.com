@@ -1,9 +1,12 @@
 "use client"
+import { Button } from "@/components/ui/button"
+import { useFileUploadSubmit } from "./file-upload-use-submit"
 import {
   FileUploadSlot,
   IdCardBackIllustration,
 } from "@/registry/ui/file-upload/file-upload"
 export default function FileUploadIdCardDemo() {
+  const form = useFileUploadSubmit()
   return (
     <div className="@container w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
       <div className="mb-4 flex items-center justify-between gap-2">
@@ -13,14 +16,36 @@ export default function FileUploadIdCardDemo() {
         </span>
       </div>
       <div className="grid grid-cols-1 gap-4 @sm:grid-cols-2">
-        <FileUploadSlot label="人像面" maxSize={10 * 1024 * 1024} />
         <FileUploadSlot
+          {...form.slot("人像面")}
+          label="人像面"
+          maxSize={10 * 1024 * 1024}
+        />
+        <FileUploadSlot
+          {...form.slot("国徽面")}
           label="国徽面"
           maxSize={10 * 1024 * 1024}
           placeholder={
             <IdCardBackIllustration className="w-24 text-muted-foreground" />
           }
         />
+      </div>
+      <div className="mt-4">
+        <Button
+          type="button"
+          size="default"
+          className="w-full"
+          disabled={form.busy || form.done || !form.ready}
+          onClick={() =>
+            void form.upload(
+              form.items.filter(
+                (item) => item.status !== "done" && item.status !== "error",
+              ),
+            )
+          }
+        >
+          {form.done ? "已提交" : form.busy ? "提交中…" : "提交"}
+        </Button>
       </div>
     </div>
   )

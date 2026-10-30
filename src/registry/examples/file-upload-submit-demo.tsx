@@ -76,7 +76,7 @@ export default function FileUploadSubmitDemo() {
       <div className="mt-3 flex flex-col gap-2">
         <Button
           type="button"
-          size="sm"
+          size="default"
           disabled={
             busy ||
             done ||

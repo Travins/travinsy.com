@@ -1826,7 +1826,8 @@
       "title": "文件上传",
       "description": "多文件选择与证件槽位，支持拖放、拍照、格式大小校验与受控上传状态，组件不发送请求。",
       "dependencies": [
-        "lucide-react"
+        "lucide-react",
+        "@base-ui/react"
       ],
       "registryDependencies": [
         "attachment",
@@ -1872,6 +1873,11 @@
           "path": "src/registry/hooks/use-controllable-state.ts",
           "type": "registry:hook",
           "target": "hooks/use-controllable-state.ts"
+        },
+        {
+          "path": "src/registry/ui/file-upload/file-upload-camera.tsx",
+          "type": "registry:ui",
+          "target": "@ui/file-upload/file-upload-camera.tsx"
         }
       ],
       "type": "registry:ui"

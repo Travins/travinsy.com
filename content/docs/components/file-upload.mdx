@@ -53,6 +53,14 @@ export function ApplicationAttachments() {
 
 默认状态为 `pending`（待提交）；使用方把状态改为 `uploading`、`error`、`done`。`progress` 是 0–100 的数字，上传中显示百分比和进度条；`error` 是该文件的错误信息。传入 `onRetry` 后，失败的条目右侧会出现重试按钮，点击时把该条目交回给你重新上传。
 
+### 证件取景相机
+
+`FileUploadSlot` 默认 `viewfinder="id-card"`。触屏设备（`pointer: coarse`）、支持 `getUserMedia` 且处于安全上下文时，点击空槽或重拍会打开页内相机，使用后置摄像头和证件取景框。拍摄按画面中的取景框裁成 JPEG，确认「使用这张」后写入槽位，状态为 `pending`。
+
+正式环境需要 HTTPS；localhost 可用于开发。局域网 HTTP 会退回带 `capture` 的系统相机；桌面仍然打开文件选择。权限被拒或相机出错时关闭对话框、退回系统相机，并显示可通过 `labels.cameraFallback` 覆盖的提示。`viewfinder={false}` 始终使用原生输入。相册按钮使用不带 `capture` 的输入。
+
+槽位支持 `uploading` 的遮罩、进度条和百分比，`error` 的红框及错误文字，`done` 的「已上传」徽标。传入 `onRetry(item)` 可重传失败槽位，按钮读屏名称包含槽位标签。上传中禁止重拍和删除。关闭、卸载、确认照片或切到后台会释放相机轨道。
+
 ### 校验与清除错误
 
 `accept` 支持 MIME、通配 MIME 和扩展名（如 `image/*,.pdf`）。`maxSize` 的单位为字节，`maxFiles` 限制总数。`multiple={false}` 最多保留一个文件。非法文件不进入列表，通过 `onReject` 返回 `type`、`size`、`count` 原因。下一次成功选择或删除会清除旧错误；同一次选择仍有拒绝文件时保留本次原因。外部 `error` 由使用方更新。
@@ -65,7 +73,7 @@ iOS Safari 对通过脚本写入 `FileList` 的支持不可靠。因此组件不
 
 ### 证件正反面
 
-用 `FileUploadSlot` 配合内置线稿，窄容器单列展示。
+用 `FileUploadSlot` 配合内置线稿，窄容器单列展示。两面选好才能提交；国徽面首次固定失败，可单独重试。
 
 <ComponentPreview name="file-upload-id-card-demo" />
 
@@ -105,7 +113,7 @@ type FileUploadRejection = { file: File; reason: "type" | "size" | "count" }
 appendFiles(formData: FormData, name: string, items: FileUploadItem[]): void
 ```
 
-`IdCardFrontIllustration`、`IdCardBackIllustration` 接受 SVG 属性，使用 `currentColor`，仅为示意图。`FileUploadLabels` 导出全部文案类型；两种组件均接受 `labels?: Partial<FileUploadLabels>`。可覆盖 `drop`、`choose`、`camera`、`album`、四种状态、`remove`、`retry`、`replace`、`delete`、`upload`、`any`、`hint`、`unlimited` 和三个错误模板。模板占位符见安装源码的 `config.ts`。
+`IdCardFrontIllustration`、`IdCardBackIllustration` 接受 SVG 属性，使用 `currentColor`，仅为示意图。`FileUploadLabels` 导出全部文案类型；两种组件均接受 `labels?: Partial<FileUploadLabels>`。相机文案还可覆盖 `cameraAlign`（含 `{label}`）、`cameraLight`、`cameraConfirm`、`cameraCancel`、`cameraShoot`、`cameraUse`、`cameraFallback` 和 `uploaded`。可覆盖 `drop`、`choose`、`camera`、`album`、四种状态、`remove`、`retry`、`replace`、`delete`、`upload`、`any`、`hint`、`unlimited` 和三个错误模板。模板占位符见安装源码的 `config.ts`。
 
 ### data-slot
 
@@ -118,13 +126,16 @@ appendFiles(formData: FormData, name: string, items: FileUploadItem[]): void
 | 错误区              | `file-upload-error`                                   |
 | 槽位根节点 / 控件   | `file-upload-slot` / `file-upload-slot-control`       |
 | 槽位输入 / 触发按钮 | `file-upload-slot-input` / `file-upload-slot-trigger` |
+| 相机对话框          | `file-upload-camera-dialog`                         |
 | 槽位错误区          | `file-upload-slot-error`                              |
 
 文件列表复用官方 Attachment 的 `attachment-*` 槽位。拖入状态用 `data-dragging` 表示。
 
 ## 可访问性
 
-选择按钮及空槽使用真正的 button，Tab 聚焦后按 Enter 或空格打开文件选择。删除、重试按钮的名称包含文件名。错误区使用 `aria-live="polite"`，控件通过 `aria-describedby` 关联错误提示。被拒绝的文件只在下方给出一行说明，不把整个控件标红；红色边框只跟随外部传入的 `error`。
+相机使用 Base UI Dialog 管理焦点：打开后焦点限制在对话框内，Esc 关闭；圆形快门按钮读屏名称为「拍摄」。
+
+选择按钮及空槽使用真正的 button，Tab 聚焦后按 Enter 或空格打开文件选择。删除、重试按钮的名称包含文件名。错误区使用 `aria-live="polite"`，控件通过 `aria-describedby` 关联错误提示。被拒绝的文件只在下方给出一行说明，不把整个控件标红；红色边框跟随外部传入的 `error` 或条目的 `error` 状态。
 
 ## 注意事项
 

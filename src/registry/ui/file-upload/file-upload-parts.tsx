@@ -69,8 +69,8 @@ function IdCardBackIllustration(props: React.ComponentProps<"svg">) {
       {...props}
     >
       <rect x="4" y="4" width="150" height="92" rx="8" />
-      <circle cx="79" cy="32" r="15" />
-      <circle cx="79" cy="32" r="8" />
+      <circle cx="32" cy="29" r="15" />
+      <circle cx="32" cy="29" r="8" />
       <path d="M35 65h88M49 80h60" />
     </svg>
   )

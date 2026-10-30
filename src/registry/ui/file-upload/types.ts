@@ -38,6 +38,10 @@ type FileUploadProps = FileUploadCommonProps & {
   onRetry?: (item: FileUploadItem) => void
 }
 type FileUploadSlotProps = FileUploadCommonProps & {
+  /** 触屏安全上下文中启用证件取景；false 始终走原生输入。@default "id-card" */
+  viewfinder?: "id-card" | false
+  /** 点击失败槽位的重试按钮，由使用方更新上传状态。 */
+  onRetry?: (item: FileUploadItem) => void
   label: string
   placeholder?: React.ReactNode
   value?: FileUploadItem | null

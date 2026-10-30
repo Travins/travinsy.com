@@ -2,7 +2,7 @@
  * 表单与可交互组件的交互验收：按 `component-acceptance` 技能第 6 节「表单与可交互组件的必查项」
  * 逐条跑一遍组件页里的每个示例，输出一页带截图的问题报告。
  *
- *   pnpm qa:interaction                                # 默认清单（方条 / 输入类组件 + auth-01 区块）
+ *   pnpm qa:interaction                                # 全部组件
  *   pnpm qa:interaction number-stepper phone-input     # 指定组件 / 区块
  *   pnpm qa:interaction toggle-switch --base http://localhost:3000
  *   pnpm qa:interaction toggle-switch --build          # 对 `pnpm build` 的产物起临时 next start
@@ -33,23 +33,10 @@ const DEFAULT_BASE = "http://localhost:3002"
 const DESKTOP = { width: 1280, height: 1000 }
 const MOBILE = { width: 390, height: 844 }
 
-/** 没有参数时检查的清单：方条 / 输入类组件 + 一个区块 */
-const DEFAULT_NAMES = [
-  "value-slider",
-  "control-panel",
-  "xy-pad",
-  "angle-dial",
-  "segmented-control",
-  "toggle-switch",
-  "tone-picker",
-  "amount-input",
-  "phone-input",
-  "id-number-input",
-  "number-stepper",
-  "steps",
-  "region-picker",
-  "auth-01",
-]
+/** 没有参数时检查全部组件文档 */
+const DEFAULT_NAMES = readdirSync("content/docs/components")
+  .filter((file) => file.endsWith(".mdx") && file !== "index.mdx")
+  .map((file) => file.slice(0, -4))
 
 /**
  * 状态切换时宽度必须一致的控件：倒计时 / 进行中会换文字，宽度不能跟着变（叠放占位）。
@@ -88,6 +75,7 @@ const CHECKS = {
   errorClear: "⑦ 错误能消失",
   mobile: "⑧ 手机不横向溢出 / 输入字号 / 控件高度",
   cardSpec: "⑨ 示例卡片规范",
+  buttonHeight: "⑪ 提交按钮高度",
   runtime: "⑩ 运行时报错",
 } as const
 
@@ -101,6 +89,7 @@ const CHECK_IDS: Record<string, string> = {
   [CHECKS.errorClear]: "error-clear",
   [CHECKS.mobile]: "mobile",
   [CHECKS.cardSpec]: "card-spec",
+  [CHECKS.buttonHeight]: "button-height",
   [CHECKS.runtime]: "runtime",
 }
 
@@ -1311,6 +1300,64 @@ async function openPage(
   return page
 }
 
+async function checkSubmitHeight(ctx: Ctx, page: Page, scope: Scope) {
+  const issues = await scope.locator.evaluate((root) => {
+    // 基准取「默认档」：桌面 32px、触屏 40px。同一示例里如果有更高一档的单行控件（大号方条 36 / 44px），
+    // 提交按钮也要跟到那一档；超过上限的是多行或展示型容器（大号金额、带说明的复合输入），不参与比较
+    const coarse = matchMedia("(pointer: coarse)").matches
+    const floor = coarse ? 40 : 32
+    const cap = coarse ? 44 : 36
+    const heights = Array.from(
+      root.querySelectorAll(
+        "input:not([type=hidden]):not([type=file]):not([type=checkbox]):not([type=radio]):not([type=range]), [role=combobox]",
+      ),
+    )
+      .map((el) => {
+        // 方条里的 input 本身可能比条矮，取最近的有边框的方条容器
+        const bar =
+          el.closest(
+            '[data-slot$="-bar"], [data-slot$="-field"], [data-slot="input"]',
+          ) ?? el
+        const rect = bar.getBoundingClientRect()
+        return getComputedStyle(el).visibility === "hidden" || rect.width === 0
+          ? 0
+          : Math.round(rect.height)
+      })
+      .filter((height) => height > 0 && height <= cap)
+    const minimum = Math.max(floor, ...heights)
+    return Array.from(root.querySelectorAll("button")).flatMap((button) => {
+      const text = (button.textContent ?? "").trim()
+      const height =
+        getComputedStyle(button).visibility === "hidden" ||
+        button.getBoundingClientRect().width === 0
+          ? 0
+          : button.getBoundingClientRect().height
+      return /^(提交|保存|确认|确定|下一步|登录|注册|支付|重试|使用这张)/.test(
+        text,
+      ) &&
+        height > 0 &&
+        height < minimum
+        ? [{ text, height, minimum }]
+        : []
+    })
+  })
+  for (const issue of issues)
+    add(
+      ctx,
+      CHECKS.buttonHeight,
+      scope.label,
+      `按钮「${issue.text}」高度 ${issue.height}px，小于同一示例要求的 ${issue.minimum}px`,
+      "error",
+      await screenshot(
+        ctx,
+        page,
+        CHECKS.buttonHeight,
+        scope.locator,
+        scope.label,
+      ),
+    )
+}
+
 /** 桌面宽：点按、键盘、按住、光标、状态宽度 */
 async function runDesktop(
   ctx: Ctx,
@@ -1341,6 +1388,7 @@ async function runDesktop(
   }
   for (const scope of scopes) {
     for (const check of [
+      checkSubmitHeight,
       checkKeyboardRing,
       checkPointerRing,
       checkPressedBorder,
@@ -1378,6 +1426,7 @@ async function runMobile(
     )
   }
   for (const scope of scopes) {
+    await checkSubmitHeight(ctx, page, scope)
     const snapshot = await mobileSnapshot(scope)
     ctx.stats.fields += snapshot.fields.length
     ctx.stats.bars += snapshot.bars.length
