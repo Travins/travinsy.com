@@ -131,6 +131,27 @@ const columns: DataTableColumn<Dataset>[] = [
     },
   },
 ]
+// 全表共用一个分钟级时钟：新挂载的单元格（翻页、排序）直接读到当前时间，不会先显示日期再跳成「几小时前」；
+// 只有首次水合时用 null，与预渲染的日期一致
+let clock = 0
+let clockTimer: ReturnType<typeof setInterval> | undefined
+const clockListeners = new Set<() => void>()
+function subscribeClock(listener: () => void) {
+  clockListeners.add(listener)
+  if (clockListeners.size === 1)
+    clockTimer = setInterval(() => {
+      clock = Date.now()
+      clockListeners.forEach((notify) => notify())
+    }, 60000)
+  return () => {
+    clockListeners.delete(listener)
+    if (!clockListeners.size) clearInterval(clockTimer)
+  }
+}
+function getClock() {
+  if (!clock) clock = Date.now()
+  return clock
+}
 function RelativeDate({
   value,
   exact = false,
@@ -138,16 +159,7 @@ function RelativeDate({
   value: string
   exact?: boolean
 }) {
-  const [now, setNow] = React.useState<number | null>(null)
-  React.useEffect(() => {
-    const update = () => setNow(Date.now())
-    const timer = setTimeout(update, 0)
-    const interval = setInterval(update, 60000)
-    return () => {
-      clearTimeout(timer)
-      clearInterval(interval)
-    }
-  }, [])
+  const now = React.useSyncExternalStore(subscribeClock, getClock, () => null)
   const date = new Date(value)
   const days = now === null ? 100 : (now - date.getTime()) / 86400000
   const relative = new Intl.RelativeTimeFormat("zh-CN", { numeric: "auto" })

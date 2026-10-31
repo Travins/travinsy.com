@@ -10,6 +10,13 @@ import {
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
@@ -82,6 +89,7 @@ function BarPagination({
   const labels = { ...DEFAULT_LABELS, ...labelsProp }
   const count = Math.max(1, Math.trunc(pageCount) || 1)
   const clamp = (n: number) => Math.min(count, Math.max(1, Math.trunc(n) || 1))
+  const id = React.useId()
   const [rawPage, setPage] = useControllableState({
     prop: pageProp,
     defaultProp: defaultPage,
@@ -194,25 +202,38 @@ function BarPagination({
           >
             {pageSizes && (
               <PaginationItem className="hidden self-stretch @min-[30rem]/bar-pagination:flex">
-                <label className="flex items-center gap-1 px-2 whitespace-nowrap text-muted-foreground">
-                  {labels.perPage}
-                  <select
-                    aria-label={labels.perPage}
+                {/* 每页条数：官方 Select，触发器做成方条里的一格（无边框、透明底），弹出层与站点菜单同一套 */}
+                <div className="flex items-center gap-1 ps-2 whitespace-nowrap text-muted-foreground">
+                  <span id={`${id}-per-page`}>{labels.perPage}</span>
+                  <Select
                     value={pageSize}
-                    onChange={(event) =>
-                      onPageSizeChange?.(Number(event.target.value))
-                    }
-                    className="h-full min-w-0 bg-transparent font-mono text-base text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset md:text-sm"
+                    onValueChange={(value) => onPageSizeChange?.(Number(value))}
                   >
-                    {pageSizes
-                      .filter((n) => n > 0)
-                      .map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                  </select>
-                </label>
+                    <SelectTrigger
+                      aria-labelledby={`${id}-per-page`}
+                      className="h-full! gap-1 rounded-none border-0 bg-transparent! py-0 ps-1 pe-2 font-mono text-foreground shadow-none hover:bg-background/60! focus-visible:ring-inset [&_svg]:size-3.5!"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent
+                      alignItemWithTrigger={false}
+                      align="start"
+                      className="w-auto min-w-20"
+                    >
+                      {pageSizes
+                        .filter((n) => n > 0)
+                        .map((n) => (
+                          <SelectItem
+                            key={n}
+                            value={n}
+                            className="py-1 font-mono text-xs"
+                          >
+                            {n}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </PaginationItem>
             )}
             <PaginationItem>
