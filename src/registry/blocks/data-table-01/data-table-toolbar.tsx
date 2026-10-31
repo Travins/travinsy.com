@@ -79,7 +79,11 @@ function DataTableToolbar<T>({
       // 表格工具栏统一 12px；触屏输入框保持 16px，避免 iOS 聚焦时页面放大
       className="[&_*]:text-xs! pointer-coarse:[&_input]:text-base!"
     >
-      <GridToolbarItem grow>
+      {/* 搜索：宽容器里定宽，窄容器里占满第一行 */}
+      <GridToolbarItem
+        grow
+        className="@min-[40rem]:w-64 @min-[40rem]:flex-none"
+      >
         <BarField
           label={searchLabel}
           aria-label={searchLabel ? undefined : labels.searchField}
@@ -101,9 +105,9 @@ function DataTableToolbar<T>({
       </GridToolbarItem>
       {statusFilter && (
         // 状态筛选用方条下拉：清除即「全部」；窄容器里独占最后一行
-        <GridToolbarItem className="order-last basis-full @min-[40rem]:order-none @min-[40rem]:w-44 @min-[40rem]:basis-auto">
+        <GridToolbarItem className="order-last basis-full @min-[40rem]:order-none @min-[40rem]:w-36 @min-[40rem]:basis-auto">
           <BarSelect
-            label={labels.status}
+            aria-label={labels.status}
             placeholder={
               statusFilter.options.find((option) => option.value === "")
                 ?.label ?? labels.all
@@ -137,6 +141,12 @@ function DataTableToolbar<T>({
         </GridToolbarItem>
       )}
       {children}
+      {/* 空白格：吃掉剩余宽度，让列设置与密度靠右 */}
+      <GridToolbarItem
+        grow
+        aria-hidden="true"
+        className="hidden @min-[40rem]:flex"
+      />
       <GridToolbarItem>
         <DropdownMenu>
           <DropdownMenuTrigger

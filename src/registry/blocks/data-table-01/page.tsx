@@ -287,11 +287,11 @@ function DataTablePage() {
             apiRef={apiRef}
             toolbar={(table) => (
               // 工具栏是网格工具栏：插槽里每个控件包一层 GridToolbarItem 成为一格
-              <GridToolbarItem className="hidden w-48 @min-[64rem]:flex">
+              <GridToolbarItem className="hidden w-40 @min-[64rem]:flex">
                 <BarSelect
                   multiple
-                  label="负责人"
-                  placeholder="全部"
+                  aria-label="负责人"
+                  placeholder="全部负责人"
                   contentClassName="[&_[data-slot=combobox-item]]:text-xs [&_*]:text-xs"
                   value={
                     (table.getColumn("owner")?.getFilterValue() as string[]) ??
@@ -436,7 +436,7 @@ function DataTablePage() {
             statusFilter={{
               columnId: "status",
               options: [
-                { value: "", label: "全部" },
+                { value: "", label: "全部状态" },
                 { value: "进行中", label: "进行中", tone: "var(--flow-green)" },
                 { value: "待审核", label: "待审核", tone: "var(--flow-amber)" },
                 {
