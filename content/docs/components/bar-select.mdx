@@ -22,6 +22,24 @@ import { BarSelect } from "@/components/ui/bar-select/bar-select"
 
 选项超过 8 项时自动显示搜索，也可以通过 `searchable` 强制开关。复杂 label 请提供 `textValue` 以供搜索。无 label 时必须传入 aria-label。
 
+### 尺寸
+
+通过 `size` 选择高度，不需要覆盖 CSS。
+
+| `size`    | 桌面高度 | 触屏高度 |
+| --------- | -------- | -------- |
+| `sm`      | 28px     | 36px     |
+| `default` | 32px     | 40px     |
+| `lg`      | 36px     | 44px     |
+
+```tsx
+<BarSelect
+  size="lg"
+  label="负责人"
+  options={[{ value: "lin", label: "林小满" }]}
+/>
+```
+
 ### 放进网格工具栏
 
 放进[网格工具栏](/components/grid-toolbar/)时会自动去掉外框、圆角和底色，铺满整格，焦点环画在格子内侧；单独使用时不受影响。
@@ -32,7 +50,7 @@ import { BarSelect } from "@/components/ui/bar-select/bar-select"
 
 <ComponentPreview name="bar-select-multiple-demo" />
 
-`multiple` 开启多选，默认显示首项与额外数量；`display="summary"` 显示总数。`count` 为零的选项变灰，但仍能选择；只有 `disabled` 会禁用选项。
+选项超过 8 项自动出现搜索，本例不传 `searchable`。`group` 把已离职成员分组。`multiple` 开启多选，默认显示首项与额外数量；`display="summary"` 显示总数。`count` 为零的选项变灰，但仍能选择；只有 `disabled` 会禁用选项。
 
 ### 标签与表单
 
@@ -40,9 +58,17 @@ import { BarSelect } from "@/components/ui/bar-select/bar-select"
 
 `display="chips"` 逐项展示，支持移除。传入 `name` 后用隐藏输入提交，多选时每个值对应一个输入；`form` 可关联外部表单。
 
-### 尺寸
+### 校验
 
-<ComponentPreview name="bar-select-sizes-demo" />
+`error` 随当前值计算；选择审批人后错误立即消失。
+
+<ComponentPreview name="bar-select-validation-demo" />
+
+### 单选
+
+不传 `multiple` 时为单选，`defaultValue` 指定初始负责人。
+
+<ComponentPreview name="bar-select-single-demo" />
 
 ## API
 
@@ -53,6 +79,10 @@ import { BarSelect } from "@/components/ui/bar-select/bar-select"
 ## 可访问性
 
 列表导航、选中状态与键盘操作交给 Base UI Combobox。单选选中即关闭，多选保持打开并清空搜索。清除与移除按钮有独立名称。error、description 通过 aria-describedby 关联。触屏使用底部 Sheet，并提供清除与完成按钮。窄容器标签移到上方。
+
+## 注意事项
+
+窄于 20rem 的字段容器会把标签移到条上方。表单主操作与字段使用同一尺寸；校验由调用方提供，错误应随值更新。
 
 ## 源码
 

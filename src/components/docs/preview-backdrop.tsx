@@ -7,6 +7,10 @@ import { cn } from "@/lib/utils"
  * 列表缩略图与组件详情页的预览共用这张表，按组件名取。
  */
 const BACKDROPS: Record<string, "dots" | "grid"> = {
+  "bar-field": "dots",
+  "bar-select": "dots",
+  "grid-toolbar": "dots",
+  "grid-pagination": "dots",
   "local-time": "dots",
   "stat-card": "dots",
   "mini-chart": "grid",

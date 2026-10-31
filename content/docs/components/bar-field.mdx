@@ -22,19 +22,43 @@ import { BarField } from "@/components/ui/bar-field/bar-field"
 
 它是方条系列的基础文本框。普通文本、搜索、密码和验证码使用它；需要手机号格式整理或证件号校验时，使用 phone-input、id-number-input。suffix 支持单位和密码切换按钮；footerAction 用于忘记密码等操作。`type="search"` 时有内容就显示清除键（与方条下拉的清除键同一档，替代浏览器自带的蓝色清除钮），其他类型可用 `clearable` 打开；清除只触发 `onValueChange("")`，并把焦点留在输入框里。无标签时必须提供 aria-label 或 aria-labelledby，placeholder 不能代替名称。
 
+### 尺寸
+
+通过 `size` 选择高度，不需要覆盖 CSS。
+
+| `size`    | 桌面高度 | 触屏高度 |
+| --------- | -------- | -------- |
+| `sm`      | 28px     | 36px     |
+| `default` | 32px     | 40px     |
+| `lg`      | 36px     | 44px     |
+
+```tsx
+<BarField size="lg" label="名称" name="name" />
+```
+
 ### 放进网格工具栏
 
 放进[网格工具栏](/components/grid-toolbar/)时会自动去掉外框、圆角和底色，铺满整格，焦点环画在格子内侧；单独使用时不受影响。
 
 ## 示例
 
-### 尺寸与状态
+### 搜索
 
-<ComponentPreview name="bar-field-sizes-demo" />
+`type="search"`、`icon` 与快捷键 `suffix` 组成搜索条；`clearable` 显示自绘清除键。
+
+<ComponentPreview name="bar-field-search-demo" />
 
 ### 后缀
 
 <ComponentPreview name="bar-field-suffix-demo" />
+
+`suffix` 放置单位或密码显隐按钮，按钮使用与字段相同的尺寸。
+
+### 校验与说明
+
+`error` 根据密码长度计算，达到 8 个字符立即消失；`description` 给出说明，`footerAction` 提供忘记密码操作。
+
+<ComponentPreview name="bar-field-validation-demo" />
 
 ## API
 
@@ -45,6 +69,10 @@ import { BarField } from "@/components/ui/bar-field/bar-field"
 ## 可访问性
 
 字段通过 label 关联输入框，error 和 description 用 aria-describedby 关联。支持 name、form 和原生输入属性；非受控表单重置恢复 defaultValue。窄容器标签移到条上方。文字输入聚焦使用加深边框，后缀按钮用键盘聚焦环。
+
+## 注意事项
+
+窄于 20rem 的字段容器会把标签移到条上方。表单主操作与字段使用同一尺寸；校验由调用方提供，错误应随值更新。
 
 ## 源码
 

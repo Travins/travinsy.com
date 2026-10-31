@@ -22,7 +22,6 @@ const THEMES = ["blue", "orange", "violet"]
 type Shot = { group: string; label: string; file: string }
 type Issue = { component: string; where: string; message: string }
 
-
 async function open(
   browser: Browser,
   url: string,
@@ -35,6 +34,14 @@ async function open(
     colorScheme: options.dark ? "dark" : "light",
   })
   const where = `${url} @${options.width}${options.dark ? " dark" : ""}${options.theme ? ` ${options.theme}` : ""}`
+  // Vercel Analytics 的脚本只在部署到 Vercel 后才存在，本地 next start 下给个空脚本，免得 404 算成问题
+  await page.route("**/_vercel/**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/javascript",
+      body: "",
+    }),
+  )
   page.on("pageerror", (error) =>
     issues.push({ component, where, message: error.message }),
   )

@@ -340,6 +340,8 @@ function BarSelect(props: BarSelectProps) {
             }
             className={cn(
               "h-auto min-w-0 flex-1 justify-between self-stretch rounded-none font-normal focus-visible:ring-inset",
+              error &&
+                "focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-ring/50 focus-visible:outline-solid",
               multiple && display === "chips" && selected.length && "flex-none",
             )}
           >

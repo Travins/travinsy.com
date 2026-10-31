@@ -185,6 +185,8 @@ type SegmentedControlProps = Omit<
 - 键盘焦点在选项上时有一圈 `focus-visible` 焦点环，并临时抬高 `z-index`，不会被旁边滑过来的选中块盖住。
 - `modified` 只有配 `label` 时才有可见效果（标签从次要色变成前景色）；没有 `label` 时只留下 `data-modified`，供外界用选择器自己加样式。
 
+放进网格工具栏时，文字选项自动等分所在格子的宽度；`iconOnly` 选项保持方形。
+
 ## 注意事项
 
 - 出错时传 `aria-invalid`，方条变红（和金额输入、省市区选择的错误态一致）；错误文字放在控件下方，用 `aria-describedby` 关联，读屏聚焦时一并朗读。

@@ -7,7 +7,6 @@ import { Eye, EyeOff } from "lucide-react"
 
 export default function Demo() {
   const [visible, setVisible] = React.useState(false)
-  const [sent, setSent] = React.useState(false)
   return (
     <div className="w-full max-w-3xl space-y-4 rounded-xl border border-edge bg-background p-4 shadow-xs">
       <BarField
@@ -29,19 +28,6 @@ export default function Demo() {
             onClick={() => setVisible(!visible)}
           >
             {visible ? <EyeOff /> : <Eye />}
-          </Button>
-        }
-      />
-      <BarField
-        label="验证码"
-        suffix={
-          <Button
-            type="button"
-            variant="ghost"
-            size="default"
-            onClick={() => setSent(true)}
-          >
-            {sent ? "已获取" : "获取"}
           </Button>
         }
       />

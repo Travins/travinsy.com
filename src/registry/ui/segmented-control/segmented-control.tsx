@@ -202,7 +202,9 @@ function SegmentedControl({
               className={cn(
                 "relative flex min-w-0 cursor-pointer items-center justify-center whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
                 // 纯图标：正方形格子、不留文字间距，图标才能真正居中
-                iconOnly ? "aspect-square flex-none" : "flex-auto gap-1.5 px-3",
+                iconOnly
+                  ? "aspect-square flex-none"
+                  : "flex-auto gap-1.5 px-3 in-data-[slot=grid-toolbar]:flex-1",
                 // 放进网格工具栏：每个选项是一格，格子之间虚线分隔
                 "in-data-[slot=grid-toolbar]:border-s in-data-[slot=grid-toolbar]:border-dashed in-data-[slot=grid-toolbar]:border-edge in-data-[slot=grid-toolbar]:first:border-s-0",
               )}

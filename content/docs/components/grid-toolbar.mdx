@@ -28,7 +28,13 @@ import { SegmentedControl } from "@/components/ui/segmented-control/segmented-co
     <BarField aria-label="搜索" icon={<Search />} placeholder="搜索…" />
   </GridToolbarItem>
   <GridToolbarItem>
-    <SegmentedControl aria-label="状态" options={OPTIONS} />
+    <SegmentedControl
+      aria-label="状态"
+      options={[
+        { value: "all", label: "全部" },
+        { value: "active", label: "进行中" },
+      ]}
+    />
   </GridToolbarItem>
 </GridToolbar>
 ```
@@ -39,11 +45,25 @@ import { SegmentedControl } from "@/components/ui/segmented-control/segmented-co
 
 [方条输入](/components/bar-field/)、[分段选择](/components/segmented-control/)、[方条下拉](/components/bar-select/)放进工具栏时会自动换成无框写法：去掉自己的边框、圆角和底色，高度铺满整格，焦点环画在格子内侧。分段选择还会把每个选项拆成一格，选中项整格铺底色，不再是圆角的滑块。单独使用时保持原样，不需要额外传参数。原理是这三个组件带了 `in-data-[slot=grid-toolbar]:` 样式，只在祖先是网格工具栏时生效，组件之间没有互相引用。
 
-图标按钮用官方 `Button`：`variant="ghost"`、`size="icon-lg"`（默认高度）或 `size="icon"`（`size="sm"` 时），再加 `h-full rounded-none focus-visible:ring-inset`，就是一个方形的格子。
+图标按钮用官方 `Button`：`variant="ghost"`、`size="icon-lg"`（默认高度）或 `size="icon"`（`size="sm"` 时），再加 `rounded-none focus-visible:ring-inset`，就是一个方形的格子。
 
 ### 外框与换行
 
 单独使用时整条带一圈边框（`bordered` 默认为 `true`）。放进已经有边线的容器，例如表格顶部，设 `bordered={false}`，由容器画线。格子之间是虚线；换行后，每格都画左线和上线，最外圈的线由外框裁掉，所以不论怎样换行，格子之间都只有一条线。
+
+## 示例
+
+### 外框与分组
+
+`bordered` 默认开启外框；`separator="solid"` 将导出操作分成独立一组。`iconOnly` 保留图标格的方形比例。
+
+<ComponentPreview name="grid-toolbar-groups-demo" />
+
+### 窄容器换行
+
+搜索格使用 `basis-full` 独占一行，其余格通过 `grow` 与基础宽度自动换行，换行后的横线仍连续。
+
+<ComponentPreview name="grid-toolbar-wrap-demo" />
 
 ## API
 
@@ -57,7 +77,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control/segmented-co
 
 导出 `GridToolbarProps`、`GridToolbarItemProps` 类型和 `gridToolbarVariants`。
 
-## data-slot
+### data-slot
 
 | 部位             | `data-slot`            |
 | ---------------- | ---------------------- |
