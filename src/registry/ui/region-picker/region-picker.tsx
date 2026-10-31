@@ -10,6 +10,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetTitle,
+  SheetClose,
+} from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
@@ -287,6 +294,52 @@ function RegionPicker({
     />
   )
 
+  // 官方 SheetContent 未开放 Portal 的 container，仅内嵌模式保留底层容器适配。
+  const sheetContents = (
+    <>
+      <div className="flex h-12 shrink-0 items-center justify-between gap-1 pr-2 pl-4">
+        <SheetTitle className="text-base font-medium">
+          {labels.title}
+        </SheetTitle>
+        {/* 标题栏里的按钮同一档 lg：清除与关闭并排 */}
+        {code !== null && !required && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="lg"
+            className="ml-auto text-muted-foreground"
+            onClick={() => commit(EMPTY_PATH)}
+          >
+            {labels.clear}
+          </Button>
+        )}
+        <SheetClose
+          ref={closeRef}
+          aria-label={labels.close}
+          render={<Button type="button" variant="ghost" size="icon-lg" />}
+        >
+          <X aria-hidden="true" />
+        </SheetClose>
+      </div>
+      {panel("sheet")}
+    </>
+  )
+  const sheetClassName = cn(
+    "gap-0 outline-none motion-reduce:transition-none",
+    contained ? "absolute h-[85%]" : "h-[85dvh]",
+  )
+  const sheetContentProps = {
+    "data-slot": "region-picker-sheet",
+    // 避免唤起软键盘；内嵌面板聚焦时不滚动外层容器。
+    initialFocus: () => {
+      closeRef.current?.focus({ preventScroll: true })
+      return false as const
+    },
+    finalFocus: triggerRef,
+    className: sheetClassName,
+    children: sheetContents,
+  }
+
   return (
     <div
       data-slot="region-picker"
@@ -296,64 +349,35 @@ function RegionPicker({
       className={cn("relative w-full", className)}
     >
       {sheet ? (
-        <Dialog.Root
+        <Sheet
           open={open}
           onOpenChange={(next) => setOpen(next)}
           modal={contained ? "trap-focus" : true}
         >
-          <Dialog.Trigger {...triggerProps} />
-          <Dialog.Portal container={container}>
-            <Dialog.Backdrop
-              data-slot="region-picker-backdrop"
-              className={cn(
-                `inset-0 z-50 ${SCRIM} transition-opacity duration-[320ms] data-ending-style:opacity-0 data-starting-style:opacity-0`,
-                contained ? "absolute" : "fixed",
-              )}
-            />
-            <Dialog.Popup
-              data-slot="region-picker-sheet"
-              // 不自动聚焦搜索框，免得软键盘弹出来盖住列表；焦点先落在关闭按钮上
-              // 聚焦时 preventScroll：面板起点在容器下方之外，默认的 focus 会把带
-              // overflow 的容器整体滚上去，再随面板上滑滚回来，看起来像遮罩从上面落下
-              initialFocus={() => {
-                closeRef.current?.focus({ preventScroll: true })
-                return false
-              }}
-              className={cn(
-                "inset-x-0 bottom-0 z-50 mx-auto flex w-full max-w-xl flex-col rounded-t-xl border-t bg-popover text-sm text-popover-foreground shadow-lg transition-transform duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)] outline-none data-ending-style:translate-y-full data-ending-style:duration-200 data-ending-style:ease-in data-starting-style:translate-y-full motion-reduce:transition-none sm:border-x",
-                contained ? "absolute h-[85%]" : "fixed h-[85dvh]",
-              )}
-            >
-              <div className="flex h-12 shrink-0 items-center justify-between gap-1 pr-2 pl-4">
-                <Dialog.Title className="text-base font-medium">
-                  {labels.title}
-                </Dialog.Title>
-                {/* 标题栏里的按钮同一档 lg：清除与关闭并排 */}
-                {code !== null && !required && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="lg"
-                    className="ml-auto text-muted-foreground"
-                    onClick={() => commit(EMPTY_PATH)}
-                  >
-                    {labels.clear}
-                  </Button>
+          <SheetTrigger {...triggerProps} />
+          {contained ? (
+            <Dialog.Portal container={container}>
+              <Dialog.Backdrop
+                data-slot="region-picker-backdrop"
+                className={`absolute inset-0 z-50 ${SCRIM} transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none`}
+              />
+              <Dialog.Popup
+                {...sheetContentProps}
+                data-side="bottom"
+                className={cn(
+                  "inset-x-0 bottom-0 z-50 flex flex-col border-t bg-popover bg-clip-padding text-sm text-popover-foreground shadow-lg transition duration-200 ease-in-out data-ending-style:translate-y-10 data-ending-style:opacity-0 data-starting-style:translate-y-10 data-starting-style:opacity-0",
+                  sheetClassName,
                 )}
-                <Dialog.Close
-                  ref={closeRef}
-                  aria-label={labels.close}
-                  render={
-                    <Button type="button" variant="ghost" size="icon-lg" />
-                  }
-                >
-                  <X aria-hidden="true" />
-                </Dialog.Close>
-              </div>
-              {panel("sheet")}
-            </Dialog.Popup>
-          </Dialog.Portal>
-        </Dialog.Root>
+              />
+            </Dialog.Portal>
+          ) : (
+            <SheetContent
+              {...sheetContentProps}
+              side="bottom"
+              showCloseButton={false}
+            />
+          )}
+        </Sheet>
       ) : (
         <Popover open={open} onOpenChange={(next) => setOpen(next)}>
           <PopoverTrigger {...triggerProps} />

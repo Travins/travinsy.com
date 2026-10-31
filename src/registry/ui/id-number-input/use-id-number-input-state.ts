@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { useCaretRestore } from "@/registry/hooks/use-caret-restore"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
 import type { IdNumberInputProps } from "./types"
@@ -44,12 +45,7 @@ function useIdNumberInputState({
   const [touched, setTouched] = React.useState(false)
   const composingRef = React.useRef(false)
   const [draft, setDraft] = React.useState<string | null>(null)
-  const [caret, setCaret] = React.useState<{ position: number } | null>(null)
-  React.useLayoutEffect(() => {
-    const input = inputRef.current
-    if (caret && input && document.activeElement === input)
-      input.setSelectionRange(caret.position, caret.position)
-  }, [caret, inputRef])
+  const setCaret = useCaretRestore(inputRef)
 
   const commit = (raw: string, rawCaret: number) => {
     const next = sanitizeIdNumber(kind, raw, rawCaret)

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { cva } from "class-variance-authority"
+import { barFieldVariants } from "@/registry/ui/bar-field/bar-field"
 
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -14,19 +14,7 @@ import type { PhoneInputSendButtonProps } from "./types"
  * 高度只来自既有三档 28 / 32 / 36px，触屏设备上各加高一档（36 / 40 / 44px）；
  * 手机上字号保持 16px，iOS 聚焦时才不会自动放大页面
  */
-const phoneInputControlVariants = cva(
-  "flex w-full min-w-0 cursor-text items-center gap-3 rounded-md border bg-muted/60 px-3 transition-colors",
-  {
-    variants: {
-      size: {
-        sm: "h-7 text-base pointer-coarse:h-9 md:text-xs",
-        default: "h-8 text-base pointer-coarse:h-10 md:text-sm",
-        lg: "h-9 text-base pointer-coarse:h-11 md:text-sm",
-      },
-    },
-    defaultVariants: { size: "default" },
-  },
-)
+const phoneInputControlVariants = barFieldVariants
 
 /** 手机号方条把「号码是否有效」告诉条内的发送按钮：号码不完整时按钮自动置灰 */
 const PhoneInputContext = React.createContext<{ valid: boolean } | null>(null)

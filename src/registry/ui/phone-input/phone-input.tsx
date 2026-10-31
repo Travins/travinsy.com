@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useCaretRestore } from "@/registry/hooks/use-caret-restore"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
 import { DEFAULT_LABELS, PHONE_LENGTH } from "./config"
@@ -65,12 +66,7 @@ function PhoneInput({
   const [touched, setTouched] = React.useState(false)
 
   // 整理后要恢复的光标位置；每次都是新对象，保证文本没变（敲了非法字符）时也会重设光标
-  const [caret, setCaret] = React.useState<{ position: number } | null>(null)
-  React.useLayoutEffect(() => {
-    const input = inputRef.current
-    if (caret && input && document.activeElement === input)
-      input.setSelectionRange(caret.position, caret.position)
-  }, [caret])
+  const setCaret = useCaretRestore(inputRef)
 
   const commit = (raw: string, rawCaret: number) => {
     const next = sanitizePhone(raw, rawCaret)
@@ -125,7 +121,7 @@ function PhoneInput({
       data-disabled={disabled ? "" : undefined}
       // 容器查询：窄于 20rem 时缩小间距和按钮内边距，并把标签挪到条上方，号码不被挤掉
       className={cn(
-        "@container/phone-input flex w-full flex-col gap-1.5",
+        "@container/phone-input in-data-[slot=grid-toolbar]:h-full flex w-full flex-col gap-1.5",
         className,
       )}
     >
@@ -136,7 +132,7 @@ function PhoneInput({
           aria-hidden="true"
           htmlFor={id}
           data-slot="phone-input-label-above"
-          className="hidden text-xs text-muted-foreground @max-[20rem]/phone-input:block"
+          className="hidden text-xs text-muted-foreground @max-[20rem]/phone-input:block in-data-[slot=grid-toolbar]:hidden!"
         >
           {label}
         </label>
@@ -166,7 +162,7 @@ function PhoneInput({
           <label
             data-slot="phone-input-label"
             htmlFor={id}
-            className="shrink-0 text-muted-foreground max-md:text-sm @max-[20rem]/phone-input:sr-only"
+            className="shrink-0 text-muted-foreground max-md:text-sm @max-[20rem]/phone-input:sr-only in-data-[slot=grid-toolbar]:not-sr-only! in-data-[slot=grid-toolbar]:whitespace-nowrap!"
           >
             {label}
           </label>

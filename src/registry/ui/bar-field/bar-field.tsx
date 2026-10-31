@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
+// 方条统一承载工具栏适配：去掉外框和底色，聚焦环画在格子内侧。
 const barFieldVariants = cva(
-  "flex w-full min-w-0 cursor-text items-center gap-3 rounded-md border bg-muted/60 px-3 transition-colors",
+  "flex w-full min-w-0 cursor-text items-center gap-3 rounded-md border bg-muted/60 px-3 transition-colors in-data-[slot=grid-toolbar]:h-full! in-data-[slot=grid-toolbar]:rounded-none in-data-[slot=grid-toolbar]:border-0 in-data-[slot=grid-toolbar]:bg-transparent in-data-[slot=grid-toolbar]:focus-within:ring-3 in-data-[slot=grid-toolbar]:focus-within:ring-ring/50 in-data-[slot=grid-toolbar]:focus-within:ring-inset",
   {
     variants: {
       size: {
@@ -131,8 +132,6 @@ function BarField({
             : "border-edge focus-within:border-foreground/25 focus-within:bg-background hover:not-focus-within:bg-muted dark:focus-within:bg-input/30",
           disabled && "cursor-not-allowed opacity-50",
           readOnly && "bg-muted/30",
-          // 放进网格工具栏：去掉外框、圆角和底色，焦点环画在格子内侧
-          "in-data-[slot=grid-toolbar]:h-full! in-data-[slot=grid-toolbar]:rounded-none in-data-[slot=grid-toolbar]:border-0 in-data-[slot=grid-toolbar]:bg-transparent in-data-[slot=grid-toolbar]:focus-within:ring-3 in-data-[slot=grid-toolbar]:focus-within:ring-ring/50 in-data-[slot=grid-toolbar]:focus-within:ring-inset",
         )}
         onMouseDown={(event) => {
           if (event.target === event.currentTarget) {

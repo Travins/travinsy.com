@@ -1152,7 +1152,8 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
-        "https://yiui.dev/r/chinese-number.json"
+        "https://yiui.dev/r/chinese-number.json",
+        "https://yiui.dev/r/bar-field.json"
       ],
       "files": [
         {
@@ -1189,6 +1190,11 @@
           "path": "src/registry/lib/data-display.ts",
           "type": "registry:lib",
           "target": "lib/data-display.ts"
+        },
+        {
+          "path": "src/registry/hooks/use-caret-restore.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-caret-restore.ts"
         }
       ],
       "type": "registry:ui"
@@ -1198,11 +1204,9 @@
       "name": "phone-input",
       "title": "手机号输入",
       "description": "中国大陆手机号输入：边输边按 3-4-4 分隔且光标不乱跳，粘贴、自动填充带 +86 或横线的号码自动整理，失焦校验号段；条内可放带倒计时的「获取验证码」。值是 11 位纯数字。",
-      "dependencies": [
-        "class-variance-authority"
-      ],
       "registryDependencies": [
-        "button"
+        "button",
+        "https://yiui.dev/r/bar-field.json"
       ],
       "files": [
         {
@@ -1234,6 +1238,11 @@
           "path": "src/registry/hooks/use-controllable-state.ts",
           "type": "registry:hook",
           "target": "hooks/use-controllable-state.ts"
+        },
+        {
+          "path": "src/registry/hooks/use-caret-restore.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-caret-restore.ts"
         }
       ],
       "type": "registry:ui"
@@ -1243,8 +1252,8 @@
       "name": "id-number-input",
       "title": "证件号输入",
       "description": "身份证号、银行卡号与统一社会信用代码输入：自动整理与分组、保持光标、失焦校验，支持打码显示和原始值提交。",
-      "dependencies": [
-        "class-variance-authority"
+      "registryDependencies": [
+        "https://yiui.dev/r/bar-field.json"
       ],
       "files": [
         {
@@ -1281,6 +1290,11 @@
           "path": "src/registry/hooks/use-controllable-state.ts",
           "type": "registry:hook",
           "target": "hooks/use-controllable-state.ts"
+        },
+        {
+          "path": "src/registry/hooks/use-caret-restore.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-caret-restore.ts"
         }
       ],
       "type": "registry:ui"
@@ -1366,7 +1380,8 @@
       "registryDependencies": [
         "button",
         "input",
-        "popover"
+        "popover",
+        "sheet"
       ],
       "files": [
         {

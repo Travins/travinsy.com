@@ -191,7 +191,7 @@ findRegionPath(chinaRegions, "999999") // []，找不到返回空数组
   - 步骤条横排在顶部，搜索框打开即聚焦。
   - 选项是带边框的紧凑按钮；分组时按字母两栏排布。
   - 内容区固定 16rem 高，超出滚动。每一步选项多少不一，高度固定后浮层不会在输入框上下方之间来回翻转。
-- 用 `presentation` 固定形态（`"sheet"` / `"popover"`），默认 `"auto"` 按上面的规则自动切换；`container` 把底部面板挂进指定元素，只盖住它、不锁整页滚动，适合预览窗格、手机外框这类局部区域。
+- 用 `presentation` 固定形态（`"sheet"` / `"popover"`），默认 `"auto"` 按上面的规则自动切换；普通底部面板使用官方 Sheet；由于 SheetContent 尚未开放 Portal 容器，指定 `container` 时通过底层 Dialog 保留内嵌定位。`container` 把底部面板挂进指定元素，只盖住它、不锁整页滚动，适合预览窗格、手机外框这类局部区域。
 - **步骤数一开始就显示**：数据最深三级就显示三步；选了直辖市后剩两步，第二步名称自动对齐为「区县」（`labels.levels` 从最深一级往上对齐）。
 - 选完一步自动进入下一步，最后一步选完即确认并关闭；换步骤时列表向前或向后滑入，系统开启「减弱动态效果」时不播放。
 - 搜索时步骤条暂时隐藏，结果单列显示完整路径与代码。
@@ -306,7 +306,7 @@ type RegionPickerProps = {
 | 触发器里的标签 / 路径文字 | `region-picker-label` / `region-picker-value-text` |
 | 提交与校验用的隐藏输入 | `region-picker-value` |
 | 面板内容（带 `data-variant="sheet"` 或 `"popover"`） | `region-picker-panel` |
-| 手机底部面板 / 遮罩 | `region-picker-sheet` / `region-picker-backdrop` |
+| 手机底部面板 / 遮罩 | `region-picker-sheet` / `sheet-overlay`（内嵌模式为 `region-picker-backdrop`） |
 | 搜索框 | `region-picker-search` |
 | 步骤条 / 单个步骤（带 `data-state`：`done` / `current` / `todo`） | `region-picker-steps` / `region-picker-step` |
 | 拼音首字母分组 / 手机字母索引条 | `region-picker-group` / `region-picker-index` |

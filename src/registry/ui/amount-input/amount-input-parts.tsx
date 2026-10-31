@@ -2,6 +2,7 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { barFieldVariants } from "@/registry/ui/bar-field/bar-field"
 
 /**
  * 两种外观：
@@ -15,7 +16,7 @@ const amountInputControlVariants = cva(
   {
     variants: {
       variant: {
-        bar: "items-center gap-1.5 rounded-md border bg-muted/60 px-3",
+        bar: "",
         display: "items-baseline gap-1 border-b-2 pb-1 tracking-tight",
       },
       size: { sm: "", default: "", lg: "" },
@@ -24,17 +25,17 @@ const amountInputControlVariants = cva(
       {
         variant: "bar",
         size: "sm",
-        class: "h-7 text-base pointer-coarse:h-9 md:text-xs",
+        class: cn(barFieldVariants({ size: "sm" }), "gap-1.5"),
       },
       {
         variant: "bar",
         size: "default",
-        class: "h-8 text-base pointer-coarse:h-10 md:text-sm",
+        class: cn(barFieldVariants({ size: "default" }), "gap-1.5"),
       },
       {
         variant: "bar",
         size: "lg",
-        class: "h-9 text-base pointer-coarse:h-11 md:text-sm",
+        class: cn(barFieldVariants({ size: "lg" }), "gap-1.5"),
       },
       { variant: "display", size: "sm", class: "text-2xl" },
       { variant: "display", size: "default", class: "text-3xl" },

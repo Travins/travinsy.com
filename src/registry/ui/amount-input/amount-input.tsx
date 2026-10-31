@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useCaretRestore } from "@/registry/hooks/use-caret-restore"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 import { toRmbUppercase } from "@/registry/lib/chinese-number"
 import { formatStat } from "@/registry/lib/data-display"
@@ -122,12 +123,7 @@ function AmountInput({
   }
 
   // 整理后要恢复的光标位置；每次都是新对象，保证即使文本没变（敲了非法字符）也会重设光标
-  const [caret, setCaret] = React.useState<{ position: number } | null>(null)
-  React.useLayoutEffect(() => {
-    const input = inputRef.current
-    if (caret && input && document.activeElement === input)
-      input.setSelectionRange(caret.position, caret.position)
-  }, [caret])
+  const setCaret = useCaretRestore(inputRef)
 
   const composing = React.useRef(false)
   const [edits, setEdits] = React.useState(0)
@@ -256,7 +252,7 @@ function AmountInput({
       data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
       data-readonly={readOnly ? "" : undefined}
-      className={cn("flex w-full flex-col gap-1.5", className)}
+      className={cn("flex w-full flex-col gap-1.5", !display && "in-data-[slot=grid-toolbar]:h-full", className)}
     >
       {display && labelNode}
       {readoutPlacement === "above" && readout}

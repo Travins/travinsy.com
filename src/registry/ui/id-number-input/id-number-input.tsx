@@ -146,7 +146,7 @@ function IdNumberInput({
       data-invalid={invalid ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
       className={cn(
-        "@container/id-number-input flex w-full min-w-0 flex-col gap-1.5",
+        "@container/id-number-input in-data-[slot=grid-toolbar]:h-full flex w-full min-w-0 flex-col gap-1.5",
         className,
       )}
     >
@@ -157,7 +157,7 @@ function IdNumberInput({
           aria-hidden="true"
           htmlFor={id}
           data-slot="id-number-input-label-above"
-          className="hidden text-xs text-muted-foreground @max-[20rem]/id-number-input:block"
+          className="hidden text-xs text-muted-foreground @max-[20rem]/id-number-input:block in-data-[slot=grid-toolbar]:hidden!"
         >
           {label}
         </label>
@@ -184,7 +184,7 @@ function IdNumberInput({
           <label
             data-slot="id-number-input-label"
             htmlFor={id}
-            className="shrink-0 text-muted-foreground max-md:text-sm @max-[20rem]/id-number-input:sr-only"
+            className="shrink-0 text-muted-foreground max-md:text-sm @max-[20rem]/id-number-input:sr-only in-data-[slot=grid-toolbar]:not-sr-only! in-data-[slot=grid-toolbar]:whitespace-nowrap!"
           >
             {label}
           </label>
