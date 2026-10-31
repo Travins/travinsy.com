@@ -705,14 +705,13 @@ function DataTable<T>({
                     )}
                   </tr>
                 ))}
-                {/* 分页模式下最后一页不足一页时用点阵补齐高度，翻页时分页条不会上下跳 */}
+                {/* 分页模式下最后一页不足一页时用空白补齐高度，翻页时分页条不会上下跳 */}
                 {!virtualization &&
                   table.getPageCount() > 1 &&
                   rows.length < pagination.pageSize && (
                     <tr aria-hidden="true" data-slot="data-table-filler">
                       <td
                         colSpan={span}
-                        className="bg-dots"
                         style={{
                           height:
                             (pagination.pageSize - rows.length) *
