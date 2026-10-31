@@ -1931,7 +1931,8 @@
         "https://yiui.dev/r/bar-field.json",
         "https://yiui.dev/r/bar-pagination.json",
         "https://yiui.dev/r/segmented-control.json",
-        "alert-dialog"
+        "alert-dialog",
+        "https://yiui.dev/r/bar-select.json"
       ],
       "files": [
         {
@@ -2036,6 +2037,44 @@
           "path": "src/registry/ui/bar-pagination/bar-pagination.tsx",
           "type": "registry:ui",
           "target": "@ui/bar-pagination/bar-pagination.tsx"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "bar-select",
+      "type": "registry:ui",
+      "title": "方条下拉选择",
+      "description": "方条下拉选择，支持搜索、多选、分组与触屏底部面板。",
+      "dependencies": [
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "combobox",
+        "input-group",
+        "sheet",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/bar-select/bar-select.tsx",
+          "type": "registry:ui",
+          "target": "@ui/bar-select/bar-select.tsx"
+        },
+        {
+          "path": "src/registry/ui/bar-select/types.ts",
+          "type": "registry:ui",
+          "target": "@ui/bar-select/types.ts"
+        },
+        {
+          "path": "src/registry/ui/bar-select/config.ts",
+          "type": "registry:ui",
+          "target": "@ui/bar-select/config.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",

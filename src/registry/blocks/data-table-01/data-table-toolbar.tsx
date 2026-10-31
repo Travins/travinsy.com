@@ -113,6 +113,7 @@ function DataTableToolbar<T>({
             }}
           />
         )}
+        {children}
         <div className="ml-auto flex shrink-0 items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -187,7 +188,6 @@ function DataTableToolbar<T>({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {children}
       </div>
     </>
   )

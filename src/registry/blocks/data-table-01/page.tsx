@@ -22,6 +22,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
+import { BarSelect } from "@/registry/ui/bar-select/bar-select"
 import { Button } from "@/components/ui/button"
 import {
   GridContainer,
@@ -75,6 +76,8 @@ const columns: DataTableColumn<Dataset>[] = [
   },
   {
     accessorKey: "owner",
+    filterFn: (row, columnId, values: string[]) =>
+      !values.length || values.includes(String(row.getValue(columnId))),
     header: "负责人",
     size: 140,
     cell: ({ getValue }) => (
@@ -281,6 +284,29 @@ function DataTablePage() {
         <GridSection>
           <DataTable
             apiRef={apiRef}
+            toolbar={(table) => (
+              <BarSelect
+                multiple
+                label="负责人"
+                placeholder="全部"
+                className="hidden w-52 shrink-0 @min-[64rem]:block"
+                contentClassName="[&_[data-slot=combobox-item]]:text-xs [&_*]:text-xs"
+                value={
+                  (table.getColumn("owner")?.getFilterValue() as string[]) ?? []
+                }
+                options={["林小满", "陈青", "周远"].map((owner) => ({
+                  value: owner,
+                  label: owner,
+                  count: data.filter((row) => row.owner === owner).length,
+                }))}
+                onValueChange={(values) => {
+                  table
+                    .getColumn("owner")
+                    ?.setFilterValue(values.length ? values : undefined)
+                  table.setPageIndex(0)
+                }}
+              />
+            )}
             rowActions={(row) => (
               <DataTableRowActions
                 label={row.name}

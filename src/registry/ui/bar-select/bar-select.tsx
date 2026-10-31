@@ -1,0 +1,426 @@
+"use client"
+
+import * as React from "react"
+import { Check, Search, X } from "lucide-react"
+import { cva } from "class-variance-authority"
+import { Button } from "@/components/ui/button"
+import {
+  Combobox,
+  ComboboxTrigger,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxGroup,
+  ComboboxLabel,
+} from "@/components/ui/combobox"
+import { InputGroupAddon } from "@/components/ui/input-group"
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet"
+import { cn } from "@/lib/utils"
+import { useControllableState } from "@/registry/hooks/use-controllable-state"
+import { defaultLabels } from "./config"
+import type { BarSelectProps } from "./types"
+
+const barSelectVariants = cva(
+  "flex min-w-0 items-center rounded-md border bg-muted/60 transition-colors",
+  {
+    variants: { size: { sm: "text-xs", default: "text-sm", lg: "text-sm" } },
+    defaultVariants: { size: "default" },
+  },
+)
+function subscribePointer(notify: () => void) {
+  const media = window.matchMedia("(pointer: coarse)")
+  media.addEventListener("change", notify)
+  return () => media.removeEventListener("change", notify)
+}
+function BarSelect(props: BarSelectProps) {
+  const {
+    options,
+    label,
+    placeholder = "请选择",
+    searchable = options.length > 8,
+    clearable = true,
+    size = "default",
+    error,
+    description,
+    name,
+    form,
+    disabled,
+    labels: labelsProp,
+    contentClassName,
+    className,
+    multiple = false,
+    value: valueProp,
+    defaultValue,
+    onValueChange,
+    ...rest
+  } = props
+  // 模式属性不透传到 DOM。
+  const { display: displayProp, ...domProps } = rest as typeof rest & {
+    display?: string
+  }
+  const display = props.multiple ? (displayProp ?? "first-plus") : "first-plus"
+  const labels = { ...defaultLabels, ...labelsProp }
+  const id = React.useId()
+  const anchor = React.useRef<HTMLDivElement>(null)
+  const [value, setValue] = useControllableState<string | string[] | null>({
+    prop: valueProp,
+    defaultProp: defaultValue ?? (multiple ? [] : null),
+    onChange: (next) => {
+      if (props.multiple)
+        (onValueChange as ((value: string[]) => void) | undefined)?.(
+          Array.isArray(next) ? next : [],
+        )
+      else
+        (onValueChange as ((value: string | null) => void) | undefined)?.(
+          typeof next === "string" ? next : null,
+        )
+    },
+  })
+  const [open, setOpen] = React.useState(false)
+  const [query, setQuery] = React.useState("")
+  const coarse = React.useSyncExternalStore(
+    subscribePointer,
+    () => window.matchMedia("(pointer: coarse)").matches,
+    () => false,
+  )
+  const values = Array.isArray(value) ? value : value ? [value] : []
+  const selected = values
+    .map((v) => options.find((o) => o.value === v))
+    .filter((o) => !!o)
+  const text = (v: string) => {
+    const o = options.find((item) => item.value === v)
+    return o?.textValue ?? (typeof o?.label === "string" ? o.label : v)
+  }
+  const filtered = options.filter((o) =>
+    text(o.value).toLocaleLowerCase().includes(query.toLocaleLowerCase()),
+  )
+  const groups = [...new Set(filtered.map((o) => o.group ?? ""))]
+  const clear = () => {
+    setValue(multiple ? [] : null)
+    setQuery("")
+  }
+  React.useEffect(() => {
+    const element =
+      anchor.current?.closest("form") ??
+      (form ? document.getElementById(form) : null)
+    if (!element || valueProp !== undefined) return
+    const reset = () => {
+      setValue(defaultValue ?? (multiple ? [] : null))
+      setQuery("")
+    }
+    element.addEventListener("reset", reset)
+    return () => element.removeEventListener("reset", reset)
+  }, [form, valueProp, defaultValue, multiple, setValue])
+  const contents = (
+    <>
+      {searchable && (
+        // 搜索行做成弹层顶部的一条：无边框、左侧放大镜、下方分隔线
+        <ComboboxInput
+          aria-label={labels.search}
+          placeholder={`${labels.search}…`}
+          showTrigger={false}
+          className={cn(
+            "m-0! h-9! rounded-none! border-0! border-b! border-border! bg-transparent! shadow-none! has-[[data-slot=input-group-control]:focus-visible]:ring-0! [&_input]:text-base md:[&_input]:text-sm",
+            coarse && "h-11! px-2",
+          )}
+        >
+          <InputGroupAddon>
+            <Search aria-hidden="true" className="size-3.5" />
+          </InputGroupAddon>
+        </ComboboxInput>
+      )}
+      {/* 选项没有通过 items 交给 Base UI，列表会带 data-empty，官方样式随之清掉内边距，这里用 ! 保留 */}
+      <ComboboxList
+        className={cn(
+          "overflow-auto p-1!",
+          coarse
+            ? "max-h-[50dvh] px-3! [&_[data-slot=combobox-item]]:min-h-11 [&_[data-slot=combobox-item]]:text-base"
+            : "max-h-72",
+        )}
+      >
+        {!filtered.length && (
+          <div className="p-3 text-center text-sm text-muted-foreground">
+            {labels.empty}
+          </div>
+        )}
+        {groups.map((group) => (
+          <ComboboxGroup key={group}>
+            {group && <ComboboxLabel>{group}</ComboboxLabel>}
+            {filtered
+              .filter((o) => (o.group ?? "") === group)
+              .map((option) => (
+                <ComboboxItem
+                  key={option.value}
+                  value={option.value}
+                  disabled={option.disabled}
+                  className={cn(
+                    size === "sm" ? "text-xs" : "text-sm",
+                    option.count === 0 && "text-muted-foreground",
+                    // 多选用左侧勾选框表达状态，隐藏官方右侧的对勾，计数靠右
+                    multiple && "pr-1.5 [&>span.absolute]:hidden",
+                  )}
+                >
+                  {multiple && (
+                    <span
+                      aria-hidden="true"
+                      data-checked={values.includes(option.value) || undefined}
+                      className="flex size-3.5 shrink-0 items-center justify-center rounded-[4px] border border-input bg-background text-primary-foreground! data-checked:border-primary data-checked:bg-primary [&_*]:text-primary-foreground!"
+                    >
+                      {values.includes(option.value) && (
+                        <Check
+                          className="size-2.5 text-primary-foreground!"
+                          strokeWidth={3}
+                        />
+                      )}
+                    </span>
+                  )}
+                  {option.icon}
+                  <span className="min-w-0 flex-1 truncate">
+                    {option.label}
+                  </span>
+                  {option.count !== undefined && (
+                    <span className="ms-2 font-mono text-xs text-muted-foreground tabular-nums">
+                      {option.count}
+                    </span>
+                  )}
+                </ComboboxItem>
+              ))}
+          </ComboboxGroup>
+        ))}
+      </ComboboxList>
+      {coarse ? (
+        // 触屏：底部两颗等宽大按钮，留出安全区
+        <div className="grid grid-cols-2 gap-3 border-t border-border p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            disabled={disabled || !clearable || !values.length}
+            onClick={clear}
+          >
+            {labels.clear}
+          </Button>
+          <Button type="button" size="lg" onClick={() => setOpen(false)}>
+            {labels.done}
+          </Button>
+        </div>
+      ) : (
+        multiple && (
+          <div className="flex items-center justify-between gap-2 border-t border-border p-2 text-xs">
+            <span aria-live="polite">{labels.selected(values.length)}</span>
+            {clearable && (
+              <Button
+                type="button"
+                variant="ghost"
+                size={size === "lg" ? "default" : "sm"}
+                disabled={disabled || !values.length}
+                onClick={clear}
+              >
+                {labels.clear}
+              </Button>
+            )}
+          </div>
+        )
+      )}
+    </>
+  )
+  return (
+    <div
+      {...domProps}
+      data-slot="bar-select"
+      data-size={size}
+      className={cn("@container/bar-select w-full min-w-0", className)}
+    >
+      {label && (
+        <span
+          aria-hidden="true"
+          className="mb-1.5 hidden text-xs text-muted-foreground @max-[12rem]/bar-select:block"
+        >
+          {label}
+        </span>
+      )}
+      <Combobox<string, boolean>
+        multiple={multiple}
+        value={value}
+        disabled={disabled}
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next)
+          if (!next) setQuery("")
+        }}
+        inputValue={query}
+        onInputValueChange={setQuery}
+        itemToStringLabel={text}
+        filter={null}
+        inline={coarse}
+        onValueChange={(next) => {
+          setValue(next)
+          setQuery("")
+          if (!multiple) setOpen(false)
+        }}
+      >
+        <div
+          ref={anchor}
+          data-slot="bar-select-control"
+          className={cn(
+            barSelectVariants({ size }),
+            "relative",
+            error ? "border-destructive" : "border-edge hover:bg-muted",
+            disabled && "opacity-50",
+          )}
+        >
+          {label && (
+            <span
+              id={`${id}-label`}
+              className="shrink-0 border-r border-edge px-3 text-muted-foreground @max-[12rem]/bar-select:sr-only"
+            >
+              {label}
+            </span>
+          )}
+          {multiple && display === "chips" && selected.length > 0 && (
+            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 py-1 ps-2">
+              {selected.map((o) => (
+                <span
+                  key={o.value}
+                  data-slot="bar-select-chip"
+                  className="flex h-5 items-center gap-0.5 rounded-sm border border-edge bg-background ps-1.5 text-xs"
+                >
+                  {o.label}
+                  {/* 标签内的移除键：跟随官方 combobox chip 的 icon-xs 档 */}
+                  <Button
+                    type="button"
+                    size="icon-xs"
+                    variant="ghost"
+                    className="size-4.5 rounded-[3px] text-muted-foreground hover:text-foreground"
+                    disabled={disabled}
+                    aria-label={labels.remove(text(o.value))}
+                    onClick={() =>
+                      setValue(values.filter((v) => v !== o.value))
+                    }
+                  >
+                    <X className="size-3" />
+                  </Button>
+                </span>
+              ))}
+            </div>
+          )}
+          <ComboboxTrigger
+            render={<Button type="button" variant="ghost" size={size} />}
+            aria-label={props["aria-label"]}
+            aria-labelledby={label ? `${id}-label ${id}-value` : undefined}
+            aria-invalid={!!error}
+            // 触屏时列表内联在底部面板里，Combobox 不再自己弹出，由触发键打开面板
+            onClick={() => {
+              if (coarse) setOpen(true)
+            }}
+            aria-describedby={
+              [error && `${id}-error`, description && `${id}-description`]
+                .filter(Boolean)
+                .join(" ") || undefined
+            }
+            className={cn(
+              "min-w-0 flex-1 justify-between rounded-none font-normal focus-visible:ring-inset",
+              multiple && display === "chips" && selected.length && "flex-none",
+            )}
+          >
+            <span
+              id={`${id}-value`}
+              className={cn(
+                "min-w-0 flex-1 truncate text-start",
+                clearable && values.length > 0 && "pe-6",
+              )}
+            >
+              {!selected.length ? (
+                placeholder
+              ) : multiple && display === "summary" ? (
+                labels.selected(values.length)
+              ) : multiple && display === "chips" ? null : (
+                <>
+                  {selected[0]?.label}
+                  {values.length > 1 && ` +${values.length - 1}`}
+                </>
+              )}
+            </span>
+          </ComboboxTrigger>
+          {/* 清除键叠在触发条上、下拉箭头左侧（兄弟元素，避免按钮嵌套） */}
+          {clearable && values.length > 0 && (
+            <Button
+              type="button"
+              size="icon-xs"
+              variant="ghost"
+              aria-label={labels.clear}
+              disabled={disabled}
+              className="absolute end-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              onClick={clear}
+            >
+              <X className="size-3.5" />
+            </Button>
+          )}
+        </div>
+        {coarse ? (
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetContent
+              side="bottom"
+              className={cn("max-h-[85dvh] overflow-auto", contentClassName)}
+            >
+              <SheetTitle className="px-4 pt-4">
+                {label ?? props["aria-label"]}
+              </SheetTitle>
+              <SheetDescription
+                aria-live="polite"
+                className={cn("px-4", !multiple && "sr-only")}
+              >
+                {multiple ? labels.selected(values.length) : labels.search}
+              </SheetDescription>
+              {contents}
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <ComboboxContent
+            anchor={anchor}
+            className={cn(
+              "min-w-(--anchor-width) outline-none",
+              contentClassName,
+            )}
+          >
+            {contents}
+          </ComboboxContent>
+        )}
+      </Combobox>
+      {name &&
+        (multiple ? values : [typeof value === "string" ? value : ""]).map(
+          (v, index) => (
+            <input
+              key={index}
+              type="hidden"
+              name={name}
+              form={form}
+              value={v}
+              disabled={disabled}
+            />
+          ),
+        )}
+      {error && (
+        <p id={`${id}-error`} className="mt-1.5 text-xs text-destructive">
+          {error}
+        </p>
+      )}
+      {description && (
+        <p
+          id={`${id}-description`}
+          className="mt-1.5 text-xs text-muted-foreground"
+        >
+          {description}
+        </p>
+      )}
+    </div>
+  )
+}
+export { BarSelect, barSelectVariants }
+export type { BarSelectProps, BarSelectOption, BarSelectLabels } from "./types"

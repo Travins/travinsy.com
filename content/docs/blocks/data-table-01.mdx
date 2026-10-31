@@ -135,3 +135,7 @@ Table 固定使用 v8 API，调用函数添加 `"use no memo"`，避免 React Co
 切换加载、两种空状态及错误；名称输入「失败」后保存可观察回滚。
 
 <ComponentPreview name="data-table-01-states-demo" />
+
+### 负责人筛选
+
+示例通过 `toolbar={(table) => ...}` 插槽接入方条多选，并用 owner 列的 `filterFn` 匹配选中负责人；更新筛选后回到第一页。每位负责人的计数来自完整数据集。窄容器隐藏此筛选。列设置继续使用原有图标菜单。

@@ -1,0 +1,55 @@
+---
+title: 方条下拉选择
+titleEn: Bar Select
+description: 方条下拉选择，支持搜索、多选、分组与触屏底部面板。
+group: input
+status: new
+---
+
+<ComponentPreview name="bar-select-demo" />
+
+## 安装
+
+<InstallCommand name="bar-select" />
+
+## 用法
+
+```tsx
+import { BarSelect } from "@/components/ui/bar-select/bar-select"
+
+;<BarSelect label="负责人" options={[{ value: "lin", label: "林小满" }]} />
+```
+
+选项超过 8 项时自动显示搜索，也可以通过 `searchable` 强制开关。复杂 label 请提供 `textValue` 以供搜索。无 label 时必须传入 aria-label。
+
+## 示例
+
+### 多选、计数与分组
+
+<ComponentPreview name="bar-select-multiple-demo" />
+
+`multiple` 开启多选，默认显示首项与额外数量；`display="summary"` 显示总数。`count` 为零的选项变灰，但仍能选择；只有 `disabled` 会禁用选项。
+
+### 标签与表单
+
+<ComponentPreview name="bar-select-chips-demo" />
+
+`display="chips"` 逐项展示，支持移除。传入 `name` 后用隐藏输入提交，多选时每个值对应一个输入；`form` 可关联外部表单。
+
+### 尺寸
+
+<ComponentPreview name="bar-select-sizes-demo" />
+
+## API
+
+<PropsTable name="bar-select" component="BarSelect" />
+
+导出 `BarSelectProps`、`BarSelectOption`、`BarSelectLabels` 类型及 `barSelectVariants`。`labels` 可覆盖清除、搜索、无匹配结果、已选数量、移除和完成文案。根节点为 `data-slot="bar-select"`，触发条为 `bar-select-control`。
+
+## 可访问性
+
+列表导航、选中状态与键盘操作交给 Base UI Combobox。单选选中即关闭，多选保持打开并清空搜索。清除与移除按钮有独立名称。error、description 通过 aria-describedby 关联。触屏使用底部 Sheet，并提供清除与完成按钮。窄容器标签移到上方。
+
+## 源码
+
+<ComponentSource name="bar-select" />

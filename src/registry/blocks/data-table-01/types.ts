@@ -1,5 +1,6 @@
 import type * as React from "react"
 import type {
+  Table,
   ColumnDef,
   SortingState,
   PaginationState,
@@ -108,7 +109,7 @@ type DataTableProps<T> = Omit<React.ComponentProps<"div">, "onChange"> & {
   virtualization?: false | { estimateRowHeight?: number; height?: number }
   header?: React.ReactNode
   counts?: Record<string, number>
-  toolbar?: React.ReactNode
+  toolbar?: React.ReactNode | ((table: Table<T>) => React.ReactNode)
   statusFilter?: {
     columnId: string
     /** tone：状态色点的颜色，填 CSS 颜色或主题变量，如 "var(--flow-green)" */

@@ -312,7 +312,7 @@ function DataTable<T>({
               : undefined
         }
       >
-        {toolbar}
+        {typeof toolbar === "function" ? toolbar(table) : toolbar}
       </DataTableToolbar>
       <div
         ref={scrollRef}
