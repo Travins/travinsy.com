@@ -163,22 +163,18 @@ function SegmentedControl({
         <span
           id={labelId}
           data-slot="segmented-control-label"
-          className="flex shrink-0 items-center ps-3 pe-2.5 font-medium whitespace-nowrap text-muted-foreground transition-colors group-data-[modified]/segmented-control:text-foreground"
+          className="flex shrink-0 items-center border-e border-edge px-3 whitespace-nowrap text-muted-foreground transition-colors group-data-[modified]/segmented-control:text-foreground"
         >
           {label}
         </span>
       ) : null}
       {/*
-        有标签时，选项收进右侧一道微微下凹的槽里：左边是纯文字的字段名（与数值滑块、开关的标签同一种写法），
-        右边才是可选的东西，标签不会被误认成第一个选项。没有标签时整条都是选项，不需要这道槽。
+        有标签时，标签与选项之间只用一道整高竖线隔开（与方条输入、方条下拉同一种写法），
+        不再另套一层下凹的槽：外框 → 选中块，只有两层。
       */}
       <span
         data-slot="segmented-control-options"
-        className={cn(
-          "relative flex min-w-0 flex-1 items-stretch",
-          label !== undefined &&
-            "my-[3px] me-[3px] rounded-sm bg-foreground/5 dark:bg-foreground/10",
-        )}
+        className="relative flex min-w-0 flex-1 items-stretch"
       >
         {options.map((option) => {
           const selected = option.value === value

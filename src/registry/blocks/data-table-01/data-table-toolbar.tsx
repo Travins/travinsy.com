@@ -87,7 +87,7 @@ function DataTableToolbar<T>({
         />
         {statusFilter && (
           <SegmentedControl
-            label={labels.status}
+            aria-label={labels.status}
             value={status}
             className="order-last basis-full @min-[40rem]:order-none @min-[40rem]:w-auto @min-[40rem]:basis-auto [&_[data-slot=segmented-control-item]]:flex-1 [&_[data-slot=segmented-control-item]>span:last-child]:overflow-visible"
             options={statusFilter.options.map((option) => ({

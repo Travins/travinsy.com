@@ -43,7 +43,7 @@ export function ViewSwitch() {
 
 外框是方条：细边框（`border-edge`）、小圆角、`bg-muted/60` 的淡底，和数值滑块同一副外观。每个选项是一个 `Radio.Root`，整块可点；选中时选项背后滑入一块 `segmented-control-indicator`，用 Motion 的共享布局动画在选项之间滑动，不会闪一下再出现。
 
-`label` 是方条左侧的纯文字（与数值滑块、开关的标签同一种写法），选项则收进右侧一道微微下凹的槽里，选中项是槽里凸起的一块，字段名与可选项一眼分得开。`label` 同时作为整个单选组的可访问名称（`aria-labelledby`），写了它就不必再写 `aria-label`；不写 `label` 时整条都是选项，没有这道槽。
+`label` 是方条左侧的纯文字（与数值滑块、开关的标签同一种写法），中间一道整高竖线把它和选项隔开（与方条输入、方条下拉同一种写法），选中项是外框里凸起的一块，层级只有外框和选中块两层。`label` 同时作为整个单选组的可访问名称（`aria-labelledby`），写了它就不必再写 `aria-label`；不写 `label` 时整条都是选项。在工具栏这类上下文已经说明含义的地方，可以省掉 `label`，改传 `aria-label`，方条更短。
 
 ```tsx
 <SegmentedControl label="对齐" options={ALIGN_OPTIONS} defaultValue="left" />
@@ -92,7 +92,7 @@ const OPTIONS = [
 
 ### 左侧标签
 
-`label` 是左侧的字段名，选项在右侧的槽里，读起来像「字段名 + 取值」。下面把对齐方式直接套在段落上，看得见这一行确实在起作用。
+`label` 是左侧的字段名，选项在竖线右侧，读起来像「字段名 + 取值」。下面把对齐方式直接套在段落上，看得见这一行确实在起作用。
 
 <ComponentPreview name="segmented-control-label-demo" />
 
@@ -160,7 +160,7 @@ type SegmentedControlProps = Omit<
 | --------------------------------- | ----------------------------- |
 | 根元素                            | `segmented-control`           |
 | 左侧标签                          | `segmented-control-label`     |
-| 选项槽（有 `label` 时带凹槽底色） | `segmented-control-options`   |
+| 选项容器                           | `segmented-control-options`   |
 | 选项                              | `segmented-control-item`      |
 | 选中块                            | `segmented-control-indicator` |
 
