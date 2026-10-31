@@ -2,6 +2,11 @@
 import * as React from "react"
 import { Plus, Upload, MoreHorizontal, Download, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  GridContainer,
+  GridSection,
+  GridSeparator,
+} from "@/registry/ui/grid-layout/grid-layout"
 import { numberFormat } from "@/registry/blocks/data-table-01/config"
 import { DataTable } from "@/registry/blocks/data-table-01/data-table"
 import type { DataTableColumn } from "@/registry/blocks/data-table-01/types"
@@ -191,122 +196,130 @@ function DataTablePage() {
     setNotice("已导出 " + rows.length + " 条")
   }
   return (
+    // 线条网格外框：竖线容器 + 全屏横线；表格贴着两条竖线铺满，工具栏和分页用 --data-table-gutter 与竖线留出间距
     <main
       data-slot="data-table-page"
-      className="@container mx-auto w-full max-w-6xl min-w-0 p-4 md:p-6"
+      className="@container w-full min-w-0 overflow-x-clip bg-background py-6 [--data-table-gutter:1rem] [--grid-width:72rem] sm:py-10 sm:[--data-table-gutter:1.5rem]"
     >
-      <header className="mb-6 flex flex-col items-start justify-between gap-4 @min-[40rem]:flex-row @min-[40rem]:items-end">
-        <div>
-          <p className="mb-3 font-mono text-[11px] tracking-[0.06em]">
-            DATASETS /{" "}
-            <span className="text-muted-foreground">
-              数据集 · {data.length}
-            </span>
-          </p>
-          <h1 className="text-2xl font-semibold tracking-tight">数据集</h1>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setNotice("请选择 CSV 文件导入")}
-          >
-            <Upload />
-            导入
-          </Button>
-          <Button
-            onClick={() => {
-              const id = String(
-                Math.max(0, ...data.map((row) => Number(row.id))) + 1,
-              )
-              setData((previous) => [
-                {
-                  ...datasets[0],
-                  id,
-                  code: "DS-" + id.padStart(4, "0"),
-                  name: "新建数据集",
-                },
-                ...previous,
-              ])
-              setNotice("已新建数据集")
-            }}
-          >
-            <Plus />
-            新建数据集
-          </Button>
-        </div>
-      </header>
-      <DataTable
-        rowActions={(row) => (
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={row.name + "的操作"}
-            onClick={() => exportRows([row])}
-          >
-            <MoreHorizontal />
-          </Button>
-        )}
-        columns={columns}
-        data={data}
-        rowCount={data.length}
-        rowSelection={selection}
-        onRowSelectionChange={setSelection}
-        onSelectAll={() =>
-          setSelection(Object.fromEntries(data.map((row) => [row.id, true])))
-        }
-        bulkActions={(rows) => (
-          <>
+      <GridContainer>
+        <GridSection
+          topLine
+          className="flex flex-col items-start justify-between gap-4 px-4 py-6 sm:px-6 @min-[40rem]:flex-row @min-[40rem]:items-end"
+        >
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">数据集</h1>
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              整理、审核与维护团队的数据资源。
+            </p>
+          </div>
+          <div className="flex gap-2">
             <Button
-              variant="ghost"
-              size="default"
-              aria-label="导出"
-              onClick={() => exportRows(rows)}
+              variant="outline"
+              onClick={() => setNotice("请选择 CSV 文件导入")}
             >
-              <Download />
-              <span data-label>导出</span>
+              <Upload />
+              导入
             </Button>
-            {/* 反色坞里删除用红色文字区分，混入背景色保证亮暗模式都清楚 */}
             <Button
-              variant="ghost"
-              size="default"
-              aria-label="删除"
-              className="text-[color-mix(in_oklab,var(--destructive)_75%,var(--background))]!"
               onClick={() => {
-                setData((previous) =>
-                  previous.filter((row) => !selection[row.id]),
+                const id = String(
+                  Math.max(0, ...data.map((row) => Number(row.id))) + 1,
                 )
-                setSelection({})
-                setNotice("已删除选中的数据集")
+                setData((previous) => [
+                  {
+                    ...datasets[0],
+                    id,
+                    code: "DS-" + id.padStart(4, "0"),
+                    name: "新建数据集",
+                  },
+                  ...previous,
+                ])
+                setNotice("已新建数据集")
               }}
             >
-              <Trash2 />
-              <span data-label>删除</span>
+              <Plus />
+              新建数据集
             </Button>
-          </>
-        )}
-        onCellCommit={({ rowId, columnId, value }) =>
-          setData((previous) =>
-            previous.map((row) =>
-              row.id === rowId ? { ...row, [columnId]: value } : row,
-            ),
-          )
-        }
+          </div>
+        </GridSection>
+        <GridSeparator label={"DATASETS / " + data.length} />
+        <GridSection>
+          <DataTable
+            rowActions={(row) => (
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={row.name + "的操作"}
+                onClick={() => exportRows([row])}
+              >
+                <MoreHorizontal />
+              </Button>
+            )}
+            columns={columns}
+            data={data}
+            rowCount={data.length}
+            rowSelection={selection}
+            onRowSelectionChange={setSelection}
+            onSelectAll={() =>
+              setSelection(
+                Object.fromEntries(data.map((row) => [row.id, true])),
+              )
+            }
+            bulkActions={(rows) => (
+              <>
+                <Button
+                  variant="ghost"
+                  size="default"
+                  aria-label="导出"
+                  onClick={() => exportRows(rows)}
+                >
+                  <Download />
+                  <span data-label>导出</span>
+                </Button>
+                {/* 反色坞里删除用红色文字区分，混入背景色保证亮暗模式都清楚 */}
+                <Button
+                  variant="ghost"
+                  size="default"
+                  aria-label="删除"
+                  className="text-[color-mix(in_oklab,var(--destructive)_75%,var(--background))]!"
+                  onClick={() => {
+                    setData((previous) =>
+                      previous.filter((row) => !selection[row.id]),
+                    )
+                    setSelection({})
+                    setNotice("已删除选中的数据集")
+                  }}
+                >
+                  <Trash2 />
+                  <span data-label>删除</span>
+                </Button>
+              </>
+            )}
+            onCellCommit={({ rowId, columnId, value }) =>
+              setData((previous) =>
+                previous.map((row) =>
+                  row.id === rowId ? { ...row, [columnId]: value } : row,
+                ),
+              )
+            }
 
-        getRowId={getRowId}
-        statusFilter={{
-          columnId: "status",
-          options: [
-            { value: "", label: "全部" },
-            { value: "进行中", label: "进行中", tone: "var(--flow-green)" },
-            { value: "待审核", label: "待审核", tone: "var(--flow-amber)" },
-            {
-              value: "已归档",
-              label: "已归档",
-              tone: "var(--muted-foreground)",
-            },
-          ],
-        }}
-      />
+            getRowId={getRowId}
+            statusFilter={{
+              columnId: "status",
+              options: [
+                { value: "", label: "全部" },
+                { value: "进行中", label: "进行中", tone: "var(--flow-green)" },
+                { value: "待审核", label: "待审核", tone: "var(--flow-amber)" },
+                {
+                  value: "已归档",
+                  label: "已归档",
+                  tone: "var(--muted-foreground)",
+                },
+              ],
+            }}
+          />
+        </GridSection>
+      </GridContainer>
       <p role="status" className="sr-only">
         {notice}
       </p>

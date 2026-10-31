@@ -1965,10 +1965,7 @@
         "skeleton",
         "empty",
         "sheet",
-        "table",
-        "select",
         "dropdown-menu",
-        "tabs",
         "https://yiui.dev/r/grid-layout.json"
       ],
       "files": [

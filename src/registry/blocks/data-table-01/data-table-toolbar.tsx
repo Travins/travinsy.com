@@ -67,7 +67,7 @@ function DataTableToolbar<T>({
     <>
       <div
         data-slot="data-table-toolbar"
-        className="flex flex-wrap items-center gap-2 py-3 @min-[40rem]:flex-nowrap"
+        className="flex flex-wrap items-center gap-2 px-[var(--data-table-gutter,0px)] py-3 @min-[40rem]:flex-nowrap"
       >
         <label className="relative block min-w-0 flex-1 @min-[40rem]:w-64 @min-[40rem]:flex-none">
           <span className="sr-only">{labels.search}</span>
@@ -98,7 +98,7 @@ function DataTableToolbar<T>({
             // 窄容器单独占一行放在最下面，宽容器紧跟搜索框
             className="order-last flex min-w-0 basis-full overflow-x-auto @min-[40rem]:order-none @min-[40rem]:basis-auto"
           >
-            <div className="flex shrink-0 overflow-hidden rounded-md border border-edge">
+            <div className="flex w-full overflow-hidden rounded-md border border-edge @min-[40rem]:w-auto @min-[40rem]:shrink-0">
               {statusFilter.options.map((option) => {
                 const checked = status === option.value
                 return (
@@ -109,7 +109,7 @@ function DataTableToolbar<T>({
                     aria-checked={checked}
                     variant="ghost"
                     size="default"
-                    className="gap-1.5 rounded-none border-r border-edge px-2.5 font-normal text-muted-foreground last:border-r-0 aria-checked:bg-muted aria-checked:text-foreground"
+                    className="min-w-0 flex-1 gap-1 rounded-none border-r border-edge px-1.5 font-normal @min-[40rem]:flex-none @min-[40rem]:gap-1.5 @min-[40rem]:px-2.5 text-muted-foreground last:border-r-0 aria-checked:bg-muted aria-checked:text-foreground"
                     onClick={() => {
                       statusColumn?.setFilterValue(option.value || undefined)
                       table.setPageIndex(0)
@@ -118,7 +118,8 @@ function DataTableToolbar<T>({
                     {option.tone && (
                       <span
                         aria-hidden="true"
-                        className="size-1.5 rounded-full"
+                        // 窄容器四项均分一行，色点让位给文字
+                        className="hidden size-1.5 rounded-full @min-[40rem]:block"
                         style={{ background: option.tone }}
                       />
                     )}

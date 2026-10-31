@@ -23,7 +23,7 @@ function DataTablePagination<T>({
   return (
     <div
       data-slot="data-table-pagination"
-      className="flex flex-wrap items-center justify-between gap-3 border-t border-edge p-4 text-sm tabular-nums"
+      className="flex flex-wrap items-center justify-between gap-3 border-t border-edge px-[var(--data-table-gutter,1rem)] py-4 text-sm tabular-nums"
     >
       <span className="font-mono text-xs text-muted-foreground">
         {String(count ? pageIndex * pageSize + 1 : 0).padStart(2, "0")}–
