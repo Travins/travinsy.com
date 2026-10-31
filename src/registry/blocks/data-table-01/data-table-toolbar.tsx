@@ -1,7 +1,14 @@
 "use client"
 import * as React from "react"
 import type { Table } from "@tanstack/react-table"
-import { Search, Settings2, ArrowUpDown } from "lucide-react"
+import {
+  ArrowUpDown,
+  Rows2,
+  Rows3,
+  Rows4,
+  Search,
+  Settings2,
+} from "lucide-react"
 import { BarField } from "@/registry/ui/bar-field/bar-field"
 import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
 import { Button } from "@/components/ui/button"
@@ -144,15 +151,26 @@ function DataTableToolbar<T>({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          {/* 密度只用图标：行数越多越紧凑；文字留给读屏和悬停提示 */}
           <SegmentedControl
-            label={labels.density}
+            aria-label={labels.density}
             value={density}
-            className="hidden w-auto @min-[40rem]:flex"
-            options={[
-              { value: "40", label: labels.compact },
-              { value: "52", label: labels.standard },
-              { value: "64", label: labels.comfortable },
-            ]}
+            className="hidden w-auto @min-[40rem]:flex [&_[data-slot=segmented-control-item]]:w-8 [&_[data-slot=segmented-control-item]]:px-0"
+            options={(
+              [
+                ["40", labels.compact, Rows4],
+                ["52", labels.standard, Rows3],
+                ["64", labels.comfortable, Rows2],
+              ] as const
+            ).map(([value, text, Icon]) => ({
+              value,
+              icon: (
+                <span title={text}>
+                  <Icon />
+                </span>
+              ),
+              label: <span className="sr-only">{text}</span>,
+            }))}
             onValueChange={onDensityChange}
           />
           <DropdownMenu>
