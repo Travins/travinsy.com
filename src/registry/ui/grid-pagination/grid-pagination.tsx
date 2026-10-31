@@ -106,7 +106,6 @@ function GridPagination({
   const labels = { ...DEFAULT_LABELS, ...labelsProp }
   const count = Math.max(1, Math.trunc(pageCount) || 1)
   const clamp = (n: number) => Math.min(count, Math.max(1, Math.trunc(n) || 1))
-  const id = React.useId()
   const [rawPage, setPage] = useControllableState({
     prop: pageProp,
     defaultProp: defaultPage,
@@ -200,38 +199,34 @@ function GridPagination({
         </PaginationItem>
         {pageSizes && (
           <PaginationItem className={wide}>
-            {/* 每页条数：官方 Select，触发器铺满整格；弹出层与它同宽、左缘对齐 */}
-            <div className="flex items-center ps-3 text-xs whitespace-nowrap text-muted-foreground">
-              <span id={`${id}-per-page`}>{labels.perPage}</span>
-              <Select
-                value={pageSize}
-                onValueChange={(value) => onPageSizeChange?.(Number(value))}
+            {/* 每页条数：整格就是触发器（「每页 10 ⌄」），悬停、展开时整格变色；
+                弹出层与整格同宽、左缘对齐，选项数字与格内文字同一条左边线 */}
+            <Select
+              value={pageSize}
+              onValueChange={(value) => onPageSizeChange?.(Number(value))}
+            >
+              <SelectTrigger className="h-full! gap-2 rounded-none border-0 bg-transparent! px-3 py-0 text-xs shadow-none hover:bg-muted! focus-visible:ring-inset data-[popup-open]:bg-muted! [&_svg]:size-3.5!">
+                <span className="text-muted-foreground">{labels.perPage}</span>
+                <SelectValue className="font-mono text-foreground tabular-nums" />
+              </SelectTrigger>
+              <SelectContent
+                alignItemWithTrigger={false}
+                align="start"
+                className="w-(--anchor-width) min-w-0"
               >
-                <SelectTrigger
-                  aria-labelledby={`${id}-per-page`}
-                  className="h-full! w-16 justify-between gap-1 rounded-none border-0 bg-transparent! py-0 ps-2.5 pe-2 font-mono text-xs text-foreground shadow-none hover:bg-muted! focus-visible:ring-inset [&_svg]:size-3.5!"
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent
-                  alignItemWithTrigger={false}
-                  align="start"
-                  className="w-(--anchor-width) min-w-0"
-                >
-                  {pageSizes
-                    .filter((n) => n > 0)
-                    .map((n) => (
-                      <SelectItem
-                        key={n}
-                        value={n}
-                        className="py-1 ps-1.5 pe-6 font-mono text-xs [&_svg]:size-3.5 [&>span:last-child]:right-1"
-                      >
-                        {n}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
+                {pageSizes
+                  .filter((n) => n > 0)
+                  .map((n) => (
+                    <SelectItem
+                      key={n}
+                      value={n}
+                      className="py-1 ps-2 pe-6 font-mono text-xs tabular-nums [&_svg]:size-3.5 [&>span:last-child]:right-2"
+                    >
+                      {n}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
           </PaginationItem>
         )}
         {/* 窄容器里信息格独占上一行，这一格成了第二行的行首，不再画左线 */}
