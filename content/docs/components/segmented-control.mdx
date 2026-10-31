@@ -82,6 +82,10 @@ const OPTIONS = [
 ]
 ```
 
+### 放进网格工具栏
+
+放进[网格工具栏](/components/grid-toolbar/)时会自动去掉外框、圆角和底色，铺满整格，焦点环画在格子内侧；单独使用时不受影响。
+
 ## 示例
 
 ### 色调
@@ -163,13 +167,13 @@ type SegmentedControlProps = Omit<
 
 ## data-slot
 
-| 元素                              | `data-slot`                   |
-| --------------------------------- | ----------------------------- |
-| 根元素                            | `segmented-control`           |
-| 左侧标签                          | `segmented-control-label`     |
-| 选项容器                           | `segmented-control-options`   |
-| 选项                              | `segmented-control-item`      |
-| 选中块                            | `segmented-control-indicator` |
+| 元素     | `data-slot`                   |
+| -------- | ----------------------------- |
+| 根元素   | `segmented-control`           |
+| 左侧标签 | `segmented-control-label`     |
+| 选项容器 | `segmented-control-options`   |
+| 选项     | `segmented-control-item`      |
+| 选中块   | `segmented-control-indicator` |
 
 根元素始终带 `data-variant`（`bar` / `compact`），`iconOnly` 时带 `data-icon-only`，`modified` 为真时带 `data-modified`，禁用时带 `data-disabled`；选项上是 Base UI 给的 `data-checked`、`data-disabled`。
 

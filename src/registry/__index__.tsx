@@ -93,6 +93,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "grid-section-sidebar-demo": lazy(() => import("./examples/grid-section-sidebar-demo")),
   "grid-separator-label-demo": lazy(() => import("./examples/grid-separator-label-demo")),
   "grid-separator-patterns-demo": lazy(() => import("./examples/grid-separator-patterns-demo")),
+  "grid-toolbar-demo": lazy(() => import("./examples/grid-toolbar-demo")),
   "id-number-input-demo": lazy(() => import("./examples/id-number-input-demo")),
   "id-number-input-form-demo": lazy(() => import("./examples/id-number-input-form-demo")),
   "id-number-input-kinds-demo": lazy(() => import("./examples/id-number-input-kinds-demo")),

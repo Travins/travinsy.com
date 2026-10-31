@@ -242,12 +242,17 @@ function BarSelect(props: BarSelectProps) {
       {...domProps}
       data-slot="bar-select"
       data-size={size}
-      className={cn("@container/bar-select w-full min-w-0", className)}
+      className={cn(
+        "@container/bar-select w-full min-w-0",
+        // 放进网格工具栏：铺满整格
+        "in-data-[slot=grid-toolbar]:h-full",
+        className,
+      )}
     >
       {label && (
         <span
           aria-hidden="true"
-          className="mb-1.5 hidden text-xs text-muted-foreground @max-[10rem]/bar-select:block"
+          className="mb-1.5 hidden text-xs text-muted-foreground in-data-[slot=grid-toolbar]:hidden! @max-[10rem]/bar-select:block"
         >
           {label}
         </span>
@@ -280,12 +285,14 @@ function BarSelect(props: BarSelectProps) {
             "relative",
             error ? "border-destructive" : "border-edge hover:bg-muted",
             disabled && "opacity-50",
+            // 放进网格工具栏：去掉外框、圆角和底色，铺满整格
+            "in-data-[slot=grid-toolbar]:h-full! in-data-[slot=grid-toolbar]:min-h-0! in-data-[slot=grid-toolbar]:rounded-none in-data-[slot=grid-toolbar]:border-0 in-data-[slot=grid-toolbar]:bg-transparent in-data-[slot=grid-toolbar]:hover:bg-muted",
           )}
         >
           {label && (
             <span
               id={`${id}-label`}
-              className="flex shrink-0 items-center self-stretch border-r border-edge px-3 text-muted-foreground @max-[10rem]/bar-select:sr-only"
+              className="flex shrink-0 items-center self-stretch border-r border-edge px-3 text-muted-foreground in-data-[slot=grid-toolbar]:not-sr-only! in-data-[slot=grid-toolbar]:px-3! in-data-[slot=grid-toolbar]:whitespace-nowrap! @max-[10rem]/bar-select:sr-only"
             >
               {label}
             </span>
@@ -332,7 +339,7 @@ function BarSelect(props: BarSelectProps) {
                 .join(" ") || undefined
             }
             className={cn(
-              "h-auto min-w-0 flex-1 self-stretch justify-between rounded-none font-normal focus-visible:ring-inset",
+              "h-auto min-w-0 flex-1 justify-between self-stretch rounded-none font-normal focus-visible:ring-inset",
               multiple && display === "chips" && selected.length && "flex-none",
             )}
           >

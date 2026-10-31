@@ -96,6 +96,8 @@ function BarField({
       data-size={size}
       className={cn(
         "@container/bar-field flex w-full flex-col gap-1.5",
+        // 放进网格工具栏：铺满整格
+        "in-data-[slot=grid-toolbar]:h-full",
         className,
       )}
     >
@@ -104,7 +106,7 @@ function BarField({
           htmlFor={id}
           aria-hidden="true"
           data-slot="bar-field-label-above"
-          className="hidden text-xs text-muted-foreground @max-[20rem]/bar-field:block"
+          className="hidden text-xs text-muted-foreground in-data-[slot=grid-toolbar]:hidden! @max-[20rem]/bar-field:block"
         >
           {label}
         </label>
@@ -118,6 +120,8 @@ function BarField({
             : "border-edge focus-within:border-foreground/25 focus-within:bg-background hover:not-focus-within:bg-muted dark:focus-within:bg-input/30",
           disabled && "cursor-not-allowed opacity-50",
           readOnly && "bg-muted/30",
+          // 放进网格工具栏：去掉外框、圆角和底色，焦点环画在格子内侧
+          "in-data-[slot=grid-toolbar]:h-full! in-data-[slot=grid-toolbar]:rounded-none in-data-[slot=grid-toolbar]:border-0 in-data-[slot=grid-toolbar]:bg-transparent in-data-[slot=grid-toolbar]:focus-within:ring-3 in-data-[slot=grid-toolbar]:focus-within:ring-ring/50 in-data-[slot=grid-toolbar]:focus-within:ring-inset",
         )}
         onMouseDown={(event) => {
           if (event.target === event.currentTarget) {
@@ -130,7 +134,7 @@ function BarField({
           <label
             htmlFor={id}
             data-slot="bar-field-label"
-            className="shrink-0 text-muted-foreground max-md:text-sm @max-[20rem]/bar-field:sr-only"
+            className="shrink-0 text-muted-foreground in-data-[slot=grid-toolbar]:not-sr-only! in-data-[slot=grid-toolbar]:whitespace-nowrap! max-md:text-sm @max-[20rem]/bar-field:sr-only"
           >
             {label}
           </label>

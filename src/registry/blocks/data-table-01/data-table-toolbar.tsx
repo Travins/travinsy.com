@@ -11,6 +11,10 @@ import {
 } from "lucide-react"
 import { BarField } from "@/registry/ui/bar-field/bar-field"
 import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
+import {
+  GridToolbar,
+  GridToolbarItem,
+} from "@/registry/ui/grid-toolbar/grid-toolbar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -66,13 +70,15 @@ function DataTableToolbar<T>({
     ? table.getColumn(statusFilter.columnId)
     : undefined
   const status = String(statusColumn?.getFilterValue() ?? "")
+  // 格内的图标按钮：方形、无圆角，焦点环画在格子内侧
+  const cellButton = "h-full rounded-none focus-visible:ring-inset"
   return (
-    <>
-      <div
-        data-slot="data-table-toolbar"
-        // 表格工具栏统一 12px；触屏输入框保持 16px，避免 iOS 聚焦时页面放大
-        className="flex flex-wrap items-center gap-2 px-[var(--data-table-gutter,0px)] py-3 @min-[40rem]:flex-nowrap [&_*]:text-xs! pointer-coarse:[&_input]:text-base!"
-      >
+    <GridToolbar
+      bordered={false}
+      // 表格工具栏统一 12px；触屏输入框保持 16px，避免 iOS 聚焦时页面放大
+      className="[&_*]:text-xs! pointer-coarse:[&_input]:text-base!"
+    >
+      <GridToolbarItem grow>
         <BarField
           label={searchLabel}
           aria-label={searchLabel ? undefined : labels.searchField}
@@ -80,7 +86,6 @@ function DataTableToolbar<T>({
           inputRef={searchRef}
           type="search"
           placeholder={labels.search}
-          className="min-w-0 flex-1 @min-[40rem]:w-64 @min-[40rem]:flex-none [&_[data-slot=bar-field-label-above]]:hidden! [&_[data-slot=bar-field-label]]:not-sr-only!"
           value={table.getState().globalFilter ?? ""}
           onValueChange={(value) => {
             table.setGlobalFilter(value)
@@ -92,11 +97,14 @@ function DataTableToolbar<T>({
             </kbd>
           }
         />
-        {statusFilter && (
+      </GridToolbarItem>
+      {statusFilter && (
+        // 窄容器里状态筛选独占最后一行
+        <GridToolbarItem className="order-last basis-full @min-[40rem]:order-none @min-[40rem]:basis-auto">
           <SegmentedControl
             aria-label={labels.status}
             value={status}
-            className="order-last basis-full @min-[40rem]:order-none @min-[40rem]:w-auto @min-[40rem]:basis-auto [&_[data-slot=segmented-control-item]]:flex-1 [&_[data-slot=segmented-control-item]>span:last-child]:overflow-visible"
+            className="[&_[data-slot=segmented-control-item]]:flex-1 [&_[data-slot=segmented-control-item]>span:last-child]:overflow-visible"
             options={statusFilter.options.map((option) => ({
               value: option.value,
               icon: option.tone ? (
@@ -119,86 +127,90 @@ function DataTableToolbar<T>({
               table.setPageIndex(0)
             }}
           />
-        )}
-        {children}
-        <div className="ml-auto flex shrink-0 items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label={labels.columns}
-                />
-              }
-            >
-              <Settings2 aria-hidden="true" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-44 *:text-xs!">
-              {table.getAllLeafColumns().map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(value)}
-                  closeOnClick={false}
-                >
-                  {String(column.columnDef.header ?? column.id)}
-                </DropdownMenuCheckboxItem>
+        </GridToolbarItem>
+      )}
+      {children}
+      <GridToolbarItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon-lg"
+                aria-label={labels.columns}
+                className={cellButton}
+              />
+            }
+          >
+            <Settings2 aria-hidden="true" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="min-w-44 *:text-xs!">
+            {table.getAllLeafColumns().map((column) => (
+              <DropdownMenuCheckboxItem
+                key={column.id}
+                checked={column.getIsVisible()}
+                onCheckedChange={(value) => column.toggleVisibility(value)}
+                closeOnClick={false}
+              >
+                {String(column.columnDef.header ?? column.id)}
+              </DropdownMenuCheckboxItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => table.resetColumnVisibility()}>
+              {labels.reset}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </GridToolbarItem>
+      {/* 密度只用图标：行数越多越紧凑；文字留给读屏和悬停提示 */}
+      <GridToolbarItem className="hidden @min-[40rem]:flex">
+        <SegmentedControl
+          aria-label={labels.density}
+          iconOnly
+          value={density}
+          options={[
+            { value: "40", label: labels.compact, icon: <Rows4 /> },
+            { value: "52", label: labels.standard, icon: <Rows3 /> },
+            { value: "64", label: labels.comfortable, icon: <Rows2 /> },
+          ]}
+          onValueChange={onDensityChange}
+        />
+      </GridToolbarItem>
+      <GridToolbarItem className="@min-[40rem]:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                size="icon-lg"
+                variant="ghost"
+                aria-label={labels.sort}
+                className={cellButton}
+              />
+            }
+          >
+            <ArrowUpDown />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="*:text-xs!">
+            {table
+              .getAllLeafColumns()
+              .filter((column) => column.getCanSort())
+              .map((column) => (
+                <React.Fragment key={column.id}>
+                  {[false, true].map((desc) => (
+                    <DropdownMenuItem
+                      key={String(desc)}
+                      onClick={() => column.toggleSorting(desc)}
+                    >
+                      {String(column.columnDef.header)} ·{" "}
+                      {desc ? labels.descending : labels.ascending}
+                    </DropdownMenuItem>
+                  ))}
+                </React.Fragment>
               ))}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => table.resetColumnVisibility()}>
-                {labels.reset}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {/* 密度只用图标：行数越多越紧凑；文字留给读屏和悬停提示 */}
-          <SegmentedControl
-            aria-label={labels.density}
-            iconOnly
-            value={density}
-            className="hidden @min-[40rem]:flex"
-            options={[
-              { value: "40", label: labels.compact, icon: <Rows4 /> },
-              { value: "52", label: labels.standard, icon: <Rows3 /> },
-              { value: "64", label: labels.comfortable, icon: <Rows2 /> },
-            ]}
-            onValueChange={onDensityChange}
-          />
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  size="icon"
-                  variant="outline"
-                  aria-label={labels.sort}
-                  className="@min-[40rem]:hidden"
-                />
-              }
-            >
-              <ArrowUpDown />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="*:text-xs!">
-              {table
-                .getAllLeafColumns()
-                .filter((column) => column.getCanSort())
-                .map((column) => (
-                  <React.Fragment key={column.id}>
-                    {[false, true].map((desc) => (
-                      <DropdownMenuItem
-                        key={String(desc)}
-                        onClick={() => column.toggleSorting(desc)}
-                      >
-                        {String(column.columnDef.header)} ·{" "}
-                        {desc ? labels.descending : labels.ascending}
-                      </DropdownMenuItem>
-                    ))}
-                  </React.Fragment>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-    </>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </GridToolbarItem>
+    </GridToolbar>
   )
 }
 export { DataTableToolbar }

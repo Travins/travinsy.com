@@ -792,6 +792,17 @@ async function checkPressedBorder(ctx: Ctx, page: Page, scope: Scope) {
       const report = await target.evaluate((node, controlSelector) => {
         const control = node.closest(controlSelector)
         if (!control || control === node || node.contains(control)) return null
+        // 控件本身没有边框（如放进网格工具栏的无框写法），没有可盖住的边，跳过
+        const style = getComputedStyle(control)
+        if (
+          [
+            style.borderTopWidth,
+            style.borderRightWidth,
+            style.borderBottomWidth,
+            style.borderLeftWidth,
+          ].every((width) => parseFloat(width) === 0)
+        )
+          return null
         const rect = node.getBoundingClientRect()
         const rectC = control.getBoundingClientRect()
         // 按钮离控件四边最近的那一段，小于 0.5px 就算压到边框上了

@@ -1930,6 +1930,7 @@
         "https://yiui.dev/r/grid-layout.json",
         "https://yiui.dev/r/bar-field.json",
         "https://yiui.dev/r/grid-pagination.json",
+        "https://yiui.dev/r/grid-toolbar.json",
         "https://yiui.dev/r/segmented-control.json",
         "alert-dialog",
         "https://yiui.dev/r/bar-select.json"
@@ -2078,6 +2079,22 @@
           "path": "src/registry/hooks/use-controllable-state.ts",
           "type": "registry:hook",
           "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "grid-toolbar",
+      "type": "registry:ui",
+      "title": "网格工具栏",
+      "description": "一行格子组成的工具栏，格子之间虚线分隔、窄容器自动换行；方条输入、分段选择、方条下拉放进来会自动去掉外框铺满整格。",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/grid-toolbar/grid-toolbar.tsx",
+          "type": "registry:ui",
+          "target": "@ui/grid-toolbar/grid-toolbar.tsx"
         }
       ]
     },

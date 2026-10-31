@@ -111,6 +111,7 @@ type DataTableProps<T> = Omit<React.ComponentProps<"div">, "onChange"> & {
   virtualization?: false | { estimateRowHeight?: number; height?: number }
   header?: React.ReactNode
   counts?: Record<string, number>
+  /** 工具栏插槽：工具栏是网格工具栏，每个控件包一层 `GridToolbarItem` 成为一格 */
   toolbar?: React.ReactNode | ((table: Table<T>) => React.ReactNode)
   statusFilter?: {
     columnId: string

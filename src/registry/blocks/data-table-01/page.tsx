@@ -23,6 +23,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
 import { BarSelect } from "@/registry/ui/bar-select/bar-select"
+import { GridToolbarItem } from "@/registry/ui/grid-toolbar/grid-toolbar"
 import { Button } from "@/components/ui/button"
 import {
   GridContainer,
@@ -285,27 +286,30 @@ function DataTablePage() {
           <DataTable
             apiRef={apiRef}
             toolbar={(table) => (
-              <BarSelect
-                multiple
-                label="负责人"
-                placeholder="全部"
-                className="hidden w-48 shrink-0 @min-[64rem]:block"
-                contentClassName="[&_[data-slot=combobox-item]]:text-xs [&_*]:text-xs"
-                value={
-                  (table.getColumn("owner")?.getFilterValue() as string[]) ?? []
-                }
-                options={["林小满", "陈青", "周远"].map((owner) => ({
-                  value: owner,
-                  label: owner,
-                  count: data.filter((row) => row.owner === owner).length,
-                }))}
-                onValueChange={(values) => {
-                  table
-                    .getColumn("owner")
-                    ?.setFilterValue(values.length ? values : undefined)
-                  table.setPageIndex(0)
-                }}
-              />
+              // 工具栏是网格工具栏：插槽里每个控件包一层 GridToolbarItem 成为一格
+              <GridToolbarItem className="hidden w-48 @min-[64rem]:flex">
+                <BarSelect
+                  multiple
+                  label="负责人"
+                  placeholder="全部"
+                  contentClassName="[&_[data-slot=combobox-item]]:text-xs [&_*]:text-xs"
+                  value={
+                    (table.getColumn("owner")?.getFilterValue() as string[]) ??
+                    []
+                  }
+                  options={["林小满", "陈青", "周远"].map((owner) => ({
+                    value: owner,
+                    label: owner,
+                    count: data.filter((row) => row.owner === owner).length,
+                  }))}
+                  onValueChange={(values) => {
+                    table
+                      .getColumn("owner")
+                      ?.setFilterValue(values.length ? values : undefined)
+                    table.setPageIndex(0)
+                  }}
+                />
+              </GridToolbarItem>
             )}
             rowActions={(row) => (
               <DataTableRowActions

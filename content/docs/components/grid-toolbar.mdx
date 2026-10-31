@@ -1,0 +1,80 @@
+---
+title: 网格工具栏
+titleEn: Grid Toolbar
+description: 一行格子组成的工具栏，格子之间虚线分隔、窄容器自动换行；方条输入、分段选择、方条下拉放进来会自动去掉外框铺满整格。
+group: data
+status: new
+---
+
+<ComponentPreview name="grid-toolbar-demo" />
+
+## 安装
+
+<InstallCommand name="grid-toolbar" />
+
+## 用法
+
+```tsx
+import { Search } from "lucide-react"
+import { BarField } from "@/components/ui/bar-field/bar-field"
+import {
+  GridToolbar,
+  GridToolbarItem,
+} from "@/components/ui/grid-toolbar/grid-toolbar"
+import { SegmentedControl } from "@/components/ui/segmented-control/segmented-control"
+
+;<GridToolbar aria-label="筛选">
+  <GridToolbarItem grow>
+    <BarField aria-label="搜索" icon={<Search />} placeholder="搜索…" />
+  </GridToolbarItem>
+  <GridToolbarItem>
+    <SegmentedControl aria-label="状态" options={OPTIONS} />
+  </GridToolbarItem>
+</GridToolbar>
+```
+
+`GridToolbar` 是整行，`GridToolbarItem` 是其中一格。每格高度跟随工具栏，格内控件铺满整格；`grow` 让这一格占满剩余宽度，通常给搜索框。宽度、换行位置、窄屏隐藏都写在 `GridToolbarItem` 的 `className` 上，比如 `basis-full` 让一格独占一行、`hidden @min-[40rem]:flex` 在窄容器里隐藏。
+
+### 放进来的控件
+
+[方条输入](/components/bar-field/)、[分段选择](/components/segmented-control/)、[方条下拉](/components/bar-select/)放进工具栏时会自动换成无框写法：去掉自己的边框、圆角和底色，高度铺满整格，焦点环画在格子内侧。单独使用时保持原样，不需要额外传参数。原理是这三个组件带了 `in-data-[slot=grid-toolbar]:` 样式，只在祖先是网格工具栏时生效，组件之间没有互相引用。
+
+图标按钮用官方 `Button`：`variant="ghost"`、`size="icon-lg"`（默认高度）或 `size="icon"`（`size="sm"` 时），再加 `h-full rounded-none focus-visible:ring-inset`，就是一个方形的格子。
+
+### 外框与换行
+
+单独使用时整条带一圈边框（`bordered` 默认为 `true`）。放进已经有边线的容器，例如表格顶部，设 `bordered={false}`，由容器画线。格子之间是虚线；换行后，每格都画左线和上线，最外圈的线由外框裁掉，所以不论怎样换行，格子之间都只有一条线。
+
+## API
+
+### GridToolbar
+
+<PropsTable name="grid-toolbar" component="GridToolbar" />
+
+### GridToolbarItem
+
+<PropsTable name="grid-toolbar" component="GridToolbarItem" />
+
+导出 `GridToolbarProps`、`GridToolbarItemProps` 类型和 `gridToolbarVariants`。
+
+## data-slot
+
+| 部位             | `data-slot`            |
+| ---------------- | ---------------------- |
+| 整行             | `grid-toolbar`         |
+| 内层（负责换行） | `grid-toolbar-content` |
+| 一格             | `grid-toolbar-item`    |
+
+根元素在 `bordered` 为真时带 `data-bordered`。
+
+## 可访问性
+
+工具栏本身只是布局，不接管键盘：格内每个控件保留自己的 Tab 顺序与方向键行为。没有使用 `role="toolbar"`，因为那要求整条只占一个 Tab 位、由方向键切换，与输入框、下拉的键盘习惯冲突。给整行一个 `aria-label`（如「日志筛选」）方便读屏定位；格内控件各自需要可访问名称。
+
+## 注意事项
+
+行高对应按钮 `icon` / `icon-lg` 档：`size="sm"` 为 32px，默认 36px，触屏上分别加高到 40 / 44px。工具栏外层是 `overflow-hidden`（用来裁掉最外圈的线），弹出层都走 Portal，不受影响；如果在格子里放自绘的浮层，请同样用 Portal。
+
+## 源码
+
+<ComponentSource name="grid-toolbar" />

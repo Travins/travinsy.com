@@ -164,6 +164,8 @@ function SegmentedControl({
         "data-[disabled]:opacity-50",
         // 纯图标的格子是正方形，整条按内容收紧，不再铺满一行
         iconOnly && "w-fit",
+        // 放进网格工具栏：去掉外框、圆角和底色，高度跟随格子
+        "in-data-[slot=grid-toolbar]:h-full! in-data-[slot=grid-toolbar]:rounded-none in-data-[slot=grid-toolbar]:border-0 in-data-[slot=grid-toolbar]:bg-transparent",
         className,
       )}
       style={{ ...flowToneStyle(tone), ...style }}
