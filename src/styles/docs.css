@@ -508,6 +508,8 @@ a.docs-nav-head[aria-current="page"]::after {
     flex: 1;
     overflow-y: auto;
     overscroll-behavior: contain;
+    /* 最后一项不贴着窗口底边 */
+    padding-bottom: 2rem;
   }
   .docs-main {
     padding: 2rem 2rem 4rem;

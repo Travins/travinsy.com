@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { DocsNavScroll } from "./docs-nav-scroll"
 import { sectionNav, type NavSectionId } from "./docs-nav"
 
 const pad = (n: number) => String(n).padStart(2, "0")
@@ -55,7 +56,7 @@ export function DocsSidebarNav({
             {head}
           </Link>
         )}
-        <div className="docs-nav-scroll">
+        <DocsNavScroll section={section}>
           {nav.groups.map((group, groupIndex) => {
             const titleId = `docs-nav-${section}-${group.id}`
             return (
@@ -126,7 +127,7 @@ export function DocsSidebarNav({
               </div>
             )
           })}
-        </div>
+        </DocsNavScroll>
       </div>
     </nav>
   )
