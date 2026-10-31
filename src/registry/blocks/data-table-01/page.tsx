@@ -94,7 +94,7 @@ const columns: DataTableColumn<Dataset>[] = [
     header: "状态",
     size: 140,
     cell: ({ getValue }) => (
-      <span className="inline-flex items-center gap-2">
+      <span className="inline-flex items-center gap-1.5 text-xs">
         <span
           className={
             String(getValue()) === "进行中"
