@@ -145,8 +145,13 @@ function Checkout01({
       setPending(false)
     }
   }
-  const submitButton = (size: "default" | "lg") => (
-    <Button size={size} disabled={pending} onClick={submit}>
+  const submitButton = (size: "default" | "lg", className?: string) => (
+    <Button
+      size={size}
+      className={className}
+      disabled={pending}
+      onClick={submit}
+    >
       {pending ? t.pending : t.submit}
     </Button>
   )
@@ -365,7 +370,7 @@ function Checkout01({
               </p>
             )}
             <div className="hidden @3xl/checkout:grid">
-              {submitButton("default")}
+              {submitButton("lg")}
             </div>
           </div>
         </aside>
@@ -374,7 +379,7 @@ function Checkout01({
         <span>
           {t.total} <strong className="font-mono">{money(total)}</strong>
         </span>
-        {submitButton("lg")}
+        {submitButton("lg", "w-1/2")}
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
