@@ -12,6 +12,7 @@ const DATA_TABLE_LABELS: DataTableLabels = {
   editDescription: (value, column) => "编辑「" + value + "」的" + column,
   actions: "操作",
   rowTotal: (count: number) => `共 ${count} 行`,
+  showMore: (rest: number) => `显示更多（还有 ${rest} 行）`,
   search: "搜索数据集…",
   searchField: "搜索",
   status: "状态",

@@ -45,6 +45,9 @@ import { DataTablePagination } from "./data-table-pagination"
 import { DATA_TABLE_LABELS } from "./config"
 import type { DataTableProps, DataTableMeta } from "./types"
 
+/** 虚拟滚动模式下窄屏卡片列表每批显示的条数 */
+const MOBILE_LIST_BATCH = 30
+
 function DataTable<T>({
   apiRef,
   columns,
@@ -115,6 +118,8 @@ function DataTable<T>({
   })
   const [visibility, setVisibility] = React.useState<VisibilityState>({})
   const [density, setDensity] = React.useState("52")
+  // 虚拟滚动模式下，窄屏卡片列表分批显示：一次铺开上万行会让页面（含预渲染的 HTML）过大
+  const [listLimit, setListLimit] = React.useState(MOBILE_LIST_BATCH)
   const [detailId, setDetailId] = React.useState<string | null>(null)
   const longPress = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const [scrolled, setScrolled] = React.useState(false)
@@ -393,7 +398,7 @@ function DataTable<T>({
                     // 与表体一致：操作列前的分隔线画在最后一个数据列的右边
                     rowActions &&
                       i === all.length - 1 &&
-                      "border-r border-edge [border-right-style:dashed]",
+                      "border-r [border-right-style:dashed] border-edge",
                     header.id === pinned && "sticky left-10 z-30",
                     header.id === pinned &&
                       scrolled &&
@@ -761,110 +766,124 @@ function DataTable<T>({
             </Button>
           </li>
         ) : (
-          rows.map((row, index) => {
-            const cells = row.getAllCells()
-            const name = cells[0]
-            const status = cells.find(
-              (cell) => cell.column.id === statusFilter?.columnId,
-            )
-            const rest = cells
-              .filter((cell) => cell !== name && cell !== status)
-              .slice(0, 3)
-            return (
-              <li
-                key={row.id}
-                className={cn(
-                  "group/row flex border-b border-dashed border-edge last:border-b-0",
-                  row.getIsSelected() && "bg-primary/[0.04]",
-                )}
-              >
-                <div
+          (virtualization ? rows.slice(0, listLimit) : rows).map(
+            (row, index) => {
+              const cells = row.getAllCells()
+              const name = cells[0]
+              const status = cells.find(
+                (cell) => cell.column.id === statusFilter?.columnId,
+              )
+              const rest = cells
+                .filter((cell) => cell !== name && cell !== status)
+                .slice(0, 3)
+              return (
+                <li
+                  key={row.id}
                   className={cn(
-                    "group/number relative flex w-10 shrink-0 items-center justify-center border-r border-dashed border-edge",
-                    row.getIsSelected()
-                      ? "bg-hatch"
-                      : "focus-within:bg-dots hover:bg-dots",
+                    "group/row flex border-b border-dashed border-edge last:border-b-0",
+                    row.getIsSelected() && "bg-primary/[0.04]",
                   )}
-                  onPointerDown={() => {
-                    longPress.current = setTimeout(
-                      () => row.toggleSelected(true),
-                      500,
-                    )
-                  }}
-                  onPointerUp={() => {
-                    if (longPress.current) clearTimeout(longPress.current)
-                  }}
-                  onPointerCancel={() => {
-                    if (longPress.current) clearTimeout(longPress.current)
-                  }}
-                  onPointerLeave={() => {
-                    if (longPress.current) clearTimeout(longPress.current)
-                  }}
                 >
-                  {row.getIsSelected() && (
+                  <div
+                    className={cn(
+                      "group/number relative flex w-10 shrink-0 items-center justify-center border-r border-dashed border-edge",
+                      row.getIsSelected()
+                        ? "bg-hatch"
+                        : "focus-within:bg-dots hover:bg-dots",
+                    )}
+                    onPointerDown={() => {
+                      longPress.current = setTimeout(
+                        () => row.toggleSelected(true),
+                        500,
+                      )
+                    }}
+                    onPointerUp={() => {
+                      if (longPress.current) clearTimeout(longPress.current)
+                    }}
+                    onPointerCancel={() => {
+                      if (longPress.current) clearTimeout(longPress.current)
+                    }}
+                    onPointerLeave={() => {
+                      if (longPress.current) clearTimeout(longPress.current)
+                    }}
+                  >
+                    {row.getIsSelected() && (
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-primary"
+                      />
+                    )}
                     <span
                       aria-hidden="true"
-                      className="pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-primary"
+                      className={cn(
+                        "font-mono text-[10px] text-muted-foreground group-focus-within/number:opacity-0 group-hover/number:opacity-0",
+                        row.getIsSelected() && "opacity-0",
+                      )}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <Checkbox
+                      aria-label={labels.selectRow + " " + (index + 1)}
+                      checked={row.getIsSelected()}
+                      onCheckedChange={(value) => row.toggleSelected(!!value)}
+                      className={cn(
+                        "absolute opacity-0 group-focus-within/number:opacity-100 group-hover/number:opacity-100",
+                        row.getIsSelected() && "opacity-100",
+                      )}
                     />
-                  )}
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      "font-mono text-[10px] text-muted-foreground group-focus-within/number:opacity-0 group-hover/number:opacity-0",
-                      row.getIsSelected() && "opacity-0",
-                    )}
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <Checkbox
-                    aria-label={labels.selectRow + " " + (index + 1)}
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    className={cn(
-                      "absolute opacity-0 group-focus-within/number:opacity-100 group-hover/number:opacity-100",
-                      row.getIsSelected() && "opacity-100",
-                    )}
-                  />
-                </div>
-                <button
-                  type="button"
-                  className="min-w-0 flex-1 p-3 text-left focus-visible:outline-2 focus-visible:outline-ring"
-                  onClick={() => setDetailId(row.id)}
-                >
-                  <span className="flex items-center justify-between gap-2">
-                    <span className="truncate font-medium">
-                      {String(name?.getValue() ?? "")}
-                    </span>
-                    <span className="shrink-0 text-xs">
-                      {status &&
-                        flexRender(
-                          status.column.columnDef.cell,
-                          status.getContext(),
-                        )}
-                    </span>
-                  </span>
-                  <span className="mt-2 flex items-center gap-3 font-mono text-[10px] text-muted-foreground">
-                    {rest.map((cell, index) => (
-                      <span
-                        key={cell.id}
-                        className={index === rest.length - 1 ? "ml-auto" : ""}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </span>
-                    ))}
-                  </span>
-                </button>
-                {rowActions && (
-                  <div className="flex shrink-0 items-center pr-2">
-                    {rowActions(row.original)}
                   </div>
-                )}
-              </li>
-            )
-          })
+                  <button
+                    type="button"
+                    className="min-w-0 flex-1 p-3 text-left focus-visible:outline-2 focus-visible:outline-ring"
+                    onClick={() => setDetailId(row.id)}
+                  >
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="truncate font-medium">
+                        {String(name?.getValue() ?? "")}
+                      </span>
+                      <span className="shrink-0 text-xs">
+                        {status &&
+                          flexRender(
+                            status.column.columnDef.cell,
+                            status.getContext(),
+                          )}
+                      </span>
+                    </span>
+                    <span className="mt-2 flex items-center gap-3 font-mono text-[10px] text-muted-foreground">
+                      {rest.map((cell, index) => (
+                        <span
+                          key={cell.id}
+                          className={index === rest.length - 1 ? "ml-auto" : ""}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </span>
+                      ))}
+                    </span>
+                  </button>
+                  {rowActions && (
+                    <div className="flex shrink-0 items-center pr-2">
+                      {rowActions(row.original)}
+                    </div>
+                  )}
+                </li>
+              )
+            },
+          )
+        )}
+        {virtualization && !loading && !error && rows.length > listLimit && (
+          <li className="p-4">
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full"
+              onClick={() => setListLimit((limit) => limit + MOBILE_LIST_BATCH)}
+            >
+              {labels.showMore(rows.length - listLimit)}
+            </Button>
+          </li>
         )}
       </ul>
       <Sheet

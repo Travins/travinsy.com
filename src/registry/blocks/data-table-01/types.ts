@@ -33,6 +33,8 @@ type DataTableLabels = {
   editDescription: (value: string, column: string) => string
   actions: string
   rowTotal: (count: number) => string
+  /** 虚拟滚动模式下窄屏列表的「显示更多」 */
+  showMore: (rest: number) => string
   search: string
   /** 搜索框的读屏名称（未传 searchLabel 时使用） */
   searchField: string
