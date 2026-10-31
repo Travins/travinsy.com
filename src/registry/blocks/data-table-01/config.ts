@@ -29,6 +29,7 @@ const DATA_TABLE_LABELS: DataTableLabels = {
   empty: "暂无数据",
   noResults: "没有符合条件的结果",
   clearFilters: "清除筛选",
+  all: "全部",
   first: "首页",
   previous: "上一页",
   next: "下一页",

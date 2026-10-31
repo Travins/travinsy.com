@@ -10,6 +10,7 @@ import {
   Settings2,
 } from "lucide-react"
 import { BarField } from "@/registry/ui/bar-field/bar-field"
+import { BarSelect } from "@/registry/ui/bar-select/bar-select"
 import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
 import {
   GridToolbar,
@@ -99,29 +100,35 @@ function DataTableToolbar<T>({
         />
       </GridToolbarItem>
       {statusFilter && (
-        // 窄容器里状态筛选独占最后一行
-        <GridToolbarItem className="order-last basis-full @min-[40rem]:order-none @min-[40rem]:basis-auto">
-          <SegmentedControl
-            aria-label={labels.status}
-            value={status}
-            className="[&_[data-slot=segmented-control-item]]:flex-1 [&_[data-slot=segmented-control-item]>span:last-child]:overflow-visible"
-            options={statusFilter.options.map((option) => ({
-              value: option.value,
-              icon: option.tone ? (
-                <span
-                  className="hidden size-1.5 rounded-full @min-[40rem]:block"
-                  style={{ background: option.tone }}
-                />
-              ) : undefined,
-              label: (
-                <span className="whitespace-nowrap">
-                  {option.label}
-                  <span className="ml-1.5 hidden font-mono text-xs text-muted-foreground @min-[40rem]:inline">
-                    {counts?.[option.value] ?? 0}
+        // 状态筛选用方条下拉：清除即「全部」；窄容器里独占最后一行
+        <GridToolbarItem className="order-last basis-full @min-[40rem]:order-none @min-[40rem]:w-44 @min-[40rem]:basis-auto">
+          <BarSelect
+            label={labels.status}
+            placeholder={
+              statusFilter.options.find((option) => option.value === "")
+                ?.label ?? labels.all
+            }
+            value={status || null}
+            contentClassName="[&_*]:text-xs"
+            options={statusFilter.options
+              .filter((option) => option.value !== "")
+              .map((option) => ({
+                value: option.value,
+                textValue: option.label,
+                count: counts?.[option.value] ?? 0,
+                label: (
+                  <span className="flex items-center gap-2">
+                    {option.tone && (
+                      <span
+                        aria-hidden="true"
+                        className="size-1.5 shrink-0 rounded-full"
+                        style={{ background: option.tone }}
+                      />
+                    )}
+                    {option.label}
                   </span>
-                </span>
-              ),
-            }))}
+                ),
+              }))}
             onValueChange={(value) => {
               statusColumn?.setFilterValue(value || undefined)
               table.setPageIndex(0)

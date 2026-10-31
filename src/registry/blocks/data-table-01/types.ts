@@ -51,6 +51,8 @@ type DataTableLabels = {
   empty: string
   noResults: string
   clearFilters: string
+  /** 状态筛选未选时的占位（statusFilter 里没有空值选项时使用） */
+  all: string
   first: string
   previous: string
   next: string
