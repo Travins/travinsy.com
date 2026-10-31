@@ -378,7 +378,7 @@ function DataTable<T>({
                   )}
                 </span>
               </th>
-              {table.getHeaderGroups()[0]?.headers.map((header) => (
+              {table.getHeaderGroups()[0]?.headers.map((header, i, all) => (
                 <th
                   key={header.id}
                   aria-sort={
@@ -390,6 +390,10 @@ function DataTable<T>({
                   }
                   className={cn(
                     "relative bg-muted/50 px-3 text-left",
+                    // 与表体一致：操作列前的分隔线画在最后一个数据列的右边
+                    rowActions &&
+                      i === all.length - 1 &&
+                      "border-r border-edge [border-right-style:dashed]",
                     header.id === pinned && "sticky left-10 z-30",
                     header.id === pinned &&
                       scrolled &&
@@ -456,7 +460,7 @@ function DataTable<T>({
                 </th>
               ))}
               {rowActions && (
-                <th className="w-16 border-l border-dashed border-edge bg-muted text-center text-xs font-medium">
+                <th className="w-16 bg-muted text-center text-xs font-medium">
                   {labels.actions}
                 </th>
               )}
@@ -694,7 +698,7 @@ function DataTable<T>({
                     ))}
                     {rowActions && (
                       <td className="w-16 border-b border-dashed border-edge text-center">
-                        {/* 左侧分隔线由前一格的 border-r 提供，这里不再画，避免两条虚线重叠 */}
+                        {/* 左侧分隔线由前一格的 border-r 提供（表头同理），这里不再画 */}
                         {/* 操作按钮常驻显示（淡色），悬停行时加深 */}
                         {rowActions(row.original)}
                       </td>
