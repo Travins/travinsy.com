@@ -1,0 +1,47 @@
+---
+title: 方条文本框
+titleEn: Bar Field
+description: 方条系列基础文本框，支持标签、图标、后缀和错误提示。
+group: input
+status: new
+---
+
+<ComponentPreview name="bar-field-demo" />
+
+## 安装
+
+<InstallCommand name="bar-field" />
+
+## 用法
+
+```tsx
+import { BarField } from "@/components/ui/bar-field/bar-field"
+
+;<BarField label="名称" name="name" />
+```
+
+它是方条系列的基础文本框。普通文本、搜索、密码和验证码使用它；需要手机号格式整理或证件号校验时，使用 phone-input、id-number-input。suffix 支持单位和密码切换按钮；footerAction 用于忘记密码等操作。无标签时必须提供 aria-label 或 aria-labelledby，placeholder 不能代替名称。
+
+## 示例
+
+### 尺寸与状态
+
+<ComponentPreview name="bar-field-sizes-demo" />
+
+### 后缀
+
+<ComponentPreview name="bar-field-suffix-demo" />
+
+## API
+
+<PropsTable name="bar-field" component="BarField" />
+
+导出 `BarFieldProps` 类型。根元素的 `data-slot` 为 `bar-field`。
+
+## 可访问性
+
+字段通过 label 关联输入框，error 和 description 用 aria-describedby 关联。支持 name、form 和原生输入属性；非受控表单重置恢复 defaultValue。窄容器标签移到条上方。文字输入聚焦使用加深边框，后缀按钮用键盘聚焦环。
+
+## 源码
+
+<ComponentSource name="bar-field" />

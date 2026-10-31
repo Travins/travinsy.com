@@ -1983,6 +1983,54 @@
           "flow-amber": "oklch(0.82 0.15 82)"
         }
       }
+    },
+    {
+      "name": "bar-field",
+      "type": "registry:ui",
+      "title": "方条文本框",
+      "description": "方条系列基础文本框，支持标签、图标、后缀和错误提示。",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/ui/bar-field/bar-field.tsx",
+          "type": "registry:ui",
+          "target": "@ui/bar-field/bar-field.tsx"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "bar-pagination",
+      "type": "registry:ui",
+      "title": "方条分页",
+      "description": "基于官方分页组合的方条控件，支持每页条数、跳页和窄容器。",
+      "dependencies": [
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "pagination"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/bar-pagination/bar-pagination.tsx",
+          "type": "registry:ui",
+          "target": "@ui/bar-pagination/bar-pagination.tsx"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
     }
   ]
 }
