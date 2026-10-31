@@ -44,7 +44,7 @@ import { BarPagination } from "@/components/ui/bar-pagination/bar-pagination"
 
 ## 注意事项
 
-pageCount 至少按一页显示，page 超出范围时夹到有效范围。getHref 模式保持浏览器原生链接行为，跳页会导航到生成的地址。
+页码采用固定槽位：总页数多于 `siblings × 2 + 5` 时，无论当前在第几页，页码格（含省略号）的数量都相同，省略号与页码按钮同宽，翻页时分页条宽度不变。pageCount 至少按一页显示，page 超出范围时夹到有效范围。getHref 模式保持浏览器原生链接行为，跳页会导航到生成的地址。
 
 ## 源码
 

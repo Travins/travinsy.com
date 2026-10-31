@@ -3,7 +3,7 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cva } from "class-variance-authority"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Pagination,
   PaginationContent,
@@ -101,23 +101,26 @@ function BarPagination({
     size === "sm" ? "icon-sm" : size === "lg" ? "icon-lg" : "icon"
   const cell =
     "rounded-none border-0 font-mono tabular-nums focus-visible:ring-inset"
-  const pages: (number | string)[] = []
+  // 固定槽位：总页数多于 2×siblings+5 时，始终渲染同样数量的格子（首页、末页、当前页及两侧、
+  // 两个省略号或补位页码），翻页时分页条宽度不变，按钮不会在鼠标下移位
   const radius = Math.max(0, Math.trunc(siblings) || 0)
-  const numbers = [
-    ...new Set([
-      1,
-      count,
-      ...Array.from(
-        { length: Math.min(count, radius * 2 + 1) },
-        (_, i) => page - radius + i,
-      ).filter((n) => n > 0 && n <= count),
-    ]),
-  ].sort((a, b) => a - b)
-  for (const n of numbers) {
-    const last = pages.at(-1)
-    if (typeof last === "number" && n - last > 1) pages.push(`gap-${n}`)
-    pages.push(n)
-  }
+  const slots = radius * 2 + 5
+  const range = (from: number, to: number) =>
+    Array.from({ length: to - from + 1 }, (_, i) => from + i)
+  const pages: (number | string)[] =
+    count <= slots
+      ? range(1, count)
+      : page <= radius + 3
+        ? [...range(1, slots - 2), "gap-end", count]
+        : page >= count - radius - 2
+          ? [1, "gap-start", ...range(count - slots + 3, count)]
+          : [
+              1,
+              "gap-start",
+              ...range(page - radius, page + radius),
+              "gap-end",
+              count,
+            ]
   const item = (
     n: number,
     content: React.ReactNode,
@@ -227,7 +230,7 @@ function BarPagination({
                           <SelectItem
                             key={n}
                             value={n}
-                            className="py-1 ps-1.5 pe-6 font-mono text-xs [&>span:last-child]:right-1 [&_svg]:size-3.5"
+                            className="py-1 ps-1.5 pe-6 font-mono text-xs [&_svg]:size-3.5 [&>span:last-child]:right-1"
                           >
                             {n}
                           </SelectItem>
@@ -255,7 +258,11 @@ function BarPagination({
                 ) : (
                   <span
                     aria-hidden="true"
-                    className="flex min-w-8 items-center justify-center px-2 text-muted-foreground"
+                    className={cn(
+                      buttonVariants({ variant: "ghost", size: buttonSize }),
+                      cell,
+                      "pointer-events-none text-muted-foreground",
+                    )}
                   >
                     …
                   </span>
