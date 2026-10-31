@@ -102,6 +102,12 @@ const OPTIONS = [
 
 <ComponentPreview name="segmented-control-swatch-demo" />
 
+### 纯图标
+
+`iconOnly` 只显示图标：每格是正方形，图标在格子正中，整条按内容收紧；`label` 仍然要写，只给读屏，是字符串时还会作为悬停提示。适合工具栏里含义靠图标就能看懂的切换，比如对齐方式、列表密度。
+
+<ComponentPreview name="segmented-control-icon-demo" />
+
 ## API
 
 ### SegmentedControl
@@ -149,6 +155,7 @@ type SegmentedControlProps = Omit<
   size?: SegmentedControlSize
   tone?: FlowTone
   modified?: boolean
+  iconOnly?: boolean
   className?: string
   style?: React.CSSProperties
 }
@@ -164,7 +171,7 @@ type SegmentedControlProps = Omit<
 | 选项                              | `segmented-control-item`      |
 | 选中块                            | `segmented-control-indicator` |
 
-根元素始终带 `data-variant`（`bar` / `compact`），`modified` 为真时带 `data-modified`，禁用时带 `data-disabled`；选项上是 Base UI 给的 `data-checked`、`data-disabled`。
+根元素始终带 `data-variant`（`bar` / `compact`），`iconOnly` 时带 `data-icon-only`，`modified` 为真时带 `data-modified`，禁用时带 `data-disabled`；选项上是 Base UI 给的 `data-checked`、`data-disabled`。
 
 ## 可访问性
 

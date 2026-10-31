@@ -138,6 +138,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "ripple-pulse-demo": lazy(() => import("./examples/ripple-pulse-demo")),
   "ripple-signal-demo": lazy(() => import("./examples/ripple-signal-demo")),
   "segmented-control-demo": lazy(() => import("./examples/segmented-control-demo")),
+  "segmented-control-icon-demo": lazy(() => import("./examples/segmented-control-icon-demo")),
   "segmented-control-label-demo": lazy(() => import("./examples/segmented-control-label-demo")),
   "segmented-control-swatch-demo": lazy(() => import("./examples/segmented-control-swatch-demo")),
   "segmented-control-tone-demo": lazy(() => import("./examples/segmented-control-tone-demo")),

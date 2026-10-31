@@ -110,6 +110,11 @@ type SegmentedControlProps = Omit<
    * @default false
    */
   modified?: boolean
+  /**
+   * 只显示图标：每格为正方形，`label` 只给读屏；`label` 是字符串时同时作为悬停提示
+   * @default false
+   */
+  iconOnly?: boolean
 }
 
 /**
@@ -126,6 +131,7 @@ function SegmentedControl({
   size = "default",
   tone,
   modified = false,
+  iconOnly = false,
   disabled,
   className,
   style,
@@ -151,10 +157,13 @@ function SegmentedControl({
       aria-labelledby={label !== undefined ? labelId : undefined}
       data-slot="segmented-control"
       data-variant={variant}
+      data-icon-only={iconOnly ? "" : undefined}
       data-modified={modified ? "" : undefined}
       className={cn(
         segmentedControlVariants({ size, variant }),
         "data-[disabled]:opacity-50",
+        // 纯图标的格子是正方形，整条按内容收紧，不再铺满一行
+        iconOnly && "w-fit",
         className,
       )}
       style={{ ...flowToneStyle(tone), ...style }}
@@ -184,7 +193,16 @@ function SegmentedControl({
               value={option.value}
               disabled={option.disabled}
               data-slot="segmented-control-item"
-              className="relative flex min-w-0 flex-auto cursor-pointer items-center justify-center gap-1.5 px-3 whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
+              title={
+                iconOnly && typeof option.label === "string"
+                  ? option.label
+                  : undefined
+              }
+              className={cn(
+                "relative flex min-w-0 cursor-pointer items-center justify-center whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+                // 纯图标：正方形格子、不留文字间距，图标才能真正居中
+                iconOnly ? "aspect-square flex-none" : "flex-auto gap-1.5 px-3",
+              )}
             >
               {selected ? (
                 <motion.span
@@ -213,7 +231,9 @@ function SegmentedControl({
                   {option.icon}
                 </span>
               ) : null}
-              <span className="relative truncate">{option.label}</span>
+              <span className={iconOnly ? "sr-only" : "relative truncate"}>
+                {option.label}
+              </span>
             </Radio.Root>
           )
         })}

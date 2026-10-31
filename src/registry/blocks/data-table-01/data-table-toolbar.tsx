@@ -154,23 +154,14 @@ function DataTableToolbar<T>({
           {/* 密度只用图标：行数越多越紧凑；文字留给读屏和悬停提示 */}
           <SegmentedControl
             aria-label={labels.density}
+            iconOnly
             value={density}
-            className="hidden w-auto @min-[40rem]:flex [&_[data-slot=segmented-control-item]]:w-8 [&_[data-slot=segmented-control-item]]:gap-0 [&_[data-slot=segmented-control-item]]:px-0"
-            options={(
-              [
-                ["40", labels.compact, Rows4],
-                ["52", labels.standard, Rows3],
-                ["64", labels.comfortable, Rows2],
-              ] as const
-            ).map(([value, text, Icon]) => ({
-              value,
-              icon: (
-                <span title={text}>
-                  <Icon />
-                </span>
-              ),
-              label: <span className="sr-only">{text}</span>,
-            }))}
+            className="hidden @min-[40rem]:flex"
+            options={[
+              { value: "40", label: labels.compact, icon: <Rows4 /> },
+              { value: "52", label: labels.standard, icon: <Rows3 /> },
+              { value: "64", label: labels.comfortable, icon: <Rows2 /> },
+            ]}
             onValueChange={onDensityChange}
           />
           <DropdownMenu>
