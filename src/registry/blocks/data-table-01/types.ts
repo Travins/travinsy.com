@@ -56,6 +56,10 @@ type DataTableLabels = {
   cancel: string
   save: string
   saveError: string
+  saving: string
+  saved: string
+  nextCell: string
+  editAgain: string
   selectPage: string
   selectRow: string
 }

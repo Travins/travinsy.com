@@ -49,7 +49,9 @@ export default function Page() {
 
 ### 编辑与失败回滚
 
-列 `meta.editable` 支持 `text` 与 `number`。`meta.validate(value, row)` 返回错误文字时保留编辑态。`onCellCommit({ rowId, columnId, value, row })` 保存修改，组件先更新本地显示，异步失败则回滚并显示错误。父层应在保存成功后同步数据；编辑使用 accessorKey 对应的顶层字段。
+列 `meta.editable` 支持 `text` 与 `number`。编辑框就地替换内容，整格描主色实线框，下方贴一条提示条显示快捷键；`meta.validate(value, row)` 返回错误文字时提示条变红，编辑态保留。
+
+`onCellCommit({ rowId, columnId, value, row })` 可以返回 Promise。保存是乐观的：编辑框立刻关闭，格子右上角显示「保存中」，成功后显示「已保存」并淡出；Promise 拒绝时值回滚，格子标红，悬停或聚焦可看到错误，按 Enter 重新编辑会带回草稿。值没有变化时不会调用 `onCellCommit`。父层应在保存成功后同步数据；编辑使用 accessorKey 对应的顶层字段。示例模拟 600ms 请求，改成已有的名称会被拒绝。
 
 ### 行操作与主动编辑
 
@@ -113,8 +115,9 @@ import { DataTableRowActions } from "@/components/data-table-01/data-table-row-a
 | Tab               | 聚焦排序、选择、编辑格与列宽手柄  |
 | Enter / F2 / 双击 | 开始编辑                          |
 | Enter             | 保存并聚焦下一行同列              |
+| 点击别处          | 保存                              |
 | Tab / Shift+Tab   | 保存并聚焦下一个 / 上一个可编辑格 |
-| Esc               | 取消编辑                          |
+| Esc               | 放弃修改                          |
 | ← / →（列宽手柄） | 调整 16px                         |
 
 表头提供 aria-sort，虚拟行提供 aria-rowindex，编辑错误通过 aria-describedby 关联。

@@ -384,13 +384,23 @@ function DataTablePage() {
                 </Button>
               </>
             )}
-            onCellCommit={({ rowId, columnId, value }) =>
+            onCellCommit={async ({ rowId, columnId, value }) => {
+              // 模拟请求：等待 600ms；重名由“服务端”拒绝，演示保存失败与回滚
+              await new Promise((resolve) => setTimeout(resolve, 600))
+              if (
+                columnId === "name" &&
+                data.some(
+                  (row) =>
+                    row.id !== rowId && row.name === String(value).trim(),
+                )
+              )
+                throw new Error("已有同名数据集")
               setData((previous) =>
                 previous.map((row) =>
                   row.id === rowId ? { ...row, [columnId]: value } : row,
                 ),
               )
-            }
+            }}
 
             getRowId={getRowId}
             statusFilter={{

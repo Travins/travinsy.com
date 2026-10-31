@@ -36,6 +36,10 @@ const DATA_TABLE_LABELS: DataTableLabels = {
   cancel: "取消",
   save: "保存",
   saveError: "保存失败，请重试",
+  saving: "保存中",
+  saved: "已保存",
+  nextCell: "下一格",
+  editAgain: "重新编辑",
   selectPage: "选择当前页",
   selectRow: "选择行",
 }
