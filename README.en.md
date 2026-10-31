@@ -100,6 +100,7 @@ See the [installation guide](https://yiui.dev/docs/installation/) for where file
 | [Settings `settings-01`](https://yiui.dev/blocks/settings-01/) | A full settings page built from the bar controls: section nav, live preview, modified count, reset and async save. |
 | [Split sign-in `auth-01`](https://yiui.dev/blocks/auth-01/) | Brand panel plus forms: password / one-time-code sign-in (auto-formatted phone number, inline send-code button with countdown), sign-up with a strength meter, password recovery. |
 | [Checkout `checkout-01`](https://yiui.dev/blocks/checkout-01/) | Address, shipping, invoice, payment and order completion, with a mobile store ordering demo. |
+| [Data table `data-table-01`](https://yiui.dev/blocks/data-table-01/) | Sorting, filtering, selection, cell editing and virtual scrolling. |
 | [AI assistant `agent-chat-01`](https://yiui.dev/blocks/agent-chat-01/) | Embedded and floating layouts showing reasoning summaries, tool calls, sources and charts, with a built-in streaming demo. |
 | [Console shell `app-shell-01`](https://yiui.dev/templates/app-shell-01/) | Fixed header, collapsible nav, workspace sidebar and AI assistant, with example pages full of stat cards and charts. |
 

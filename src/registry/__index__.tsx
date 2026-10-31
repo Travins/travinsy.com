@@ -34,6 +34,10 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "control-panel-actions-demo": lazy(() => import("./examples/control-panel-actions-demo")),
   "control-panel-demo": lazy(() => import("./examples/control-panel-demo")),
   "control-panel-groups-demo": lazy(() => import("./examples/control-panel-groups-demo")),
+  "data-table-01-large-demo": lazy(() => import("./examples/data-table-01-large-demo")),
+  "data-table-01-mobile-demo": lazy(() => import("./examples/data-table-01-mobile-demo")),
+  "data-table-01-server-demo": lazy(() => import("./examples/data-table-01-server-demo")),
+  "data-table-01-states-demo": lazy(() => import("./examples/data-table-01-states-demo")),
   "file-upload-demo": lazy(() => import("./examples/file-upload-demo")),
   "file-upload-id-card-demo": lazy(() => import("./examples/file-upload-id-card-demo")),
   "file-upload-mobile-demo": lazy(() => import("./examples/file-upload-mobile-demo")),
@@ -177,5 +181,6 @@ export const registryViews: Record<string, LazyExoticComponent<ComponentType>> =
   "app-shell-01": lazy(() => import("./templates/app-shell-01/demo")),
   "auth-01": lazy(() => import("./blocks/auth-01/demo")),
   "checkout-01": lazy(() => import("./blocks/checkout-01/demo")),
+  "data-table-01": lazy(() => import("./blocks/data-table-01/demo")),
   "settings-01": lazy(() => import("./blocks/settings-01/demo")),
 }

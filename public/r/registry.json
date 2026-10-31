@@ -1938,6 +1938,70 @@
         "iframeHeight": "1000px"
       },
       "type": "registry:block"
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "data-table-01",
+      "title": "数据表格",
+      "description": "支持筛选、选择、编辑与虚拟滚动的数据集表格。",
+      "dependencies": [
+        "@tanstack/react-table@^8.21.3",
+        "@tanstack/react-virtual@^3.14.24",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "checkbox",
+        "skeleton",
+        "empty",
+        "sheet",
+        "table",
+        "select",
+        "https://yiui.dev/r/segmented-control.json",
+        "dropdown-menu"
+      ],
+      "files": [
+        {
+          "path": "src/registry/blocks/data-table-01/data-table.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table-01/data-table.tsx"
+        },
+        {
+          "path": "src/registry/blocks/data-table-01/data-table-toolbar.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table-01/data-table-toolbar.tsx"
+        },
+        {
+          "path": "src/registry/blocks/data-table-01/data-table-pagination.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table-01/data-table-pagination.tsx"
+        },
+        {
+          "path": "src/registry/blocks/data-table-01/data-table-cell.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table-01/data-table-cell.tsx"
+        },
+        {
+          "path": "src/registry/blocks/data-table-01/types.ts",
+          "type": "registry:component",
+          "target": "@components/data-table-01/types.ts"
+        },
+        {
+          "path": "src/registry/blocks/data-table-01/config.ts",
+          "type": "registry:component",
+          "target": "@components/data-table-01/config.ts"
+        },
+        {
+          "path": "src/registry/blocks/data-table-01/page.tsx",
+          "type": "registry:page",
+          "target": "app/data-table/page.tsx"
+        }
+      ],
+      "meta": {
+        "iframeHeight": "820px"
+      },
+      "type": "registry:block"
     }
   ]
 }

@@ -1,0 +1,104 @@
+---
+title: 数据表格
+titleEn: Data Table
+description: 支持排序、筛选、选择、编辑与虚拟滚动的原生数据表格。
+status: new
+---
+
+<BlockViewer name="data-table-01" />
+
+## 功能说明
+
+管理数据集列表，支持当前页选择、固定名称列、列宽调整、三档密度、搜索与状态筛选。示例数据均为虚构。
+
+### 用到的组件
+
+| 组件                      | 用途             |
+| ------------------------- | ---------------- |
+| checkbox / button / input | 选择、操作与编辑 |
+| empty / skeleton          | 空状态与加载     |
+| sheet                     | 触屏编辑面板     |
+| segmented-control         | 状态与密度选择   |
+
+## 安装
+
+<InstallCommand name="data-table-01" />
+
+安装入口是 `app/data-table/page.tsx`，替换其中示例数据与列定义即可。
+
+## 用法
+
+```tsx
+"use client"
+import { DataTable } from "@/components/data-table-01/data-table"
+const columns = [{ accessorKey: "name", header: "名称" }]
+const data = [{ id: "1", name: "城市声景" }]
+export default function Page() {
+  return <DataTable columns={columns} data={data} getRowId={(row) => row.id} />
+}
+```
+
+### 客户端与服务端模式
+
+默认 `mode="client"` 在本地排序、筛选和分页。`mode="manual"` 时由使用方响应 `onSortingChange`、`onGlobalFilterChange`、`onColumnFiltersChange` 和 `onPaginationChange`，请求后更新 `data` 与 `rowCount`。请求期间传 `loading`，失败传 `error` 和 `onRetry`。
+
+### 编辑与失败回滚
+
+列 `meta.editable` 支持 `text` 与 `number`。`meta.validate(value, row)` 返回错误文字时保留编辑态。`onCellCommit({ rowId, columnId, value, row })` 保存修改，组件先更新本地显示，异步失败则回滚并显示错误。父层应在保存成功后同步数据；编辑使用 accessorKey 对应的顶层字段。
+
+## 示例
+
+### 服务端分页
+
+首次进入第 3 页固定失败，重试后成功。
+
+<ComponentPreview name="data-table-01-server-demo" />
+
+### 一万行虚拟滚动
+
+传 `virtualization={{ height: 480, estimateRowHeight: 40 }}`，关闭分页，仅渲染视口附近的行。数据使用确定性公式生成。
+
+<ComponentPreview name="data-table-01-large-demo" />
+
+### 手机
+
+窄容器默认隐藏 `meta.hideOnMobile` 列，可从列设置重新打开。触屏点击可编辑格后从底部面板保存。
+
+<ComponentPreview name="data-table-01-mobile-demo" />
+
+## API
+
+`columns`、`data`、`getRowId` 必填。排序、分页、全局筛选、列筛选、行选择均支持受控值、对应 `default*` 初值与 `on*Change` 回调。分页默认每页 10 条。
+
+`statusFilter={{ columnId, options }}` 提供分段筛选，空字符串表示全部。`toolbar`、`bulkActions(selected)`、`rowActions(row)` 提供操作插槽。`onSelectAll` 由使用方处理跨页全选，表头只选择当前页。`labels` 覆盖文案。
+
+列 meta 支持 `align`、`editable`、`validate`、`hideOnMobile`、`pinned`，列宽使用原生 `size`。首个标记 pinned 的可见数据列固定。
+
+文件职责：`data-table.tsx` 组装，`data-table-toolbar.tsx` 工具栏，`data-table-pagination.tsx` 分页，`data-table-cell.tsx` 编辑，`types.ts` 类型，`config.ts` 文案。根节点为 `data-slot="data-table"`，滚动容器为 `data-table-scroll`，编辑格为 `data-table-cell`。
+
+## 可访问性
+
+| 按键              | 操作                              |
+| ----------------- | --------------------------------- |
+| Tab               | 聚焦排序、选择、编辑格与列宽手柄  |
+| Enter / F2 / 双击 | 开始编辑                          |
+| Enter             | 保存并聚焦下一行同列              |
+| Tab / Shift+Tab   | 保存并聚焦下一个 / 上一个可编辑格 |
+| Esc               | 取消编辑                          |
+| ← / →（列宽手柄） | 调整 16px                         |
+
+表头提供 aria-sort，虚拟行提供 aria-rowindex，编辑错误通过 aria-describedby 关联。
+
+## 注意事项
+
+Table 固定使用 v8 API，调用函数添加 `"use no memo"`，避免 React Compiler 缓存稳定可变对象读取。虚拟滚动建议固定行高。不提供多格粘贴、撤销与方向键网格导航。
+
+## 源码
+
+<ComponentSource name="data-table-01" />
+
+## 状态与保存失败
+
+切换加载、两种空状态及错误；名称输入「失败」后保存可观察回滚。
+
+<ComponentPreview name="data-table-01-states-demo" />

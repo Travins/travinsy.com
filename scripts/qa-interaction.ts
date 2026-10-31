@@ -965,6 +965,7 @@ type MobileField = {
   ariaLabel: string | null
   labels: string[]
   hasAccessibleName: boolean
+  searchWithHiddenLabel: boolean
 }
 
 type MobileBar = {
@@ -988,6 +989,7 @@ async function mobileSnapshot(
       ariaLabel: string | null
       labels: string[]
       hasAccessibleName: boolean
+      searchWithHiddenLabel: boolean
     }[] = []
     root.querySelectorAll("input").forEach((input) => {
       const rect = input.getBoundingClientRect()
@@ -1037,6 +1039,15 @@ async function mobileSnapshot(
         ariaLabel: ariaLabel ? ariaLabel.trim() : null,
         labels,
         hasAccessibleName: Boolean(labels.length || ariaLabel?.trim()),
+        // 搜索框允许隐藏标签；仍需真实关联名称、占位提示和可见搜索图标。
+        searchWithHiddenLabel:
+          input.type === "search" &&
+          Boolean(input.placeholder.trim()) &&
+          Array.from(input.labels ?? []).some(
+            (label) =>
+              Boolean(label.textContent?.trim()) &&
+              Boolean(label.querySelector('svg[aria-hidden="true"]')),
+          ),
       })
     })
     const bars: { tag: string; slot: string | null; height: number }[] = []
@@ -1057,7 +1068,7 @@ async function mobileSnapshot(
   })
 }
 
-/** 每个字段都要有看得见的标签：文字藏在 sr-only 里、只给 aria-label 都不算 */
+/** 表单字段须有可见标签；带图标与占位提示的搜索框可使用关联的隐藏标签。 */
 async function checkVisibleLabels(
   ctx: Ctx,
   page: Page,
@@ -1066,7 +1077,7 @@ async function checkVisibleLabels(
 ) {
   const seen = new Map<string, number>()
   for (const field of snapshot.fields) {
-    if (field.labels.length) continue
+    if (field.labels.length || field.searchWithHiddenLabel) continue
     const count = (seen.get(field.name) ?? 0) + 1
     seen.set(field.name, count)
     const file = await screenshot(
