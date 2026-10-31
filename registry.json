@@ -255,7 +255,8 @@
         "https://yiui.dev/r/text-animate.json",
         "https://yiui.dev/r/segmented-control.json",
         "https://yiui.dev/r/toggle-switch.json",
-        "https://yiui.dev/r/phone-input.json"
+        "https://yiui.dev/r/phone-input.json",
+        "https://yiui.dev/r/bar-field.json"
       ],
       "files": [
         {
@@ -1868,7 +1869,8 @@
         "https://yiui.dev/r/id-number-input.json",
         "https://yiui.dev/r/segmented-control.json",
         "https://yiui.dev/r/timeline.json",
-        "https://yiui.dev/r/chinese-number.json"
+        "https://yiui.dev/r/chinese-number.json",
+        "https://yiui.dev/r/bar-field.json"
       ],
       "files": [
         {
@@ -1925,7 +1927,11 @@
         "empty",
         "sheet",
         "dropdown-menu",
-        "https://yiui.dev/r/grid-layout.json"
+        "https://yiui.dev/r/grid-layout.json",
+        "https://yiui.dev/r/bar-field.json",
+        "https://yiui.dev/r/bar-pagination.json",
+        "https://yiui.dev/r/segmented-control.json",
+        "alert-dialog"
       ],
       "files": [
         {
@@ -1967,6 +1973,11 @@
           "path": "src/registry/hooks/use-controllable-state.ts",
           "type": "registry:hook",
           "target": "@hooks/use-controllable-state.ts"
+        },
+        {
+          "path": "src/registry/blocks/data-table-01/data-table-row-actions.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table-01/data-table-row-actions.tsx"
         }
       ],
       "meta": {

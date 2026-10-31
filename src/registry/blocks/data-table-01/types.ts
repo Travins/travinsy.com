@@ -30,6 +30,8 @@ type DataTableLabels = {
   items: string
   page: string
   editDescription: (value: string, column: string) => string
+  actions: string
+  rowTotal: (count: number) => string
   search: string
   status: string
   columns: string
@@ -57,7 +59,12 @@ type DataTableLabels = {
   selectPage: string
   selectRow: string
 }
+type DataTableHandle = {
+  startEditing: (rowId: string, columnId: string) => void
+  openDetails: (rowId: string) => void
+}
 type DataTableProps<T> = Omit<React.ComponentProps<"div">, "onChange"> & {
+  apiRef?: React.Ref<DataTableHandle>
   columns: DataTableColumn<T>[]
   data: T[]
   getRowId: (row: T) => string
@@ -101,4 +108,10 @@ type DataTableProps<T> = Omit<React.ComponentProps<"div">, "onChange"> & {
   }
   labels?: Partial<DataTableLabels>
 }
-export type { DataTableProps, DataTableColumn, DataTableMeta, DataTableLabels }
+export type {
+  DataTableHandle,
+  DataTableProps,
+  DataTableColumn,
+  DataTableMeta,
+  DataTableLabels,
+}

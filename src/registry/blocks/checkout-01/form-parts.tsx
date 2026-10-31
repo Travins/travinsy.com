@@ -7,7 +7,7 @@ import {
   RegionPicker,
   type RegionOption,
 } from "@/registry/ui/region-picker/region-picker"
-import { cn } from "@/lib/utils"
+import { BarField } from "@/registry/ui/bar-field/bar-field"
 import { DEFAULT_LABELS } from "./config"
 import type { Address, PaymentMethod } from "./types"
 
@@ -15,52 +15,27 @@ function CheckoutTextField({
   label,
   error,
   className,
+  value,
+  defaultValue,
   ...props
-}: React.ComponentProps<"input"> & { label: string; error?: string }) {
-  const id = React.useId()
+}: Omit<React.ComponentProps<"input">, "size"> & {
+  label: string
+  error?: string
+}) {
   return (
-    <div
-      data-slot="checkout-text-field"
-      className="@container/field grid gap-1.5"
-    >
-      <label
-        htmlFor={id}
-        className="hidden text-xs text-muted-foreground @max-[20rem]/field:block"
-      >
-        {label}
-      </label>
-      <div
-        className={cn(
-          "flex h-8 min-w-0 items-center gap-3 rounded-md border border-edge bg-muted/60 px-3 text-sm focus-within:border-foreground/25 focus-within:bg-background pointer-coarse:h-10",
-          error &&
-            "border-destructive ring-3 ring-destructive/20 focus-within:border-destructive",
-        )}
-      >
-        <label
-          htmlFor={id}
-          className="shrink-0 text-muted-foreground @max-[20rem]/field:sr-only"
-        >
-          {label}
-        </label>
-        <input
-          id={id}
-          aria-invalid={!!error}
-          aria-describedby={error ? id + "-error" : undefined}
-          className={cn(
-            "h-full min-w-0 flex-1 bg-transparent text-right text-base font-medium outline-none @max-[20rem]/field:text-left pointer-fine:text-sm",
-            className,
-          )}
-          {...props}
-        />
-      </div>
-      {error && (
-        <p id={id + "-error"} role="alert" className="text-xs text-destructive">
-          {error}
-        </p>
-      )}
-    </div>
+    <BarField
+      {...props}
+      value={value === undefined ? undefined : String(value)}
+      defaultValue={
+        defaultValue === undefined ? undefined : String(defaultValue)
+      }
+      label={label}
+      error={error}
+      className={className}
+    />
   )
 }
+
 function CheckoutAddressForm({
   regions,
   formId,

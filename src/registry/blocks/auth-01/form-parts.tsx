@@ -4,6 +4,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { useState, type ComponentProps, type ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
+import { BarField } from "@/registry/ui/bar-field/bar-field"
 import { cn } from "@/lib/utils"
 
 import { resolveLabels, type Auth01Labels } from "./config"
@@ -19,8 +20,10 @@ function TextField({
   footerAction,
   trailing,
   className,
+  value,
+  defaultValue,
   ...props
-}: Omit<ComponentProps<"input">, "id"> & {
+}: Omit<ComponentProps<"input">, "id" | "size"> & {
   id: string
   label: string
   error?: string
@@ -29,56 +32,24 @@ function TextField({
   /** 条内最右侧的元素，例如显示/隐藏密码按钮 */
   trailing?: ReactNode
 }) {
-  const errorId = `${id}-error`
   return (
-    <div data-slot="auth-01-text-field" className="flex flex-col gap-1.5">
-      <div
-        data-slot="auth-01-text-field-control"
-        className={cn(
-          "flex h-9 w-full min-w-0 cursor-text items-center gap-3 rounded-md border bg-muted/60 px-3 text-base transition-colors has-disabled:cursor-not-allowed has-disabled:opacity-50 md:text-sm pointer-coarse:h-11",
-          error
-            ? "border-destructive ring-3 ring-destructive/20 dark:border-destructive/50 dark:ring-destructive/40"
-            : "border-edge focus-within:border-foreground/25 focus-within:bg-background hover:not-focus-within:bg-muted dark:focus-within:bg-input/30",
-        )}
-        // 点到条内空白处（标签与值之间）也聚焦输入框
-        onMouseDown={(event) => {
-          if (event.target === event.currentTarget) {
-            event.preventDefault()
-            event.currentTarget.querySelector("input")?.focus()
-          }
-        }}
-      >
-        <label
-          htmlFor={id}
-          className="shrink-0 text-muted-foreground max-md:text-sm"
-        >
-          {label}
-        </label>
-        <input
-          id={id}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
-          className={cn(
-            "h-full min-w-0 flex-1 bg-transparent text-right font-medium outline-none placeholder:font-normal placeholder:text-muted-foreground disabled:cursor-not-allowed",
-            className,
-          )}
-          {...props}
-        />
-        {trailing}
-      </div>
-      {error || footerAction ? (
-        <div className="flex items-start justify-between gap-3">
-          {error ? (
-            <p id={errorId} className="text-xs text-destructive">
-              {error}
-            </p>
-          ) : (
-            <span />
-          )}
-          {footerAction}
-        </div>
-      ) : null}
-    </div>
+    <BarField
+      {...props}
+      value={value === undefined ? undefined : String(value)}
+      defaultValue={
+        defaultValue === undefined ? undefined : String(defaultValue)
+      }
+      id={id}
+      label={label}
+      error={error}
+      footerAction={footerAction}
+      suffix={trailing}
+      size="lg"
+      className={cn(
+        "[&_[data-slot=bar-field-label-above]]:hidden! [&_[data-slot=bar-field-label]]:not-sr-only! [&_input]:text-right!",
+        className,
+      )}
+    />
   )
 }
 
@@ -99,12 +70,12 @@ function PasswordField({
         <Button
           type="button"
           variant="ghost"
-          size="icon-sm"
+          size="icon-lg"
           onClick={() => setVisible((value) => !value)}
           aria-label={visible ? text.hidePassword : text.showPassword}
           aria-pressed={visible}
           // 按钮比条内边距大，向右让出 8px，图标视觉上仍与条的右缘留足间距
-          className="-mr-2 shrink-0 text-muted-foreground hover:text-foreground"
+          className="shrink-0 text-muted-foreground hover:text-foreground"
         >
           {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
         </Button>

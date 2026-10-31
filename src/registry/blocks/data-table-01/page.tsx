@@ -1,6 +1,27 @@
 "use client"
 import * as React from "react"
-import { Plus, Upload, MoreHorizontal, Download, Trash2 } from "lucide-react"
+import {
+  Plus,
+  Upload,
+  Eye,
+  Pencil,
+  Copy,
+  Archive,
+  Download,
+  Trash2,
+} from "lucide-react"
+import { DataTableRowActions } from "@/registry/blocks/data-table-01/data-table-row-actions"
+import type { DataTableHandle } from "@/registry/blocks/data-table-01/types"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import {
   GridContainer,
@@ -165,6 +186,8 @@ function RelativeDate({
 }
 const getRowId = (row: Dataset) => row.id
 function DataTablePage() {
+  const apiRef = React.useRef<DataTableHandle>(null)
+  const [deleting, setDeleting] = React.useState<Dataset[]>([])
   const [data, setData] = React.useState(datasets)
   const [selection, setSelection] = React.useState<Record<string, boolean>>({})
   const [notice, setNotice] = React.useState("")
@@ -245,15 +268,60 @@ function DataTablePage() {
         <GridSeparator label={"DATASETS / " + data.length} />
         <GridSection>
           <DataTable
+            apiRef={apiRef}
             rowActions={(row) => (
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={row.name + "的操作"}
-                onClick={() => exportRows([row])}
-              >
-                <MoreHorizontal />
-              </Button>
+              <DataTableRowActions
+                label={row.name}
+                actions={[
+                  {
+                    label: "查看详情",
+                    icon: <Eye />,
+                    onSelect: () => apiRef.current?.openDetails(row.id),
+                  },
+                  {
+                    label: "编辑名称",
+                    icon: <Pencil />,
+                    onSelect: () =>
+                      apiRef.current?.startEditing(row.id, "name"),
+                  },
+                  {
+                    label: "复制编号",
+                    icon: <Copy />,
+                    shortcut: row.code,
+                    onSelect: () => {
+                      void navigator.clipboard.writeText(row.code).then(
+                        () => setNotice("已复制"),
+                        () => setNotice("复制失败"),
+                      )
+                    },
+                  },
+                  "separator",
+                  {
+                    label: "导出 CSV",
+                    icon: <Download />,
+                    onSelect: () => exportRows([row]),
+                  },
+                  {
+                    label: "归档",
+                    icon: <Archive />,
+                    onSelect: () =>
+                      setData((previous) =>
+                        previous.map((item) =>
+                          item.id === row.id
+                            ? { ...item, status: "已归档" }
+                            : item,
+                        ),
+                      ),
+                  },
+                  "separator",
+                  {
+                    label: "删除…",
+                    icon: <Trash2 />,
+                    destructive: true,
+                    onSelect: () => setDeleting([row]),
+                  },
+                ]}
+              />
             )}
             columns={columns}
             data={data}
@@ -276,19 +344,28 @@ function DataTablePage() {
                   <Download />
                   <span data-label>导出</span>
                 </Button>
+                <Button
+                  variant="ghost"
+                  size="default"
+                  aria-label="归档"
+                  onClick={() =>
+                    setData((previous) =>
+                      previous.map((row) =>
+                        selection[row.id] ? { ...row, status: "已归档" } : row,
+                      ),
+                    )
+                  }
+                >
+                  <Archive />
+                  <span data-label>归档</span>
+                </Button>
                 {/* 反色坞里删除用红色文字区分，混入背景色保证亮暗模式都清楚 */}
                 <Button
                   variant="ghost"
                   size="default"
                   aria-label="删除"
                   className="text-[color-mix(in_oklab,var(--destructive)_75%,var(--background))]!"
-                  onClick={() => {
-                    setData((previous) =>
-                      previous.filter((row) => !selection[row.id]),
-                    )
-                    setSelection({})
-                    setNotice("已删除选中的数据集")
-                  }}
+                  onClick={() => setDeleting(rows)}
                 >
                   <Trash2 />
                   <span data-label>删除</span>
@@ -320,6 +397,41 @@ function DataTablePage() {
           />
         </GridSection>
       </GridContainer>
+      <AlertDialog
+        open={deleting.length > 0}
+        onOpenChange={(open) => {
+          if (!open) setDeleting([])
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>删除数据集？</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleting.length === 1
+                ? "将删除 1 个数据集：「" + deleting[0]?.name + "」，此操作无法撤销。"
+                : "将删除 " + deleting.length + " 个数据集，此操作无法撤销。"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel size="default">取消</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              size="default"
+              onClick={() => {
+                const ids = new Set(deleting.map((row) => row.id))
+                setData((previous) =>
+                  previous.filter((row) => !ids.has(row.id)),
+                )
+                setSelection({})
+                setDeleting([])
+                setNotice("已删除数据集")
+              }}
+            >
+              删除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <p role="status" className="sr-only">
         {notice}
       </p>

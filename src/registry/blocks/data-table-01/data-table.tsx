@@ -46,6 +46,7 @@ import { DATA_TABLE_LABELS } from "./config"
 import type { DataTableProps, DataTableMeta } from "./types"
 
 function DataTable<T>({
+  apiRef,
   columns,
   data,
   getRowId,
@@ -121,6 +122,44 @@ function DataTable<T>({
   >({})
   const scrollRef = React.useRef<HTMLDivElement>(null)
   const containerRef = React.useRef<HTMLDivElement>(null)
+  React.useImperativeHandle(apiRef, () => ({
+    startEditing(rowId, columnId) {
+      if ((containerRef.current?.getBoundingClientRect().width ?? 0) < 640) {
+        setDetailId(rowId)
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            const cell = Array.from(
+              document.querySelectorAll<HTMLElement>(
+                '[data-slot="sheet-content"] [data-column]',
+              ),
+            ).find((node) => node.dataset.column === columnId)
+            cell?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true }))
+          }),
+        )
+        return
+      }
+      const row = Array.from(
+        containerRef.current?.querySelectorAll<HTMLElement>("[data-row-id]") ??
+          [],
+      ).find((node) => node.dataset.rowId === rowId)
+      const cell = Array.from(
+        row?.querySelectorAll<HTMLElement>("[data-column]") ?? [],
+      ).find((node) => node.dataset.column === columnId)
+      // 菜单关闭并恢复焦点后再启动已有的单元格编辑流程。
+      requestAnimationFrame(() =>
+        cell?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true })),
+      )
+    },
+    openDetails: setDetailId,
+  }))
+  const [desktop, setDesktop] = React.useState(false)
+  React.useEffect(() => {
+    const query = window.matchMedia("(min-width: 640px)")
+    const update = () => setDesktop(query.matches)
+    update()
+    query.addEventListener("change", update)
+    return () => query.removeEventListener("change", update)
+  }, [])
   const touchedVisibility = React.useRef(false)
   React.useEffect(() => {
     const observer = new ResizeObserver(([entry]) => {
@@ -292,7 +331,7 @@ function DataTable<T>({
           style={
             {
               width: "100%",
-              minWidth: table.getTotalSize() + 40 + (rowActions ? 40 : 0),
+              minWidth: table.getTotalSize() + 40 + (rowActions ? 64 : 0),
               "--data-table-row-height": density + "px",
             } as React.CSSProperties
           }
@@ -310,7 +349,7 @@ function DataTable<T>({
                 }}
               />
             ))}
-            {rowActions && <col style={{ width: 40 }} />}
+            {rowActions && <col style={{ width: 64 }} />}
           </colgroup>
           <thead className="sticky top-0 z-20 bg-muted/50 [&_th]:border-b [&_th]:border-edge">
             <tr>
@@ -414,7 +453,11 @@ function DataTable<T>({
                   />
                 </th>
               ))}
-              {rowActions && <th className="w-10 bg-muted/50" />}
+              {rowActions && (
+                <th className="w-16 border-l border-dashed border-edge bg-muted text-center text-xs font-medium">
+                  {labels.actions}
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -494,6 +537,22 @@ function DataTable<T>({
                 {shown.map(({ row, index }) => (
                   <tr
                     key={row.id}
+                    data-row-id={row.id}
+                    onKeyDown={(event) => {
+                      if (
+                        (event.shiftKey && event.key === "F10") ||
+                        event.key === "ContextMenu"
+                      ) {
+                        const trigger =
+                          event.currentTarget.querySelector<HTMLButtonElement>(
+                            '[data-slot="data-table-row-actions"] button',
+                          )
+                        if (trigger) {
+                          event.preventDefault()
+                          trigger.click()
+                        }
+                      }
+                    }}
                     aria-rowindex={
                       virtualization
                         ? index + 2
@@ -632,7 +691,7 @@ function DataTable<T>({
                       </td>
                     ))}
                     {rowActions && (
-                      <td className="border-b border-dashed border-edge">
+                      <td className="w-16 border-b border-l border-dashed border-edge text-center">
                         <div className="opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100">
                           {rowActions(row.original)}
                         </div>
@@ -777,6 +836,11 @@ function DataTable<T>({
                     ))}
                   </span>
                 </button>
+                {rowActions && (
+                  <div className="flex shrink-0 items-center pr-2">
+                    {rowActions(row.original)}
+                  </div>
+                )}
               </li>
             )
           })
@@ -788,7 +852,10 @@ function DataTable<T>({
           if (!open) setDetailId(null)
         }}
       >
-        <SheetContent side="bottom" className="max-h-[85dvh] overflow-auto p-6">
+        <SheetContent
+          side={desktop ? "right" : "bottom"}
+          className="max-h-[85dvh] overflow-auto p-6 sm:max-h-none"
+        >
           <SheetTitle>
             {String(detail?.getAllCells()[0]?.getValue() ?? "")}
           </SheetTitle>

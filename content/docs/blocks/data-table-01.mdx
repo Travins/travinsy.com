@@ -13,13 +13,17 @@ status: new
 
 ### 用到的组件
 
-| 组件                      | 用途                                         |
-| ------------------------- | -------------------------------------------- |
-| grid-layout               | 页面外框：竖线容器、全屏横线与点阵分隔带     |
-| checkbox / button / input | 选择、操作与编辑                             |
-| dropdown-menu             | 列设置与窄屏排序菜单                         |
-| empty / skeleton          | 空状态与加载                                 |
-| sheet                     | 窄屏详情与编辑面板                           |
+| 组件                      | 用途                                     |
+| ------------------------- | ---------------------------------------- |
+| grid-layout               | 页面外框：竖线容器、全屏横线与点阵分隔带 |
+| checkbox / button / input | 选择、操作与编辑                         |
+| bar-field                 | 搜索输入与快捷键提示                     |
+| bar-pagination            | 页码、每页条数和跳页                     |
+| segmented-control         | 状态筛选与密度选择                       |
+| alert-dialog              | 单行与批量删除确认                       |
+| dropdown-menu             | 列设置与窄屏排序菜单                     |
+| empty / skeleton          | 空状态与加载                             |
+| sheet                     | 桌面右侧详情、手机底部详情与编辑面板     |
 
 ## 安装
 
@@ -47,6 +51,31 @@ export default function Page() {
 
 列 `meta.editable` 支持 `text` 与 `number`。`meta.validate(value, row)` 返回错误文字时保留编辑态。`onCellCommit({ rowId, columnId, value, row })` 保存修改，组件先更新本地显示，异步失败则回滚并显示错误。父层应在保存成功后同步数据；编辑使用 accessorKey 对应的顶层字段。
 
+### 行操作与主动编辑
+
+通过 `apiRef` 获取 `DataTableHandle`，调用 `startEditing(rowId, columnId)` 开始单元格编辑，调用 `openDetails(rowId)` 打开详情。桌面详情从右侧展开，手机从底部展开。
+
+```tsx
+import { DataTableRowActions } from "@/components/data-table-01/data-table-row-actions"
+
+;<DataTableRowActions
+  label={row.name}
+  actions={[
+    { label: "查看详情", onSelect: () => apiRef.current?.openDetails(row.id) },
+    {
+      label: "编辑名称",
+      onSelect: () => apiRef.current?.startEditing(row.id, "name"),
+    },
+    "separator",
+    { label: "删除…", destructive: true, onSelect: () => setDeleting([row]) },
+  ]}
+/>
+```
+
+每项可传 `icon`、`shortcut`；`"separator"` 插入分隔线。示例提供查看、编辑、复制编号、导出 CSV、归档与删除。删除和批量删除先确认，复制结果由读屏提示。选中行内控件后按 Shift+F10 或 ContextMenu 键打开该行菜单。
+
+窄于 40rem 时状态筛选独占一行，隐藏色点和数量以保留完整状态文字；隐藏密度选择，给搜索与筛选留出空间。虚拟滚动仅显示总行数。
+
 ## 示例
 
 ### 服务端分页
@@ -63,7 +92,7 @@ export default function Page() {
 
 ### 手机
 
-小于 40rem 的容器显示两行账目列表。点击行打开全部字段详情，点击可编辑字段保存；长按编号栏进入多选，排序收进工具栏菜单。
+小于 40rem 的容器显示两行账目列表。通过行菜单打开全部字段详情，点击可编辑字段保存；长按编号栏进入多选，排序收进工具栏菜单。
 
 <ComponentPreview name="data-table-01-mobile-demo" />
 

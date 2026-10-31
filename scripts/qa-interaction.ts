@@ -1342,6 +1342,8 @@ async function checkSubmitHeight(ctx: Ctx, page: Page, scope: Scope) {
       .filter((height) => height > 0 && height <= cap)
     const minimum = Math.max(floor, ...heights)
     return Array.from(root.querySelectorAll("button")).flatMap((button) => {
+      // 切换表单视图的文字链接不属于提交操作。
+      if (button.matches('[data-slot$="-link-button"]')) return []
       const text = (button.textContent ?? "").trim()
       const height =
         getComputedStyle(button).visibility === "hidden" ||
