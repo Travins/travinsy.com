@@ -1,7 +1,7 @@
 "use client"
 
 import { PreviewSkeleton } from "@/components/docs/preview-skeleton"
-import { Suspense, useMemo, useState, type ReactNode } from "react"
+import { Suspense, useMemo, useRef, useState, type ReactNode } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { registryExamples } from "@/registry/__index__"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
@@ -71,6 +71,8 @@ export function ComponentPreviewClient({
 }) {
   const Preview = registryExamples[name]
   const [view, setView] = useState("preview")
+  const previewRef = useRef<HTMLDivElement>(null)
+  const [codeHeight, setCodeHeight] = useState(320)
   // 在 tuner/ 里登记过的组件，每个示例都带一个可开关的调整面板
   // 示例可以在 tuner 配置里单独关闭面板或去掉部分控件；按示例名解析一次，保持引用稳定
   const tunerConfig = useMemo(() => resolveTuner(item, name), [item, name])
@@ -79,7 +81,11 @@ export function ComponentPreviewClient({
   return (
     <Tabs
       value={view}
-      onValueChange={(value) => setView(String(value))}
+      onValueChange={(value) => {
+        if (value === "code" && previewRef.current)
+          setCodeHeight(previewRef.current.getBoundingClientRect().height)
+        setView(String(value))
+      }}
       className={docFrameClass}
     >
       <DocFrameBar>
@@ -117,6 +123,7 @@ export function ComponentPreviewClient({
       </DocFrameBar>
       <TabsContent
         value="preview"
+        ref={previewRef}
         keepMounted
         className={cn(
           docFramePanelClass,
@@ -157,8 +164,12 @@ export function ComponentPreviewClient({
           </motion.div>
         ) : null}
       </AnimatePresence>
-      <TabsContent value="code" keepMounted className={docFramePanelClass}>
-        {code}
+      <TabsContent
+        value="code"
+        className={cn(docFramePanelClass, "flex-none overflow-auto")}
+        style={{ height: codeHeight }}
+      >
+        {view === "code" ? code : null}
       </TabsContent>
     </Tabs>
   )

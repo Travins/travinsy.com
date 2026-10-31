@@ -337,7 +337,11 @@ export function BlockViewerClient({
           </div>
         </div>
       </TabsContent>
-      <TabsContent value="code" keepMounted className={docFramePanelClass}>
+      <TabsContent
+        value="code"
+        className={cn(docFramePanelClass, "flex-none")}
+        style={{ height: frameHeight, overflow: "auto" }}
+      >
         <div className="grid md:grid-cols-[15rem_minmax(0,1fr)]">
           <nav
             aria-label="文件"
@@ -346,11 +350,9 @@ export function BlockViewerClient({
             <FileTree nodes={tree} active={active} onSelect={setActive} />
           </nav>
           <div className="min-w-0 md:max-h-[44rem] md:overflow-auto">
-            {files.map((file) => (
-              <div key={file.path} hidden={file.path !== active}>
-                {file.code}
-              </div>
-            ))}
+            {view === "code"
+              ? files.find((file) => file.path === active)?.code
+              : null}
           </div>
         </div>
       </TabsContent>

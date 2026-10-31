@@ -1,16 +1,7 @@
-import { readFile } from "node:fs/promises"
-import { CodeBlock } from "./code-block"
+import { getSourceFiles } from "./source-files"
 import { BlockViewerClient } from "./block-viewer-client"
 import { InstallCommand } from "./install-command"
 import { getRegistryItem } from "./registry-items"
-import { toInstalledImports } from "./installed-imports"
-
-const langs: Record<string, string> = {
-  ts: "ts",
-  tsx: "tsx",
-  css: "css",
-  json: "json",
-}
 
 /**
  * 区块 / 页面查看器：iframe 预览（可切换设备宽度）+ 多文件代码 + 安装命令。
@@ -18,24 +9,7 @@ const langs: Record<string, string> = {
  */
 export async function BlockViewer({ name }: { name: string }) {
   const item = getRegistryItem(name)
-  const files = await Promise.all(
-    item.files.map(async (file) => {
-      const shown = file.target ?? file.path.split("/").at(-1)!
-      const code = toInstalledImports(await readFile(file.path, "utf8"))
-      return {
-        path: shown,
-        source: code,
-        code: (
-          <CodeBlock
-            code={code}
-            lang={langs[shown.split(".").at(-1)!] ?? "tsx"}
-            bare
-            collapse={false}
-          />
-        ),
-      }
-    }),
-  )
+  const files = await getSourceFiles(name)
   return (
     <BlockViewerClient
       name={name}

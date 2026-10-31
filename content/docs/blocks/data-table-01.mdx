@@ -80,6 +80,10 @@ import { DataTableRowActions } from "@/components/data-table-01/data-table-row-a
 
 窄于 40rem 时状态筛选独占一行，隐藏色点和数量以保留完整状态文字；隐藏密度选择，给搜索与筛选留出空间。虚拟滚动仅显示总行数。
 
+### 负责人筛选
+
+示例通过 `toolbar={(table) => ...}` 插槽接入方条多选：插槽里的控件包一层 `GridToolbarItem` 成为工具栏的一格，用 owner 列的 `filterFn` 匹配选中负责人，更新筛选后回到第一页。每位负责人的计数来自完整数据集；窄容器隐藏此筛选。
+
 ## 示例
 
 ### 服务端分页
@@ -99,6 +103,12 @@ import { DataTableRowActions } from "@/components/data-table-01/data-table-row-a
 小于 40rem 的容器显示两行账目列表。通过行菜单打开全部字段详情，点击可编辑字段保存；长按编号栏进入多选，排序收进工具栏菜单。
 
 <ComponentPreview name="data-table-01-mobile-demo" />
+
+### 状态与保存失败
+
+切换加载、两种空状态及错误；名称输入「失败」后保存可观察回滚。
+
+<ComponentPreview name="data-table-01-states-demo" />
 
 ## API
 
@@ -131,13 +141,3 @@ Table 固定使用 v8 API，调用函数添加 `"use no memo"`，避免 React Co
 ## 源码
 
 <ComponentSource name="data-table-01" />
-
-## 状态与保存失败
-
-切换加载、两种空状态及错误；名称输入「失败」后保存可观察回滚。
-
-<ComponentPreview name="data-table-01-states-demo" />
-
-### 负责人筛选
-
-示例通过 `toolbar={(table) => ...}` 插槽接入方条多选，并用 owner 列的 `filterFn` 匹配选中负责人；更新筛选后回到第一页。每位负责人的计数来自完整数据集。窄容器隐藏此筛选。列设置继续使用原有图标菜单。
