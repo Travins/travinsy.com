@@ -11,6 +11,7 @@ const DATA_TABLE_LABELS: DataTableLabels = {
   page: "页",
   editDescription: (value, column) => "编辑「" + value + "」的" + column,
   search: "搜索数据集…",
+  status: "按状态筛选",
   columns: "列设置",
   reset: "恢复默认",
   density: "密度",

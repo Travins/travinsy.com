@@ -19,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { DataTableLabels, DataTableProps } from "./types"
 
 function DataTableToolbar<T>({
@@ -60,58 +59,21 @@ function DataTableToolbar<T>({
     window.addEventListener("keydown", focusSearch)
     return () => window.removeEventListener("keydown", focusSearch)
   }, [])
+  const statusColumn = statusFilter
+    ? table.getColumn(statusFilter.columnId)
+    : undefined
+  const status = String(statusColumn?.getFilterValue() ?? "")
   return (
     <>
-      {statusFilter && (
-        <Tabs
-          value={String(
-            table.getColumn(statusFilter.columnId)?.getFilterValue() ?? "",
-          )}
-          onValueChange={(value) => {
-            table
-              .getColumn(statusFilter.columnId)
-              ?.setFilterValue(value || undefined)
-            table.setPageIndex(0)
-          }}
-          className="overflow-x-auto border-b border-edge"
-        >
-          <TabsList variant="line" className="h-12! justify-start gap-5 px-0">
-            {statusFilter.options.map((option) => (
-              <TabsTrigger
-                key={option.value}
-                value={option.value}
-                className="flex-none px-1 after:bottom-0!"
-              >
-                {option.value && (
-                  <span
-                    aria-hidden="true"
-                    className={
-                      option.value === "进行中"
-                        ? "size-1.5 rounded-full bg-(--flow-green)"
-                        : option.value === "待审核"
-                          ? "size-1.5 rounded-full bg-(--flow-amber)"
-                          : "size-1.5 rounded-full bg-muted-foreground"
-                    }
-                  />
-                )}
-                {option.label}
-                <span className="ml-1 font-mono text-xs">
-                  {counts?.[option.value] ?? 0}
-                </span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-      )}
       <div
         data-slot="data-table-toolbar"
-        className="flex flex-wrap items-center justify-between gap-3 py-4"
+        className="flex flex-wrap items-center gap-2 py-3 @min-[40rem]:flex-nowrap"
       >
-        <label className="relative block min-w-0 flex-1 @min-[40rem]:max-w-72">
+        <label className="relative block min-w-0 flex-1 @min-[40rem]:w-64 @min-[40rem]:flex-none">
           <span className="sr-only">{labels.search}</span>
           <Search
             aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
           />
           <Input
             ref={searchRef}
@@ -122,13 +84,55 @@ function DataTableToolbar<T>({
               table.setGlobalFilter(event.target.value)
               table.setPageIndex(0)
             }}
-            className="w-full rounded-none border-edge bg-muted/40 pr-8 pl-9 pointer-coarse:text-base"
+            className="w-full pr-8 pl-8"
           />
-          <kbd className="absolute top-1/2 right-3 -translate-y-1/2 font-mono text-xs text-muted-foreground">
+          <kbd className="pointer-events-none absolute top-1/2 right-2 grid h-5 min-w-5 -translate-y-1/2 place-items-center rounded-sm border border-edge bg-muted px-1 font-mono text-[11px] text-muted-foreground pointer-coarse:hidden">
             /
           </kbd>
         </label>
-        <div className="flex flex-wrap items-center gap-2.5">
+        {statusFilter && (
+          // 状态筛选：单选按钮组，每项带数量；窄屏可横向滚动
+          <div
+            role="radiogroup"
+            aria-label={labels.status}
+            // 窄容器单独占一行放在最下面，宽容器紧跟搜索框
+            className="order-last flex min-w-0 basis-full overflow-x-auto @min-[40rem]:order-none @min-[40rem]:basis-auto"
+          >
+            <div className="flex shrink-0 overflow-hidden rounded-md border border-edge">
+              {statusFilter.options.map((option) => {
+                const checked = status === option.value
+                return (
+                  <Button
+                    key={option.value}
+                    type="button"
+                    role="radio"
+                    aria-checked={checked}
+                    variant="ghost"
+                    size="default"
+                    className="gap-1.5 rounded-none border-r border-edge px-2.5 font-normal text-muted-foreground last:border-r-0 aria-checked:bg-muted aria-checked:text-foreground"
+                    onClick={() => {
+                      statusColumn?.setFilterValue(option.value || undefined)
+                      table.setPageIndex(0)
+                    }}
+                  >
+                    {option.tone && (
+                      <span
+                        aria-hidden="true"
+                        className="size-1.5 rounded-full"
+                        style={{ background: option.tone }}
+                      />
+                    )}
+                    {option.label}
+                    <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                      {counts?.[option.value] ?? 0}
+                    </span>
+                  </Button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger
               render={

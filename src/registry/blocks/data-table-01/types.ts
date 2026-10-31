@@ -31,6 +31,7 @@ type DataTableLabels = {
   page: string
   editDescription: (value: string, column: string) => string
   search: string
+  status: string
   columns: string
   reset: string
   density: string
@@ -81,7 +82,6 @@ type DataTableProps<T> = Omit<React.ComponentProps<"div">, "onChange"> & {
   defaultRowSelection?: RowSelectionState
   onRowSelectionChange?: (value: RowSelectionState) => void
   onSelectAll?: () => void
-  mobileBulkActions?: (selected: T[]) => React.ReactNode
   bulkActions?: (selected: T[]) => React.ReactNode
   rowActions?: (row: T) => React.ReactNode
   onCellCommit?: (change: {
@@ -96,7 +96,8 @@ type DataTableProps<T> = Omit<React.ComponentProps<"div">, "onChange"> & {
   toolbar?: React.ReactNode
   statusFilter?: {
     columnId: string
-    options: { value: string; label: string }[]
+    /** tone：状态色点的颜色，填 CSS 颜色或主题变量，如 "var(--flow-green)" */
+    options: { value: string; label: string; tone?: string }[]
   }
   labels?: Partial<DataTableLabels>
 }

@@ -254,23 +254,23 @@ function DataTablePage() {
         onSelectAll={() =>
           setSelection(Object.fromEntries(data.map((row) => [row.id, true])))
         }
-        mobileBulkActions={(rows) => (
+        bulkActions={(rows) => (
           <>
             <Button
-              size="icon"
               variant="ghost"
+              size="default"
               aria-label="导出"
               onClick={() => exportRows(rows)}
             >
               <Download />
+              <span data-label>导出</span>
             </Button>
-            {/* 混入反色坞的背景文字色，确保亮暗模式下都能辨认删除操作。 */}
+            {/* 反色坞里删除用红色文字区分，混入背景色保证亮暗模式都清楚 */}
             <Button
-              size="icon"
               variant="ghost"
+              size="default"
               aria-label="删除"
-              data-destructive=""
-              className="text-[color-mix(in_oklab,var(--destructive)_80%,var(--background))] hover:text-destructive"
+              className="text-[color-mix(in_oklab,var(--destructive)_75%,var(--background))]!"
               onClick={() => {
                 setData((previous) =>
                   previous.filter((row) => !selection[row.id]),
@@ -280,32 +280,7 @@ function DataTablePage() {
               }}
             >
               <Trash2 />
-            </Button>
-          </>
-        )}
-        bulkActions={(rows) => (
-          <>
-            <Button
-              size="default"
-              variant="outline"
-              onClick={() => exportRows(rows)}
-            >
-              导出
-            </Button>
-            <Button
-              size="default"
-              variant="outline"
-              data-destructive=""
-              className="text-[color-mix(in_oklab,var(--destructive)_80%,var(--background))] hover:text-destructive"
-              onClick={() => {
-                setData((previous) =>
-                  previous.filter((row) => !selection[row.id]),
-                )
-                setSelection({})
-                setNotice("已删除选中的数据集")
-              }}
-            >
-              删除
+              <span data-label>删除</span>
             </Button>
           </>
         )}
@@ -322,9 +297,13 @@ function DataTablePage() {
           columnId: "status",
           options: [
             { value: "", label: "全部" },
-            { value: "进行中", label: "进行中" },
-            { value: "已归档", label: "已归档" },
-            { value: "待审核", label: "待审核" },
+            { value: "进行中", label: "进行中", tone: "var(--flow-green)" },
+            { value: "待审核", label: "待审核", tone: "var(--flow-amber)" },
+            {
+              value: "已归档",
+              label: "已归档",
+              tone: "var(--muted-foreground)",
+            },
           ],
         }}
       />

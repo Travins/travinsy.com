@@ -71,7 +71,6 @@ function DataTable<T>({
   onRowSelectionChange,
   onSelectAll,
   bulkActions,
-  mobileBulkActions,
   rowActions,
   onCellCommit,
   virtualization = false,
@@ -279,7 +278,7 @@ function DataTable<T>({
         data-slot="data-table-scroll"
         data-scrolled={scrolled}
         onScroll={(event) => setScrolled(event.currentTarget.scrollLeft > 0)}
-        className="relative hidden w-full max-w-full min-w-0 overflow-auto border-y border-edge @min-[40rem]:block"
+        className="relative hidden w-full max-w-full min-w-0 overflow-auto border-t border-edge @min-[40rem]:block"
         style={{
           height: virtualization ? (virtualization.height ?? 480) : undefined,
           maxHeight: virtualization ? undefined : 600,
@@ -288,7 +287,8 @@ function DataTable<T>({
         <table
           aria-label={labels.search}
           aria-rowcount={count + 1}
-          className="table-fixed border-separate border-spacing-0 text-sm"
+          // 最后一行不画虚线，底边由分页栏的实线收口，避免虚线 + 实线叠成两道
+          className="table-fixed border-separate border-spacing-0 text-sm [&>tbody>tr:last-child>td]:border-b-0"
           style={
             {
               width: "100%",
@@ -319,7 +319,7 @@ function DataTable<T>({
                   <Checkbox
                     className={
                       table.getIsSomePageRowsSelected()
-                        ? "border-primary bg-primary [&_[data-slot=checkbox-indicator]]:invisible"
+                        ? "border-primary bg-primary dark:bg-primary [&_[data-slot=checkbox-indicator]]:invisible"
                         : undefined
                     }
                     aria-label={labels.selectPage}
@@ -660,7 +660,7 @@ function DataTable<T>({
       <ul
         data-slot="data-table-list"
         aria-label={labels.search}
-        className="border-y border-edge @min-[40rem]:hidden"
+        className="border-t border-edge @min-[40rem]:hidden"
       >
         {loading ? (
           Array.from({ length: pagination.pageSize }, (_, index) => (
@@ -830,7 +830,8 @@ function DataTable<T>({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: reducedMotion ? 0 : 12 }}
             transition={{ duration: 0.18 }}
-            className="sticky bottom-4 z-40 mx-auto mt-3 flex w-fit max-w-[calc(100%-2rem)] flex-nowrap items-center justify-center gap-1 rounded-full bg-foreground px-3 py-2 text-sm whitespace-nowrap text-background shadow-lg @min-[40rem]:gap-3 @min-[40rem]:px-4"
+            // 高度 2.75rem，用负的上边距抵消占位：浮在表格底部，不把分页栏往下推
+            className="sticky bottom-4 z-40 mx-auto -mt-14 mb-3 flex h-11 w-fit max-w-[calc(100%-2rem)] flex-nowrap items-center gap-1 rounded-lg bg-foreground p-1 pl-3 text-sm whitespace-nowrap text-background shadow-lg"
           >
             <span aria-live="polite" className="shrink-0 font-mono">
               {labels.selected} {selected}
@@ -841,8 +842,8 @@ function DataTable<T>({
             </span>
             {selected < (rowCount ?? data.length) && (
               <Button
-                variant="link"
-                className="shrink-0 px-2 text-inherit underline"
+                variant="ghost"
+                className="shrink-0 px-2 font-normal text-background/70 hover:bg-background/15 hover:text-background"
                 onClick={() =>
                   onSelectAll
                     ? onSelectAll()
@@ -857,31 +858,25 @@ function DataTable<T>({
                 </span>
               </Button>
             )}
-            {/* 反色操作坞需要覆盖标准按钮配色，保持前景与背景的对比。 */}
-            <div className="flex shrink-0 gap-1 @min-[40rem]:gap-2 [&_button]:border-background/30 [&_button]:bg-transparent [&_button:hover]:bg-background/15 [&_button:not([data-destructive])]:text-background">
-              <div
-                className={cn(
-                  "flex gap-2",
-                  mobileBulkActions && "hidden @min-[40rem]:flex",
-                )}
-              >
-                {bulkActions?.(
-                  table.getSelectedRowModel().rows.map((row) => row.original),
-                )}
-              </div>
-              {mobileBulkActions && (
-                <div className="flex gap-1 @min-[40rem]:hidden">
-                  {mobileBulkActions(
-                    table.getSelectedRowModel().rows.map((row) => row.original),
-                  )}
-                </div>
+            <span
+              aria-hidden="true"
+              className="mx-1 h-5 w-px bg-background/20"
+            />
+            {/* 反色操作坞：覆盖按钮配色保持对比；窄容器只留图标（文字放在 data-label 里） */}
+            <div className="flex shrink-0 gap-1 [&_[data-label]]:hidden @min-[40rem]:[&_[data-label]]:inline [&_button]:text-background [&_button:hover]:bg-background/15 [&_button:hover]:text-background">
+              {bulkActions?.(
+                table.getSelectedRowModel().rows.map((row) => row.original),
               )}
             </div>
+            <span
+              aria-hidden="true"
+              className="mx-1 h-5 w-px bg-background/20"
+            />
             <Button
               size="icon"
               variant="ghost"
               aria-label={labels.clear}
-              className="shrink-0 rounded-full text-inherit hover:bg-background/15 hover:text-background"
+              className="shrink-0 text-background/70 hover:bg-background/15 hover:text-background"
               onClick={() => setRowSelection({})}
             >
               <X />
