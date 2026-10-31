@@ -109,6 +109,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "number-stepper-cart-demo": lazy(() => import("./examples/number-stepper-cart-demo")),
   "number-stepper-demo": lazy(() => import("./examples/number-stepper-demo")),
   "number-stepper-sizes-demo": lazy(() => import("./examples/number-stepper-sizes-demo")),
+  "number-stepper-unit-demo": lazy(() => import("./examples/number-stepper-unit-demo")),
   "orbit-demo": lazy(() => import("./examples/orbit-demo")),
   "orbit-half-demo": lazy(() => import("./examples/orbit-half-demo")),
   "orbit-icons-demo": lazy(() => import("./examples/orbit-icons-demo")),

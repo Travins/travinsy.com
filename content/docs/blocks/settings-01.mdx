@@ -17,11 +17,24 @@ description: 用方条控件拼成的完整设置页：分区导航、实时预�
 - **已修改**：每个控件的 `modified` 由「当前值 ≠ 默认值」得出，改过的项标签变亮；每个分区的面板头部显示本分区已修改项数，并带「复制设置」和「恢复本分区默认值」两个按钮。
 - **底部保存栏**：显示总的已修改项数与保存状态，右侧是「恢复默认」和「保存」。保存时按钮进入 loading，成功显示「已保存」，失败显示回调抛出的 `Error.message`。
 
+### 改动对比
+
+点击底部「已修改 N 项」打开对比：桌面为 Popover，窄屏为底部 Sheet。旧值为默认值，新值为当前值；每行可单独撤销，也可全部恢复或保存。保存沿用原有异步状态和错误提示，没有改动时入口禁用。
+
+用到的组件：
+
+| 组件 | 用途 |
+| --- | --- |
+| item | 改动列表 |
+| popover | 桌面对比浮层 |
+| sheet | 手机底部面板 |
+| button | 撤销、恢复与保存 |
+
 ## 安装
 
 <InstallCommand name="settings-01" />
 
-会安装 `app/settings/page.tsx` 页面和 `components/settings-01/` 下的组件，并带上它依赖的本站控件：数值滑块、分段选择、开关、色调选择、控制面板（连同 `flow-diagram` 提供的色调变量）。shadcn 依赖为 `button`，npm 依赖为 `motion`、`lucide-react`。
+会安装 `app/settings/page.tsx` 页面和 `components/settings-01/` 下的组件，并带上它依赖的本站控件：数值滑块、分段选择、开关、色调选择、控制面板（连同 `flow-diagram` 提供的色调变量）。shadcn 依赖为 `button`、`item`、`popover`、`sheet`，npm 依赖为 `motion`、`lucide-react`。
 
 ## 用法
 
@@ -229,6 +242,7 @@ export default function SettingsPage() {
 app/settings/page.tsx                    # 页面入口：把 onSave 接到你的后端
 components/settings-01/
 ├── settings-01.tsx                      # 入口：状态、已修改计数、分区切换、底部保存栏
+├── changes.tsx                          # 改动对比与统一读数格式化
 ├── config.ts                            # ★ DEFAULT_LABELS 文案、DEFAULT_VALUES 默认值、分区与键的对应
 ├── types.ts                             # Settings01Values 等类型
 ├── utils.ts                             # 值比较、小时格式化、错误文案

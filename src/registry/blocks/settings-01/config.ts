@@ -112,6 +112,11 @@ const DEFAULT_LABELS = {
   crashReportsHint: "自动上报",
   retention: "历史保留",
   readoutDays: "{value} 天",
+  changesTitle: "改动对比",
+  undoChange: "撤销 {field} 的修改",
+  resetChanges: "全部恢复",
+  valueOn: "开",
+  valueOff: "关",
   // 底部操作栏
   footerLabel: "保存设置",
   modifiedCount: "已修改 {count} 项",

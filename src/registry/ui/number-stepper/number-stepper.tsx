@@ -48,6 +48,7 @@ function NumberStepper({
   allowWheelScrub = false,
   locale = "zh-CN",
   label,
+  unit,
   size = "default",
   disabled = false,
   readOnly = false,
@@ -117,7 +118,7 @@ function NumberStepper({
       ariaInvalid !== "false")
   const errorId = `${id}-error`
   const description =
-    [describedBy, message ? errorId : undefined].filter(Boolean).join(" ") ||
+    [describedBy, unit != null ? `${id}-unit` : undefined, message ? errorId : undefined].filter(Boolean).join(" ") ||
     undefined
   const buttonSize =
     size === "sm" ? "icon-sm" : size === "lg" ? "icon-lg" : "icon"
@@ -127,7 +128,7 @@ function NumberStepper({
     // 按下时只缩小图标给一点触感，按钮底色和尺寸不动；减少动态效果时不缩。
     // 按钮留在方条边框里面、撑满框内高度：不用负边距伸到边线上，否则按下时的底色和下沉会盖住边框（出错时的红边尤其明显）
     className:
-      "h-full touch-manipulation self-stretch focus-visible:ring-inset [&_svg]:transition-transform [&_svg]:duration-100 [&_svg]:ease-out active:[&_svg]:scale-[0.8] motion-reduce:[&_svg]:transition-none motion-reduce:active:[&_svg]:scale-100 rounded-none border-0 border-edge text-muted-foreground transition-colors active:not-aria-[haspopup]:translate-y-0 aria-disabled:pointer-events-none aria-disabled:opacity-40 disabled:opacity-40",
+      "h-full shrink-0 touch-manipulation self-stretch focus-visible:ring-inset [&_svg]:transition-transform [&_svg]:duration-100 [&_svg]:ease-out active:[&_svg]:scale-[0.8] motion-reduce:[&_svg]:transition-none motion-reduce:active:[&_svg]:scale-100 rounded-none border-0 border-edge text-muted-foreground transition-colors active:not-aria-[haspopup]:translate-y-0 aria-disabled:pointer-events-none aria-disabled:opacity-40 disabled:opacity-40",
   })
 
   function handleCommit(next: number | null) {
@@ -220,7 +221,7 @@ function NumberStepper({
             <Minus aria-hidden="true" />
           )}
         </NumberField.Decrement>
-        <div className="relative min-w-0">
+        <div className="relative flex min-w-0 shrink items-center justify-center gap-1 px-2">
           <NumberField.Input
             ref={inputRef}
             data-slot="number-stepper-input"
@@ -236,7 +237,7 @@ function NumberStepper({
             inputMode="numeric"
             form={props.form}
             className={cn(
-              "field-sizing-content min-h-0 max-w-24 min-w-10 bg-transparent px-2 text-center text-sm font-medium tabular-nums outline-none in-data-pointer-focus:caret-transparent pointer-coarse:text-base",
+              "min-h-0 w-16 min-w-0 bg-transparent px-0 text-center text-sm font-medium tabular-nums outline-none in-data-pointer-focus:caret-transparent pointer-coarse:text-base",
               pending && "text-muted-foreground",
             )}
             onKeyDown={(event) => {
@@ -256,6 +257,7 @@ function NumberStepper({
               }
             }}
           />
+          {unit != null && <span data-slot="number-stepper-unit" aria-hidden="true" className="shrink-0 text-xs text-muted-foreground">{unit}</span>}
         </div>
         <NumberField.Increment
           data-slot="number-stepper-increment"
@@ -282,6 +284,7 @@ function NumberStepper({
           )}
         </NumberField.Increment>
       </NumberField.Group>
+      {unit != null && <span id={`${id}-unit`} className="sr-only">{unit}</span>}
       {message && (
         <p
           id={errorId}

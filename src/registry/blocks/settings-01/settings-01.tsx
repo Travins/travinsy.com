@@ -9,12 +9,12 @@ import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 import { flowToneStyle } from "@/registry/lib/flow-tone"
 
+import { Settings01Changes } from "./changes"
 import { AppearanceSection } from "./appearance-section"
 import {
   DEFAULT_VALUES,
   SECTION_IDS,
   SECTION_KEYS,
-  formatLabel,
   resolveLabels,
   type Settings01Labels,
 } from "./config"
@@ -116,7 +116,8 @@ function Settings01({
   const counts = Object.fromEntries(
     SECTION_IDS.map((id) => [id, SECTION_KEYS[id].filter(modified).length]),
   ) as Record<Settings01SectionId, number>
-  const total = SECTION_IDS.reduce((sum, id) => sum + counts[id], 0)
+  const changes = SECTION_IDS.flatMap((section) => SECTION_KEYS[section].filter(modified).map((key) => ({ key, section })))
+  const total = changes.length
   const dirty = (Object.keys(values) as (keyof Settings01Values)[]).some(
     (key) => !isSameValue(values[key], saved[key]),
   )
@@ -214,11 +215,7 @@ function Settings01({
       >
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:border-x lg:border-edge">
           <div className="min-w-0 text-sm">
-            <p className="truncate font-medium tabular-nums">
-              {total > 0
-                ? formatLabel(text.modifiedCount, { count: total })
-                : text.unmodified}
-            </p>
+            <Settings01Changes changes={changes} values={values} defaults={resolvedDefaults} labels={text} pending={pending} dirty={dirty} onUndo={(key) => set(key, resolvedDefaults[key])} onReset={resetAll} onSave={save} />
             {/* 状态行固定占一行高度，避免保存时底栏跳动；出错时同一位置换成红色的错误原因 */}
             {action.status === "error" ? (
               <p

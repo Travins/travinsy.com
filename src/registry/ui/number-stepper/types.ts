@@ -51,6 +51,8 @@ type NumberStepperProps = Omit<
   onCommitError?: (error: unknown) => void
   /** 条内左侧标签；不传时控件随内容收窄。 */
   label?: React.ReactNode
+  /** 数字右侧的单位；独立展示并通过描述关联输入，不参与提交。默认不显示。 */
+  unit?: React.ReactNode
   /** 高度 28 / 32 / 36px；触屏 36 / 40 / 44px。
    * @default "default"
    */

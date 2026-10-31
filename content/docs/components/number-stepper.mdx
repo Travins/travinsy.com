@@ -79,6 +79,12 @@ NumberField 自带长按连续步进：等待约 400ms 后，每 60ms 改变一�
 
 <ComponentPreview name="number-stepper-cart-demo" />
 
+### 单位后缀
+
+通过 `unit` 显示单位，不参与输入与表单提交。独立的读屏描述保留数字格式化能力，也支持 px、件、pt 等业务单位。传入 React 节点时应包含可朗读的文本。
+
+<ComponentPreview name="number-stepper-unit-demo" />
+
 ### 尺寸与状态
 
 三档高度 28 / 32 / 36px，触屏上为 36 / 40 / 44px；按钮点击区域随之加大。
@@ -119,6 +125,7 @@ type NumberStepperLabels = {
 | 减号按钮 | `number-stepper-decrement` |
 | 输入框   | `number-stepper-input`     |
 | 加号按钮 | `number-stepper-increment` |
+| 单位后缀 | `number-stepper-unit` |
 | 加载图标 | `number-stepper-spinner`   |
 | 错误提示 | `number-stepper-error`     |
 
