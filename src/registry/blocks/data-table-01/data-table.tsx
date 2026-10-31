@@ -692,9 +692,8 @@ function DataTable<T>({
                     ))}
                     {rowActions && (
                       <td className="w-16 border-b border-l border-dashed border-edge text-center">
-                        <div className="opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100">
-                          {rowActions(row.original)}
-                        </div>
+                        {/* 操作按钮常驻显示（淡色），悬停行时加深 */}
+                        {rowActions(row.original)}
                       </td>
                     )}
                   </tr>

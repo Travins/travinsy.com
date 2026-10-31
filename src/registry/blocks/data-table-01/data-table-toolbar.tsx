@@ -61,7 +61,8 @@ function DataTableToolbar<T>({
     <>
       <div
         data-slot="data-table-toolbar"
-        className="flex flex-wrap items-center gap-2 px-[var(--data-table-gutter,0px)] py-3 @min-[40rem]:flex-nowrap"
+        // 表格工具栏统一 12px；触屏输入框保持 16px，避免 iOS 聚焦时页面放大
+        className="flex flex-wrap items-center gap-2 px-[var(--data-table-gutter,0px)] py-3 @min-[40rem]:flex-nowrap [&_*]:text-xs! pointer-coarse:[&_input]:text-base!"
       >
         <BarField
           label="搜索"
@@ -122,7 +123,7 @@ function DataTableToolbar<T>({
             >
               <Settings2 aria-hidden="true" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-44">
+            <DropdownMenuContent align="end" className="min-w-44 *:text-xs!">
               {table.getAllLeafColumns().map((column) => (
                 <DropdownMenuCheckboxItem
                   key={column.id}
@@ -163,7 +164,7 @@ function DataTableToolbar<T>({
             >
               <ArrowUpDown />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="*:text-xs!">
               {table
                 .getAllLeafColumns()
                 .filter((column) => column.getCanSort())

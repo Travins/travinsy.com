@@ -36,13 +36,17 @@ function DataTableRowActions({
             <Button
               variant="ghost"
               size="icon-sm"
+              className="text-muted-foreground group-hover/row:text-foreground hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground"
               aria-label={label + " 的操作"}
             />
           }
         >
           <MoreHorizontal aria-hidden="true" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-auto min-w-44">
+        <DropdownMenuContent
+          align="end"
+          className="w-auto min-w-40 *:text-xs! [&_[role=menuitem]_svg]:size-3.5!"
+        >
           {actions.map((action, index) =>
             action === "separator" ? (
               <DropdownMenuSeparator key={index} />

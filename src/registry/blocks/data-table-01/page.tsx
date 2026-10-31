@@ -408,7 +408,9 @@ function DataTablePage() {
             <AlertDialogTitle>删除数据集？</AlertDialogTitle>
             <AlertDialogDescription>
               {deleting.length === 1
-                ? "将删除 1 个数据集：「" + deleting[0]?.name + "」，此操作无法撤销。"
+                ? "将删除 1 个数据集：「" +
+                  deleting[0]?.name +
+                  "」，此操作无法撤销。"
                 : "将删除 " + deleting.length + " 个数据集，此操作无法撤销。"}
             </AlertDialogDescription>
           </AlertDialogHeader>

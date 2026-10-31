@@ -18,10 +18,10 @@ function DataTablePagination<T>({
   return (
     <div
       data-slot="data-table-pagination"
-      className="border-t border-edge px-[var(--data-table-gutter,1rem)] py-4"
+      className="border-t border-edge px-[var(--data-table-gutter,1rem)] py-4 [&_*]:text-xs! pointer-coarse:[&_input]:text-base!"
     >
       {virtual ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           {labels.rowTotal(count)}
         </p>
       ) : (
