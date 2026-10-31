@@ -148,6 +148,8 @@ function GridPagination({
       {current && (
         <motion.span
           layoutId={indicatorId}
+          // 只在翻页时做动画；表格变高变矮等引起的整条位移直接跟随，不做上下滑动
+          layoutDependency={page}
           aria-hidden="true"
           data-slot="grid-pagination-indicator"
           className="absolute inset-0 bg-foreground"
