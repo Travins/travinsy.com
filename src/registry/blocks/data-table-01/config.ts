@@ -1,5 +1,9 @@
 import type { DataTableLabels } from "./types"
 const DATA_TABLE_LABELS: DataTableLabels = {
+  sort: "排序",
+  ascending: "升序",
+  descending: "降序",
+  detailDescription: "查看全部字段，点击可编辑字段进行修改。",
   emptyDescription: "添加第一份数据集，开始整理团队的数据资源。",
   noResultsDescription: "试试其他关键词，或清除筛选条件。",
   errorDescription: "暂时无法读取数据，请稍后重试。",
@@ -14,6 +18,7 @@ const DATA_TABLE_LABELS: DataTableLabels = {
   standard: "标准",
   comfortable: "舒适",
   selected: "已选",
+  selectAllCompact: "全选",
   selectAll: "选择全部",
   clear: "清除选择",
   retry: "重试",
@@ -23,7 +28,7 @@ const DATA_TABLE_LABELS: DataTableLabels = {
   previous: "上一页",
   next: "下一页",
   total: "共",
-  perPage: "每页条数",
+  perPage: "每页",
   jump: "跳至",
   cancel: "取消",
   save: "保存",

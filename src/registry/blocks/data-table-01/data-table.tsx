@@ -8,6 +8,7 @@ import {
   Inbox,
   SearchX,
   AlertCircle,
+  X,
 } from "lucide-react"
 import {
   flexRender,
@@ -19,9 +20,16 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table"
 import { useVirtualizer } from "@tanstack/react-virtual"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Empty,
@@ -34,7 +42,7 @@ import { useControllableState } from "@/registry/hooks/use-controllable-state"
 import { DataTableCell } from "./data-table-cell"
 import { DataTableToolbar } from "./data-table-toolbar"
 import { DataTablePagination } from "./data-table-pagination"
-import { DATA_TABLE_LABELS, numberFormat } from "./config"
+import { DATA_TABLE_LABELS } from "./config"
 import type { DataTableProps, DataTableMeta } from "./types"
 
 function DataTable<T>({
@@ -63,10 +71,13 @@ function DataTable<T>({
   onRowSelectionChange,
   onSelectAll,
   bulkActions,
+  mobileBulkActions,
   rowActions,
   onCellCommit,
   virtualization = false,
   toolbar,
+  header,
+  counts,
   statusFilter,
   labels: overrides,
   className,
@@ -74,6 +85,7 @@ function DataTable<T>({
 }: DataTableProps<T>) {
   "use no memo"
   // Table v8 的稳定可变对象不能交由 React Compiler 缓存读取。
+  const reducedMotion = useReducedMotion()
   const labels = { ...DATA_TABLE_LABELS, ...overrides }
   const [sorting, setSorting] = useControllableState({
     prop: sortingProp,
@@ -101,7 +113,9 @@ function DataTable<T>({
     onChange: onRowSelectionChange,
   })
   const [visibility, setVisibility] = React.useState<VisibilityState>({})
-  const [density, setDensity] = React.useState("40")
+  const [density, setDensity] = React.useState("52")
+  const [detailId, setDetailId] = React.useState<string | null>(null)
+  const longPress = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const [scrolled, setScrolled] = React.useState(false)
   const [patches, setPatches] = React.useState<
     Record<string, Record<string, unknown>>
@@ -193,6 +207,27 @@ function DataTable<T>({
   const pinned = table
     .getVisibleLeafColumns()
     .find((column) => (column.columnDef.meta as DataTableMeta<T>)?.pinned)?.id
+  async function commitCell(rowId: string, columnId: string, value: unknown) {
+    const row = rows.find((row) => row.id === rowId)!
+    const column = table.getColumn(columnId)!
+    const key =
+      "accessorKey" in column.columnDef
+        ? String(column.columnDef.accessorKey)
+        : columnId
+    const previous =
+      patches[rowId]?.[key] ?? (row.original as Record<string, unknown>)[key]
+    setPatches((old) => ({ ...old, [rowId]: { ...old[rowId], [key]: value } }))
+    try {
+      await onCellCommit?.({ rowId, columnId, value, row: row.original })
+    } catch (reason) {
+      setPatches((old) => ({
+        ...old,
+        [rowId]: { ...old[rowId], [key]: previous },
+      }))
+      throw reason
+    }
+  }
+  const detail = rows.find((row) => row.id === detailId)
   function clearFilters() {
     setGlobalFilter("")
     setColumnFilters([])
@@ -208,42 +243,43 @@ function DataTable<T>({
       )}
       {...props}
     >
+      {header}
       <DataTableToolbar
         table={table}
         labels={labels}
         density={density}
         onDensityChange={setDensity}
         statusFilter={statusFilter}
+        counts={
+          mode === "manual"
+            ? counts
+            : statusFilter
+              ? Object.fromEntries(
+                  statusFilter.options.map((option) => [
+                    option.value,
+                    option.value
+                      ? displayData.filter(
+                          (row) =>
+                            String(
+                              (row as Record<string, unknown>)[
+                                statusFilter.columnId
+                              ],
+                            ) === option.value,
+                        ).length
+                      : displayData.length,
+                  ]),
+                )
+              : undefined
+        }
       >
         {toolbar}
       </DataTableToolbar>
-      {selected > 0 && (
-        <div
-          role="status"
-          className="flex flex-wrap items-center gap-3 border-y border-edge bg-primary/5 p-3 text-sm"
-        >
-          {labels.selected} {numberFormat.format(selected)} {labels.items}
-          {rowCount !== undefined && onSelectAll && selected < rowCount && (
-            <Button variant="link" onClick={onSelectAll}>
-              {labels.selectAll} {numberFormat.format(rowCount)} {labels.items}
-            </Button>
-          )}
-          <Button variant="ghost" onClick={() => setRowSelection({})}>
-            {labels.clear}
-          </Button>
-          <div className="ml-auto flex items-center gap-2">
-            {bulkActions?.(
-              table.getSelectedRowModel().rows.map((row) => row.original),
-            )}
-          </div>
-        </div>
-      )}
       <div
         ref={scrollRef}
         data-slot="data-table-scroll"
         data-scrolled={scrolled}
         onScroll={(event) => setScrolled(event.currentTarget.scrollLeft > 0)}
-        className="relative w-full max-w-full min-w-0 overflow-auto border-y border-edge"
+        className="relative hidden w-full max-w-full min-w-0 overflow-auto border-y border-edge @min-[40rem]:block"
         style={{
           height: virtualization ? (virtualization.height ?? 480) : undefined,
           maxHeight: virtualization ? undefined : 600,
@@ -255,22 +291,30 @@ function DataTable<T>({
           className="table-fixed border-separate border-spacing-0 text-sm"
           style={
             {
-              width: table.getTotalSize() + 48 + (rowActions ? 64 : 0),
-              minWidth: "100%",
+              width: "100%",
+              minWidth: table.getTotalSize() + 40 + (rowActions ? 40 : 0),
               "--data-table-row-height": density + "px",
             } as React.CSSProperties
           }
         >
           <colgroup>
-            <col style={{ width: 48 }} />
+            <col style={{ width: 40 }} />
             {table.getVisibleLeafColumns().map((column) => (
-              <col key={column.id} style={{ width: column.getSize() }} />
+              <col
+                key={column.id}
+                style={{
+                  width:
+                    column.id === table.getVisibleLeafColumns()[0]?.id
+                      ? undefined
+                      : column.getSize(),
+                }}
+              />
             ))}
-            {rowActions && <col style={{ width: 64 }} />}
+            {rowActions && <col style={{ width: 40 }} />}
           </colgroup>
-          <thead className="sticky top-0 z-20 bg-muted">
+          <thead className="sticky top-0 z-20 bg-muted/50 [&_th]:border-b [&_th]:border-edge">
             <tr>
-              <th className="sticky left-0 z-30 w-12 bg-muted px-3">
+              <th className="sticky left-0 z-30 w-12 bg-muted/50 px-3">
                 <span className="relative flex size-4">
                   <Checkbox
                     className={
@@ -304,15 +348,15 @@ function DataTable<T>({
                         : "none"
                   }
                   className={cn(
-                    "relative bg-muted px-3 text-left",
-                    header.id === pinned && "sticky left-12 z-30",
+                    "relative bg-muted/50 px-3 text-left",
+                    header.id === pinned && "sticky left-10 z-30",
                     header.id === pinned &&
                       scrolled &&
                       "shadow-[4px_0_6px_-4px_var(--border)]",
                   )}
                   style={{
-                    width: header.getSize(),
-                    minWidth: header.getSize(),
+                    width: header.index === 0 ? undefined : header.getSize(),
+                    minWidth: header.index === 0 ? undefined : header.getSize(),
                   }}
                 >
                   <Button
@@ -370,7 +414,7 @@ function DataTable<T>({
                   />
                 </th>
               ))}
-              {rowActions && <th />}
+              {rowActions && <th className="w-10 bg-muted/50" />}
             </tr>
           </thead>
           <tbody>
@@ -379,7 +423,13 @@ function DataTable<T>({
                 <tr key={i}>
                   {Array.from({ length: span }, (_, j) => (
                     <td key={j} className="p-3">
-                      <Skeleton className="h-4 w-full" />
+                      {j === 0 ? (
+                        <span className="font-mono text-muted-foreground">
+                          –
+                        </span>
+                      ) : (
+                        <Skeleton className="h-4 w-full" />
+                      )}
                     </td>
                   ))}
                 </tr>
@@ -387,7 +437,7 @@ function DataTable<T>({
             ) : error ? (
               <tr>
                 <td colSpan={span}>
-                  <Empty className="sticky left-0 min-h-60 w-[100cqw] max-w-full">
+                  <Empty className="sticky left-0 min-h-60 w-[100cqw] max-w-full bg-dots">
                     <EmptyHeader>
                       <EmptyMedia variant="icon">
                         <AlertCircle aria-hidden="true" />
@@ -406,7 +456,7 @@ function DataTable<T>({
             ) : !rows.length ? (
               <tr>
                 <td colSpan={span}>
-                  <Empty className="sticky left-0 min-h-60 w-[100cqw] max-w-full">
+                  <Empty className="sticky left-0 min-h-60 w-[100cqw] max-w-full bg-dots">
                     <EmptyHeader>
                       <EmptyMedia variant="icon">
                         {globalFilter || columnFilters.length ? (
@@ -449,15 +499,40 @@ function DataTable<T>({
                         ? index + 2
                         : pagination.pageIndex * pagination.pageSize + index + 2
                     }
+                    className="group/row"
                     data-state={row.getIsSelected() ? "selected" : undefined}
                   >
                     <td
                       className={cn(
-                        "sticky left-0 z-10 w-12 border-b border-edge px-3",
-                        row.getIsSelected() ? "bg-muted" : "bg-background",
+                        "group/number sticky left-0 z-10 w-10 border-r border-b border-dashed border-edge px-3",
+                        row.getIsSelected()
+                          ? "bg-primary/[0.04]"
+                          : "bg-background",
                       )}
                     >
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "pointer-events-none absolute inset-0",
+                          row.getIsSelected()
+                            ? "border-l-2 border-primary bg-hatch"
+                            : "group-focus-within/number:bg-dots group-hover/row:bg-dots",
+                        )}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "absolute inset-0 flex items-center justify-center font-mono text-[10px] text-muted-foreground group-focus-within/number:opacity-0 group-hover/row:opacity-0",
+                          row.getIsSelected() && "opacity-0",
+                        )}
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
                       <Checkbox
+                        className={cn(
+                          "relative opacity-0 group-focus-within/number:opacity-100 group-hover/row:opacity-100",
+                          row.getIsSelected() && "opacity-100",
+                        )}
                         aria-label={labels.selectRow + " " + (index + 1)}
                         checked={row.getIsSelected()}
                         onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -468,18 +543,28 @@ function DataTable<T>({
                         key={cell.id}
                         style={{
                           height: Number(density),
-                          width: cell.column.getSize(),
-                          maxWidth: cell.column.getSize(),
+                          width:
+                            cell.column.id ===
+                            table.getVisibleLeafColumns()[0]?.id
+                              ? undefined
+                              : cell.column.getSize(),
+                          maxWidth:
+                            cell.column.id ===
+                            table.getVisibleLeafColumns()[0]?.id
+                              ? undefined
+                              : cell.column.getSize(),
                           textAlign: (
                             cell.column.columnDef.meta as DataTableMeta<T>
                           )?.align,
                         }}
                         className={cn(
-                          "border-b border-edge px-3 py-0",
+                          "border-r border-b border-dashed border-edge px-3 py-0",
                           (cell.column.columnDef.meta as DataTableMeta<T>)
                             ?.align === "right" && "font-mono tabular-nums",
-                          row.getIsSelected() ? "bg-muted" : "bg-background",
-                          cell.column.id === pinned && "sticky left-12 z-10",
+                          row.getIsSelected()
+                            ? "bg-primary/[0.04]"
+                            : "bg-background",
+                          cell.column.id === pinned && "sticky left-10 z-10",
                           cell.column.id === pinned &&
                             scrolled &&
                             "shadow-[4px_0_6px_-4px_var(--border)]",
@@ -493,42 +578,66 @@ function DataTable<T>({
                           labels={labels}
                           cellKey={cell.column.id}
                           rowHeight={Number(density)}
-                          onCommit={async (value) => {
-                            const key =
-                              "accessorKey" in cell.column.columnDef
-                                ? String(cell.column.columnDef.accessorKey)
-                                : cell.column.id
-                            const previous =
-                              patches[row.id]?.[key] ??
-                              (row.original as Record<string, unknown>)[key]
-                            setPatches((old) => ({
-                              ...old,
-                              [row.id]: { ...old[row.id], [key]: value },
-                            }))
-                            try {
-                              await onCellCommit?.({
-                                rowId: row.id,
-                                columnId: cell.column.id,
-                                value,
-                                row: row.original,
-                              })
-                            } catch (reason) {
-                              setPatches((old) => ({
-                                ...old,
-                                [row.id]: { ...old[row.id], [key]: previous },
-                              }))
-                              throw reason
-                            }
-                          }}
+                          onCommit={(value) =>
+                            commitCell(row.id, cell.column.id, value)
+                          }
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
                           )}
+                          {(cell.column.columnDef.meta as DataTableMeta<T>)
+                            ?.bar && (
+                            <span
+                              aria-hidden="true"
+                              className="mt-2 block h-0.5 bg-edge"
+                            >
+                              <span
+                                className="block h-full bg-primary/70"
+                                style={{
+                                  width:
+                                    Math.max(
+                                      0,
+                                      Math.min(
+                                        100,
+                                        (Number(cell.getValue()) /
+                                          Math.max(
+                                            1,
+                                            (
+                                              cell.column.columnDef
+                                                .meta as DataTableMeta<T>
+                                            )?.max ??
+                                              Math.max(
+                                                ...displayData.map(
+                                                  (row) =>
+                                                    Number(
+                                                      (
+                                                        row as Record<
+                                                          string,
+                                                          unknown
+                                                        >
+                                                      )[cell.column.id],
+                                                    ) || 0,
+                                                ),
+                                              ),
+                                          )) *
+                                          100,
+                                      ),
+                                    ) + "%",
+                                }}
+                              />
+                            </span>
+                          )}
                         </DataTableCell>
                       </td>
                     ))}
-                    {rowActions && <td>{rowActions(row.original)}</td>}
+                    {rowActions && (
+                      <td className="border-b border-dashed border-edge">
+                        <div className="opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100">
+                          {rowActions(row.original)}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
                 {!!virtualization && items.length > 0 && (
@@ -548,6 +657,238 @@ function DataTable<T>({
           </tbody>
         </table>
       </div>
+      <ul
+        data-slot="data-table-list"
+        aria-label={labels.search}
+        className="border-y border-edge @min-[40rem]:hidden"
+      >
+        {loading ? (
+          Array.from({ length: pagination.pageSize }, (_, index) => (
+            <li
+              key={index}
+              className="flex gap-4 border-b border-dashed border-edge p-4"
+            >
+              <span className="font-mono">–</span>
+              <Skeleton className="h-10 flex-1" />
+            </li>
+          ))
+        ) : !rows.length || error ? (
+          <li className="bg-dots p-10 text-center">
+            <Inbox className="mx-auto mb-3 size-6" />
+            <p>{error || labels.noResults}</p>
+            <Button variant="outline" onClick={error ? onRetry : clearFilters}>
+              {error ? labels.retry : labels.clearFilters}
+            </Button>
+          </li>
+        ) : (
+          rows.map((row, index) => {
+            const cells = row.getAllCells()
+            const name = cells[0]
+            const status = cells.find(
+              (cell) => cell.column.id === statusFilter?.columnId,
+            )
+            const rest = cells
+              .filter((cell) => cell !== name && cell !== status)
+              .slice(0, 3)
+            return (
+              <li
+                key={row.id}
+                className={cn(
+                  "group/row flex border-b border-dashed border-edge last:border-b-0",
+                  row.getIsSelected() && "bg-primary/[0.04]",
+                )}
+              >
+                <div
+                  className={cn(
+                    "group/number relative flex w-10 shrink-0 items-center justify-center border-r border-dashed border-edge",
+                    row.getIsSelected()
+                      ? "bg-hatch"
+                      : "focus-within:bg-dots hover:bg-dots",
+                  )}
+                  onPointerDown={() => {
+                    longPress.current = setTimeout(
+                      () => row.toggleSelected(true),
+                      500,
+                    )
+                  }}
+                  onPointerUp={() => {
+                    if (longPress.current) clearTimeout(longPress.current)
+                  }}
+                  onPointerCancel={() => {
+                    if (longPress.current) clearTimeout(longPress.current)
+                  }}
+                  onPointerLeave={() => {
+                    if (longPress.current) clearTimeout(longPress.current)
+                  }}
+                >
+                  {row.getIsSelected() && (
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-primary"
+                    />
+                  )}
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "font-mono text-[10px] text-muted-foreground group-focus-within/number:opacity-0 group-hover/number:opacity-0",
+                      row.getIsSelected() && "opacity-0",
+                    )}
+                  >
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <Checkbox
+                    aria-label={labels.selectRow + " " + (index + 1)}
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    className={cn(
+                      "absolute opacity-0 group-focus-within/number:opacity-100 group-hover/number:opacity-100",
+                      row.getIsSelected() && "opacity-100",
+                    )}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="min-w-0 flex-1 p-3 text-left focus-visible:outline-2 focus-visible:outline-ring"
+                  onClick={() => setDetailId(row.id)}
+                >
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="truncate font-medium">
+                      {String(name?.getValue() ?? "")}
+                    </span>
+                    <span className="shrink-0 text-xs">
+                      {status &&
+                        flexRender(
+                          status.column.columnDef.cell,
+                          status.getContext(),
+                        )}
+                    </span>
+                  </span>
+                  <span className="mt-2 flex items-center gap-3 font-mono text-[10px] text-muted-foreground">
+                    {rest.map((cell, index) => (
+                      <span
+                        key={cell.id}
+                        className={index === rest.length - 1 ? "ml-auto" : ""}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </span>
+                    ))}
+                  </span>
+                </button>
+              </li>
+            )
+          })
+        )}
+      </ul>
+      <Sheet
+        open={!!detail}
+        onOpenChange={(open) => {
+          if (!open) setDetailId(null)
+        }}
+      >
+        <SheetContent side="bottom" className="max-h-[85dvh] overflow-auto p-6">
+          <SheetTitle>
+            {String(detail?.getAllCells()[0]?.getValue() ?? "")}
+          </SheetTitle>
+          <SheetDescription>{labels.detailDescription}</SheetDescription>
+          <div className="divide-y divide-dashed divide-edge">
+            {detail?.getAllCells().map((cell) => (
+              <div key={cell.id} className="py-3">
+                <p className="mb-1 text-xs text-muted-foreground">
+                  {String(cell.column.columnDef.header)}
+                </p>
+                <DataTableCell
+                  value={cell.getValue()}
+                  row={detail.original}
+                  meta={cell.column.columnDef.meta as DataTableMeta<T>}
+                  title={String(cell.column.columnDef.header)}
+                  labels={labels}
+                  cellKey={cell.column.id}
+                  rowHeight={52}
+                  onCommit={(value) =>
+                    commitCell(detail.id, cell.column.id, value)
+                  }
+                >
+                  {(
+                    cell.column.columnDef.meta as DataTableMeta<T>
+                  )?.detailCell?.(cell.getValue(), detail.original) ??
+                    flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </DataTableCell>
+              </div>
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
+      <AnimatePresence>
+        {selected > 0 && (
+          <motion.div
+            role="toolbar"
+            aria-label="批量操作"
+            initial={{ opacity: 0, y: reducedMotion ? 0 : 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reducedMotion ? 0 : 12 }}
+            transition={{ duration: 0.18 }}
+            className="sticky bottom-4 z-40 mx-auto mt-3 flex w-fit max-w-[calc(100%-2rem)] flex-nowrap items-center justify-center gap-1 rounded-full bg-foreground px-3 py-2 text-sm whitespace-nowrap text-background shadow-lg @min-[40rem]:gap-3 @min-[40rem]:px-4"
+          >
+            <span aria-live="polite" className="shrink-0 font-mono">
+              {labels.selected} {selected}
+              <span className="hidden @min-[40rem]:inline">
+                {" "}
+                / {rowCount ?? data.length}
+              </span>
+            </span>
+            {selected < (rowCount ?? data.length) && (
+              <Button
+                variant="link"
+                className="shrink-0 px-2 text-inherit underline"
+                onClick={() =>
+                  onSelectAll
+                    ? onSelectAll()
+                    : table.toggleAllRowsSelected(true)
+                }
+              >
+                <span className="hidden @min-[40rem]:inline">
+                  {labels.selectAll} {rowCount ?? data.length} {labels.items}
+                </span>
+                <span className="@min-[40rem]:hidden">
+                  {labels.selectAllCompact} {rowCount ?? data.length}
+                </span>
+              </Button>
+            )}
+            {/* 反色操作坞需要覆盖标准按钮配色，保持前景与背景的对比。 */}
+            <div className="flex shrink-0 gap-1 @min-[40rem]:gap-2 [&_button]:border-background/30 [&_button]:bg-transparent [&_button:hover]:bg-background/15 [&_button:not([data-destructive])]:text-background">
+              <div
+                className={cn(
+                  "flex gap-2",
+                  mobileBulkActions && "hidden @min-[40rem]:flex",
+                )}
+              >
+                {bulkActions?.(
+                  table.getSelectedRowModel().rows.map((row) => row.original),
+                )}
+              </div>
+              {mobileBulkActions && (
+                <div className="flex gap-1 @min-[40rem]:hidden">
+                  {mobileBulkActions(
+                    table.getSelectedRowModel().rows.map((row) => row.original),
+                  )}
+                </div>
+              )}
+            </div>
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label={labels.clear}
+              className="shrink-0 rounded-full text-inherit hover:bg-background/15 hover:text-background"
+              onClick={() => setRowSelection({})}
+            >
+              <X />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <DataTablePagination
         table={table}
         labels={labels}

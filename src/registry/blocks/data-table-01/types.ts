@@ -8,6 +8,9 @@ import type {
 } from "@tanstack/react-table"
 
 type DataTableMeta<T> = {
+  detailCell?: (value: unknown, row: T) => React.ReactNode
+  bar?: boolean
+  max?: number
   align?: "left" | "center" | "right"
   editable?: "text" | "number"
   validate?: (value: unknown, row: T) => string | undefined
@@ -17,6 +20,10 @@ type DataTableMeta<T> = {
 }
 type DataTableColumn<T> = ColumnDef<T, unknown> & { meta?: DataTableMeta<T> }
 type DataTableLabels = {
+  sort: string
+  ascending: string
+  descending: string
+  detailDescription: string
   emptyDescription: string
   noResultsDescription: string
   errorDescription: string
@@ -31,6 +38,7 @@ type DataTableLabels = {
   standard: string
   comfortable: string
   selected: string
+  selectAllCompact: string
   selectAll: string
   clear: string
   retry: string
@@ -73,6 +81,7 @@ type DataTableProps<T> = Omit<React.ComponentProps<"div">, "onChange"> & {
   defaultRowSelection?: RowSelectionState
   onRowSelectionChange?: (value: RowSelectionState) => void
   onSelectAll?: () => void
+  mobileBulkActions?: (selected: T[]) => React.ReactNode
   bulkActions?: (selected: T[]) => React.ReactNode
   rowActions?: (row: T) => React.ReactNode
   onCellCommit?: (change: {
@@ -82,6 +91,8 @@ type DataTableProps<T> = Omit<React.ComponentProps<"div">, "onChange"> & {
     row: T
   }) => void | Promise<void>
   virtualization?: false | { estimateRowHeight?: number; height?: number }
+  header?: React.ReactNode
+  counts?: Record<string, number>
   toolbar?: React.ReactNode
   statusFilter?: {
     columnId: string

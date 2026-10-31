@@ -1955,7 +1955,8 @@
       "dependencies": [
         "@tanstack/react-table@^8.21.3",
         "@tanstack/react-virtual@^3.14.24",
-        "lucide-react"
+        "lucide-react",
+        "motion"
       ],
       "registryDependencies": [
         "button",
@@ -1966,8 +1967,9 @@
         "sheet",
         "table",
         "select",
-        "https://yiui.dev/r/segmented-control.json",
-        "dropdown-menu"
+        "dropdown-menu",
+        "tabs",
+        "https://yiui.dev/r/grid-layout.json"
       ],
       "files": [
         {
@@ -2004,8 +2006,24 @@
           "path": "src/registry/blocks/data-table-01/page.tsx",
           "type": "registry:page",
           "target": "app/data-table/page.tsx"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "@hooks/use-controllable-state.ts"
         }
       ],
+      "cssVars": {
+        "theme": {},
+        "light": {
+          "flow-green": "oklch(0.62 0.16 150)",
+          "flow-amber": "oklch(0.7 0.16 70)"
+        },
+        "dark": {
+          "flow-green": "oklch(0.77 0.17 152)",
+          "flow-amber": "oklch(0.82 0.15 82)"
+        }
+      },
       "meta": {
         "iframeHeight": "820px"
       },

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Pencil } from "lucide-react"
 import { createPortal } from "react-dom"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -135,7 +136,7 @@ function DataTableCell<T>({
       data-editable={!!meta?.editable}
       data-column={cellKey}
       tabIndex={meta?.editable ? 0 : undefined}
-      className="relative flex h-full min-h-0 flex-col justify-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+      className="group/cell relative flex h-full min-h-0 flex-col justify-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset data-[editable=true]:hover:outline-1 data-[editable=true]:hover:-outline-offset-4 data-[editable=true]:hover:outline-edge data-[editable=true]:hover:outline-dashed"
       onDoubleClick={(event) => {
         if (
           event.currentTarget.contains(event.target as Node) &&
@@ -161,6 +162,12 @@ function DataTableCell<T>({
         }
       }}
     >
+      {meta?.editable && !editing && (
+        <Pencil
+          aria-hidden="true"
+          className="pointer-events-none absolute top-1 right-1 size-3 text-muted-foreground/50 opacity-0 group-hover/cell:opacity-100"
+        />
+      )}
       {editing && !mobile ? input : children}
       {error &&
         !mobile &&

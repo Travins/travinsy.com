@@ -62,7 +62,7 @@ export default function Page() {
 
 ### 手机
 
-窄容器默认隐藏 `meta.hideOnMobile` 列，可从列设置重新打开。触屏点击可编辑格后从底部面板保存。
+小于 40rem 的容器显示两行账目列表。点击行打开全部字段详情，点击可编辑字段保存；长按编号栏进入多选，排序收进工具栏菜单。
 
 <ComponentPreview name="data-table-01-mobile-demo" />
 
@@ -70,9 +70,9 @@ export default function Page() {
 
 `columns`、`data`、`getRowId` 必填。排序、分页、全局筛选、列筛选、行选择均支持受控值、对应 `default*` 初值与 `on*Change` 回调。分页默认每页 10 条。
 
-`statusFilter={{ columnId, options }}` 提供分段筛选，空字符串表示全部。`toolbar`、`bulkActions(selected)`、`rowActions(row)` 提供操作插槽。`onSelectAll` 由使用方处理跨页全选，表头只选择当前页。`labels` 覆盖文案。
+`statusFilter={{ columnId, options }}` 提供带完整数据计数的状态标签页，空字符串表示全部。`toolbar`、`bulkActions(selected)`、`mobileBulkActions(selected)`、`rowActions(row)` 提供操作插槽，`header` 可传入头部内容。manual 模式使用 `counts` 传入状态计数。`onSelectAll` 由使用方处理跨页全选，表头只选择当前页。`labels` 覆盖文案。
 
-列 meta 支持 `align`、`editable`、`validate`、`hideOnMobile`、`pinned`，列宽使用原生 `size`。首个标记 pinned 的可见数据列固定。
+列 meta 支持 `align`、`editable`、`validate`、`hideOnMobile`、`pinned`、`bar`（数字比例条）、`max`（服务端模式的列最大值），列宽使用原生 `size`。`detailCell(value, row)` 定制详情字段的展示，例如完整时间；`mobileBulkActions` 可传入窄容器专用的图标操作。首个标记 pinned 的可见数据列固定。
 
 文件职责：`data-table.tsx` 组装，`data-table-toolbar.tsx` 工具栏，`data-table-pagination.tsx` 分页，`data-table-cell.tsx` 编辑，`types.ts` 类型，`config.ts` 文案。根节点为 `data-slot="data-table"`，滚动容器为 `data-table-scroll`，编辑格为 `data-table-cell`。
 

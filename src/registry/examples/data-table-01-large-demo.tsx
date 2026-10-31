@@ -11,7 +11,8 @@ const data: Dataset[] = Array.from({ length: 10000 }, (_, i) => ({
   owner: ["林小满", "周远"][i % 2],
   status: "进行中",
   samples: ((i * 1664525 + 1013904223) >>> 0) % 100000,
-  updated: "2026-10-20",
+  code: "DS-" + String(i + 1).padStart(4, "0"),
+  updatedAt: "2026-10-20T08:00:00.000Z",
 }))
 export default function LargeDemo() {
   return (

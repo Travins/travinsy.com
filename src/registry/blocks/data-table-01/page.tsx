@@ -1,18 +1,21 @@
 "use client"
 import * as React from "react"
+import { Plus, Upload, MoreHorizontal, Download, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { numberFormat } from "@/registry/blocks/data-table-01/config"
 import { DataTable } from "@/registry/blocks/data-table-01/data-table"
 import type { DataTableColumn } from "@/registry/blocks/data-table-01/types"
 type Dataset = {
+  code: string
   id: string
   name: string
   owner: string
   status: string
   samples: number
-  updated: string
+  updatedAt: string
 }
 const datasets: Dataset[] = Array.from({ length: 64 }, (_, i) => ({
+  code: "DS-" + String(i + 1).padStart(4, "0"),
   id: String(i + 1),
   name:
     ["城市声景", "植物图谱", "手写字迹", "街道影像"][i % 4] +
@@ -21,27 +24,68 @@ const datasets: Dataset[] = Array.from({ length: 64 }, (_, i) => ({
   owner: ["林小满", "陈青", "周远"][i % 3],
   status: ["进行中", "已归档", "待审核"][i % 3],
   samples: 1200 + i * 137,
-  updated: "2026-10-" + String(10 + (i % 20)).padStart(2, "0"),
+  updatedAt: new Date(
+    Date.UTC(2026, 9, 31, 0) - (i < 6 ? (i + 1) * 3600000 : (i - 4) * 86400000),
+  ).toISOString(),
 }))
 const columns: DataTableColumn<Dataset>[] = [
   {
     accessorKey: "name",
     header: "名称",
     size: 240,
+    cell: ({ row, getValue }) => (
+      <span>
+        <span className="font-medium">{String(getValue())}</span>
+        <span className="mt-1 block font-mono text-[10px] text-muted-foreground">
+          {row.original.code}
+        </span>
+      </span>
+    ),
     meta: {
       pinned: true,
       editable: "text",
       validate: (value) => (String(value).trim() ? undefined : "请输入名称"),
     },
   },
-  { accessorKey: "owner", header: "负责人", size: 140 },
-  { accessorKey: "status", header: "状态", size: 140 },
+  {
+    accessorKey: "owner",
+    header: "负责人",
+    size: 140,
+    cell: ({ getValue }) => (
+      <span className="inline-flex items-center gap-2">
+        <span className="flex size-5 items-center justify-center rounded-sm border border-edge bg-muted text-[10px]">
+          {String(getValue()).slice(0, 1)}
+        </span>
+        {String(getValue())}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: "状态",
+    size: 140,
+    cell: ({ getValue }) => (
+      <span className="inline-flex items-center gap-2">
+        <span
+          className={
+            String(getValue()) === "进行中"
+              ? "size-1.5 rounded-full bg-(--flow-green)"
+              : String(getValue()) === "待审核"
+                ? "size-1.5 rounded-full bg-(--flow-amber)"
+                : "size-1.5 rounded-full bg-muted-foreground"
+          }
+        />
+        {String(getValue())}
+      </span>
+    ),
+  },
   {
     accessorKey: "samples",
     header: "样本数",
     cell: ({ getValue }) => numberFormat.format(Number(getValue())),
     size: 140,
     meta: {
+      bar: true,
       align: "right",
       editable: "number",
       validate: (value) =>
@@ -51,12 +95,69 @@ const columns: DataTableColumn<Dataset>[] = [
     },
   },
   {
-    accessorKey: "updated",
+    accessorKey: "updatedAt",
+    cell: ({ getValue }) => <RelativeDate value={String(getValue())} />,
     header: "更新时间",
     size: 180,
-    meta: { hideOnMobile: true },
+    meta: {
+      hideOnMobile: true,
+      detailCell: (value) => <RelativeDate value={String(value)} exact />,
+    },
   },
 ]
+function RelativeDate({
+  value,
+  exact = false,
+}: {
+  value: string
+  exact?: boolean
+}) {
+  const [now, setNow] = React.useState<number | null>(null)
+  React.useEffect(() => {
+    const update = () => setNow(Date.now())
+    const timer = setTimeout(update, 0)
+    const interval = setInterval(update, 60000)
+    return () => {
+      clearTimeout(timer)
+      clearInterval(interval)
+    }
+  }, [])
+  const date = new Date(value)
+  const days = now === null ? 100 : (now - date.getTime()) / 86400000
+  const relative = new Intl.RelativeTimeFormat("zh-CN", { numeric: "auto" })
+  const text =
+    days > 7
+      ? value.slice(5, 10)
+      : days < 1
+        ? relative.format(-Math.max(1, Math.floor(days * 24)), "hour")
+        : relative.format(-Math.floor(days), "day")
+  return (
+    <time
+      data-slot="data-table-date"
+      dateTime={value}
+      title={new Intl.DateTimeFormat("zh-CN", {
+        dateStyle: "full",
+        timeStyle: "long",
+        timeZone: "Asia/Shanghai",
+      }).format(date)}
+      className="font-mono text-xs text-muted-foreground"
+    >
+      {exact
+        ? new Intl.DateTimeFormat("sv-SE", {
+            timeZone: "Asia/Shanghai",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          }).format(date) +
+          "（" +
+          text +
+          "）"
+        : text}
+    </time>
+  )
+}
 const getRowId = (row: Dataset) => row.id
 function DataTablePage() {
   const [data, setData] = React.useState(datasets)
@@ -74,7 +175,7 @@ function DataTablePage() {
                   row.owner,
                   row.status,
                   row.samples,
-                  row.updated,
+                  row.updatedAt,
                 ].join(","),
               )
               .join("\n"),
@@ -92,15 +193,59 @@ function DataTablePage() {
   return (
     <main
       data-slot="data-table-page"
-      className="mx-auto w-full max-w-6xl min-w-0 p-4 md:p-6"
+      className="@container mx-auto w-full max-w-6xl min-w-0 p-4 md:p-6"
     >
-      <div className="mb-4">
-        <h1 className="text-2xl font-semibold tracking-tight">数据集</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          整理、审核与维护团队的数据资源。
-        </p>
-      </div>
+      <header className="mb-6 flex flex-col items-start justify-between gap-4 @min-[40rem]:flex-row @min-[40rem]:items-end">
+        <div>
+          <p className="mb-3 font-mono text-[11px] tracking-[0.06em]">
+            DATASETS /{" "}
+            <span className="text-muted-foreground">
+              数据集 · {data.length}
+            </span>
+          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">数据集</h1>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setNotice("请选择 CSV 文件导入")}
+          >
+            <Upload />
+            导入
+          </Button>
+          <Button
+            onClick={() => {
+              const id = String(
+                Math.max(0, ...data.map((row) => Number(row.id))) + 1,
+              )
+              setData((previous) => [
+                {
+                  ...datasets[0],
+                  id,
+                  code: "DS-" + id.padStart(4, "0"),
+                  name: "新建数据集",
+                },
+                ...previous,
+              ])
+              setNotice("已新建数据集")
+            }}
+          >
+            <Plus />
+            新建数据集
+          </Button>
+        </div>
+      </header>
       <DataTable
+        rowActions={(row) => (
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={row.name + "的操作"}
+            onClick={() => exportRows([row])}
+          >
+            <MoreHorizontal />
+          </Button>
+        )}
         columns={columns}
         data={data}
         rowCount={data.length}
@@ -109,6 +254,35 @@ function DataTablePage() {
         onSelectAll={() =>
           setSelection(Object.fromEntries(data.map((row) => [row.id, true])))
         }
+        mobileBulkActions={(rows) => (
+          <>
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="导出"
+              onClick={() => exportRows(rows)}
+            >
+              <Download />
+            </Button>
+            {/* 混入反色坞的背景文字色，确保亮暗模式下都能辨认删除操作。 */}
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="删除"
+              data-destructive=""
+              className="text-[color-mix(in_oklab,var(--destructive)_80%,var(--background))] hover:text-destructive"
+              onClick={() => {
+                setData((previous) =>
+                  previous.filter((row) => !selection[row.id]),
+                )
+                setSelection({})
+                setNotice("已删除选中的数据集")
+              }}
+            >
+              <Trash2 />
+            </Button>
+          </>
+        )}
         bulkActions={(rows) => (
           <>
             <Button
@@ -121,7 +295,8 @@ function DataTablePage() {
             <Button
               size="default"
               variant="outline"
-              className="border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+              data-destructive=""
+              className="text-[color-mix(in_oklab,var(--destructive)_80%,var(--background))] hover:text-destructive"
               onClick={() => {
                 setData((previous) =>
                   previous.filter((row) => !selection[row.id]),
