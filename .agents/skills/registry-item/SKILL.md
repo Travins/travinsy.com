@@ -1,6 +1,6 @@
 ---
 name: registry-item
-description: 在 yiui.dev 新增或修改一个 shadcn registry 条目（组件 registry:ui、区块 registry:block、页面模板 registry:page、主题 registry:theme）的完整流程：源码位置、registry.json、演示、MDX 文档、构建与安装验证。
+description: 在 yiui.dev 新增或修改一个 shadcn registry 条目（组件 registry:ui、区块 registry:block、页面 registry:page、主题 registry:theme）的完整流程：源码位置、registry.json、演示、MDX 文档、构建与安装验证。
 ---
 
 # 新增 registry 条目
@@ -14,16 +14,16 @@ description: 在 yiui.dev 新增或修改一个 shadcn registry 条目（组件 
 1. **写源码**
    - 组件：`src/registry/ui/<name>/<name>.tsx`
    - 区块：`src/registry/blocks/<name>/`（可多文件）
-   - 页面模板：`src/registry/templates/<name>/`（可多文件，含 `page.tsx`）
+   - 页面：`src/registry/pages/<name>/`（可多文件，含 `page.tsx`）
    - 只用主题 token 的颜色；工具函数从 `@/lib/utils` 引入 `cn`；shadcn 原语从 `@/components/ui/<x>` 引入（安装时 CLI 会改写别名）
    - 文件里的说明注释用中文
 2. **登记到 `registry.json`**（根目录）
    - `name`（kebab-case）、`type`、`title`、`description`（中文）
    - `dependencies`：npm 包；`registryDependencies`：shadcn 组件名，或本站的完整 URL / `@yiui/<name>`
-   - `files[].path`；页面模板文件必须写 `target`（如 `app/page.tsx`）
+   - `files[].path`；页面文件必须写 `target`（如 `app/page.tsx`）
    - 用到 `src/styles/grid.css` 工具类或新的 CSS 变量时，写进 `css` / `cssVars`
 3. **写演示**：`src/registry/examples/<name>-demo.tsx`（默认导出一个组件），多个变体用 `<name>-<variant>-demo.tsx`
-4. **写文档**：`content/docs/<components|blocks|templates>/<name>.mdx`，frontmatter 包含 `title`、`description`；正文使用文档组件（`ComponentPreview`、`InstallCommand` 等，以 `src/components/docs/` 中实际导出的为准）；可选 `group: <分组 id>` 决定侧栏与 `/components/` 列表页的分组，分组表（id、中英文标题、顺序）统一在 `src/components/docs/docs-groups.ts` 维护，新增分组先在表里登记，frontmatter 写了未登记的 id 构建会报错，不写 `group` 则归入默认组（无小标题）；新条目在 frontmatter 加 `status: new`，侧栏条目旁显示绿色的「新」，组件稳定（通常上线一两个版本后）删掉这一行即可
+4. **写文档**：`content/docs/<components|blocks|pages>/<name>.mdx`，frontmatter 包含 `title`、`description`；正文使用文档组件（`ComponentPreview`、`InstallCommand` 等，以 `src/components/docs/` 中实际导出的为准）；可选 `group: <分组 id>` 决定侧栏与 `/components/` 列表页的分组，分组表（id、中英文标题、顺序）统一在 `src/components/docs/docs-groups.ts` 维护，新增分组先在表里登记，frontmatter 写了未登记的 id 构建会报错，不写 `group` 则归入默认组（无小标题）；新条目在 frontmatter 加 `status: new`，侧栏条目旁显示绿色的「新」，组件稳定（通常上线一两个版本后）删掉这一行即可
 5. **验证**
    ```bash
    source ~/.nvm/nvm.sh && nvm use
@@ -42,7 +42,7 @@ MDX 内置组件由 `src/components/docs/mdx-components.tsx` 注册，无需在�
 - `<PropsTable name="grid-layout" component="GridSection" />`：用 `fumadocs-typescript` 从条目首个源码文件解析导出组件，通过 Parameters<typeof Component>[0] 自动解析自定义属性及 className/children，排除其余继承的 HTML 属性。
 - Markdown 代码围栏支持 `title="文件名.tsx"`，构建时用 Shiki 高亮，颜色映射主题 token。
 
-文档分区为 `content/docs/components/`、`content/docs/agents/`；新增 blocks/templates 时沿用 `src/app/(docs)/components/[[...slug]]/page.tsx`，扩充 `src/lib/source.ts` 分区类型及配置。每个动态路由必须设置 `dynamicParams = false` 并生成静态参数。
+文档分区为 `content/docs/components/`、`content/docs/agents/`；新增 blocks/pages 时沿用 `src/app/(docs)/components/[[...slug]]/page.tsx`，扩充 `src/lib/source.ts` 分区类型及配置。每个动态路由必须设置 `dynamicParams = false` 并生成静态参数。
 
 ## 构建流程
 

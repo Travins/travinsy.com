@@ -18,7 +18,7 @@ import { SectionHeading } from "./section-heading"
 const descriptions: Record<EntrySection, string> = {
   blocks:
     "可直接安装的完整区块。切换设备宽度查看布局，或打开代码，把需要的部分带进你的项目。",
-  templates:
+  pages:
     "从完整页面开始搭建。直接在下方操作页面、切换设备宽度或打开代码，再通过文档安装和调整。",
 }
 
@@ -42,7 +42,7 @@ export function EntryGallery({ section }: { section: EntrySection }) {
         <Fragment key={item.name}>
           {index > 0 ? <GridSeparator /> : null}
           <GridSection className="min-w-0 px-4 py-6 sm:px-6 sm:py-8">
-            {/* 区块与模板都直接放可操作的查看器：能点、能切设备宽度、能看代码，不必先打开预览 */}
+            {/* 区块与页面都直接放可操作的查看器：能点、能切设备宽度、能看代码，不必先打开预览 */}
             <BlockViewer name={item.name} />
             <div className="mt-6 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
               <div className="max-w-2xl min-w-0">

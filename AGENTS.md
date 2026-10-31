@@ -50,7 +50,7 @@ env -u ALL_PROXY -u all_proxy pnpm dlx shadcn@latest add <name>
 content/                     MDX 内容（Fumadocs 读取）
   docs/components/*.mdx      组件文档
   docs/blocks/*.mdx          区块文档
-  docs/templates/*.mdx       页面风格模板文档
+  docs/pages/*.mdx       页面文档
   docs/agents/*.mdx          智能体开发引导
   blog/*.mdx                 博客
 src/
@@ -62,7 +62,7 @@ src/
   registry/                  ★ 对外发布的 registry 源码（唯一真源）
     ui/<name>/               registry:ui 组件（含线条网格原语 ui/grid-layout，站点自身也直接 import 它）
     blocks/<name>/           registry:block
-    templates/<name>/        registry:page / 多文件页面模板
+    pages/<name>/        registry:page / 多文件页面
     examples/<name>-demo.tsx 文档里用的演示
   styles/                    grid.css（网格工具类）、themes.css（颜色主题）、docs.css（文档/代码样式）
   lib/                       source.ts（Fumadocs loader）、themes.ts、utils.ts
@@ -115,7 +115,7 @@ scripts/                     构建辅助脚本
 | `web-design-guidelines` | UI/可访问性审查 | 交付 UI 前自查 |
 | `next-dev-loop` | 在运行中的 `next dev` 里验证行为 | 验收 UI 改动 |
 | `component-conventions` | **组件书写规范（强制）** | 写/改 src/registry 下任何代码 |
-| `registry-item` | 本项目新增 registry 组件的完整流程 | 新增/修改组件、区块、模板、主题 |
+| `registry-item` | 本项目新增 registry 组件的完整流程 | 新增/修改组件、区块、页面、主题 |
 | `component-acceptance` | 组件从开发到验收的流程、标准与验收清单 | 新增组件、重做示例、发布前验收 |
 | `grid-design` | 本项目线条网格设计规范 | 做任何页面布局 |
 | `humanizer-zh` | 中文文本润色：去空话、套话和模板化表达 | 撰写或修改 `content/blog/` 下的博客，成稿前必须用它过一遍 |
@@ -129,7 +129,7 @@ scripts/                     构建辅助脚本
 ### 分支与发布
 - 日常开发在 `dev` 分支上提交、推送；推送 `dev` 不会触发 Vercel 构建
 - `master` 是线上分支，推送即自动部署到 yiui.dev。只有维护者确认要发布时，才把 `dev` 合并（快进）到 `master` 并推送
-- 发布前先核对 `README.md` 与 `README.en.md`：组件 / 区块 / 模板列表、特点、命令表要和本次发布的内容一致，有出入就先更新再发布
+- 发布前先核对 `README.md` 与 `README.en.md`：组件 / 区块 / 页面列表、特点、命令表要和本次发布的内容一致，有出入就先更新再发布
 - 不要直接在 `master` 上提交
 
 ### 拆分与派发任务

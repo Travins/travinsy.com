@@ -577,122 +577,122 @@
       ],
       "files": [
         {
-          "path": "src/registry/templates/app-shell-01/layout.tsx",
+          "path": "src/registry/pages/app-shell-01/layout.tsx",
           "type": "registry:page",
           "target": "app/(app)/layout.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/page.tsx",
+          "path": "src/registry/pages/app-shell-01/page.tsx",
           "type": "registry:page",
           "target": "app/(app)/dashboard/page.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/sections/page.tsx",
+          "path": "src/registry/pages/app-shell-01/sections/page.tsx",
           "type": "registry:page",
           "target": "app/(app)/dashboard/[...slug]/page.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/app-shell.tsx",
+          "path": "src/registry/pages/app-shell-01/app-shell.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/app-shell.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/app-header.tsx",
+          "path": "src/registry/pages/app-shell-01/app-header.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/app-header.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/app-shell-script.tsx",
+          "path": "src/registry/pages/app-shell-01/app-shell-script.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/app-shell-script.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/primary-nav.tsx",
+          "path": "src/registry/pages/app-shell-01/primary-nav.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/primary-nav.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/workspace-sidebar.tsx",
+          "path": "src/registry/pages/app-shell-01/workspace-sidebar.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/workspace-sidebar.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/page-header.tsx",
+          "path": "src/registry/pages/app-shell-01/page-header.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/page-header.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/page-toolbar.tsx",
+          "path": "src/registry/pages/app-shell-01/page-toolbar.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/page-toolbar.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/header-status.tsx",
+          "path": "src/registry/pages/app-shell-01/header-status.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/header-status.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/user-menu.tsx",
+          "path": "src/registry/pages/app-shell-01/user-menu.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/user-menu.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/theme-toggle.tsx",
+          "path": "src/registry/pages/app-shell-01/theme-toggle.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/theme-toggle.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/nav-link.tsx",
+          "path": "src/registry/pages/app-shell-01/nav-link.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/nav-link.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/nav-types.ts",
+          "path": "src/registry/pages/app-shell-01/nav-types.ts",
           "type": "registry:component",
           "target": "@components/app-shell/nav-types.ts"
         },
         {
-          "path": "src/registry/templates/app-shell-01/nav-config.ts",
+          "path": "src/registry/pages/app-shell-01/nav-config.ts",
           "type": "registry:component",
           "target": "@components/app-shell/nav-config.ts"
         },
         {
-          "path": "src/registry/templates/app-shell-01/use-stored-flag.ts",
+          "path": "src/registry/pages/app-shell-01/use-stored-flag.ts",
           "type": "registry:component",
           "target": "@components/app-shell/use-stored-flag.ts"
         },
         {
-          "path": "src/registry/templates/app-shell-01/dashboard-overview.tsx",
+          "path": "src/registry/pages/app-shell-01/dashboard-overview.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/dashboard-overview.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/page-summaries.tsx",
+          "path": "src/registry/pages/app-shell-01/page-summaries.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/page-summaries.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/distribution-card.tsx",
+          "path": "src/registry/pages/app-shell-01/distribution-card.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/distribution-card.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/overview-charts.tsx",
+          "path": "src/registry/pages/app-shell-01/overview-charts.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/overview-charts.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/list-page.tsx",
+          "path": "src/registry/pages/app-shell-01/list-page.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/list-page.tsx"
         },
         {
-          "path": "src/registry/templates/app-shell-01/sample-data.ts",
+          "path": "src/registry/pages/app-shell-01/sample-data.ts",
           "type": "registry:component",
           "target": "@components/app-shell/sample-data.ts"
         },
         {
-          "path": "src/registry/templates/app-shell-01/config.ts",
+          "path": "src/registry/pages/app-shell-01/config.ts",
           "type": "registry:component",
           "target": "@components/app-shell/config.ts"
         },

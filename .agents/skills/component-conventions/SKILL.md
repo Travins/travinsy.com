@@ -1,6 +1,6 @@
 ---
 name: component-conventions
-description: yiui.dev 组件书写规范（强制）。编写或修改 src/registry 下任何组件、区块、模板、演示时必读：分层与依赖规则、文件与命名、代码结构（data-slot、导出、Props、变体、受控/非受控）、文案与 i18n、样式 token、客户端/静态导出、可访问性、文档结构与自查清单。
+description: yiui.dev 组件书写规范（强制）。编写或修改 src/registry 下任何组件、区块、页面、演示时必读：分层与依赖规则、文件与命名、代码结构（data-slot、导出、Props、变体、受控/非受控）、文案与 i18n、样式 token、客户端/静态导出、可访问性、文档结构与自查清单。
 ---
 
 # 组件书写规范
@@ -15,7 +15,7 @@ description: yiui.dev 组件书写规范（强制）。编写或修改 src/regis
 | ------------- | -------------------------------------------- | -------------------------------- | ----------------------------------------------- | ---------------------------------------------------------- |
 | 组件 ui       | `src/registry/ui/<name>/`                    | `registry:ui`                    | 单一职责、可组合的原语（如 trace、grid-layout） | `@/lib/utils`、`@/components/ui/*`、npm 包、其他 `ui` 条目 |
 | 区块 block    | `src/registry/blocks/<name>/`                | `registry:block`                 | 一个完整的界面区域（登录页、AI 助手面板）       | 以上全部 + 其他 `block`                                    |
-| 模板 template | `src/registry/templates/<name>/`             | `registry:block`（含 page 文件） | 一整页 / 一套布局                               | 以上全部                                                   |
+| 页面 page | `src/registry/pages/<name>/`             | `registry:page`（含 page 文件） | 一整页 / 一套布局                               | 以上全部                                                   |
 | 演示 example  | `src/registry/examples/` 或条目内 `demo.tsx` | 不发布                           | 文档预览                                        | 任意                                                       |
 | Hook / lib    | `src/registry/hooks/`、`src/registry/lib/`   | `registry:hook` / `registry:lib` | 跨条目复用的逻辑                                | `@/lib/utils`、npm 包                                      |
 
@@ -25,7 +25,7 @@ description: yiui.dev 组件书写规范（强制）。编写或修改 src/regis
 ## 2. 文件与命名
 
 - 目录、文件名：kebab-case；条目目录名 = registry `name`
-- 入口文件 = `<name>.tsx`（区块/模板可用语义名如 `agent-chat.tsx`，但必须在文档"文件结构"中标明入口）
+- 入口文件 = `<name>.tsx`（区块/页面可用语义名如 `agent-chat.tsx`，但必须在文档"文件结构"中标明入口）
 - 子文件按职责拆分，单文件超过约 300 行应拆分；共享类型放 `types.ts`，常量/默认文案放 `config.ts`
 - `demo.tsx`：仅用于 `/view/` 预览，不进入 registry files；`page.tsx`：安装到用户项目的页面入口（target 到 `app/...`）
 - 编号系列：同类区块用 `-01`、`-02` 后缀（`auth-01`、`auth-02`），API 尽量保持一致
@@ -117,7 +117,7 @@ export { StatusCard, StatusCardTitle, statusCardVariants }
 
 ## 5. 文案与 i18n
 
-- 默认中文。**用户可见文案不得散落硬编码在 JSX 深处**：区块/模板把文案集中为 `DEFAULT_LABELS`（放 `config.ts`），组件接收 `labels?: Partial<Labels>` 覆盖
+- 默认中文。**用户可见文案不得散落硬编码在 JSX 深处**：区块/页面把文案集中为 `DEFAULT_LABELS`（放 `config.ts`），组件接收 `labels?: Partial<Labels>` 覆盖
 - 小型 ui 组件的少量文案可直接作为 props 默认值（如 `label = "复制"`）
 - 日期、数字格式化用 `Intl`，不要手拼
 - 代码标识符、data-slot、类型名用英文；注释用中文，注释说明"为什么"，不复述代码

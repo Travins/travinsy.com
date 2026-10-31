@@ -9,7 +9,7 @@ const DEFAULT_DIR: Record<string, string> = {
   hooks: "hooks",
   lib: "lib",
   blocks: "components",
-  templates: "components",
+  pages: "components",
 }
 
 /**

@@ -4,10 +4,9 @@ export const searchGroups = [
   "文档",
   "组件",
   "区块",
-  "模板",
+  "页面",
   "主题",
   "博客",
-  "页面",
 ] as const
 export type SearchGroup = (typeof searchGroups)[number]
 
@@ -17,7 +16,7 @@ export function searchGroup(url: string): SearchGroup {
     docs: "文档",
     components: "组件",
     blocks: "区块",
-    templates: "模板",
+    pages: "页面",
     themes: "主题",
     blog: "博客",
   }
@@ -33,7 +32,7 @@ export const searchShortcuts: {
   { title: "文档", url: "/docs/", group: "文档" },
   { title: "组件", url: "/components/", group: "组件" },
   { title: "区块", url: "/blocks/", group: "区块" },
-  { title: "模板", url: "/templates/", group: "模板" },
+  { title: "页面", url: "/pages/", group: "页面" },
   { title: "颜色主题", url: "/themes/", group: "主题" },
   { title: "博客", url: "/blog/", group: "博客" },
 ]

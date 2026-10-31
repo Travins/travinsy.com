@@ -7,7 +7,7 @@
  * warn: exports-at-end（类型导出、page/layout/demo.tsx、examples 例外）、
  * data-slot（只查直接返回原生 JSX 的大写函数，page/layout/demo.tsx、examples 例外）、
  * function-declaration（大写 JSX 箭头组件）、
- * labels（blocks/templates JSX 中文，config.ts、DEFAULT_LABELS、demo/page 例外，最多三处）、
+ * labels（blocks/pages JSX 中文，config.ts、DEFAULT_LABELS、demo/page 例外，最多三处）、
  * storage-key-prefix（静态 key 必须以 travinsy: 开头）。未使用的 npm 依赖为 warn。
  * 忽略单条诊断：紧邻上一行写 `// registry-lint-disable-next-line <规则 id>[, <规则 id>]`，
  * 必须写明规则 id；被忽略的条数在报告末尾统计。
@@ -322,7 +322,7 @@ function lintFile(
       if (/^[A-Z]/.test(name) && roots.some(jsx)) {
         if (ts.isArrowFunction(n))
           add("function-declaration", "warn", n, "组件应使用 function 声明")
-        if (!exempt && /^src\/registry\/(ui|blocks|templates)\//.test(file))
+        if (!exempt && /^src\/registry\/(ui|blocks|pages)\//.test(file))
           for (const root of roots) {
             const opening = ts.isJsxElement(root)
               ? root.openingElement
@@ -350,7 +350,7 @@ function lintFile(
     if (
       ts.isJsxText(n) &&
       /[\u3400-\u9fff]/.test(n.text) &&
-      /^src\/registry\/(blocks|templates)\//.test(file) &&
+      /^src\/registry\/(blocks|pages)\//.test(file) &&
       !/(?:^|\/)(?:demo|page)\.tsx$/.test(file) &&
       path.basename(file) !== "config.ts" &&
       labelCount < 3
@@ -376,9 +376,9 @@ function lintFile(
         spec,
       )
     const reverse = file.startsWith("src/registry/ui/")
-      ? /^@\/registry\/(?:blocks|templates)\//.test(spec)
+      ? /^@\/registry\/(?:blocks|pages)\//.test(spec)
       : file.startsWith("src/registry/blocks/") &&
-        spec.startsWith("@/registry/templates/")
+        spec.startsWith("@/registry/pages/")
     const relative = spec.startsWith(".")
       ? slash(
           path.posix.normalize(path.posix.join(path.posix.dirname(file), spec)),
@@ -389,9 +389,9 @@ function lintFile(
         relative,
       )
     const relativeReverse = file.startsWith("src/registry/ui/")
-      ? /^src\/registry\/(blocks|templates)\//.test(relative)
+      ? /^src\/registry\/(blocks|pages)\//.test(relative)
       : file.startsWith("src/registry/blocks/") &&
-        relative.startsWith("src/registry/templates/")
+        relative.startsWith("src/registry/pages/")
     if (forbidden || reverse || relativeForbidden || relativeReverse)
       add(
         "forbidden-import",

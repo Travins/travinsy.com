@@ -3,7 +3,7 @@ import { siteConfig } from "@/config/site"
 import { groupEntries, type EntryGroup } from "./docs-groups"
 import { sectionItems, type EntrySection } from "./registry-items"
 
-/** titleEn 只有组件、区块、模板有：英文名。 */
+/** titleEn 只有组件、区块、页面有：英文名。 */
 export type NavItem = {
   title: string
   url: string
@@ -11,7 +11,7 @@ export type NavItem = {
   /** 来自 MDX frontmatter 的 `status`：侧栏据此显示「新」标 */
   status?: "new"
 }
-export type NavSectionId = "docs" | "components" | "blocks" | "templates"
+export type NavSectionId = "docs" | "components" | "blocks" | "pages"
 /** 分区内的一组条目（小标题可选）；编号在整个分区内连续，不按组重置。 */
 export type NavGroup = EntryGroup<NavItem>
 export type NavSection = {
@@ -32,7 +32,7 @@ export const sectionHome: Record<
   docs: { title: "文档", titleEn: "Docs", url: "/docs/" },
   components: { title: "组件", titleEn: "Components", url: "/components/" },
   blocks: { title: "区块", titleEn: "Blocks", url: "/blocks/" },
-  templates: { title: "模板", titleEn: "Templates", url: "/templates/" },
+  pages: { title: "页面", titleEn: "Pages", url: "/pages/" },
 }
 
 /** fumadocs 生成的 page.url 没有末尾斜杠，而站点路由（trailingSlash）统一带斜杠。 */
@@ -56,7 +56,7 @@ function mdxItems(section: NavSectionId, includeIndex: boolean): GroupedItem[] {
 
 function entryItems(section: EntrySection): GroupedItem[] {
   return sectionItems(section).map((entry) => {
-    // 区块 / 模板的 group、status 写在各自的 MDX frontmatter 里
+    // 区块 / 页面的 group、status 写在各自的 MDX frontmatter 里
     const page = source.getPage(
       [section, entry.name],
       siteConfig.defaultLanguage,
@@ -76,7 +76,7 @@ function entryItems(section: EntrySection): GroupedItem[] {
 /** 侧栏、移动导航和相邻页共用当前分区的顺序（先按分组表排，再按分区内原顺序）。 */
 export function sectionNav(section: NavSectionId): NavSection {
   const entries =
-    section === "blocks" || section === "templates"
+    section === "blocks" || section === "pages"
       ? entryItems(section)
       : mdxItems(section, section === "docs")
   const home = sectionHome[section]

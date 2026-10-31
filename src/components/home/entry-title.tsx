@@ -6,7 +6,7 @@ function EntryTitle({
   name,
   title,
 }: {
-  section: "components" | "blocks" | "templates"
+  section: "components" | "blocks" | "pages"
   name: string
   title: string
 }) {

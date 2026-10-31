@@ -5,7 +5,7 @@ export const dynamic = "force-static"
 export const dynamicParams = false
 
 // 原有卡片目录不生成 Markdown。
-const overviewSections = new Set(["components", "blocks", "templates"])
+const overviewSections = new Set(["components", "blocks", "pages"])
 
 const markdownPages = () =>
   docsPages().filter(

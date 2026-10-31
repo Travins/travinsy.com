@@ -218,7 +218,7 @@ export default function HomePage() {
       <SectionFrame
         index="04"
         name="BLOCKS"
-        title="区块与模板"
+        title="区块与页面"
         action={
           <Link
             href="/blocks/"

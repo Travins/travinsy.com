@@ -2,10 +2,10 @@
 
 import type { ReactNode } from "react"
 
-import { AppShell } from "@/registry/templates/app-shell-01/app-shell"
-import { HeaderStatus } from "@/registry/templates/app-shell-01/header-status"
-import { navConfig } from "@/registry/templates/app-shell-01/nav-config"
-import { services } from "@/registry/templates/app-shell-01/sample-data"
+import { AppShell } from "@/registry/pages/app-shell-01/app-shell"
+import { HeaderStatus } from "@/registry/pages/app-shell-01/header-status"
+import { navConfig } from "@/registry/pages/app-shell-01/nav-config"
+import { services } from "@/registry/pages/app-shell-01/sample-data"
 
 /**
  * 控制台布局：app/(app) 路由组下的所有页面都会套上这层壳。

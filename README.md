@@ -12,7 +12,7 @@
   <a href="https://yiui.dev">官网</a> ·
   <a href="https://yiui.dev/components/">组件</a> ·
   <a href="https://yiui.dev/blocks/">区块</a> ·
-  <a href="https://yiui.dev/templates/">模板</a> ·
+  <a href="https://yiui.dev/pages/">页面</a> ·
   <a href="https://yiui.dev/themes/">主题</a> ·
   <a href="https://yiui.dev/docs/installation/">文档</a>
 </p>
@@ -93,7 +93,7 @@ pnpm dlx shadcn@latest add @yiui/value-slider
 | 布局 | [线条网格布局](https://yiui.dev/components/grid-layout/) |
 | 工具函数 | [中文数字](https://yiui.dev/components/chinese-number/) · [全国行政区划](https://yiui.dev/components/china-regions/) · [色调变量](https://yiui.dev/components/flow-tone/) |
 
-## 区块与模板
+## 区块与页面
 
 | 名称 | 说明 |
 | --- | --- |
@@ -102,7 +102,7 @@ pnpm dlx shadcn@latest add @yiui/value-slider
 | [订单结算 `checkout-01`](https://yiui.dev/blocks/checkout-01/) | 地址、配送、发票、支付与订单完成页，附门店下单手机示例。 |
 | [数据表格 `data-table-01`](https://yiui.dev/blocks/data-table-01/) | 排序、筛选、选择、单格编辑与虚拟滚动。 |
 | [AI 助手面板 `agent-chat-01`](https://yiui.dev/blocks/agent-chat-01/) | 嵌入与浮动两种布局，展示分析摘要、工具调用、来源与图表，内置流式演示。 |
-| [企业控制台布局 `app-shell-01`](https://yiui.dev/templates/app-shell-01/) | 固定顶栏、可折叠导航、工作区侧栏与 AI 助手，带统计卡与图表的示例页面。 |
+| [企业控制台布局 `app-shell-01`](https://yiui.dev/pages/app-shell-01/) | 固定顶栏、可折叠导航、工作区侧栏与 AI 助手，带统计卡与图表的示例页面。 |
 
 ## 颜色主题
 
@@ -141,7 +141,7 @@ content/            文档与博客（MDX）
 src/registry/       对外发布的源码（唯一真源）
   ui/               组件
   blocks/           区块
-  templates/        页面模板
+  pages/        页面
   examples/         文档里的示例
 src/components/     站点自身的外壳、文档渲染、首页
 src/styles/         线条网格、颜色主题与文档样式

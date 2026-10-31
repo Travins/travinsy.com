@@ -1,8 +1,8 @@
 import { readdir, writeFile } from "node:fs/promises"
 
-// 区块与页面模板的入口演示：src/registry/<blocks|templates>/<name>/demo.tsx。
+// 区块与页面的入口演示：src/registry/<blocks|pages>/<name>/demo.tsx。
 // demo 不会被安装到用户项目（不写进 registry.json 的 files），只用于 /view/<name>/ 预览。
-const viewRoots = ["blocks", "templates"] as const
+const viewRoots = ["blocks", "pages"] as const
 
 async function main() {
   const names = (await readdir("src/registry/examples"))
@@ -33,7 +33,7 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
 ${names.map((file) => `  "${file.slice(0, -4)}": lazy(() => import("./examples/${file.slice(0, -4)}")),`).join("\n")}
 }
 
-// 区块 / 页面模板的整页预览，键为 registry 条目名
+// 区块 / 页面的整页预览，键为 registry 条目名
 export const registryViews: Record<string, LazyExoticComponent<ComponentType>> = {
 ${views.map((view) => `  "${view.name}": lazy(() => import("${view.path}")),`).join("\n")}
 }

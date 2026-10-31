@@ -6,7 +6,7 @@ const kinds: Record<string, string> = {
   docs: "DOCS · 文档",
   components: "YI UI · 组件",
   blocks: "BLOCKS · 区块",
-  templates: "TEMPLATES · 模板",
+  pages: "PAGES · 页面",
 }
 
 /** 没有专属卡片的页面（首页、404 等）使用的默认卡片 key */

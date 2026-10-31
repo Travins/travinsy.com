@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { DashboardOverview } from "@/registry/templates/app-shell-01/dashboard-overview"
+import { DashboardOverview } from "@/registry/pages/app-shell-01/dashboard-overview"
 
 export const metadata: Metadata = {
   title: "概览",

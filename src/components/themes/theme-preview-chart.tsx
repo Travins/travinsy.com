@@ -13,7 +13,7 @@ import {
  * 中性、石色这类灰阶主题的 chart-1~5 是由浅到深的渐变：亮色下 chart-1、暗色下 chart-5 几乎贴着底色，
  * 堆叠时那一段会像消失了一样。所以只取四档：亮色用 chart-2~5，暗色用 chart-1~4，彩色主题同样适用。
  */
-const SERIES = ["文档", "组件", "博客", "模板"].map((label, index) => ({
+const SERIES = ["文档", "组件", "博客", "页面"].map((label, index) => ({
   key: `s${index}`,
   label,
   tone: `var(--theme-preview-chart-${index + 1})`,

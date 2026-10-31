@@ -69,7 +69,7 @@ export function entryHref({ name, type }: { name: string; type: string }) {
     type === "registry:block"
       ? "blocks"
       : type === "registry:page"
-        ? "templates"
+        ? "pages"
         : "components"
   return `/${section}/${name}/`
 }

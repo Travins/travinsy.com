@@ -1,7 +1,7 @@
 # Registry 规范检查实现与扫描报告
 
 扫描时间：2026-10-25T21:54（共享工作区快照：另一个 Agent 正在整改 `src/registry/blocks/**` 与
-`src/registry/templates/**`，它们的导入改动尚未同步到 `registry.json` 的 `files`，所以快照里
+`src/registry/pages/**`，它们的导入改动尚未同步到 `registry.json` 的 `files`，所以快照里
 `registry-deps` 还有 14 个 error，不属于本检查器的误报）。
 
 快照结果：0 warn（全仓库）；error 仅剩上述 14 条 `registry-deps`。`src/registry/ui/**`、
@@ -22,13 +22,13 @@
 
 - `pnpm registry:lint --self-test`：通过。
 - `pnpm registry:lint`：全仓库 0 warn；`src/registry/ui/**`、`src/registry/examples/**`、
-  `src/registry/hooks/**` 无诊断。剩余 error 都是另一个 Agent 正在整改的 `blocks` / `templates` 的
+  `src/registry/hooks/**` 无诊断。剩余 error 都是另一个 Agent 正在整改的 `blocks` / `pages` 的
   `registry-deps`（`registry.json` 尚未登记新增的 `config.ts`）。
 - `pnpm lint`：通过。
 - `pnpm exec tsc --noEmit --pretty false`：通过。
 - `npx prettier --check` 对 `src/registry/ui`、`src/registry/examples`、`src/registry/hooks`
   与两个脚本文件：通过。
-- 未运行 `pnpm build`：共享工作区里另一个 Agent 同时在改 `blocks`/`templates`，构建会互相污染；
+- 未运行 `pnpm build`：共享工作区里另一个 Agent 同时在改 `blocks`/`pages`，构建会互相污染；
   由主控统一构建。
 - 未 git commit。
 
@@ -61,7 +61,7 @@ export function Panel() { return <div /> }
 - `exports-at-end`：检查直接导出的函数与变量，允许类型导出，不额外验证 export 列表实际在文件末尾。
   `page.tsx`、`layout.tsx`、`demo.tsx` 与 `src/registry/examples/**` 不检查——它们按 Next.js 与演示约定
   就地导出。
-- `data-slot` 只查 ui/blocks/templates 中直接返回原生 JSX 的大写命名函数，跳过嵌套函数返回值。
+- `data-slot` 只查 ui/blocks/pages 中直接返回原生 JSX 的大写命名函数，跳过嵌套函数返回值。
   Fragment、其他组件、条件表达式、通过变量返回 JSX 不检查；`page.tsx`、`layout.tsx`、`demo.tsx` 与
   `examples/**` 例外。箭头组件告警沿用直接返回 JSX 的识别边界；memo 等包装调用不做类型推导。
 - 颜色检查扫描 className 表达式和 cva 参数中的字符串/模板片段，覆盖 Tailwind 默认调色板与要求的前缀；
@@ -107,7 +107,7 @@ export function Panel() { return <div /> }
 - `no-forward-ref`：error 0 / warn 0
 - `no-hardcoded-color`：error 0 / warn 0
 - `forbidden-import`：error 0 / warn 0
-- `registry-deps`：error 14 / warn 0（均为 `blocks` / `templates` 的进行中改动）
+- `registry-deps`：error 14 / warn 0（均为 `blocks` / `pages` 的进行中改动）
 - `labels`：error 0 / warn 0
 - `storage-key-prefix`：error 0 / warn 0
 - `disable-comment`：error 0 / warn 0

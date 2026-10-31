@@ -53,7 +53,7 @@ pnpm dlx shadcn@latest view @yiui/grid-layout
 | --- | --- | --- |
 | `registry:ui` | 单个组件，安装到 `components/ui/<name>/` | `grid-layout` |
 | `registry:block` | 区块，由多个文件和组件组成，页面文件写入 `app/` | `auth-01` |
-| `registry:page` | 整页模板，会写入 `app/` 下的页面与布局 | `app-shell-01` |
+| `registry:page` | 完整页面，会写入 `app/` 下的页面与布局 | `app-shell-01` |
 | `registry:theme` | 颜色主题，只写入 CSS 变量，会改写已有的同名变量 | `theme-blue` |
 
 文件的具体落点、样式写入的内容见[安装](/docs/installation/)。
@@ -67,4 +67,4 @@ pnpm dlx shadcn@latest view @yiui/grid-layout
 
 安装时依赖会递归解析、一起装上，所以即便你用 `@yiui/...` 命名空间，CLI 取依赖条目时访问的仍是 `https://yiui.dev/r/` 下的地址。已存在的文件默认会提示是否覆盖，处理方式见[安装](/docs/installation/#已经有同名文件时)。
 
-大层级依赖小层级：区块和模板由组件拼成，组件之间也有依赖，例如 `value-slider` 依赖 `flow-diagram`，`flow-diagram` 再依赖 `grid-layout`。每个条目页的「命令」标签会列出会连带安装的内容，「手动」标签给出完整的依赖清单。
+大层级依赖小层级：区块和页面由组件拼成，组件之间也有依赖，例如 `value-slider` 依赖 `flow-diagram`，`flow-diagram` 再依赖 `grid-layout`。每个条目页的「命令」标签会列出会连带安装的内容，「手动」标签给出完整的依赖清单。

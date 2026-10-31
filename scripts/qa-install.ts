@@ -364,7 +364,7 @@ async function main() {
           row.notes.push(`已安装文件被覆盖 ${target}`)
       row.install = "通过"
       try {
-        // 区块、模板自带页面，直接访问；组件与工具库（registry:lib）用文档示例生成页面
+        // 区块、页面条目自带页面，直接访问；组件与工具库（registry:lib）用文档示例生成页面
         if (item.type === "registry:block" || item.type === "registry:page") {
           row.routes = item.files
             .filter(

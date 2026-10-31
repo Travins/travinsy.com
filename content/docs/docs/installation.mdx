@@ -12,7 +12,7 @@ description: 前置条件、用 shadcn 初始化 Base UI 底座、安装第一�
 | Tailwind CSS | v4（条目用 `@utility` 与 `@theme inline` 写样式） |
 | shadcn/ui | 已初始化，底座选 **Base UI**（`components.json` 里 `style` 以 `base-` 开头，如 `base-nova`） |
 | Node.js | 20.18 以上（shadcn CLI 的要求） |
-| 框架 | 组件本身不绑框架；区块和模板里的页面文件按 Next.js App Router 写，`app-shell-01` 还引入了 `next/link` 与 `next/navigation` |
+| 框架 | 组件本身不绑框架；区块和页面里的页面文件按 Next.js App Router 写，`app-shell-01` 还引入了 `next/link` 与 `next/navigation` |
 
 为什么要 Base UI：条目里用到 shadcn 原语（`button`、`dropdown-menu`、`tooltip` 等）的地方，用的是 Base UI 的 `render` 属性，不是 Radix 的 `asChild`；`value-slider`、`toggle-switch`、`segmented-control` 等还直接引入 `@base-ui/react`。CLI 会按你项目的底座生成原语，所以在 Radix 项目里装 `app-shell-01` 会类型报错，详见下面的[常见问题](#常见问题)。
 
@@ -63,8 +63,8 @@ CLI 做三件事：写入源码文件、安装 npm 依赖、把样式合并进�
 | 类型 | 落点 | 例子 |
 | --- | --- | --- |
 | 组件 `registry:ui` | `components/ui/<name>/` | `components/ui/grid-layout/grid-layout.tsx` |
-| 区块、模板的组件 | `components/<name>/` | `components/auth-01/auth-01.tsx` |
-| 区块、模板的页面 | `app/…`，路径由条目指定 | `auth-01` 写入 `app/login/page.tsx`；`app-shell-01` 写入 `app/(app)/layout.tsx`、`app/(app)/dashboard/page.tsx` 与 `app/(app)/dashboard/[...slug]/page.tsx` |
+| 区块、页面的组件 | `components/<name>/` | `components/auth-01/auth-01.tsx` |
+| 区块、页面的页面 | `app/…`，路径由条目指定 | `auth-01` 写入 `app/login/page.tsx`；`app-shell-01` 写入 `app/(app)/layout.tsx`、`app/(app)/dashboard/page.tsx` 与 `app/(app)/dashboard/[...slug]/page.tsx` |
 | 共用 hook 与工具 | `hooks/`、`lib/` | `hooks/use-controllable-state.ts`、`lib/data-display.ts` |
 
 文件装进项目后就是你的源码，可以直接改。每个条目页「手动」标签里的文件标题就是这里的落点。
@@ -110,7 +110,7 @@ pnpm dlx shadcn@latest add https://yiui.dev/r/value-slider.json --dry-run
 
 ## 下一步
 
-- 浏览[组件](/components/)、[区块](/blocks/)与[模板](/templates/)。
+- 浏览[组件](/components/)、[区块](/blocks/)与[页面](/pages/)。
 - 阅读[主题定制](/docs/theming/)，了解线条颜色、亮暗模式与颜色主题如何安装。
 - 让 AI 编辑器直接检索和安装条目，见 [AI 与 llms.txt](/docs/llms/)。
 

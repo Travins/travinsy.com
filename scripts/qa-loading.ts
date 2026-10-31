@@ -25,7 +25,7 @@ async function main() {
       "/",
       "/themes/",
       "/blocks/",
-      "/templates/",
+      "/pages/",
       "/components/",
       "/view/app-shell-01/",
     ]) {

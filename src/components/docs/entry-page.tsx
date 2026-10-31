@@ -10,7 +10,7 @@ import { mdxComponents } from "./mdx-components"
 import { pageMarkdown } from "./page-markdown"
 import { sectionItems, type EntrySection } from "./registry-items"
 
-// 区块 / 模板文档：在通用 MDX 组件之外多一个 BlockViewer
+// 区块 / 页面文档：在通用 MDX 组件之外多一个 BlockViewer
 const entryMdxComponents: MDXComponents = { ...mdxComponents, BlockViewer }
 
 import { EntryGallery } from "@/components/sections/entry-gallery"

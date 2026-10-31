@@ -23,7 +23,7 @@ export type RegistryItem = {
 
 export const entrySections = {
   blocks: { type: "registry:block", title: "区块", label: "BLOCKS" },
-  templates: { type: "registry:page", title: "页面模板", label: "TEMPLATES" },
+  pages: { type: "registry:page", title: "页面", label: "PAGES" },
 } as const
 export type EntrySection = keyof typeof entrySections
 
@@ -40,9 +40,9 @@ export function sectionItems(section: EntrySection) {
   return items.filter((item) => item.type === entrySections[section].type)
 }
 
-/** 可以在 /view/<name>/ 整页预览的条目：区块与页面模板。 */
+/** 可以在 /view/<name>/ 整页预览的条目：区块与页面。 */
 export function viewItems() {
-  return [...sectionItems("blocks"), ...sectionItems("templates")]
+  return [...sectionItems("blocks"), ...sectionItems("pages")]
 }
 
 /** 「在 v0 中打开」：v0 读取 registry JSON 并生成可编辑的项目。 */

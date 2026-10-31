@@ -5,18 +5,18 @@ import { EntryTitle } from "@/components/home/entry-title"
 import { LivePreview } from "@/components/home/live-preview"
 import { getRegistryItem } from "@/components/docs/registry-items"
 
-/** 首页「区块与模板」的四个入口；section 决定链接去 /blocks/ 还是 /templates/。 */
+/** 首页「区块与页面」的四个入口；section 决定链接去 /blocks/ 还是 /pages/。 */
 const SHOWCASE = [
   { section: "blocks", name: "settings-01" },
   { section: "blocks", name: "auth-01" },
   { section: "blocks", name: "agent-chat-01" },
-  { section: "templates", name: "app-shell-01" },
+  { section: "pages", name: "app-shell-01" },
 ] as const
 
-const SECTION_LABEL = { blocks: "BLOCK", templates: "TEMPLATE" } as const
+const SECTION_LABEL = { blocks: "BLOCK", pages: "PAGE" } as const
 
 /**
- * 首页「区块与模板」：2×2 的缩小实时预览，整张卡片是进入文档的链接。
+ * 首页「区块与页面」：2×2 的缩小实时预览，整张卡片是进入文档的链接。
  * 单元格自带右、下边线，再用负外边距把最外一圈挤出裁剪区，避免和容器的线叠成双线。
  */
 function EntryShowcase() {

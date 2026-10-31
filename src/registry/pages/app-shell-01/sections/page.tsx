@@ -1,14 +1,14 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { ListPage } from "@/registry/templates/app-shell-01/list-page"
-import { navConfig } from "@/registry/templates/app-shell-01/nav-config"
+import { ListPage } from "@/registry/pages/app-shell-01/list-page"
+import { navConfig } from "@/registry/pages/app-shell-01/nav-config"
 import {
   isModule,
   normalizeHref,
   resolveNav,
-} from "@/registry/templates/app-shell-01/nav-types"
-import { PageSummary } from "@/registry/templates/app-shell-01/page-summaries"
+} from "@/registry/pages/app-shell-01/nav-types"
+import { PageSummary } from "@/registry/pages/app-shell-01/page-summaries"
 
 type Props = { params: Promise<{ slug: string[] }> }
 

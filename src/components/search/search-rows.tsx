@@ -4,7 +4,6 @@ import {
   BookOpenIcon,
   ComponentIcon,
   EllipsisIcon,
-  FileIcon,
   FileTextIcon,
   HashIcon,
   HistoryIcon,
@@ -24,10 +23,9 @@ const groupIcons: Record<SearchGroup, LucideIcon> = {
   文档: BookOpenIcon,
   组件: ComponentIcon,
   区块: BlocksIcon,
-  模板: LayoutTemplateIcon,
+  页面: LayoutTemplateIcon,
   主题: PaletteIcon,
   博客: FileTextIcon,
-  页面: FileIcon,
 }
 
 const rowBase =

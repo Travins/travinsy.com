@@ -189,10 +189,10 @@ export const registryExamples: Record<string, LazyExoticComponent<ComponentType>
   "xy-pad-view-demo": lazy(() => import("./examples/xy-pad-view-demo")),
 }
 
-// 区块 / 页面模板的整页预览，键为 registry 条目名
+// 区块 / 页面的整页预览，键为 registry 条目名
 export const registryViews: Record<string, LazyExoticComponent<ComponentType>> = {
   "agent-chat-01": lazy(() => import("./blocks/agent-chat-01/demo")),
-  "app-shell-01": lazy(() => import("./templates/app-shell-01/demo")),
+  "app-shell-01": lazy(() => import("./pages/app-shell-01/demo")),
   "auth-01": lazy(() => import("./blocks/auth-01/demo")),
   "checkout-01": lazy(() => import("./blocks/checkout-01/demo")),
   "data-table-01": lazy(() => import("./blocks/data-table-01/demo")),

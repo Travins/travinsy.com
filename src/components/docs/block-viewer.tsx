@@ -13,7 +13,7 @@ const langs: Record<string, string> = {
 }
 
 /**
- * 区块 / 页面模板查看器：iframe 预览（可切换设备宽度）+ 多文件代码 + 安装命令。
+ * 区块 / 页面查看器：iframe 预览（可切换设备宽度）+ 多文件代码 + 安装命令。
  * 文件内容在构建时从 registry.json 登记的源码读取，与发布的 JSON 同源。
  */
 export async function BlockViewer({ name }: { name: string }) {

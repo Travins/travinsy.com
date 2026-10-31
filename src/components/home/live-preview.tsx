@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 
 /**
- * 区块 / 模板的缩小实时预览：用 `/view/<name>/` 页面的 iframe，等比缩小后铺满画框。
+ * 区块 / 页面的缩小实时预览：用 `/view/<name>/` 页面的 iframe，等比缩小后铺满画框。
  * iframe 要等画框靠近视口（预留 200px）才挂载，首屏阶段不会请求任何一个；挂载后再交给浏览器的 `loading="lazy"`。
  * 整块对读屏与键盘隐藏、不响应指针，点击由外层卡片的链接接管。
  *

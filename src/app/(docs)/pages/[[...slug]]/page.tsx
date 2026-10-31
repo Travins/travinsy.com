@@ -6,11 +6,11 @@ import {
 } from "@/components/docs/entry-page"
 export const dynamicParams = false
 export function generateStaticParams() {
-  return entryParams("templates")
+  return entryParams("pages")
 }
 export function generateMetadata(props: EntryRouteProps) {
-  return entryMetadata("templates", props)
+  return entryMetadata("pages", props)
 }
 export default function Page(props: EntryRouteProps) {
-  return <EntryPage section="templates" {...props} />
+  return <EntryPage section="pages" {...props} />
 }

@@ -12,7 +12,7 @@
   <a href="https://yiui.dev">Website</a> ·
   <a href="https://yiui.dev/components/">Components</a> ·
   <a href="https://yiui.dev/blocks/">Blocks</a> ·
-  <a href="https://yiui.dev/templates/">Templates</a> ·
+  <a href="https://yiui.dev/pages/">Pages</a> ·
   <a href="https://yiui.dev/themes/">Themes</a> ·
   <a href="https://yiui.dev/docs/installation/">Docs</a>
 </p>
@@ -93,7 +93,7 @@ See the [installation guide](https://yiui.dev/docs/installation/) for where file
 | Layout | [Grid Layout](https://yiui.dev/components/grid-layout/) |
 | Utilities | [Chinese Number](https://yiui.dev/components/chinese-number/) · [China Regions](https://yiui.dev/components/china-regions/) · [Flow Tone](https://yiui.dev/components/flow-tone/) |
 
-## Blocks & templates
+## Blocks & Pages
 
 | Name | Description |
 | --- | --- |
@@ -102,7 +102,7 @@ See the [installation guide](https://yiui.dev/docs/installation/) for where file
 | [Checkout `checkout-01`](https://yiui.dev/blocks/checkout-01/) | Address, shipping, invoice, payment and order completion, with a mobile store ordering demo. |
 | [Data table `data-table-01`](https://yiui.dev/blocks/data-table-01/) | Sorting, filtering, selection, cell editing and virtual scrolling. |
 | [AI assistant `agent-chat-01`](https://yiui.dev/blocks/agent-chat-01/) | Embedded and floating layouts showing reasoning summaries, tool calls, sources and charts, with a built-in streaming demo. |
-| [Console shell `app-shell-01`](https://yiui.dev/templates/app-shell-01/) | Fixed header, collapsible nav, workspace sidebar and AI assistant, with example pages full of stat cards and charts. |
+| [Console shell `app-shell-01`](https://yiui.dev/pages/app-shell-01/) | Fixed header, collapsible nav, workspace sidebar and AI assistant, with example pages full of stat cards and charts. |
 
 ## Color themes
 
@@ -141,7 +141,7 @@ content/            Docs and blog (MDX)
 src/registry/       Published source (single source of truth)
   ui/               Components
   blocks/           Blocks
-  templates/        Page templates
+  pages/        Pages
   examples/         Examples used in the docs
 src/components/     The site's own shell, doc rendering and home page
 src/styles/         Line grid, color themes and doc styles

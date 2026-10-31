@@ -90,7 +90,7 @@ export function runSelfTests(api: Api) {
     "src/registry/examples/test.tsx",
     "src/registry/blocks/test/demo.tsx",
     "src/registry/blocks/test/page.tsx",
-    "src/registry/templates/test/layout.tsx",
+    "src/registry/pages/test/layout.tsx",
   ])
     assert.deepEqual(
       lint(moduleExport, exemptFile).filter((d) => d.rule === "exports-at-end"),
@@ -193,7 +193,7 @@ export function runSelfTests(api: Api) {
   )
   assert.equal(
     lint(
-      'import { X } from "../../templates/x/x"',
+      'import { X } from "../../pages/x/x"',
       "src/registry/blocks/x/x.tsx",
     ).filter((d) => d.rule === "forbidden-import").length,
     1,
