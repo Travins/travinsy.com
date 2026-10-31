@@ -155,7 +155,7 @@ function DataTableToolbar<T>({
           <SegmentedControl
             aria-label={labels.density}
             value={density}
-            className="hidden w-auto @min-[40rem]:flex [&_[data-slot=segmented-control-item]]:w-8 [&_[data-slot=segmented-control-item]]:px-0"
+            className="hidden w-auto @min-[40rem]:flex [&_[data-slot=segmented-control-item]]:w-8 [&_[data-slot=segmented-control-item]]:gap-0 [&_[data-slot=segmented-control-item]]:px-0"
             options={(
               [
                 ["40", labels.compact, Rows4],
