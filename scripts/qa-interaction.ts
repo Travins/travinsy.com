@@ -1043,11 +1043,19 @@ async function mobileSnapshot(
         searchWithHiddenLabel:
           input.type === "search" &&
           Boolean(input.placeholder.trim()) &&
-          Array.from(input.labels ?? []).some(
+          (Array.from(input.labels ?? []).some(
             (label) =>
               Boolean(label.textContent?.trim()) &&
               Boolean(label.querySelector('svg[aria-hidden="true"]')),
-          ),
+          ) ||
+            // 或用 aria-label 命名，且同一方条内有可见的搜索图标
+            (Boolean(ariaLabel?.trim()) &&
+              Boolean(
+                (
+                  input.closest('[data-slot="bar-field"]') ??
+                  input.parentElement
+                )?.querySelector("svg"),
+              ))),
       })
     })
     const bars: { tag: string; slot: string | null; height: number }[] = []
