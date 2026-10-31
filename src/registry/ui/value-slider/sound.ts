@@ -27,7 +27,8 @@ function audio() {
 
 function flush() {
   const ctx = context
-  if (!ctx || ctx.state !== "running") return
+  if (ctx?.state !== "running") return
+  removeUnlockListeners()
   const now = performance.now()
   const queue = pending
   pending = []
@@ -44,7 +45,6 @@ function unlock() {
   const ctx = audio()
   if (!ctx) return
   if (ctx.state === "running") {
-    for (const type of GESTURES) window.removeEventListener(type, unlock, true)
     return flush()
   }
   const silent = ctx.createBufferSource()
@@ -55,7 +55,17 @@ function unlock() {
 }
 
 const GESTURES = ["pointerup", "touchend", "click", "keydown"] as const
-if (typeof window !== "undefined") {
+let listening = false
+
+function removeUnlockListeners() {
+  if (!listening) return
+  for (const type of GESTURES) window.removeEventListener(type, unlock, true)
+  listening = false
+}
+
+function listenForUnlock() {
+  if (listening) return
+  listening = true
   for (const type of GESTURES)
     window.addEventListener(type, unlock, { capture: true, passive: true })
 }
@@ -64,7 +74,11 @@ if (typeof window !== "undefined") {
 function withAudio(play: (ctx: AudioContext) => void) {
   const ctx = audio()
   if (!ctx) return
-  if (ctx.state === "running") return play(ctx)
+  if (ctx.state === "running") {
+    removeUnlockListeners()
+    return play(ctx)
+  }
+  listenForUnlock()
   // 只留最近两声：解锁前拖了一路滑块，补放时不能一下子炸出一串滴答
   pending = [...pending, { play, at: performance.now() }].slice(-2)
   void ctx.resume().then(flush, () => {})
@@ -169,7 +183,7 @@ function setMuted(muted: boolean) {
   } catch {
     // 隐私模式等存不了时只在本页生效
   }
-  listeners.forEach((listener) => listener())
+  for (const listener of listeners) listener()
   // 通知同页其他带音效的组件
   window.dispatchEvent(new Event(MUTED_EVENT))
 }
@@ -189,9 +203,16 @@ function subscribe(listener: () => void) {
   }
 }
 
-/** 读取 / 切换音效静音。服务端与水合阶段按未静音渲染，挂载后再读本地偏好。 */
-function useValueSliderMuted() {
-  const muted = React.useSyncExternalStore(subscribe, readMuted, () => false)
+const subscribeDisabled = () => () => {}
+
+/** 读取 / 切换音效静音。无声滑块不订阅全局事件，挂载后再读本地偏好。 */
+
+function useValueSliderMuted(enabled = true) {
+  const muted = React.useSyncExternalStore(
+    enabled ? subscribe : subscribeDisabled,
+    readMuted,
+    () => false,
+  )
   return [muted, setMuted] as const
 }
 

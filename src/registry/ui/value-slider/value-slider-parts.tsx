@@ -157,6 +157,9 @@ function ValueSliderReadout({
   editor,
   inside,
 }: ValueSliderReadoutProps) {
+  const focusInput = React.useCallback((node: HTMLInputElement | null) => {
+    node?.focus()
+  }, [])
   const stop = (event: React.PointerEvent) => event.stopPropagation()
 
   if (editor?.editing) {
@@ -164,7 +167,7 @@ function ValueSliderReadout({
       <input
         data-slot="value-slider-input"
         aria-label={editor.label}
-        autoFocus
+        ref={focusInput}
         inputMode="decimal"
         value={editor.draft}
         onChange={(event) => editor.change(event.target.value)}

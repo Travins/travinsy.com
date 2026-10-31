@@ -197,7 +197,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
   const isRange = values.length > 1
 
   const direction = useDirection()
-  const [muted] = useValueSliderMuted()
+  const [muted] = useValueSliderMuted(sound)
   const soundOn = sound && !muted
   const soundOnRef = React.useRef(soundOn)
   React.useEffect(() => {
@@ -246,7 +246,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
     // 音效跟着变化最大的那个手柄走
     let index = 0
     let from = previous?.[0]
-    if (previous && previous.length === list.length) {
+    if (previous?.length === list.length) {
       let largest = -1
       list.forEach((item, itemIndex) => {
         const delta = Math.abs(item - (previous[itemIndex] ?? item))
@@ -348,7 +348,7 @@ function ValueSlider<Value extends ValueSliderValue = number>(
 
   const thumbName = ariaLabel ?? (typeof label === "string" ? label : "数值")
   const readout = isRange
-    ? `${formatNumber(values[0])} – ${formatNumber(values[values.length - 1])}`
+    ? `${formatNumber(values[0] ?? min)} – ${formatNumber(values[values.length - 1] ?? max)}`
     : formatNumber(values[0] ?? min)
   /* ---------- 读数手动输入 ---------- */
 

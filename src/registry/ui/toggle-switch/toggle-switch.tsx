@@ -161,8 +161,8 @@ function ToggleSwitch({
         className={cn(
           "relative flex h-[calc(var(--toggle-switch-knob)+4px)] w-[calc(var(--toggle-switch-knob)*2+4px)] shrink-0 items-center rounded-full bg-foreground/15 p-0.5 transition-colors duration-200 motion-reduce:transition-none dark:bg-foreground/20",
           hasTone
-            ? "group-data-[checked]/toggle-switch:bg-(--flow-tone)"
-            : "group-data-[checked]/toggle-switch:bg-foreground",
+            ? "group-data-[checked]/toggle-switch:bg-(--flow-tone) dark:group-data-[checked]/toggle-switch:bg-(--flow-tone)"
+            : "group-data-[checked]/toggle-switch:bg-foreground dark:group-data-[checked]/toggle-switch:bg-foreground",
         )}
       >
         <Switch.Thumb

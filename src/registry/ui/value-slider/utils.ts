@@ -136,6 +136,7 @@ function snapValuesToTicks(
   const result = [...values]
   for (let index = 0; index < values.length; index += 1) {
     const current = values[index]
+    if (current === undefined) continue
     const nearest = nearestTick(current, ticks)
     if (nearest === undefined) continue
     if (Math.abs(nearest - current) > tolerance) continue
