@@ -4,21 +4,20 @@ import { PlusIcon } from "lucide-react"
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"
-import {
-  ChartCard,
-  ChartCardContent,
-} from "@/registry/ui/chart-card/chart-card"
+import { DataTable } from "@/registry/blocks/data-table-01/data-table"
+import type { DataTableColumn } from "@/registry/blocks/data-table-01/types"
+import { BarSelect } from "@/registry/ui/bar-select/bar-select"
+import { GridToolbarItem } from "@/registry/ui/grid-toolbar/grid-toolbar"
 
 import { formatLabel, useAppShellLabels } from "./config"
-import { EventsTable } from "./dashboard-overview"
 import { PageFrame } from "./page-header"
-import { PageToolbar } from "./page-toolbar"
-import { events } from "./sample-data"
+import { listEvents } from "./sample-data"
 
-const PAGE_SIZE = 6
+const getRowId = (row: (typeof listEvents)[number]) => row.id
+const applications = [...new Set(listEvents.map((row) => row.app))]
 
 /**
- * 通用列表页示例：标题栏 + 工具栏（搜索、翻页）+ 可选的数据摘要 + 表格。其余导航项在演示里都显示它。
+ * 通用列表页示例：标题栏 + 可选的数据摘要 + 数据表格区块。其余导航项在演示里都显示它。
  * summary 插槽放在表格上方，通常是该页自己的指标与图表（见 page-summaries.tsx）。
  */
 function ListPage({
@@ -33,18 +32,53 @@ function ListPage({
   summary?: React.ReactNode
 }) {
   const text = useAppShellLabels()
-  const [search, setSearch] = React.useState("")
-  const [page, setPage] = React.useState(1)
-  const keyword = search.trim().toLowerCase()
-  const filtered = events.filter(
-    (row) =>
-      !keyword ||
-      row.app.toLowerCase().includes(keyword) ||
-      row.target.toLowerCase().includes(keyword),
-  )
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const current = Math.min(page, totalPages)
-  const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE)
+  const statuses = [
+    { value: "ok", label: text.eventOk, tone: "var(--flow-green)" },
+    { value: "warning", label: text.eventWarning, tone: "var(--flow-amber)" },
+    { value: "error", label: text.eventError, tone: "var(--flow-rose)" },
+  ]
+  const columns: DataTableColumn<(typeof listEvents)[number]>[] = [
+    {
+      accessorKey: "app",
+      header: text.columnApp,
+      size: 150,
+      filterFn: (row, id, values: string[]) =>
+        !values.length || values.includes(row.getValue(id)),
+      meta: { pinned: true },
+    },
+    { accessorKey: "target", header: text.columnTarget, size: 240 },
+    {
+      accessorKey: "status",
+      header: text.columnStatus,
+      size: 100,
+      cell: ({ getValue }) => {
+        const status = statuses.find((item) => item.value === getValue())!
+        return (
+          <span className="inline-flex items-center gap-1.5">
+            <span
+              aria-hidden="true"
+              className="size-1.5 rounded-full"
+              style={{ backgroundColor: status.tone }}
+            />
+            {status.label}
+          </span>
+        )
+      },
+    },
+    {
+      accessorKey: "latencyMs",
+      header: text.columnLatency,
+      size: 110,
+      cell: ({ getValue }) => `${getValue()} ms`,
+      meta: { align: "right" },
+    },
+    {
+      accessorKey: "time",
+      header: text.columnTime,
+      size: 120,
+      meta: { hideOnMobile: true },
+    },
+  ]
 
   return (
     <PageFrame
@@ -58,35 +92,45 @@ function ListPage({
           {text.createAction}
         </Button>
       }
-      toolbar={
-        <PageToolbar
-          total={filtered.length}
-          page={current}
-          pageSize={PAGE_SIZE}
-          onPageChange={setPage}
-          search={search}
-          onSearchChange={(value) => {
-            setSearch(value)
-            setPage(1)
-          }}
-          searchLabel={text.searchEvents}
-        />
-      }
+      className="[&>[data-slot=app-shell-page-content]]:gap-0 [&>[data-slot=app-shell-page-content]]:p-0"
     >
       {/* 摘要按所在区域的宽度排版：右侧挂着 aside 时主区域变窄，图表会自动改为单列 */}
       {summary ? (
-        <div data-slot="app-shell-list-summary" className="@container empty:hidden">
+        <div
+          data-slot="app-shell-list-summary"
+          className="@container border-b border-edge p-4 empty:hidden @lg/main:p-6"
+        >
           {summary}
         </div>
       ) : null}
-      <ChartCard>
-        <ChartCardContent>
-          <EventsTable
-            rows={rows}
-            caption={formatLabel(text.listCaption, { title })}
-          />
-        </ChartCardContent>
-      </ChartCard>
+      <DataTable
+        aria-label={formatLabel(text.listCaption, { title })}
+        columns={columns}
+        data={listEvents}
+        getRowId={getRowId}
+        defaultPagination={{ pageIndex: 0, pageSize: 10 }}
+        labels={{ search: text.searchEvents, searchField: text.searchEvents }}
+        statusFilter={{ columnId: "status", options: statuses }}
+        toolbar={(table) => (
+          <GridToolbarItem className="w-40">
+            <BarSelect
+              multiple
+              aria-label={text.columnApp}
+              placeholder={text.allApplications}
+              options={applications.map((app) => ({ value: app, label: app }))}
+              value={
+                (table.getColumn("app")?.getFilterValue() as string[]) ?? []
+              }
+              onValueChange={(values) => {
+                table
+                  .getColumn("app")
+                  ?.setFilterValue(values.length ? values : undefined)
+                table.setPageIndex(0)
+              }}
+            />
+          </GridToolbarItem>
+        )}
+      />
     </PageFrame>
   )
 }

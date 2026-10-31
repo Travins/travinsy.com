@@ -560,14 +560,16 @@
         "avatar",
         "breadcrumb",
         "dropdown-menu",
-        "input",
         "popover",
         "sheet",
         "tooltip",
         "https://yiui.dev/r/stat-card.json",
         "https://yiui.dev/r/mini-chart.json",
         "https://yiui.dev/r/chart-card.json",
-        "https://yiui.dev/r/segmented-control.json"
+        "https://yiui.dev/r/segmented-control.json",
+        "https://yiui.dev/r/data-table-01.json",
+        "https://yiui.dev/r/bar-select.json",
+        "https://yiui.dev/r/grid-toolbar.json"
       ],
       "files": [
         {
@@ -614,11 +616,6 @@
           "path": "src/registry/pages/app-shell-01/page-header.tsx",
           "type": "registry:component",
           "target": "@components/app-shell/page-header.tsx"
-        },
-        {
-          "path": "src/registry/pages/app-shell-01/page-toolbar.tsx",
-          "type": "registry:component",
-          "target": "@components/app-shell/page-toolbar.tsx"
         },
         {
           "path": "src/registry/pages/app-shell-01/header-status.tsx",

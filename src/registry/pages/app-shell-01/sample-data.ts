@@ -38,6 +38,15 @@ const events: EventRow[] = [
   { id: "e-1031", app: "用户中心", target: "GET /api/me", status: "ok", latency: "69 ms", time: "14:15:44" },
 ]
 
+/** 列表页独立的 180 条记录：固定起点、37 秒间隔与整数公式，服务端和客户端结果一致。 */
+const listEvents = Array.from({ length: 180 }, (_, index) => ({
+  ...events[index % events.length],
+  id: `list-${180 - index}`,
+  latencyMs: 60 + (index * 137) % 1800,
+  time: new Date(Date.UTC(2026, 9, 31, 14, 32, 5) - index * 37000)
+    .toISOString().slice(11, 19),
+}))
+
 type StatItem = {
   id: string
   label: string
@@ -232,6 +241,7 @@ export {
   errorBudget,
   eventVolume,
   events,
+  listEvents,
   failureReasons,
   latencyBuckets,
   latencySeries,

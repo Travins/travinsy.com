@@ -143,7 +143,7 @@ type PageFrameProps = Omit<React.ComponentProps<"div">, "title"> &
   Pick<PageHeaderProps, "title" | "description" | "section" | "actions"> & {
     /** 标题栏下方的标签条，通常是 <PageTabs /> */
     tabs?: React.ReactNode
-    /** 标题栏下方的工具栏，通常是 <PageToolbar /> */
+    /** 标题栏下方的工具栏，可组合网格工具栏 */
     toolbar?: React.ReactNode
   }
 

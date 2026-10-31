@@ -51,11 +51,6 @@ const DEFAULT_LABELS = {
   toggleTheme: "切换亮暗模式",
   userMenu: "用户菜单：{name}",
   signOut: "退出登录",
-  pageToolbar: "列表控制",
-  totalUnit: "条",
-  previousPage: "上一页",
-  nextPage: "下一页",
-  search: "搜索",
   serviceStatus: "服务状态",
   serviceStatusAria: "查看服务状态：{name}",
   checkedAt: "检查于 {name}",
@@ -137,6 +132,7 @@ const DEFAULT_LABELS = {
   resolutionLabel: "异常事件已恢复 {percent}",
   // 列表与表格
   createAction: "新建",
+  allApplications: "全部应用",
   searchEvents: "搜索应用或目标",
   listCaption: "{title}列表",
   emptyRows: "没有匹配的记录",
@@ -147,8 +143,8 @@ const DEFAULT_LABELS = {
   columnTime: "时间",
   // 事件状态
   eventOk: "正常",
-  eventWarning: "需关注",
-  eventError: "异常",
+  eventWarning: "告警",
+  eventError: "错误",
 } as const
 
 type AppShellLabels = { [Key in keyof typeof DEFAULT_LABELS]: string }
@@ -191,7 +187,7 @@ function AppShellLabelsProvider({
 
 /**
  * 读取当前文案：组件自己的 labels > AppShell 提供的 labels > DEFAULT_LABELS。
- * 页面组件（PageHeader、PageToolbar 等）放在 AppShell 里时会自动继承 AppShell 的文案。
+ * 页面组件（PageHeader、ListPage 等）放在 AppShell 里时会自动继承 AppShell 的文案。
  */
 function useAppShellLabels(labels?: Partial<AppShellLabels>): AppShellLabels {
   const inherited = useContext(AppShellLabelsContext)

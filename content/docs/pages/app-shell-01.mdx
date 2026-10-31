@@ -14,7 +14,6 @@ description: 提炼自企业监控平台的控制台外壳：固定顶栏、可�
 - **独立滚动的主区域**：顶栏和侧栏固定，只有 `main` 滚动，切换页面自动回到顶部。
 - **右侧 `aside` 插槽**：与 `main` 并排，高度占满顶栏以下的区域，用来放 AI 助手面板等。
 - **窄屏适配**：宽度小于 768px 时，一级导航变成左侧 Sheet 抽屉，二级导航变成顶栏下方的横向标签条。
-- 页面侧附带 `PageHeader`、`PageTabs`、`PageToolbar`、`PageFrame`，对应原项目的页面框架、范围切换和列表工具栏。
 - 演示页直接用站内自研的数据展示组件拼成：
   - 概览页：指标是 [统计卡片](/components/stat-card) 加 [迷你图](/components/mini-chart) 走势；[图表卡片](/components/chart-card) 里依次是响应耗时趋势、错误预算（刻度仪表）、状态码分布（环形图）、最慢接口排行与最近事件表；范围切换用 [分段选择](/components/segmented-control)。
   - 拨测记录、接口探测、节点监控、事件与异常：各自带一组贴合主题的数据摘要（拨测量堆叠柱与异常原因环形图、耗时分布与 SLO 达标环、各区域 CPU / 内存进度环、事件趋势与处理进度），由 `ListPage` 的 `summary` 插槽放在列表上方。
@@ -27,7 +26,7 @@ description: 提炼自企业监控平台的控制台外壳：固定顶栏、可�
 
 <InstallCommand name="app-shell-01" />
 
-会安装 shadcn 的 `button`、`avatar`、`breadcrumb`、`dropdown-menu`、`input`、`popover`、`sheet`、`tooltip`，本站的 [统计卡片](/components/stat-card)、[迷你图](/components/mini-chart)、[图表卡片](/components/chart-card) 与 [分段选择](/components/segmented-control)（概览页与范围切换用到），npm 包 `lucide-react`、`next-themes`，以及 `hooks/use-controllable-state.ts`。如果项目里已有同名文件，CLI 会询问是否覆盖。
+会安装 shadcn 的 `button`、`avatar`、`breadcrumb`、`dropdown-menu`、`popover`、`sheet`、`tooltip`，本站的 [统计卡片](/components/stat-card)、[迷你图](/components/mini-chart)、[图表卡片](/components/chart-card)、[数据表格](/blocks/data-table-01/) 与 [分段选择](/components/segmented-control)（用于概览、列表与范围切换），npm 包 `lucide-react`、`next-themes`，以及 `hooks/use-controllable-state.ts`。如果项目里已有同名文件，CLI 会询问是否覆盖。
 
 > 亮暗模式按钮依赖项目里已有的 `next-themes` `ThemeProvider`；不需要的话给 `AppShell` 传 `themeToggle={false}`。
 
@@ -53,7 +52,6 @@ components/app-shell/
 ├── config.ts                  # ★ 默认文案、文案上下文、一级导航宽度与过渡类名、存储键
 ├── nav-link.tsx               # 对 next/link 的封装，统一处理点击行为
 ├── page-header.tsx            # PageHeader / PageTabs / PageContent / PageFrame
-├── page-toolbar.tsx           # 列表工具栏：总数、翻页、搜索、筛选插槽
 ├── header-status.tsx          # 顶栏服务状态弹层（数据由外部传入）
 ├── user-menu.tsx              # 头像 + 下拉菜单
 ├── theme-toggle.tsx           # 亮暗模式切换
@@ -62,7 +60,7 @@ components/app-shell/
 ├── overview-charts.tsx        # 演示：概览的错误预算、状态码分布、最慢接口三张图表卡片
 ├── distribution-card.tsx      # 演示：环形图 + 图例格的占比卡片（概览与拨测记录共用）
 ├── page-summaries.tsx         # 演示：各导航页的数据摘要（按导航项 id 选择）
-├── list-page.tsx              # 演示：列表页（工具栏 + summary 插槽 + 图表卡片里的明细表）
+├── list-page.tsx              # 演示：列表页（summary 插槽 + 数据表格区块）
 └── sample-data.ts             # 演示用假数据
 ```
 
@@ -229,18 +227,16 @@ const [collapsed, setCollapsed] = React.useState(false)
 
 ### 页面框架
 
-主区域里的页面可以用 `page-header.tsx` 和 `page-toolbar.tsx` 里的组件快速搭起来：
+列表页直接组合 [数据表格区块](/blocks/data-table-01/)，提供搜索、状态与应用筛选、排序、列设置、密度和网格分页，手机端自动切换卡片列表。摘要插槽保留在表格上方；180 条记录按固定公式生成，概览页仍使用原来的少量事件。
 
 ```tsx title="app/(app)/dashboard/system/users/page.tsx"
 import { PageFrame } from "@/components/app-shell/page-header"
-import { PageToolbar } from "@/components/app-shell/page-toolbar"
 
 <PageFrame
   section="系统管理"
   title="用户管理"
   description="账号与角色分配"
   actions={<Button>新建</Button>}
-  toolbar={<PageToolbar total={128} page={1} pageSize={20} onPageChange={setPage} />}
 >
   {/* 表格、卡片…… */}
 </PageFrame>
@@ -248,7 +244,8 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 
 ### 自定义文案
 
-用户可见文案集中在 `config.ts` 的 `DEFAULT_LABELS`，通过 `labels` 覆盖任意几项。`AppShell` 会把合并后的文案放进 context，所以主区域里的 `PageHeader`、`PageToolbar`、演示页面等组件会自动继承，不需要再逐个传 `labels`；单个组件也可以传自己的 `labels` 覆盖外层值。带占位符的文案会被填入实际名称：
+默认文案集中在 `config.ts`，通过 `AppShell` 的 `labels` 覆盖并由页面组件继承。数据表格自身的通用文案通过 `DataTable.labels` 设置。
+
 
 ```tsx
 <AppShell
@@ -281,7 +278,6 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
 | --- | --- | --- |
 | `PageHeader` | `title` `description?` `section?` `actions?` | 标题栏，滚动时吸附在主区域顶部 |
 | `PageTabs` | `tabs` `value` `onValueChange` `trailing?` `labels?` | 范围切换条（应用、环境等），用分段选择实现，单选语义 |
-| `PageToolbar` | `total` `page` `pageSize` `onPageChange` `search?` `onSearchChange?` `filters?` `labels?` | 总数、翻页、搜索；状态完全受控 |
 | `PageContent` | — | 统一内边距与纵向间距 |
 | `PageFrame` | 同 `PageHeader`，另有 `tabs?` `toolbar?` | 把标题栏、标签条、工具栏、内容区一次组合 |
 | `HeaderStatus` | `services` `checkedAt?` `labels?` | 顶栏服务状态弹层，放进 `headerActions` |
@@ -310,11 +306,6 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
     toggleTheme: { type: "string", description: "亮暗模式按钮", default: '"切换亮暗模式"' },
     userMenu: { type: "string", description: "用户菜单", default: '"用户菜单：{name}"' },
     signOut: { type: "string", description: "用户菜单", default: '"退出登录"' },
-    pageToolbar: { type: "string", description: "工具栏名称与总数单位", default: '"列表控制"' },
-    totalUnit: { type: "string", description: "工具栏名称与总数单位", default: '"条"' },
-    previousPage: { type: "string", description: "翻页按钮", default: '"上一页"' },
-    nextPage: { type: "string", description: "翻页按钮", default: '"下一页"' },
-    search: { type: "string", description: "搜索框默认名称", default: '"搜索"' },
     serviceStatus: { type: "string", description: "顶栏服务状态", default: '"服务状态"' },
     serviceStatusAria: { type: "string", description: "顶栏服务状态", default: '"查看服务状态：{name}"' },
     checkedAt: { type: "string", description: "顶栏服务状态", default: '"检查于 {name}"' },
@@ -348,6 +339,7 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
     recentEventsCount: { type: "string", description: "事件表卡片与表格题注", default: '"按时间倒序，共 {count} 条"' },
     eventsCaption: { type: "string", description: "事件表卡片与表格题注", default: '"最近拨测事件"' },
     createAction: { type: "string", description: "列表页新建按钮", default: '"新建"' },
+    allApplications: { type: "string", description: "应用筛选占位", default: '"全部应用"' },
     searchEvents: { type: "string", description: "列表页搜索框", default: '"搜索应用或目标"' },
     listCaption: { type: "string", description: "列表页表格题注", default: '"{title}列表"' },
     emptyRows: { type: "string", description: "空结果提示", default: '"没有匹配的记录"' },
@@ -357,14 +349,13 @@ import { PageToolbar } from "@/components/app-shell/page-toolbar"
     columnLatency: { type: "string", description: "表头", default: '"耗时"' },
     columnTime: { type: "string", description: "表头", default: '"时间"' },
     eventOk: { type: "string", description: "事件状态徽标文字", default: '"正常"' },
-    eventWarning: { type: "string", description: "事件状态徽标文字", default: '"需关注"' },
-    eventError: { type: "string", description: "事件状态徽标文字", default: '"异常"' },
+    eventWarning: { type: "string", description: "事件状态徽标文字", default: '"告警"' },
+    eventError: { type: "string", description: "事件状态徽标文字", default: '"错误"' },
   }}
 />
 
 ### data-slot 与状态
 
-根元素都带 `data-slot`，方便用选择器或 `has-data-[slot=…]` 定制：`app-shell`（`data-collapsed`、`data-animate`、`data-has-aside`、`data-has-workspace`）、`app-shell-header`、`app-shell-sidebar`、`app-shell-primary-nav`、`app-shell-nav-item`（`data-active`）、`app-shell-workspace-sidebar`、`app-shell-workspace-item`（`data-active`）、`app-shell-main`、`app-shell-page-header`、`app-shell-page-toolbar` 等。
 
 ## 可访问性
 
