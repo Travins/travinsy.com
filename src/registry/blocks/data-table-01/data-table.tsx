@@ -74,6 +74,7 @@ function DataTable<T>({
   bulkActions,
   rowActions,
   onCellCommit,
+  searchLabel,
   virtualization = false,
   toolbar,
   header,
@@ -288,6 +289,7 @@ function DataTable<T>({
         density={density}
         onDensityChange={setDensity}
         statusFilter={statusFilter}
+        searchLabel={searchLabel}
         counts={
           mode === "manual"
             ? counts

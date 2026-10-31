@@ -13,6 +13,7 @@ const DATA_TABLE_LABELS: DataTableLabels = {
   actions: "操作",
   rowTotal: (count: number) => `共 ${count} 行`,
   search: "搜索数据集…",
+  searchField: "搜索",
   status: "状态",
   columns: "列设置",
   reset: "恢复默认",

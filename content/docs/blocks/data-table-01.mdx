@@ -102,7 +102,7 @@ import { DataTableRowActions } from "@/components/data-table-01/data-table-row-a
 
 `columns`、`data`、`getRowId` 必填。排序、分页、全局筛选、列筛选、行选择均支持受控值、对应 `default*` 初值与 `on*Change` 回调。分页默认每页 10 条。
 
-`statusFilter={{ columnId, options }}` 在搜索框右侧显示带数量的状态筛选，空字符串表示全部，`tone` 设置色点颜色（如 `"var(--flow-green)"`）。`toolbar`、`bulkActions(selected)`、`rowActions(row)` 提供操作插槽；`bulkActions` 里的按钮文字包在 `<span data-label>` 中，窄容器只显示图标，`header` 可传入头部内容。manual 模式使用 `counts` 传入状态计数。`onSelectAll` 由使用方处理跨页全选，表头只选择当前页。`labels` 覆盖文案。
+搜索框默认只显示图标，读屏名称取 `labels.searchField`；传 `searchLabel="搜索"` 可在图标前显示条内标签。`statusFilter={{ columnId, options }}` 在搜索框右侧显示带数量的状态筛选，空字符串表示全部，`tone` 设置色点颜色（如 `"var(--flow-green)"`）。`toolbar`、`bulkActions(selected)`、`rowActions(row)` 提供操作插槽；`bulkActions` 里的按钮文字包在 `<span data-label>` 中，窄容器只显示图标，`header` 可传入头部内容。manual 模式使用 `counts` 传入状态计数。`onSelectAll` 由使用方处理跨页全选，表头只选择当前页。`labels` 覆盖文案。
 
 列 meta 支持 `align`、`editable`、`validate`、`hideOnMobile`、`pinned`、`bar`（数字比例条）、`max`（服务端模式的列最大值），列宽使用原生 `size`。`detailCell(value, row)` 定制详情字段的展示，例如完整时间。首个标记 pinned 的可见数据列固定。
 

@@ -22,6 +22,7 @@ function DataTableToolbar<T>({
   onDensityChange,
   statusFilter,
   children,
+  searchLabel,
   counts,
 }: {
   table: Table<T>
@@ -30,6 +31,7 @@ function DataTableToolbar<T>({
   onDensityChange: (value: string) => void
   statusFilter?: DataTableProps<T>["statusFilter"]
   counts?: Record<string, number>
+  searchLabel?: React.ReactNode
   children?: React.ReactNode
 }) {
   "use no memo"
@@ -65,7 +67,8 @@ function DataTableToolbar<T>({
         className="flex flex-wrap items-center gap-2 px-[var(--data-table-gutter,0px)] py-3 @min-[40rem]:flex-nowrap [&_*]:text-xs! pointer-coarse:[&_input]:text-base!"
       >
         <BarField
-          label="搜索"
+          label={searchLabel}
+          aria-label={searchLabel ? undefined : labels.searchField}
           icon={<Search />}
           inputRef={searchRef}
           type="search"

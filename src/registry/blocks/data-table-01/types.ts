@@ -33,6 +33,8 @@ type DataTableLabels = {
   actions: string
   rowTotal: (count: number) => string
   search: string
+  /** 搜索框的读屏名称（未传 searchLabel 时使用） */
+  searchField: string
   status: string
   columns: string
   reset: string
@@ -95,6 +97,8 @@ type DataTableProps<T> = Omit<React.ComponentProps<"div">, "onChange"> & {
   onSelectAll?: () => void
   bulkActions?: (selected: T[]) => React.ReactNode
   rowActions?: (row: T) => React.ReactNode
+  /** 搜索框条内标签，默认不显示；传入如「搜索」时显示在图标前 */
+  searchLabel?: React.ReactNode
   onCellCommit?: (change: {
     rowId: string
     columnId: string
