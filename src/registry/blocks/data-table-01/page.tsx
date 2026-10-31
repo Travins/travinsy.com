@@ -289,7 +289,7 @@ function DataTablePage() {
                 multiple
                 label="负责人"
                 placeholder="全部"
-                className="hidden w-44 shrink-0 @min-[64rem]:block"
+                className="hidden w-48 shrink-0 @min-[64rem]:block"
                 contentClassName="[&_[data-slot=combobox-item]]:text-xs [&_*]:text-xs"
                 value={
                   (table.getColumn("owner")?.getFilterValue() as string[]) ?? []

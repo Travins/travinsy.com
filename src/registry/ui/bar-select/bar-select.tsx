@@ -339,18 +339,25 @@ function BarSelect(props: BarSelectProps) {
             <span
               id={`${id}-value`}
               className={cn(
-                "min-w-0 flex-1 truncate text-start",
+                "flex min-w-0 flex-1 text-start",
                 clearable && values.length > 0 && "pe-6",
               )}
             >
               {!selected.length ? (
-                placeholder
+                <span className="truncate">{placeholder}</span>
               ) : multiple && display === "summary" ? (
-                labels.selected(values.length)
+                <span className="truncate">
+                  {labels.selected(values.length)}
+                </span>
               ) : multiple && display === "chips" ? null : (
                 <>
-                  {selected[0]?.label}
-                  {values.length > 1 && ` +${values.length - 1}`}
+                  {/* 宽度不够时只截断首项文字，「+N」始终完整显示 */}
+                  <span className="truncate">{selected[0]?.label}</span>
+                  {values.length > 1 && (
+                    <span className="shrink-0 ps-1 font-mono text-xs text-muted-foreground tabular-nums">
+                      +{values.length - 1}
+                    </span>
+                  )}
                 </>
               )}
             </span>
