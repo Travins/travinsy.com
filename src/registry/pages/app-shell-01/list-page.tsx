@@ -105,6 +105,8 @@ function ListPage({
       ) : null}
       <DataTable
         aria-label={formatLabel(text.listCaption, { title })}
+        // 外壳内容区没有底边线，翻页条下方补一条横线，网格才闭合
+        className="border-b border-edge"
         columns={columns}
         data={listEvents}
         getRowId={getRowId}
