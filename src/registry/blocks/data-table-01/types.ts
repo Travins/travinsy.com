@@ -51,8 +51,10 @@ type DataTableLabels = {
   empty: string
   noResults: string
   clearFilters: string
+  first: string
   previous: string
   next: string
+  last: string
   total: string
   perPage: string
   jump: string

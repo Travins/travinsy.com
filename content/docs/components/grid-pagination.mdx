@@ -1,0 +1,87 @@
+---
+title: 网格分页
+titleEn: Grid Pagination
+description: 整条是一行格子的分页：信息、每页条数、首尾页、页码与跳页各占一格，可单独使用，也可贴在表格底部。
+group: data
+status: new
+---
+
+<ComponentPreview name="grid-pagination-demo" />
+
+## 安装
+
+<InstallCommand name="grid-pagination" />
+
+## 用法
+
+```tsx
+import { GridPagination } from "@/components/ui/grid-pagination/grid-pagination"
+
+;<GridPagination defaultPage={1} pageCount={13} total={128} />
+```
+
+整条是一行格子，格子之间用虚线分开，没有圆角：
+
+| 格子 | 何时出现 | 内容 |
+| ---- | -------- | ---- |
+| 信息格 | 始终 | 占满剩余宽度；传 `total` 时显示「01–10 / 128」，否则显示「当前页 / 总页数」；`info` 可换成任意内容 |
+| 每页条数 | 传 `pageSizes` | 官方 Select，触发器铺满整格 |
+| 首页、上一页 | 始终 | 图标格；已在第一页时禁用 |
+| 页码 | 容器宽于 36rem | 每个页码一格，当前页整格反色 |
+| 下一页、尾页 | 始终 | 图标格；已在最后一页时禁用 |
+| 跳页 | `jumper`，且容器宽于 44rem | 输入页码后回车 |
+
+底层是官方 `Pagination`、`PaginationContent`、`PaginationItem`、`PaginationLink`，读屏与键盘行为和官方一致。传 `getHref` 时每一格都是真实链接；不传时是按钮，只发出 `onPageChange`。`pageSize` 由调用方控制，改变时应同步更新 `pageCount` 与 `page`。
+
+### 和方条分页的区别
+
+[方条分页](/components/bar-pagination/)是一根圆角方条，适合放进表单、卡片这类小空间；网格分页是一整行格子，适合贴在表格、列表、日志的底部，与线条网格的竖线、横线融为一体。两者共用同一套页码算法（`lib/pagination-slots.ts`）。
+
+### 外框
+
+单独使用时整条带一圈边框（`bordered` 默认为 `true`）。放进已经有边线的容器，例如表格底部，设 `bordered={false}`，由容器画顶部横线，左右与底边沿用容器的外框，看上去就是表格的最后一行。
+
+## 示例
+
+### 自定义信息格
+
+`info` 替换左侧信息格的内容，比如筛选条件与条数。这里同时用了 `size="sm"`。
+
+<ComponentPreview name="grid-pagination-info-demo" />
+
+### 链接模式
+
+<ComponentPreview name="grid-pagination-links-demo" />
+
+### 窄容器
+
+容器窄于 36rem 时，信息格独占上一行；下一行只保留首页、上一页、「当前页 / 总页数」、下一页、尾页，每页条数与跳页隐藏。
+
+<ComponentPreview name="grid-pagination-compact-demo" />
+
+## API
+
+<PropsTable name="grid-pagination" component="GridPagination" />
+
+导出 `GridPaginationProps` 类型。
+
+## data-slot
+
+| 部位 | `data-slot` |
+| ---- | ----------- |
+| 根元素（`nav`） | `grid-pagination` |
+| 信息格 | `grid-pagination-info` |
+
+根元素在 `bordered` 为真时带 `data-bordered`。
+
+## 可访问性
+
+根元素是带名称的导航（默认「分页」）。页码有「第 N 页」名称，当前页带 `aria-current="page"`；首页、上一页、下一页、尾页都有名称，到头时禁用。每页条数与跳页输入有可访问名称。窄容器里的「当前页 / 总页数」是 `aria-live` 区域，翻页时会读出。焦点环画在格子内侧，不会被相邻格子遮住。所有内置文案可通过 `labels` 覆盖。
+
+## 注意事项
+
+格子高度对应按钮的 `icon` / `icon-lg` 档：`size="sm"` 为 32px，默认 36px，触屏上分别加高到 40 / 44px。页码采用固定槽位：总页数多于 `siblings × 2 + 5` 时，无论当前在第几页，页码格（含省略号）的数量都相同，翻页时整条不抖动。`pageCount` 至少按一页显示，`page` 超出范围时夹到有效范围。
+
+## 源码
+
+<ComponentSource name="grid-pagination" />

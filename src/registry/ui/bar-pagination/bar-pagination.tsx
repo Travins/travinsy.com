@@ -19,6 +19,10 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
+import {
+  getPaginationRange,
+  getPaginationSlots,
+} from "@/registry/lib/pagination-slots"
 
 const barPaginationVariants = cva(
   "flex items-center rounded-md border border-edge bg-muted/60",
@@ -101,26 +105,8 @@ function BarPagination({
     size === "sm" ? "icon-sm" : size === "lg" ? "icon-lg" : "icon"
   const cell =
     "rounded-none border-0 font-mono tabular-nums focus-visible:ring-inset"
-  // 固定槽位：总页数多于 2×siblings+5 时，始终渲染同样数量的格子（首页、末页、当前页及两侧、
-  // 两个省略号或补位页码），翻页时分页条宽度不变，按钮不会在鼠标下移位
-  const radius = Math.max(0, Math.trunc(siblings) || 0)
-  const slots = radius * 2 + 5
-  const range = (from: number, to: number) =>
-    Array.from({ length: to - from + 1 }, (_, i) => from + i)
-  const pages: (number | string)[] =
-    count <= slots
-      ? range(1, count)
-      : page <= radius + 3
-        ? [...range(1, slots - 2), "gap-end", count]
-        : page >= count - radius - 2
-          ? [1, "gap-start", ...range(count - slots + 3, count)]
-          : [
-              1,
-              "gap-start",
-              ...range(page - radius, page + radius),
-              "gap-end",
-              count,
-            ]
+  // 固定槽位：翻页时格子数量不变，分页条不抖动（算法见 pagination-slots）
+  const pages = getPaginationSlots(page, count, siblings)
   const item = (
     n: number,
     content: React.ReactNode,
@@ -181,15 +167,15 @@ function BarPagination({
             data-slot="bar-pagination-range"
             className="font-mono text-xs whitespace-nowrap text-muted-foreground tabular-nums"
           >
-            {String(
-              total > 0
-                ? Math.min(total, (page - 1) * Math.max(1, pageSize) + 1)
-                : 0,
-            ).padStart(2, "0")}
+            {String(getPaginationRange(page, pageSize, total).from).padStart(
+              2,
+              "0",
+            )}
             –
-            {String(
-              Math.min(Math.max(0, total), page * Math.max(1, pageSize)),
-            ).padStart(2, "0")}{" "}
+            {String(getPaginationRange(page, pageSize, total).to).padStart(
+              2,
+              "0",
+            )}{" "}
             / {total}
           </p>
         )}

@@ -1929,7 +1929,7 @@
         "dropdown-menu",
         "https://yiui.dev/r/grid-layout.json",
         "https://yiui.dev/r/bar-field.json",
-        "https://yiui.dev/r/bar-pagination.json",
+        "https://yiui.dev/r/grid-pagination.json",
         "https://yiui.dev/r/segmented-control.json",
         "alert-dialog",
         "https://yiui.dev/r/bar-select.json"
@@ -2037,6 +2037,42 @@
           "path": "src/registry/ui/bar-pagination/bar-pagination.tsx",
           "type": "registry:ui",
           "target": "@ui/bar-pagination/bar-pagination.tsx"
+        },
+        {
+          "path": "src/registry/lib/pagination-slots.ts",
+          "type": "registry:lib",
+          "target": "lib/pagination-slots.ts"
+        },
+        {
+          "path": "src/registry/hooks/use-controllable-state.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-controllable-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "grid-pagination",
+      "type": "registry:ui",
+      "title": "网格分页",
+      "description": "整条是一行格子的分页：信息、每页条数、首尾页、页码与跳页各占一格，可单独使用，也可贴在表格底部。",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "pagination",
+        "select"
+      ],
+      "files": [
+        {
+          "path": "src/registry/ui/grid-pagination/grid-pagination.tsx",
+          "type": "registry:ui",
+          "target": "@ui/grid-pagination/grid-pagination.tsx"
+        },
+        {
+          "path": "src/registry/lib/pagination-slots.ts",
+          "type": "registry:lib",
+          "target": "lib/pagination-slots.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",

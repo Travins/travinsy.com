@@ -1,6 +1,6 @@
 "use client"
 import type { Table } from "@tanstack/react-table"
-import { BarPagination } from "@/registry/ui/bar-pagination/bar-pagination"
+import { GridPagination } from "@/registry/ui/grid-pagination/grid-pagination"
 import type { DataTableLabels } from "./types"
 function DataTablePagination<T>({
   table,
@@ -16,16 +16,15 @@ function DataTablePagination<T>({
   "use no memo"
   const { pageIndex, pageSize } = table.getState().pagination
   return (
-    <div
-      data-slot="data-table-pagination"
-      className="border-t border-edge px-[var(--data-table-gutter,1rem)] py-4 [&_*]:text-xs! pointer-coarse:[&_input]:text-base!"
-    >
+    // 翻页贴在表格底部当作最后一行：只画顶部横线，左右与底边沿用表格外框
+    <div data-slot="data-table-pagination" className="border-t border-edge">
       {virtual ? (
-        <p className="text-xs text-muted-foreground">
+        <p className="flex h-9 items-center px-3 font-mono text-xs text-muted-foreground tabular-nums pointer-coarse:h-11">
           {labels.rowTotal(count)}
         </p>
       ) : (
-        <BarPagination
+        <GridPagination
+          bordered={false}
           page={pageIndex + 1}
           pageCount={table.getPageCount()}
           total={count}
@@ -34,8 +33,10 @@ function DataTablePagination<T>({
           jumper
           siblings={1}
           labels={{
+            first: labels.first,
             previous: labels.previous,
             next: labels.next,
+            last: labels.last,
             perPage: labels.perPage,
             jump: labels.jump,
           }}
