@@ -693,7 +693,8 @@ function DataTable<T>({
                       </td>
                     ))}
                     {rowActions && (
-                      <td className="w-16 border-b border-l border-dashed border-edge text-center">
+                      <td className="w-16 border-b border-dashed border-edge text-center">
+                        {/* 左侧分隔线由前一格的 border-r 提供，这里不再画，避免两条虚线重叠 */}
                         {/* 操作按钮常驻显示（淡色），悬停行时加深 */}
                         {rowActions(row.original)}
                       </td>
