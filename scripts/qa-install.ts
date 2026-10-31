@@ -337,7 +337,7 @@ async function main() {
         /Would you like to overwrite/i.test(result.output) ||
         (!created.length &&
           !updated.length &&
-          !/Skipped \d+ files/i.test(result.output))
+          !/Skipped \d+ files?/i.test(result.output))
       ) {
         row.notes.push("CLI 失败、覆盖提示或未写文件")
         continue

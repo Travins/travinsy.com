@@ -22,7 +22,7 @@ export default function ChineseNumberDemo() {
   const [value, setValue] = React.useState("10010.05")
 
   return (
-    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-5 shadow-sm">
+    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
       <label htmlFor="chinese-number-input" className="text-sm font-medium">
         数字
       </label>

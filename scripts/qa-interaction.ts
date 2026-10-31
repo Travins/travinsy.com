@@ -1247,6 +1247,11 @@ function checkExampleCards(ctx: Ctx, files: string[]) {
         (token) => token === "border" || token.startsWith("border-"),
       )
       if (!hasBorder) continue
+      // 固定尺寸的图标块（size-14 / size-16 之类）不是卡片
+      if (tokens.some((token) => /^size-\d+$/.test(token))) continue
+      // 分区卡片：overflow-hidden 加各分区自带内边距（如 checklist 的头部 + 列表），外框不加 p-4
+      if (tokens.includes("overflow-hidden") && tokens.includes("shadow-xs"))
+        continue
       // max-w-xs 的密排卡片（compact 档）用 p-3 是同一种紧凑尺度，不算偏离规范
       const compactCard = tokens.includes("max-w-xs")
       const hasPadding =

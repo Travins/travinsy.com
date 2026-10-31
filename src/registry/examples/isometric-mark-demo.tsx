@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+
 import { cn } from "@/lib/utils"
 import { Volume2, VolumeX } from "lucide-react"
 import {
@@ -94,16 +96,18 @@ function Callout({
 function SoundToggle() {
   const [muted, setMuted] = useIsometricMarkMuted()
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon-sm"
       aria-pressed={!muted}
       aria-label={muted ? "打开点击音效" : "关闭点击音效"}
       title={muted ? "打开点击音效" : "关闭点击音效"}
       onClick={() => setMuted(!muted)}
-      className="absolute top-3 right-3 z-10 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&_svg]:size-3.5"
+      className="absolute top-3 right-3 z-10 text-muted-foreground [&_svg]:size-3.5"
     >
       {muted ? <VolumeX /> : <Volume2 />}
-    </button>
+    </Button>
   )
 }
 

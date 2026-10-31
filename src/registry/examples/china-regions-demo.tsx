@@ -35,7 +35,7 @@ export default function ChinaRegionsDemo() {
   const path = findPath(chinaRegions, code.trim())
 
   return (
-    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-5 shadow-sm">
+    <div className="w-full max-w-sm rounded-xl border border-edge bg-background p-4 shadow-xs">
       <label htmlFor="china-regions-code" className="text-sm font-medium">
         行政区划代码
       </label>
