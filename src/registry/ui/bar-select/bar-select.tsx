@@ -29,7 +29,14 @@ import type { BarSelectProps } from "./types"
 const barSelectVariants = cva(
   "flex min-w-0 items-center rounded-md border bg-muted/60 transition-colors",
   {
-    variants: { size: { sm: "text-xs", default: "text-sm", lg: "text-sm" } },
+    // 高度含边框，与方条输入、分段选择同一张表；标签模式换行时可以长高
+    variants: {
+      size: {
+        sm: "min-h-7 text-xs pointer-coarse:min-h-9",
+        default: "min-h-8 text-sm pointer-coarse:min-h-10",
+        lg: "min-h-9 text-sm pointer-coarse:min-h-11",
+      },
+    },
     defaultVariants: { size: "default" },
   },
 )
@@ -278,7 +285,7 @@ function BarSelect(props: BarSelectProps) {
           {label && (
             <span
               id={`${id}-label`}
-              className="shrink-0 border-r border-edge px-3 text-muted-foreground @max-[12rem]/bar-select:sr-only"
+              className="flex shrink-0 items-center self-stretch border-r border-edge px-3 text-muted-foreground @max-[12rem]/bar-select:sr-only"
             >
               {label}
             </span>
@@ -325,7 +332,7 @@ function BarSelect(props: BarSelectProps) {
                 .join(" ") || undefined
             }
             className={cn(
-              "min-w-0 flex-1 justify-between rounded-none font-normal focus-visible:ring-inset",
+              "h-auto min-w-0 flex-1 self-stretch justify-between rounded-none font-normal focus-visible:ring-inset",
               multiple && display === "chips" && selected.length && "flex-none",
             )}
           >

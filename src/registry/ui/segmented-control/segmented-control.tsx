@@ -195,7 +195,8 @@ function SegmentedControl({
                     "absolute inset-0.5 rounded-sm",
                     hasTone
                       ? "bg-(--flow-tone)/20 dark:bg-(--flow-tone)/35"
-                      : "bg-background shadow-xs dark:bg-foreground/15",
+                      : // 亮色下白块压在浅灰底上对比太弱，补一圈细描边和略重的阴影
+                        "bg-background shadow-sm ring-1 ring-foreground/10 dark:bg-foreground/15 dark:shadow-xs dark:ring-0",
                   )}
                   transition={
                     reduced
