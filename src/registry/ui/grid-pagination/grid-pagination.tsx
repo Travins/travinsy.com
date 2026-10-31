@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Pagination,
@@ -118,12 +119,63 @@ function GridPagination({
   const pages = getPaginationSlots(page, count, siblings)
   const range = total !== undefined && getPaginationRange(page, pageSize, total)
   const pad = (n: number) => String(n).padStart(2, "0")
+  // 翻页方向：页码格里的数字顺着这个方向滚动（往后翻向左滚，往前翻向右滚）
+  const [previous, setPrevious] = React.useState(page)
+  const [direction, setDirection] = React.useState(0)
+  if (previous !== page) {
+    setPrevious(page)
+    setDirection(page > previous ? 1 : -1)
+  }
+  // 当前页的反色块：同一个实例里只有一块，翻页时滑到新位置
+  const indicatorId = React.useId()
+  const reduced = useReducedMotion()
+  const transition = reduced
+    ? { duration: 0 }
+    : { type: "spring" as const, bounce: 0.15, visualDuration: 0.3 }
 
   // 每一格：方形、无圆角，焦点环画在格子内侧
   const cell =
     "rounded-none border-0 font-mono text-xs tabular-nums focus-visible:ring-inset"
   const currentCell =
-    "bg-foreground text-background hover:bg-foreground hover:text-background"
+    "text-background hover:bg-transparent hover:text-background"
+
+  /**
+   * 页码格的内容：反色块与数字分两层。数字层裁切溢出，换数字时旧的滑出、新的滑入；
+   * 反色块不在裁切层里，滑过相邻格子时不会被裁掉。
+   */
+  const slot = (value: React.ReactNode, key: string, current: boolean) => (
+    <>
+      {current && (
+        <motion.span
+          layoutId={indicatorId}
+          aria-hidden="true"
+          data-slot="grid-pagination-indicator"
+          className="absolute inset-0 bg-foreground"
+          transition={transition}
+        />
+      )}
+      <span className="absolute inset-0 overflow-hidden">
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          <motion.span
+            key={key}
+            custom={direction}
+            variants={{
+              enter: (d: number) => ({ x: `${d * 70}%`, opacity: 0 }),
+              center: { x: "0%", opacity: 1 },
+              exit: (d: number) => ({ x: `${d * -70}%`, opacity: 0 }),
+            }}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={transition}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            {value}
+          </motion.span>
+        </AnimatePresence>
+      </span>
+    </>
+  )
 
   const item = (
     n: number,
@@ -138,7 +190,7 @@ function GridPagination({
         size={buttonSize}
         isActive={current}
         aria-label={label}
-        className={cn(cell, current && currentCell)}
+        className={cn(cell, "relative", current && currentCell)}
         onClick={(event) => {
           if (
             !event.metaKey &&
@@ -159,7 +211,7 @@ function GridPagination({
         aria-label={label}
         aria-current={current ? "page" : undefined}
         disabled={disabled}
-        className={cn(cell, current && currentCell)}
+        className={cn(cell, "relative", current && currentCell)}
         onClick={() => setPage(n)}
       >
         {content}
@@ -246,20 +298,27 @@ function GridPagination({
             page === 1,
           )}
         </PaginationItem>
-        {pages.map((n) => (
-          <PaginationItem key={n} className={wide}>
+        {/* 按位置取 key：格子本身不重建，只有格里的数字滚动，反色块滑动 */}
+        {pages.map((n, index) => (
+          <PaginationItem key={index} className={wide}>
             {typeof n === "number" ? (
-              item(n, n, labels.page(n), false, n === page)
+              item(
+                n,
+                slot(n, String(n), n === page),
+                labels.page(n),
+                false,
+                n === page,
+              )
             ) : (
               <span
                 aria-hidden="true"
                 className={cn(
                   buttonVariants({ variant: "ghost", size: buttonSize }),
                   cell,
-                  "pointer-events-none text-muted-foreground",
+                  "pointer-events-none relative text-muted-foreground",
                 )}
               >
-                …
+                {slot("…", n, false)}
               </span>
             )}
           </PaginationItem>

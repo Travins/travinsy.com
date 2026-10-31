@@ -2106,7 +2106,8 @@
       "title": "网格分页",
       "description": "整条是一行格子的分页：信息、每页条数、首尾页、页码与跳页各占一格，可单独使用，也可贴在表格底部。",
       "dependencies": [
-        "lucide-react"
+        "lucide-react",
+        "motion"
       ],
       "registryDependencies": [
         "button",
