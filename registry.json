@@ -266,62 +266,62 @@
         {
           "path": "src/registry/blocks/auth-01/auth-01.tsx",
           "type": "registry:component",
-          "target": "components/auth-01/auth-01.tsx"
+          "target": "@components/auth-01/auth-01.tsx"
         },
         {
           "path": "src/registry/blocks/auth-01/config.ts",
           "type": "registry:component",
-          "target": "components/auth-01/config.ts"
+          "target": "@components/auth-01/config.ts"
         },
         {
           "path": "src/registry/blocks/auth-01/brand.tsx",
           "type": "registry:component",
-          "target": "components/auth-01/brand.tsx"
+          "target": "@components/auth-01/brand.tsx"
         },
         {
           "path": "src/registry/blocks/auth-01/brand-panel.tsx",
           "type": "registry:component",
-          "target": "components/auth-01/brand-panel.tsx"
+          "target": "@components/auth-01/brand-panel.tsx"
         },
         {
           "path": "src/registry/blocks/auth-01/sign-in-form.tsx",
           "type": "registry:component",
-          "target": "components/auth-01/sign-in-form.tsx"
+          "target": "@components/auth-01/sign-in-form.tsx"
         },
         {
           "path": "src/registry/blocks/auth-01/sign-up-form.tsx",
           "type": "registry:component",
-          "target": "components/auth-01/sign-up-form.tsx"
+          "target": "@components/auth-01/sign-up-form.tsx"
         },
         {
           "path": "src/registry/blocks/auth-01/forgot-password-form.tsx",
           "type": "registry:component",
-          "target": "components/auth-01/forgot-password-form.tsx"
+          "target": "@components/auth-01/forgot-password-form.tsx"
         },
         {
           "path": "src/registry/blocks/auth-01/form-parts.tsx",
           "type": "registry:component",
-          "target": "components/auth-01/form-parts.tsx"
+          "target": "@components/auth-01/form-parts.tsx"
         },
         {
           "path": "src/registry/blocks/auth-01/password-strength.tsx",
           "type": "registry:component",
-          "target": "components/auth-01/password-strength.tsx"
+          "target": "@components/auth-01/password-strength.tsx"
         },
         {
           "path": "src/registry/blocks/auth-01/schemas.ts",
           "type": "registry:component",
-          "target": "components/auth-01/schemas.ts"
+          "target": "@components/auth-01/schemas.ts"
         },
         {
           "path": "src/registry/blocks/auth-01/social-buttons.tsx",
           "type": "registry:component",
-          "target": "components/auth-01/social-buttons.tsx"
+          "target": "@components/auth-01/social-buttons.tsx"
         },
         {
           "path": "src/registry/blocks/auth-01/use-auth-form.ts",
           "type": "registry:component",
-          "target": "components/auth-01/use-auth-form.ts"
+          "target": "@components/auth-01/use-auth-form.ts"
         }
       ],
       "meta": {
@@ -355,67 +355,67 @@
         {
           "path": "src/registry/blocks/settings-01/settings-01.tsx",
           "type": "registry:component",
-          "target": "components/settings-01/settings-01.tsx"
+          "target": "@components/settings-01/settings-01.tsx"
         },
         {
           "path": "src/registry/blocks/settings-01/config.ts",
           "type": "registry:component",
-          "target": "components/settings-01/config.ts"
+          "target": "@components/settings-01/config.ts"
         },
         {
           "path": "src/registry/blocks/settings-01/types.ts",
           "type": "registry:component",
-          "target": "components/settings-01/types.ts"
+          "target": "@components/settings-01/types.ts"
         },
         {
           "path": "src/registry/blocks/settings-01/utils.ts",
           "type": "registry:component",
-          "target": "components/settings-01/utils.ts"
+          "target": "@components/settings-01/utils.ts"
         },
         {
           "path": "src/registry/blocks/settings-01/section-layout.tsx",
           "type": "registry:component",
-          "target": "components/settings-01/section-layout.tsx"
+          "target": "@components/settings-01/section-layout.tsx"
         },
         {
           "path": "src/registry/blocks/settings-01/section-nav.tsx",
           "type": "registry:component",
-          "target": "components/settings-01/section-nav.tsx"
+          "target": "@components/settings-01/section-nav.tsx"
         },
         {
           "path": "src/registry/blocks/settings-01/previews.tsx",
           "type": "registry:component",
-          "target": "components/settings-01/previews.tsx"
+          "target": "@components/settings-01/previews.tsx"
         },
         {
           "path": "src/registry/blocks/settings-01/appearance-section.tsx",
           "type": "registry:component",
-          "target": "components/settings-01/appearance-section.tsx"
+          "target": "@components/settings-01/appearance-section.tsx"
         },
         {
           "path": "src/registry/blocks/settings-01/notifications-section.tsx",
           "type": "registry:component",
-          "target": "components/settings-01/notifications-section.tsx"
+          "target": "@components/settings-01/notifications-section.tsx"
         },
         {
           "path": "src/registry/blocks/settings-01/sound-section.tsx",
           "type": "registry:component",
-          "target": "components/settings-01/sound-section.tsx"
+          "target": "@components/settings-01/sound-section.tsx"
         },
         {
           "path": "src/registry/blocks/settings-01/editor-section.tsx",
           "type": "registry:component",
-          "target": "components/settings-01/editor-section.tsx"
+          "target": "@components/settings-01/editor-section.tsx"
         },
         {
           "path": "src/registry/blocks/settings-01/privacy-section.tsx",
           "type": "registry:component",
-          "target": "components/settings-01/privacy-section.tsx"
+          "target": "@components/settings-01/privacy-section.tsx"
         },
         {
           "path": "src/registry/blocks/settings-01/use-save-action.ts",
           "type": "registry:component",
-          "target": "components/settings-01/use-save-action.ts"
+          "target": "@components/settings-01/use-save-action.ts"
         }
       ],
       "meta": {
@@ -454,7 +454,7 @@
         {
           "path": "src/registry/blocks/agent-chat-01/agent-chat.tsx",
           "type": "registry:component",
-          "target": "components/agent-chat/agent-chat.tsx"
+          "target": "@components/agent-chat/agent-chat.tsx"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/page.tsx",
@@ -464,57 +464,57 @@
         {
           "path": "src/registry/blocks/agent-chat-01/agent-chat-body.tsx",
           "type": "registry:component",
-          "target": "components/agent-chat/agent-chat-body.tsx"
+          "target": "@components/agent-chat/agent-chat-body.tsx"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/use-agent-chat-position.ts",
           "type": "registry:component",
-          "target": "components/agent-chat/use-agent-chat-position.ts"
+          "target": "@components/agent-chat/use-agent-chat-position.ts"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/agent-chat-context.tsx",
           "type": "registry:component",
-          "target": "components/agent-chat/agent-chat-context.tsx"
+          "target": "@components/agent-chat/agent-chat-context.tsx"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/chat-message.tsx",
           "type": "registry:component",
-          "target": "components/agent-chat/chat-message.tsx"
+          "target": "@components/agent-chat/chat-message.tsx"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/chat-charts.tsx",
           "type": "registry:component",
-          "target": "components/agent-chat/chat-charts.tsx"
+          "target": "@components/agent-chat/chat-charts.tsx"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/chat-markdown.tsx",
           "type": "registry:component",
-          "target": "components/agent-chat/chat-markdown.tsx"
+          "target": "@components/agent-chat/chat-markdown.tsx"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/mock-transport.ts",
           "type": "registry:component",
-          "target": "components/agent-chat/mock-transport.ts"
+          "target": "@components/agent-chat/mock-transport.ts"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/scripts.ts",
           "type": "registry:component",
-          "target": "components/agent-chat/scripts.ts"
+          "target": "@components/agent-chat/scripts.ts"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/config.ts",
           "type": "registry:component",
-          "target": "components/agent-chat/config.ts"
+          "target": "@components/agent-chat/config.ts"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/types.ts",
           "type": "registry:component",
-          "target": "components/agent-chat/types.ts"
+          "target": "@components/agent-chat/types.ts"
         },
         {
           "path": "src/registry/blocks/agent-chat-01/demo-data.ts",
           "type": "registry:component",
-          "target": "components/agent-chat/demo-data.ts"
+          "target": "@components/agent-chat/demo-data.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -579,107 +579,107 @@
         {
           "path": "src/registry/templates/app-shell-01/app-shell.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/app-shell.tsx"
+          "target": "@components/app-shell/app-shell.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/app-header.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/app-header.tsx"
+          "target": "@components/app-shell/app-header.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/app-shell-script.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/app-shell-script.tsx"
+          "target": "@components/app-shell/app-shell-script.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/primary-nav.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/primary-nav.tsx"
+          "target": "@components/app-shell/primary-nav.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/workspace-sidebar.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/workspace-sidebar.tsx"
+          "target": "@components/app-shell/workspace-sidebar.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/page-header.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/page-header.tsx"
+          "target": "@components/app-shell/page-header.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/page-toolbar.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/page-toolbar.tsx"
+          "target": "@components/app-shell/page-toolbar.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/header-status.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/header-status.tsx"
+          "target": "@components/app-shell/header-status.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/user-menu.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/user-menu.tsx"
+          "target": "@components/app-shell/user-menu.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/theme-toggle.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/theme-toggle.tsx"
+          "target": "@components/app-shell/theme-toggle.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/nav-link.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/nav-link.tsx"
+          "target": "@components/app-shell/nav-link.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/nav-types.ts",
           "type": "registry:component",
-          "target": "components/app-shell/nav-types.ts"
+          "target": "@components/app-shell/nav-types.ts"
         },
         {
           "path": "src/registry/templates/app-shell-01/nav-config.ts",
           "type": "registry:component",
-          "target": "components/app-shell/nav-config.ts"
+          "target": "@components/app-shell/nav-config.ts"
         },
         {
           "path": "src/registry/templates/app-shell-01/use-stored-flag.ts",
           "type": "registry:component",
-          "target": "components/app-shell/use-stored-flag.ts"
+          "target": "@components/app-shell/use-stored-flag.ts"
         },
         {
           "path": "src/registry/templates/app-shell-01/dashboard-overview.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/dashboard-overview.tsx"
+          "target": "@components/app-shell/dashboard-overview.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/page-summaries.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/page-summaries.tsx"
+          "target": "@components/app-shell/page-summaries.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/distribution-card.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/distribution-card.tsx"
+          "target": "@components/app-shell/distribution-card.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/overview-charts.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/overview-charts.tsx"
+          "target": "@components/app-shell/overview-charts.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/list-page.tsx",
           "type": "registry:component",
-          "target": "components/app-shell/list-page.tsx"
+          "target": "@components/app-shell/list-page.tsx"
         },
         {
           "path": "src/registry/templates/app-shell-01/sample-data.ts",
           "type": "registry:component",
-          "target": "components/app-shell/sample-data.ts"
+          "target": "@components/app-shell/sample-data.ts"
         },
         {
           "path": "src/registry/templates/app-shell-01/config.ts",
           "type": "registry:component",
-          "target": "components/app-shell/config.ts"
+          "target": "@components/app-shell/config.ts"
         },
         {
           "path": "src/registry/hooks/use-controllable-state.ts",
@@ -1871,27 +1871,27 @@
         {
           "path": "src/registry/blocks/checkout-01/checkout-01.tsx",
           "type": "registry:component",
-          "target": "components/checkout-01/checkout-01.tsx"
+          "target": "@components/checkout-01/checkout-01.tsx"
         },
         {
           "path": "src/registry/blocks/checkout-01/types.ts",
           "type": "registry:component",
-          "target": "components/checkout-01/types.ts"
+          "target": "@components/checkout-01/types.ts"
         },
         {
           "path": "src/registry/blocks/checkout-01/config.ts",
           "type": "registry:component",
-          "target": "components/checkout-01/config.ts"
+          "target": "@components/checkout-01/config.ts"
         },
         {
           "path": "src/registry/blocks/checkout-01/form-parts.tsx",
           "type": "registry:component",
-          "target": "components/checkout-01/form-parts.tsx"
+          "target": "@components/checkout-01/form-parts.tsx"
         },
         {
           "path": "src/registry/blocks/checkout-01/completion.tsx",
           "type": "registry:component",
-          "target": "components/checkout-01/completion.tsx"
+          "target": "@components/checkout-01/completion.tsx"
         }
       ],
       "meta": {

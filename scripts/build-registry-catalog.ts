@@ -19,6 +19,7 @@ async function main() {
           file.path.replace(/^src\//, "@/").replace(/\.tsx?$/, ""),
           file.target
             .replace(/^@ui\//, "components/ui/")
+            .replace(/^@components\//, "components/")
             .replace(/\.tsx?$/, ""),
         )
   // 仅改写发布产物，站点继续直接使用 registry 源码。

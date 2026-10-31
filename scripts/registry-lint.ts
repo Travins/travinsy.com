@@ -519,6 +519,12 @@ function lintRegistry(root: string): Diagnostic[] {
     for (const entry of item.files ?? []) {
       if (entry.type === "registry:ui" && !entry.target)
         add(item, "error", `registry:ui 文件必须有 target：${entry.path}`)
+      if (entry.target?.startsWith("components/"))
+        add(
+          item,
+          "error",
+          `target 不要写成 components/…，改用 @components/…（跟随使用方别名，monorepo 才能装对）：${entry.path}`,
+        )
       if (!entry.target) continue
       const target = path.posix.normalize(entry.target)
       const previous = targets.get(target)

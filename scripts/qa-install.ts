@@ -343,8 +343,18 @@ async function main() {
         continue
       }
       for (const file of item.files) {
-        if (!file.target?.startsWith("@ui/")) continue
-        const target = join(app, appRoot, "components/ui", file.target.slice(4))
+        // @ui/ 与 @components/ 跟随使用方的别名落点（monorepo 下在 UI 包里），其余 target 不在这里核对
+        const alias = file.target?.match(/^@(ui|components)\/(.+)$/)
+        if (!alias) continue
+        const target = join(
+          app,
+          appRoot,
+          // 探针 monorepo 把 components 与 ui 两个别名都指向 UI 包的 components/ui
+          alias[1] === "ui" || args.includes("--monorepo")
+            ? "components/ui"
+            : "components",
+          alias[2],
+        )
         if (!existsSync(target)) row.notes.push(`缺少组件独立文件 ${target}`)
         else if (!installedTargets.has(target))
           installedTargets.set(target, await readFile(target, "utf8"))
