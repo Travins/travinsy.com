@@ -27,7 +27,8 @@ function audio() {
 
 function flush() {
   const ctx = context
-  if (!ctx || ctx.state !== "running") return
+  if (ctx?.state !== "running") return
+  removeUnlockListeners()
   const now = performance.now()
   const queue = pending
   pending = []
@@ -43,10 +44,7 @@ function flush() {
 function unlock() {
   const ctx = audio()
   if (!ctx) return
-  if (ctx.state === "running") {
-    for (const type of GESTURES) window.removeEventListener(type, unlock, true)
-    return flush()
-  }
+  if (ctx.state === "running") return flush()
   const silent = ctx.createBufferSource()
   silent.buffer = ctx.createBuffer(1, 1, ctx.sampleRate)
   silent.connect(ctx.destination)
@@ -55,16 +53,34 @@ function unlock() {
 }
 
 const GESTURES = ["pointerup", "touchend", "click", "keydown"] as const
-if (typeof window !== "undefined") {
+let listening = false
+
+/**
+ * 解锁监听懒挂载：第一次真正要发声、而音频还挂起时才挂上，解锁后立即移除。
+ * 只导入组件、不出声的页面不会创建 AudioContext，也不会在 window 上留下监听。
+ */
+function listenForUnlock() {
+  if (listening) return
+  listening = true
   for (const type of GESTURES)
     window.addEventListener(type, unlock, { capture: true, passive: true })
+}
+
+function removeUnlockListeners() {
+  if (!listening) return
+  listening = false
+  for (const type of GESTURES) window.removeEventListener(type, unlock, true)
 }
 
 /** 有声就放；还没解锁就先记下，解锁后补放 */
 function withAudio(play: (ctx: AudioContext) => void) {
   const ctx = audio()
   if (!ctx) return
-  if (ctx.state === "running") return play(ctx)
+  if (ctx.state === "running") {
+    removeUnlockListeners()
+    return play(ctx)
+  }
+  listenForUnlock()
   // 只留最近两声：解锁前拖了一路滑块，补放时不能一下子炸出一串滴答
   pending = [...pending, { play, at: performance.now() }].slice(-2)
   void ctx.resume().then(flush, () => {})
@@ -180,7 +196,7 @@ function setMuted(muted: boolean) {
   } catch {
     // 隐私模式等存不了时只在本页生效
   }
-  listeners.forEach((listener) => listener())
+  for (const listener of listeners) listener()
   // 通知同页其他带音效的组件
   window.dispatchEvent(new Event(MUTED_EVENT))
 }
