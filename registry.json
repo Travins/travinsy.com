@@ -2003,9 +2003,12 @@
       "title": "方条文本框",
       "description": "方条系列基础文本框，支持标签、图标、后缀和错误提示。",
       "dependencies": [
-        "class-variance-authority"
+        "class-variance-authority",
+        "lucide-react"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "src/registry/ui/bar-field/bar-field.tsx",

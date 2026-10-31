@@ -20,7 +20,7 @@ import { BarField } from "@/components/ui/bar-field/bar-field"
 ;<BarField label="名称" name="name" />
 ```
 
-它是方条系列的基础文本框。普通文本、搜索、密码和验证码使用它；需要手机号格式整理或证件号校验时，使用 phone-input、id-number-input。suffix 支持单位和密码切换按钮；footerAction 用于忘记密码等操作。无标签时必须提供 aria-label 或 aria-labelledby，placeholder 不能代替名称。
+它是方条系列的基础文本框。普通文本、搜索、密码和验证码使用它；需要手机号格式整理或证件号校验时，使用 phone-input、id-number-input。suffix 支持单位和密码切换按钮；footerAction 用于忘记密码等操作。`type="search"` 时有内容就显示清除键（与方条下拉的清除键同一档，替代浏览器自带的蓝色清除钮），其他类型可用 `clearable` 打开；清除只触发 `onValueChange("")`，并把焦点留在输入框里。无标签时必须提供 aria-label 或 aria-labelledby，placeholder 不能代替名称。
 
 ### 放进网格工具栏
 

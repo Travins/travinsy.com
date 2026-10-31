@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import { cva } from "class-variance-authority"
+import { X } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 
@@ -45,6 +47,13 @@ type BarFieldProps = Omit<
   onValueChange?: (value: string) => void
   /** 输入节点引用 */
   inputRef?: React.Ref<HTMLInputElement>
+  /**
+   * 有内容时显示清除键；清除只触发 `onValueChange("")`，不触发原生 `onChange`
+   * @default type === "search"
+   */
+  clearable?: boolean
+  /** 清除键的读屏名称 @default "清除" */
+  clearLabel?: string
 }
 
 function BarField({
@@ -59,6 +68,8 @@ function BarField({
   defaultValue = "",
   onValueChange,
   inputRef,
+  clearable: clearableProp,
+  clearLabel = "清除",
   ref,
   className,
   id: idProp,
@@ -168,6 +179,8 @@ function BarField({
           data-slot="bar-field-input"
           className={cn(
             "h-full min-w-0 flex-1 bg-transparent font-medium outline-none placeholder:font-normal placeholder:text-muted-foreground disabled:cursor-not-allowed",
+            // 隐藏浏览器自带的搜索清除钮，统一用上面的自绘清除键
+            "[&::-webkit-search-cancel-button]:appearance-none",
             // 有标签时值靠右（方条惯例）；带前置图标的是搜索类输入，文字紧跟图标从左写起
             label && !icon && "text-right @max-[20rem]/bar-field:text-left",
           )}
@@ -176,6 +189,26 @@ function BarField({
             onChange?.(event)
           }}
         />
+        {/* 自绘清除键：与方条下拉的清除键同一档，替代浏览器自带的搜索清除钮 */}
+        {(clearableProp ?? props.type === "search") &&
+          value !== "" &&
+          !disabled &&
+          !readOnly && (
+            <Button
+              type="button"
+              size="icon-xs"
+              variant="ghost"
+              data-slot="bar-field-clear"
+              aria-label={clearLabel}
+              className="-mx-1.5 shrink-0 text-muted-foreground hover:text-foreground"
+              onClick={() => {
+                setValue("")
+                localRef.current?.focus()
+              }}
+            >
+              <X className="size-3.5" />
+            </Button>
+          )}
         {suffix && (
           <span
             data-slot="bar-field-suffix"
