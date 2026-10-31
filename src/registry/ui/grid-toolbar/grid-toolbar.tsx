@@ -73,19 +73,31 @@ type GridToolbarItemProps = React.ComponentProps<"div"> & {
    * @default false
    */
   grow?: boolean
+  /**
+   * 这一格左侧的分隔线：同一组内用虚线；`solid` 表示从这一格开始是新的一组
+   * @default "dashed"
+   */
+  separator?: "dashed" | "solid"
 }
 
 /** 工具栏里的一格：高度跟随工具栏，里面的控件铺满整格 */
 function GridToolbarItem({
   className,
   grow = false,
+  separator = "dashed",
   ...props
 }: GridToolbarItemProps) {
   return (
     <div
       data-slot="grid-toolbar-item"
+      data-separator={separator}
       className={cn(
-        "flex h-(--grid-toolbar-height) min-w-0 items-stretch border-s border-t border-dashed border-edge *:min-w-0",
+        "flex h-(--grid-toolbar-height) min-w-0 items-stretch border-s border-t border-edge *:min-w-0",
+        // 上线（换行后的横线）始终是虚线；左线按分组取虚线或实线
+        "[border-top-style:dashed]",
+        separator === "solid"
+          ? "[border-inline-start-style:solid]"
+          : "[border-inline-start-style:dashed]",
         grow ? "flex-1" : "shrink-0",
         className,
       )}

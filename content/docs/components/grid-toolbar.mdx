@@ -33,7 +33,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control/segmented-co
 </GridToolbar>
 ```
 
-`GridToolbar` 是整行，`GridToolbarItem` 是其中一格。每格高度跟随工具栏，格内控件铺满整格；`grow` 让这一格占满剩余宽度，通常给搜索框。宽度、换行位置、窄屏隐藏都写在 `GridToolbarItem` 的 `className` 上，比如 `basis-full` 让一格独占一行、`hidden @min-[40rem]:flex` 在窄容器里隐藏。
+`GridToolbar` 是整行，`GridToolbarItem` 是其中一格。每格高度跟随工具栏，格内控件铺满整格；`grow` 让这一格占满剩余宽度，通常给搜索框。格子之间默认是虚线；`separator="solid"` 让这一格左侧用实线，表示从这里开始是另一组（比如列设置和密度之间）。宽度、换行位置、窄屏隐藏都写在 `GridToolbarItem` 的 `className` 上，比如 `basis-full` 让一格独占一行、`hidden @min-[40rem]:flex` 在窄容器里隐藏。
 
 ### 放进来的控件
 

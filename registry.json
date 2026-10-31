@@ -1394,6 +1394,7 @@
         "motion"
       ],
       "registryDependencies": [
+        "tooltip",
         "https://yiui.dev/r/flow-tone.json"
       ],
       "files": [
@@ -1927,6 +1928,7 @@
         "empty",
         "sheet",
         "dropdown-menu",
+        "tooltip",
         "https://yiui.dev/r/grid-layout.json",
         "https://yiui.dev/r/bar-field.json",
         "https://yiui.dev/r/grid-pagination.json",

@@ -1,14 +1,7 @@
 "use client"
 import * as React from "react"
 import type { Table } from "@tanstack/react-table"
-import {
-  ArrowUpDown,
-  Rows2,
-  Rows3,
-  Rows4,
-  Search,
-  Settings2,
-} from "lucide-react"
+import { ArrowUpDown, Search, Settings2 } from "lucide-react"
 import { BarField } from "@/registry/ui/bar-field/bar-field"
 import { BarSelect } from "@/registry/ui/bar-select/bar-select"
 import { SegmentedControl } from "@/registry/ui/segmented-control/segmented-control"
@@ -18,6 +11,11 @@ import {
 } from "@/registry/ui/grid-toolbar/grid-toolbar"
 import { Button } from "@/components/ui/button"
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -26,6 +24,32 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
 import type { DataTableLabels, DataTableProps } from "./types"
+
+/**
+ * 密度图标：同样高度里画几条横线，线越多越紧凑。
+ * 不带外框，免得读成数据表格。
+ */
+function DensityIcon({ lines }: { lines: number }) {
+  const top = 5
+  const bottom = 19
+  const step = (bottom - top) / (lines - 1)
+  return (
+    <svg
+      data-slot="data-table-density-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      aria-hidden="true"
+      className="size-4"
+    >
+      {Array.from({ length: lines }, (_, i) => (
+        <path key={i} d={`M4 ${top + step * i}h16`} />
+      ))}
+    </svg>
+  )
+}
 
 function DataTableToolbar<T>({
   table,
@@ -149,18 +173,25 @@ function DataTableToolbar<T>({
       />
       <GridToolbarItem>
         <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon-lg"
-                aria-label={labels.columns}
-                className={cellButton}
-              />
-            }
-          >
-            <Settings2 aria-hidden="true" />
-          </DropdownMenuTrigger>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon-lg"
+                      aria-label={labels.columns}
+                      className={cellButton}
+                    />
+                  }
+                />
+              }
+            >
+              <Settings2 aria-hidden="true" />
+            </TooltipTrigger>
+            <TooltipContent>{labels.columns}</TooltipContent>
+          </Tooltip>
           <DropdownMenuContent align="end" className="min-w-44 *:text-xs!">
             {table.getAllLeafColumns().map((column) => (
               <DropdownMenuCheckboxItem
@@ -179,34 +210,53 @@ function DataTableToolbar<T>({
           </DropdownMenuContent>
         </DropdownMenu>
       </GridToolbarItem>
-      {/* 密度只用图标：行数越多越紧凑；文字留给读屏和悬停提示 */}
-      <GridToolbarItem className="hidden @min-[40rem]:flex">
+      {/* 密度是另一组：用实线与列设置分开；只用图标，文字在提示气泡和读屏里 */}
+      <GridToolbarItem separator="solid" className="hidden @min-[40rem]:flex">
         <SegmentedControl
           aria-label={labels.density}
           iconOnly
           value={density}
           options={[
-            { value: "40", label: labels.compact, icon: <Rows4 /> },
-            { value: "52", label: labels.standard, icon: <Rows3 /> },
-            { value: "64", label: labels.comfortable, icon: <Rows2 /> },
+            {
+              value: "40",
+              label: labels.compact,
+              icon: <DensityIcon lines={4} />,
+            },
+            {
+              value: "52",
+              label: labels.standard,
+              icon: <DensityIcon lines={3} />,
+            },
+            {
+              value: "64",
+              label: labels.comfortable,
+              icon: <DensityIcon lines={2} />,
+            },
           ]}
           onValueChange={onDensityChange}
         />
       </GridToolbarItem>
       <GridToolbarItem className="@min-[40rem]:hidden">
         <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                size="icon-lg"
-                variant="ghost"
-                aria-label={labels.sort}
-                className={cellButton}
-              />
-            }
-          >
-            <ArrowUpDown />
-          </DropdownMenuTrigger>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      size="icon-lg"
+                      variant="ghost"
+                      aria-label={labels.sort}
+                      className={cellButton}
+                    />
+                  }
+                />
+              }
+            >
+              <ArrowUpDown aria-hidden="true" />
+            </TooltipTrigger>
+            <TooltipContent>{labels.sort}</TooltipContent>
+          </Tooltip>
           <DropdownMenuContent align="end" className="*:text-xs!">
             {table
               .getAllLeafColumns()

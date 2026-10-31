@@ -6,6 +6,11 @@ import { RadioGroup } from "@base-ui/react/radio-group"
 import { cva } from "class-variance-authority"
 import { motion, useReducedMotion } from "motion/react"
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { useControllableState } from "@/registry/hooks/use-controllable-state"
 import { flowToneStyle, type FlowTone } from "@/registry/lib/flow-tone"
@@ -111,7 +116,7 @@ type SegmentedControlProps = Omit<
    */
   modified?: boolean
   /**
-   * 只显示图标：每格为正方形，`label` 只给读屏；`label` 是字符串时同时作为悬停提示
+   * 只显示图标：每格为正方形，`label` 给读屏，并在悬停或聚焦时用提示气泡显示
    * @default false
    */
   iconOnly?: boolean
@@ -189,17 +194,11 @@ function SegmentedControl({
       >
         {options.map((option) => {
           const selected = option.value === value
-          return (
+          const item = (
             <Radio.Root
-              key={option.value}
               value={option.value}
               disabled={option.disabled}
               data-slot="segmented-control-item"
-              title={
-                iconOnly && typeof option.label === "string"
-                  ? option.label
-                  : undefined
-              }
               className={cn(
                 "relative flex min-w-0 cursor-pointer items-center justify-center whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset data-[checked]:text-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
                 // 纯图标：正方形格子、不留文字间距，图标才能真正居中
@@ -241,6 +240,15 @@ function SegmentedControl({
                 {option.label}
               </span>
             </Radio.Root>
+          )
+          // 纯图标：悬停或键盘聚焦时用提示气泡显示文字
+          return iconOnly ? (
+            <Tooltip key={option.value}>
+              <TooltipTrigger render={item} />
+              <TooltipContent>{option.label}</TooltipContent>
+            </Tooltip>
+          ) : (
+            <React.Fragment key={option.value}>{item}</React.Fragment>
           )
         })}
       </span>
