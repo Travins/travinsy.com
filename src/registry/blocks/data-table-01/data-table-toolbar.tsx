@@ -101,7 +101,7 @@ function DataTableToolbar<T>({
               label: (
                 <span className="whitespace-nowrap">
                   {option.label}
-                  <span className="ml-1 hidden font-mono text-xs text-muted-foreground @min-[40rem]:inline">
+                  <span className="ml-1.5 hidden font-mono text-xs text-muted-foreground @min-[40rem]:inline">
                     {counts?.[option.value] ?? 0}
                   </span>
                 </span>

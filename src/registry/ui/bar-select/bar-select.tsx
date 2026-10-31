@@ -247,7 +247,7 @@ function BarSelect(props: BarSelectProps) {
       {label && (
         <span
           aria-hidden="true"
-          className="mb-1.5 hidden text-xs text-muted-foreground @max-[12rem]/bar-select:block"
+          className="mb-1.5 hidden text-xs text-muted-foreground @max-[10rem]/bar-select:block"
         >
           {label}
         </span>
@@ -285,7 +285,7 @@ function BarSelect(props: BarSelectProps) {
           {label && (
             <span
               id={`${id}-label`}
-              className="flex shrink-0 items-center self-stretch border-r border-edge px-3 text-muted-foreground @max-[12rem]/bar-select:sr-only"
+              className="flex shrink-0 items-center self-stretch border-r border-edge px-3 text-muted-foreground @max-[10rem]/bar-select:sr-only"
             >
               {label}
             </span>
