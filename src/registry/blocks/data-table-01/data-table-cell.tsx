@@ -14,13 +14,25 @@ import {
 } from "@/components/ui/sheet"
 import type { DataTableMeta, DataTableLabels } from "./types"
 
+const invertedKey =
+  "border-primary-foreground/25 bg-primary-foreground/10 text-primary-foreground"
+
 type Phase = "idle" | "saving" | "saved" | "failed"
 
-function Key({ children }: { children: React.ReactNode }) {
+function Key({
+  className,
+  children,
+}: {
+  className?: string
+  children: React.ReactNode
+}) {
   return (
     <kbd
       data-slot="data-table-cell-key"
-      className="inline-flex h-4 min-w-4 items-center justify-center rounded-[3px] border border-b-2 border-edge bg-background px-1 font-mono text-[10px] leading-none text-foreground"
+      className={cn(
+        "inline-flex h-4 min-w-4 items-center justify-center rounded-[3px] border border-b-2 border-edge bg-background px-1 font-mono text-[10px] leading-none text-foreground",
+        className,
+      )}
     >
       {children}
     </kbd>
@@ -235,10 +247,7 @@ function DataTableCell<T>({
       tabIndex={meta?.editable ? 0 : undefined}
       aria-describedby={phase === "failed" && peek ? id : undefined}
       className={cn(
-        // 键盘焦点框与编辑框同形：盖住整格，像表格软件的活动单元格
-        "group/cell relative flex h-full min-h-0 flex-col justify-center rounded-sm outline-none before:pointer-events-none before:absolute before:-inset-x-3 before:inset-y-0 before:ring-ring before:ring-inset focus-visible:before:ring-2",
-        "data-[editable=true]:not-data-editing:hover:outline-1 data-[editable=true]:not-data-editing:hover:-outline-offset-4 data-[editable=true]:not-data-editing:hover:outline-edge data-[editable=true]:not-data-editing:hover:outline-dashed",
-        "data-[state=failed]:outline-1 data-[state=failed]:-outline-offset-4 data-[state=failed]:outline-destructive/60! data-[state=failed]:outline-dashed",
+        "group/cell relative flex h-full min-h-0 flex-col justify-center outline-none",
       )}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -270,19 +279,30 @@ function DataTableCell<T>({
         }
       }}
     >
+      {/* 整格框：所有状态都画在 td 的边界上（-inset-x-3 抵消 td 的 px-3），和下方提示条左缘对齐。
+          悬停 = 浅底；键盘焦点 = 实线框；失败 = 红框 + 红底；编辑 = 主色粗框 */}
+      {meta?.editable && (
+        <span
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute -inset-x-3 inset-y-0 ring-inset",
+            editing && !mobile
+              ? cn(
+                  "z-10 bg-background ring-2",
+                  error ? "ring-destructive" : "ring-primary",
+                )
+              : phase === "failed"
+                ? "bg-destructive/5 ring-1 ring-destructive/60"
+                : "group-hover/cell:bg-muted/60 group-focus-visible/cell:ring-2 group-focus-visible/cell:ring-ring",
+          )}
+        />
+      )}
       {editing && !mobile ? (
-        <>
-          {/* 主色实线框盖住整格（含 td 内边距），表明这一格正在编辑 */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -inset-x-3 inset-y-0 z-10 bg-background ring-2 ring-primary ring-inset"
-          />
-          <span className="absolute inset-0 z-10">{input}</span>
-        </>
+        <span className="absolute inset-0 z-10">{input}</span>
       ) : (
         <div
           className={cn(
-            "min-w-0 transition-opacity",
+            "relative min-w-0 transition-opacity",
             phase === "saving" && "opacity-50",
           )}
         >
@@ -294,7 +314,7 @@ function DataTableCell<T>({
       {!editing && (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute top-1 -right-2 flex size-3 items-center justify-center"
+          className="pointer-events-none absolute top-1.5 -right-1.5 flex size-3 items-center justify-center"
         >
           {phase === "saving" ? (
             <LoaderCircle className="size-3 animate-spin text-muted-foreground motion-reduce:animate-none" />
@@ -303,7 +323,7 @@ function DataTableCell<T>({
           ) : phase === "failed" ? (
             <CircleAlert className="size-3 text-destructive" />
           ) : meta?.editable ? (
-            <Pencil className="size-3 text-muted-foreground/50 opacity-0 group-hover/cell:opacity-100" />
+            <Pencil className="size-3 text-muted-foreground opacity-0 group-hover/cell:opacity-100" />
           ) : null}
         </span>
       )}
@@ -323,10 +343,16 @@ function DataTableCell<T>({
             role={message ? "alert" : undefined}
             style={{ left: position.left, top: position.top }}
             className={cn(
-              "pointer-events-none fixed z-50 flex max-w-80 items-center gap-2 rounded-b-md border border-t-0 px-2 py-1 text-xs shadow-sm",
+              // 提示条像挂在格子框下沿的标签：左缘、边框粗细与颜色都和格子框一致
+              "pointer-events-none fixed z-50 flex max-w-80 items-center gap-2 rounded-b-md border-t-0 px-2 py-1 text-xs shadow-sm",
               message
-                ? "border-destructive/40 bg-popover text-destructive"
-                : "border-edge bg-popover text-muted-foreground",
+                ? cn(
+                    "bg-popover text-destructive",
+                    editing
+                      ? "border-2 border-destructive"
+                      : "border border-destructive/60",
+                  )
+                : "border-2 border-primary bg-primary text-primary-foreground/70",
             )}
           >
             {message ? (
@@ -342,15 +368,15 @@ function DataTableCell<T>({
             ) : (
               <span className="flex items-center gap-3 whitespace-nowrap">
                 <span className="flex items-center gap-1">
-                  <Key>↵</Key>
+                  <Key className={invertedKey}>↵</Key>
                   {labels.save}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Key>Tab</Key>
+                  <Key className={invertedKey}>Tab</Key>
                   {labels.nextCell}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Key>Esc</Key>
+                  <Key className={invertedKey}>Esc</Key>
                   {labels.cancel}
                 </span>
               </span>
