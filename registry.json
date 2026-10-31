@@ -2025,38 +2025,6 @@
       ]
     },
     {
-      "name": "bar-pagination",
-      "type": "registry:ui",
-      "title": "方条分页",
-      "description": "基于官方分页组合的方条控件，支持每页条数、跳页和窄容器。",
-      "dependencies": [
-        "class-variance-authority",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "button",
-        "pagination",
-        "select"
-      ],
-      "files": [
-        {
-          "path": "src/registry/ui/bar-pagination/bar-pagination.tsx",
-          "type": "registry:ui",
-          "target": "@ui/bar-pagination/bar-pagination.tsx"
-        },
-        {
-          "path": "src/registry/lib/pagination-slots.ts",
-          "type": "registry:lib",
-          "target": "lib/pagination-slots.ts"
-        },
-        {
-          "path": "src/registry/hooks/use-controllable-state.ts",
-          "type": "registry:hook",
-          "target": "hooks/use-controllable-state.ts"
-        }
-      ]
-    },
-    {
       "name": "grid-pagination",
       "type": "registry:ui",
       "title": "网格分页",

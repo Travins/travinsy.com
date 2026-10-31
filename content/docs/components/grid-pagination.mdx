@@ -33,9 +33,9 @@ import { GridPagination } from "@/components/ui/grid-pagination/grid-pagination"
 
 底层是官方 `Pagination`、`PaginationContent`、`PaginationItem`、`PaginationLink`，读屏与键盘行为和官方一致。传 `getHref` 时每一格都是真实链接；不传时是按钮，只发出 `onPageChange`。`pageSize` 由调用方控制，改变时应同步更新 `pageCount` 与 `page`。
 
-### 和方条分页的区别
+### 页码算法
 
-[方条分页](/components/bar-pagination/)是一根圆角方条，适合放进表单、卡片这类小空间；网格分页是一整行格子，适合贴在表格、列表、日志的底部，与线条网格的竖线、横线融为一体。两者共用同一套页码算法（`lib/pagination-slots.ts`）。
+页码排布放在 `lib/pagination-slots.ts`（随组件一起安装）：`getPaginationSlots` 算出固定数量的槽位，`getPaginationRange` 算出当前页的条目范围。自己做分页外观时可以直接复用。
 
 ### 外框
 

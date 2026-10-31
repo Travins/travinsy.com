@@ -2069,39 +2069,6 @@
     },
     {
       "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-      "name": "bar-pagination",
-      "title": "方条分页",
-      "description": "基于官方分页组合的方条控件，支持每页条数、跳页和窄容器。",
-      "dependencies": [
-        "class-variance-authority",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "button",
-        "pagination",
-        "select"
-      ],
-      "files": [
-        {
-          "path": "src/registry/ui/bar-pagination/bar-pagination.tsx",
-          "type": "registry:ui",
-          "target": "@ui/bar-pagination/bar-pagination.tsx"
-        },
-        {
-          "path": "src/registry/lib/pagination-slots.ts",
-          "type": "registry:lib",
-          "target": "lib/pagination-slots.ts"
-        },
-        {
-          "path": "src/registry/hooks/use-controllable-state.ts",
-          "type": "registry:hook",
-          "target": "hooks/use-controllable-state.ts"
-        }
-      ],
-      "type": "registry:ui"
-    },
-    {
-      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
       "name": "grid-pagination",
       "title": "网格分页",
       "description": "整条是一行格子的分页：信息、每页条数、首尾页、页码与跳页各占一格，可单独使用，也可贴在表格底部。",
