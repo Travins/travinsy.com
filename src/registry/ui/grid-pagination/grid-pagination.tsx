@@ -126,7 +126,7 @@ function GridPagination({
     setPrevious(page)
     setDirection(page > previous ? 1 : -1)
   }
-  // 当前页的反色块：同一个实例里只有一块，翻页时滑到新位置
+  // 当前页的主题色块：同一个实例里只有一块，翻页时滑到新位置
   const indicatorId = React.useId()
   const reduced = useReducedMotion()
   const transition = reduced
@@ -137,11 +137,11 @@ function GridPagination({
   const cell =
     "rounded-none border-0 font-mono text-xs tabular-nums focus-visible:ring-inset"
   const currentCell =
-    "text-background hover:bg-transparent hover:text-background"
+    "text-primary-foreground hover:bg-transparent hover:text-primary-foreground"
 
   /**
-   * 页码格的内容：反色块与数字分两层。数字层裁切溢出，换数字时旧的滑出、新的滑入；
-   * 反色块不在裁切层里，滑过相邻格子时不会被裁掉。
+   * 页码格的内容：主题色块与数字分两层。数字层裁切溢出，换数字时旧的滑出、新的滑入；
+   * 主题色块不在裁切层里，滑过相邻格子时不会被裁掉。
    */
   const slot = (value: React.ReactNode, key: string, current: boolean) => (
     <>
@@ -152,7 +152,7 @@ function GridPagination({
           layoutDependency={page}
           aria-hidden="true"
           data-slot="grid-pagination-indicator"
-          className="absolute inset-0 bg-foreground"
+          className="absolute inset-0 bg-primary"
           transition={transition}
         />
       )}
@@ -300,7 +300,7 @@ function GridPagination({
             page === 1,
           )}
         </PaginationItem>
-        {/* 按位置取 key：格子本身不重建，只有格里的数字滚动，反色块滑动 */}
+        {/* 按位置取 key：格子本身不重建，只有格里的数字滚动，主题色块滑动 */}
         {pages.map((n, index) => (
           <PaginationItem key={index} className={wide}>
             {typeof n === "number" ? (

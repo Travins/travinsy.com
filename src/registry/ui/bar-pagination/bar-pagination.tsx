@@ -122,7 +122,7 @@ function BarPagination({
         className={cn(
           cell,
           current &&
-            "bg-foreground text-background hover:bg-foreground hover:text-background",
+            "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
         )}
         onClick={(event) => {
           if (
@@ -147,7 +147,7 @@ function BarPagination({
         className={cn(
           cell,
           current &&
-            "bg-foreground text-background hover:bg-foreground hover:text-background",
+            "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
         )}
         onClick={() => setPage(n)}
       >
