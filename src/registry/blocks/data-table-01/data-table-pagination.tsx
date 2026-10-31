@@ -16,8 +16,13 @@ function DataTablePagination<T>({
   "use no memo"
   const { pageIndex, pageSize } = table.getState().pagination
   return (
-    // 翻页贴在表格底部当作最后一行：只画顶部横线，左右与底边沿用表格外框
+    // 翻页贴在表格底部：先隔一条点阵小带，再是翻页行；左右与底边沿用表格外框
     <div data-slot="data-table-pagination" className="border-t border-edge">
+      <div
+        aria-hidden="true"
+        data-slot="data-table-pagination-band"
+        className="h-4 border-b border-edge bg-dots"
+      />
       {virtual ? (
         <p className="flex h-9 items-center px-3 font-mono text-xs text-muted-foreground tabular-nums pointer-coarse:h-11">
           {labels.rowTotal(count)}

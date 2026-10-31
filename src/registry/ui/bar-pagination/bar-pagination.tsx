@@ -93,7 +93,6 @@ function BarPagination({
   const labels = { ...DEFAULT_LABELS, ...labelsProp }
   const count = Math.max(1, Math.trunc(pageCount) || 1)
   const clamp = (n: number) => Math.min(count, Math.max(1, Math.trunc(n) || 1))
-  const id = React.useId()
   const [rawPage, setPage] = useControllableState({
     prop: pageProp,
     defaultProp: defaultPage,
@@ -191,39 +190,36 @@ function BarPagination({
           >
             {pageSizes && (
               <PaginationItem className="hidden self-stretch @min-[30rem]/bar-pagination:flex">
-                {/* 每页条数：官方 Select，触发器做成方条里的一格（无边框、透明底）。
-                    触发器定宽，弹出层与它同宽、左缘对齐，选项数字与触发器数字同一列，勾与箭头同一列 */}
-                <div className="flex items-center ps-2 whitespace-nowrap text-muted-foreground">
-                  <span id={`${id}-per-page`}>{labels.perPage}</span>
-                  <Select
-                    value={pageSize}
-                    onValueChange={(value) => onPageSizeChange?.(Number(value))}
+                {/* 每页条数：整格就是触发器（「每页 10 ⌄」），悬停、展开时整格变色；
+                    弹出层与整格同宽、左缘对齐，选项数字与格内文字同一条左边线 */}
+                <Select
+                  value={pageSize}
+                  onValueChange={(value) => onPageSizeChange?.(Number(value))}
+                >
+                  <SelectTrigger className="h-full! gap-2 rounded-none border-0 bg-transparent! px-2.5 py-0 shadow-none hover:bg-background/60! focus-visible:ring-inset data-[popup-open]:bg-background/60! [&_svg]:size-3.5!">
+                    <span className="text-muted-foreground">
+                      {labels.perPage}
+                    </span>
+                    <SelectValue className="font-mono text-foreground tabular-nums" />
+                  </SelectTrigger>
+                  <SelectContent
+                    alignItemWithTrigger={false}
+                    align="start"
+                    className="w-(--anchor-width) min-w-0"
                   >
-                    <SelectTrigger
-                      aria-labelledby={`${id}-per-page`}
-                      className="h-full! w-16 justify-between gap-1 rounded-none border-0 bg-transparent! py-0 ps-2.5 pe-2 font-mono text-foreground shadow-none hover:bg-background/60! focus-visible:ring-inset [&_svg]:size-3.5!"
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent
-                      alignItemWithTrigger={false}
-                      align="start"
-                      className="w-(--anchor-width) min-w-0"
-                    >
-                      {pageSizes
-                        .filter((n) => n > 0)
-                        .map((n) => (
-                          <SelectItem
-                            key={n}
-                            value={n}
-                            className="py-1 ps-1.5 pe-6 font-mono text-xs [&_svg]:size-3.5 [&>span:last-child]:right-1"
-                          >
-                            {n}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    {pageSizes
+                      .filter((n) => n > 0)
+                      .map((n) => (
+                        <SelectItem
+                          key={n}
+                          value={n}
+                          className="py-1 ps-1.5 pe-6 font-mono text-xs tabular-nums [&_svg]:size-3.5 [&>span:last-child]:right-1.5"
+                        >
+                          {n}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
               </PaginationItem>
             )}
             <PaginationItem>
